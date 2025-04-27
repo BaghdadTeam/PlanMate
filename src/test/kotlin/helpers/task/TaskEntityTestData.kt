@@ -12,39 +12,79 @@ object TaskEntityTestData {
         creatorId = "50012"
     )
 
-    fun taskMissingTitle() = createTaskHelper(
+    fun taskWithEmptyTitle() = createTaskHelper(
         description = "This is task due thursday for the chance program",
         stateId = "123123",
         projectId = "321321",
         creatorId = "50012"
     )
 
-    fun taskMissingDescription() = createTaskHelper(
+    fun taskWithBlankTitle() = createTaskHelper(
+        title = "     ",
+        description = "This is task due thursday for the chance program",
+        stateId = "123123",
+        projectId = "321321",
+        creatorId = "50012"
+    )
+
+    fun taskWithEmptyDescription() = createTaskHelper(
         title = "Task Management",
         stateId = "123123",
         projectId = "321321",
         creatorId = "50012"
     )
 
-    fun taskMissingStateId() = createTaskHelper(
+    fun taskWithBlankDescription() = createTaskHelper(
+        title = "Task Management",
+        description = "     ",
+        stateId = "123123",
+        projectId = "321321",
+        creatorId = "50012"
+    )
+
+    fun taskWithEmptyStateId() = createTaskHelper(
         title = "Task Management",
         description = "This is task due thursday for the chance program",
         projectId = "321321",
         creatorId = "50012"
     )
 
-    fun taskMissingProjectId() = createTaskHelper(
+    fun taskWithBlankStateId() = createTaskHelper(
+        title = "Task Management",
+        description = "This is task due thursday for the chance program",
+        projectId = "321321",
+        stateId = "    ",
+        creatorId = "50012"
+    )
+
+    fun taskWithEmptyProjectId() = createTaskHelper(
         title = "Task Management",
         description = "This is task due thursday for the chance program",
         stateId = "123123",
         creatorId = "50012"
     )
 
-    fun taskMissingCreatorId() = createTaskHelper(
+    fun taskWithBlankProjectId() = createTaskHelper(
+        title = "Task Management",
+        description = "This is task due thursday for the chance program",
+        stateId = "123123",
+        projectId = "    ",
+        creatorId = "50012"
+    )
+
+    fun taskWithEmptyCreatorId() = createTaskHelper(
         title = "Task Management",
         description = "This is task due thursday for the chance program",
         stateId = "123123",
         projectId = "321321",
+    )
+
+    fun taskWithBlankCreatorId() = createTaskHelper(
+        title = "Task Management",
+        description = "This is task due thursday for the chance program",
+        stateId = "123123",
+        projectId = "321321",
+        creatorId = "    "
     )
 
     private fun createTaskHelper(
