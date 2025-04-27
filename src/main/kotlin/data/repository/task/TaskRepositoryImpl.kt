@@ -3,27 +3,51 @@ package org.baghdad.data.repository.task
 import org.baghdad.logic.entities.TaskEntity
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.storage.task.TaskStorage
+import org.baghdad.utils.customizedExceptions.*
 
 class TaskRepositoryImpl(
     val storage: TaskStorage
-): TaskRepository {
+) : TaskRepository {
+
     override fun createTask(task: TaskEntity): Boolean {
-        TODO("Not yet implemented")
+
+        validateTask(task)
+        return storage.save(task)
     }
 
-    override fun getTaskById(id: String): TaskEntity? {
-        TODO("Not yet implemented")
+    override fun getTaskById(id: String): TaskEntity {
+        return TaskEntity(
+            title = "First Task",
+            description = "Just noraml description",
+            stateId = "123",
+            projectId = "1",
+            creatorId = "123123"
+        )
     }
 
     override fun getTasksByProjectId(projectId: String): List<TaskEntity> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
-    override fun updateTask(task: TaskEntity):Boolean {
-        TODO("Not yet implemented")
+    override fun updateTask(task: TaskEntity): Boolean {
+        return false
     }
 
-    override fun deleteTask(id: String):Boolean {
-        TODO("Not yet implemented")
+    override fun deleteTask(id: String): Boolean {
+        return false
+    }
+
+    private fun validateTask(task: TaskEntity) {
+        val validations = listOf(
+            task.title to { TaskMissingTitleException() },
+            task.description to { TaskMissingDescriptionException() },
+            task.stateId to { TaskMissingStateIdException() },
+            task.projectId to { TaskMissingProjectIdException() },
+            task.creatorId to { TaskMissingCreatorIdException() }
+        )
+
+        validations.forEach { (value, exceptionSupplier) ->
+            if (value.isBlank()) throw exceptionSupplier()
+        }
     }
 }
