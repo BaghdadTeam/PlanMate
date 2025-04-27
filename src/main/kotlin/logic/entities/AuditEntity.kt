@@ -1,7 +1,9 @@
 package org.baghdad.logic.entities
 
+import java.util.UUID
+
 data class AuditEntity(
-    val id: String,
+    val id: UUID = UUID.randomUUID(),
     val entityType: String,
     val entityId: String,
     val action: String,
