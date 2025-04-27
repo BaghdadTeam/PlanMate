@@ -16,13 +16,12 @@ class TaskRepositoryImpl(
     }
 
     override fun getTaskById(id: String): TaskEntity {
-        return TaskEntity(
-            title = "First Task",
-            description = "Just noraml description",
-            stateId = "123",
-            projectId = "1",
-            creatorId = "123123"
-        )
+
+        val tasks = storage.getAll()
+
+        return tasks.first {
+            it.id.toString() == id
+        }
     }
 
     override fun getTasksByProjectId(projectId: String): List<TaskEntity> {
