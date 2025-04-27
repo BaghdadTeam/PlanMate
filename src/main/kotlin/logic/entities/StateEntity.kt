@@ -3,7 +3,7 @@ package org.baghdad.logic.entities
 import java.util.UUID
 
 data class StateEntity(
-    val id: UUID,
+    val id: UUID = UUID.randomUUID(),
     val name: String,
     val projectId: String
 )

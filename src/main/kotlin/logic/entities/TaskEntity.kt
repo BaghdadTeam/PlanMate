@@ -3,7 +3,7 @@ package org.baghdad.logic.entities
 import java.util.UUID
 
 data class TaskEntity(
-    val id: UUID,
+    val id: UUID = UUID.randomUUID(),
     val title: String,
     val description: String,
     val stateId: String,
