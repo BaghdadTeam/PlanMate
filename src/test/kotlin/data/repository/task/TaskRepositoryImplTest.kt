@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
@@ -25,6 +26,8 @@ class TaskRepositoryImplTest {
         storage = mockk(relaxed = true)
         taskRepository = TaskRepositoryImpl(storage)
     }
+
+    // region :: Create Task Region ::
 
     @Test
     fun `should return true if the task is created correctly and saved`() {
@@ -90,6 +93,24 @@ class TaskRepositoryImplTest {
         }
     }
 
+    // endregion
+
+    // region :: getTaskById ::
+
+    @Test
+    fun `should return task entity if matches the input id`() {
+        // Given
+        val taskItem = TaskEntityTestData.normalTask()
+        every { storage.getAll() } returns listOf(taskItem)
+        val taskId = taskItem.id
+
+        // When
+        val result = taskRepository.getTaskById(taskId.toString())
+
+        assertThat(result).isEqualTo(taskItem)
+    }
+
+    // endregion
 
     companion object {
         @JvmStatic
