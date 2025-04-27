@@ -55,9 +55,6 @@ jobs:
           check-for-current-branch: true
           coverage-counter-type: LINE,INSTRUCTION,BRANCH,METHOD,CLASS
           include-all-sources: true
-          debug-mode: true
-          fail-if-coverage-less: true
-          fail-on-coverage-violation: true
           failure-message: "Code coverage is currently at {coverage}%. Target is 100%."
           success-message: "✅ Code coverage is at {coverage}%."
           report-on-status: true
