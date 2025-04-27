@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: Java CI & JaCoCo 😈😈 with Gradle
 
 on:
   push:
@@ -50,7 +50,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 100
           min-coverage-changed-files: 100
-          update-comment: true
+          update-comment: false
           title: "🛡️ Code Coverage Report"
           check-for-current-branch: true
           coverage-counter-type: LINE,INSTRUCTION,BRANCH,METHOD,CLASS
