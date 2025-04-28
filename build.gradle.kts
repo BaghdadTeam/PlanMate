@@ -87,7 +87,7 @@ tasks.jacocoTestCoverageVerification {
         }
         rule {
             element = "CLASS"
-            includes = listOf("org.example.*") // Adjust package name as needed
+            includes = listOf("org.baghdad.*") // Adjust package name as needed
 
             limit {
                 counter = "LINE"

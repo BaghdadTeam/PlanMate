@@ -1,7 +1,7 @@
-package org.baghdad.logic.storage.audit
+package org.baghdad.data.storage.audit
 
 import org.baghdad.logic.entities.AuditEntity
-import org.baghdad.logic.storage.base.BasicStorage
+import org.baghdad.data.storage.base.BasicStorage
 
 interface AuditStorage
     : BasicStorage<AuditEntity> {

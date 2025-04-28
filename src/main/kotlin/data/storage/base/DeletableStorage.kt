@@ -1,4 +1,4 @@
-package org.baghdad.logic.storage.base
+package org.baghdad.data.storage.base
 
 interface DeletableStorage<T>
     : BasicStorage<T> {

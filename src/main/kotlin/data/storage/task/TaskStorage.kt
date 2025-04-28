@@ -1,9 +1,9 @@
-package org.baghdad.logic.storage.task
+package org.baghdad.data.storage.task
 
 import org.baghdad.logic.entities.TaskEntity
-import org.baghdad.logic.storage.base.BasicStorage
-import org.baghdad.logic.storage.base.DeletableStorage
-import org.baghdad.logic.storage.base.UpdatableStorage
+import org.baghdad.data.storage.base.BasicStorage
+import org.baghdad.data.storage.base.DeletableStorage
+import org.baghdad.data.storage.base.UpdatableStorage
 
 interface TaskStorage
     : BasicStorage<TaskEntity>,
