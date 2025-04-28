@@ -55,8 +55,8 @@ jobs:
           check-for-current-branch: true
           coverage-counter-type: LINE,INSTRUCTION,BRANCH,METHOD,CLASS
           include-all-sources: true
-          failure-message: "Code coverage is currently at {coverage}%. Target is 100%."
-          success-message: "✅ Code coverage is at {coverage}%."
+          failure-message: "Code coverage is currently at {coverage}%. Target is 100%. You can view the full report [here](https://github.com/${{ github.repository }}/actions/artifacts/${{ steps.upload-jacoco-report.outputs.artifact_id }}/path/build/reports/jacoco/test/html)."
+          success-message: "✅ Code coverage is at {coverage}%. You can view the full report [here](https://github.com/${{ github.repository }}/actions/artifacts/${{ steps.upload-jacoco-report.outputs.artifact_id }}/path/build/reports/jacoco/test/html)."
           report-on-status: true
 
   dependency-submission:
