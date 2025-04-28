@@ -5,8 +5,8 @@ import helpers.task.TaskEntityTestData
 import io.mockk.every
 import io.mockk.mockk
 import org.baghdad.data.repository.task.TaskRepositoryImpl
+import org.baghdad.data.storage.task.TaskStorage
 import org.baghdad.logic.entities.TaskEntity
-import org.baghdad.logic.storage.task.TaskStorage
 import org.baghdad.utils.customizedExceptions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.UUID
 import java.util.stream.Stream
 
 class TaskRepositoryImplTest {
@@ -47,9 +48,10 @@ class TaskRepositoryImplTest {
     fun `should throw TaskMissingTitleException if the task title is empty`(taskItem: TaskEntity) {
 
         // When & Then
-        assertThrows<TaskMissingTitleException> {
+        val exception = assertThrows<TaskMissingTitleException> {
             taskRepository.createTask(taskItem)
         }
+        assertThat(exception.message).isEqualTo("The task shouldn't have an empty title")
     }
 
     @ParameterizedTest
@@ -57,9 +59,10 @@ class TaskRepositoryImplTest {
     fun `should throw TaskMissingDescriptionException if the task description is empty or blank`(taskItem: TaskEntity) {
 
         // When & Then
-        assertThrows<TaskMissingDescriptionException> {
+        val exception = assertThrows<TaskMissingDescriptionException> {
             taskRepository.createTask(taskItem)
         }
+        assertThat(exception.message).isEqualTo("The task shouldn't have an empty Description")
     }
 
     @ParameterizedTest
@@ -67,9 +70,10 @@ class TaskRepositoryImplTest {
     fun `should throw TaskMissingStateIdException if the task description is empty or blank`(taskItem: TaskEntity) {
 
         // When & Then
-        assertThrows<TaskMissingStateIdException> {
+        val exception = assertThrows<TaskMissingStateIdException> {
             taskRepository.createTask(taskItem)
         }
+        assertThat(exception.message).isEqualTo("The task should be related to a state")
     }
 
 
@@ -78,9 +82,10 @@ class TaskRepositoryImplTest {
     fun `should throw TaskMissingProjectIdException if the task description is empty or blank`(taskItem: TaskEntity) {
 
         // When & Then
-        assertThrows<TaskMissingProjectIdException> {
+        val exception = assertThrows<TaskMissingProjectIdException> {
             taskRepository.createTask(taskItem)
         }
+        assertThat(exception.message).isEqualTo("The task should be related to a project")
     }
 
     @ParameterizedTest
@@ -88,9 +93,10 @@ class TaskRepositoryImplTest {
     fun `should throw TaskMissingCreatorIdException if the task description is empty or blank`(taskItem: TaskEntity) {
 
         // When & Then
-        assertThrows<TaskMissingCreatorIdException> {
+        val exception = assertThrows<TaskMissingCreatorIdException> {
             taskRepository.createTask(taskItem)
         }
+        assertThat(exception.message).isEqualTo("The task should contain it's creator Id")
     }
 
     // endregion
@@ -110,6 +116,41 @@ class TaskRepositoryImplTest {
         assertThat(result).isEqualTo(taskItem)
     }
 
+    @Test
+    fun `should throw TaskNotFoundException if there is no task matches the id`() {
+        // Given
+        val taskItem = TaskEntityTestData.normalTask()
+        every { storage.getAll() } returns listOf(taskItem)
+        val randomId = UUID.randomUUID().toString()
+
+        // When & Then
+        val exception = assertThrows<TaskNotFoundException> {
+            taskRepository.getTaskById(randomId)
+        }
+        assertThat(exception.message).isEqualTo("There is no task with the given ID")
+    }
+
+    @Test
+    fun `should throw InvalidTaskIdException if the given id is not UUID`() {
+        // Given
+        val randomId = "let's goo"
+
+        // When & Then
+        val exception = assertThrows<InvalidTaskIdException> {
+            taskRepository.getTaskById(randomId)
+        }
+        assertThat(exception.message).isEqualTo("The Given id is not of type UUID")
+    }
+
+    @ParameterizedTest
+    @CsvSource("'',", "'   ',")
+    fun `should throw TaskWithEmptyIDException if the given id is empty`(id: String) {
+        // When & Then
+        val exception = assertThrows<TaskWithEmptyIDException> {
+            taskRepository.getTaskById(id)
+        }
+        assertThat(exception.message).isEqualTo("The id should not be empty or blank")
+    }
     // endregion
 
     companion object {
