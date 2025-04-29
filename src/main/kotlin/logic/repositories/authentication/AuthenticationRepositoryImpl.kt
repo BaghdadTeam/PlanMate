@@ -2,6 +2,7 @@ package org.baghdad.logic.repositories.authentication
 
 import org.baghdad.data.storage.user.UserStorage
 import org.baghdad.logic.entities.authentication.SessionEntity
+import org.baghdad.logic.repositories.AuthenticationRepository
 
 class AuthenticationRepositoryImpl
     (
