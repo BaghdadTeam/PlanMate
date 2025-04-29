@@ -1,11 +1,11 @@
-package data.datasource.parser.audit
+package data.datasource.mapper.audit
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
-import org.baghdad.data.datasource.parser.audit.AuditParser
-import org.baghdad.data.datasource.parser.user.UserParser
+import org.baghdad.data.datasource.mapper.AuditMapper
+import org.baghdad.data.datasource.mapper.UserMapper
 import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -15,13 +15,13 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 import kotlin.test.Test
 
-class AuditParserTest {
-    private lateinit var parser: AuditParser
+class AuditMapperTest {
+    private lateinit var parser: AuditMapper
 
     @BeforeEach
     fun setUp() {
-        parser = AuditParser()
-        mockkConstructor(UserParser::class)
+        parser = AuditMapper()
+        mockkConstructor(UserMapper::class)
     }
 
     @AfterEach
@@ -47,7 +47,7 @@ class AuditParserTest {
         )
 
         // → match the trailing ']' that your parser leaves in the argument
-        every { anyConstructed<UserParser>().deserializer("Pixel,Youssef]") } returns user
+        every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
 
         val timestamp = "2025-04-29T12:34:56Z"
         val line = "$uuid,Order,123,CREATE,[Pixel,Youssef],$timestamp"
@@ -92,7 +92,7 @@ class AuditParserTest {
             hashedPassword = "pw",
             type = UserType.Mate
         )
-        every { anyConstructed<UserParser>().serializer(user) } returns "Pixel,Youssef Mohamed"
+        every { anyConstructed<UserMapper>().serializer(user) } returns "Pixel,Youssef Mohamed"
         val timestamp = "2025-04-29T12:34:56Z"
         val entity = AuditEntity(
             id = uuid,
@@ -121,7 +121,7 @@ class AuditParserTest {
             type = UserType.Mate
         )
         // simulate a user serializer with multiple commas
-        every { anyConstructed<UserParser>().serializer(user) } returns "Bodi,ASDASD,Extra"
+        every { anyConstructed<UserMapper>().serializer(user) } returns "Bodi,ASDASD,Extra"
         val timestamp = "2025-05-01T00:00:00Z"
         val entity = AuditEntity(
             id = uuid,

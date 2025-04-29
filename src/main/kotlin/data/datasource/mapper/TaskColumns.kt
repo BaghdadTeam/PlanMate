@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.parser.task
+package org.baghdad.data.datasource.mapper
 
 object TaskColumns {
     const val ID = 0

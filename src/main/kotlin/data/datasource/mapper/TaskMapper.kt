@@ -1,10 +1,10 @@
-package org.baghdad.data.datasource.parser.task
+package org.baghdad.data.datasource.mapper
 
-import org.baghdad.data.datasource.CsvParser
+import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.TaskEntity
 import java.util.*
 
-class TaskParser : CsvParser<TaskEntity> {
+class TaskMapper : CsvMapper<TaskEntity> {
     override fun header(): String {
         return "id,title,description,stateId,projectId,creatorId"
     }

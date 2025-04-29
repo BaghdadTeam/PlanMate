@@ -2,7 +2,7 @@ package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.*
-import org.baghdad.data.datasource.CsvParser
+import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
 import org.baghdad.data.datasource.csv.CsvReader
 import org.baghdad.data.datasource.csv.CsvWriter
@@ -16,7 +16,7 @@ class CsvDataSourceImplTest {
 
     private lateinit var reader: CsvReader
     private lateinit var writer: CsvWriter
-    private lateinit var parser: CsvParser<MyData>
+    private lateinit var parser: CsvMapper<MyData>
     private lateinit var csvDataSource: CsvDataSourceImpl<MyData>
 
     @BeforeEach

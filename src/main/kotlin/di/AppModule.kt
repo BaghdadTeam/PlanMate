@@ -1,16 +1,16 @@
 package org.baghdad.di
 
-import org.baghdad.data.datasource.CsvParser
+import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
 import org.baghdad.data.datasource.csv.CsvReader
 import org.baghdad.data.datasource.csv.CsvWriter
 import org.baghdad.data.datasource.csv.StorageFileNames
-import org.baghdad.data.datasource.parser.project.ProjectParser
+import org.baghdad.data.datasource.mapper.ProjectMapper
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.datasource.parser.audit.AuditParser
-import org.baghdad.data.datasource.parser.state.StateParser
-import org.baghdad.data.datasource.parser.task.TaskParser
-import org.baghdad.data.datasource.parser.user.UserParser
+import org.baghdad.data.datasource.mapper.AuditMapper
+import org.baghdad.data.datasource.mapper.StateMapper
+import org.baghdad.data.datasource.mapper.TaskMapper
+import org.baghdad.data.datasource.mapper.UserMapper
 import org.baghdad.logic.model.entities.*
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -31,18 +31,18 @@ val appModule = module {
 
 
     val entitiesInfo = listOf(
-        Triple(Entities.Audit, StorageFileNames.auditFile, AuditParser()),
-        Triple(Entities.User, StorageFileNames.userFile, UserParser()),
-        Triple(Entities.Project, StorageFileNames.projectFile, ProjectParser()),
-        Triple(Entities.State, StorageFileNames.stateFile, StateParser()),
-        Triple(Entities.Task, StorageFileNames.taskFile, TaskParser()),
+        Triple(Entities.Audit, StorageFileNames.auditFile, AuditMapper()),
+        Triple(Entities.User, StorageFileNames.userFile, UserMapper()),
+        Triple(Entities.Project, StorageFileNames.projectFile, ProjectMapper()),
+        Triple(Entities.State, StorageFileNames.stateFile, StateMapper()),
+        Triple(Entities.Task, StorageFileNames.taskFile, TaskMapper()),
     )
 
     entitiesInfo.forEach { (name, file, parser) ->
         single<File>(named(name)) { file }
         single(named(name)) { CsvWriter(get(named(name))) }
         single(named(name)) { CsvReader(get(named(name))) }
-        single<CsvParser<*>>(named(name)) { parser }
+        single<CsvMapper<*>>(named(name)) { parser }
     }
 
     bindCsvDataSource<AuditEntity>(Entities.Audit)

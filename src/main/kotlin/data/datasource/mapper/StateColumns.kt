@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.parser.state
+package org.baghdad.data.datasource.mapper
 
 object StateColumns {
     const val ID = 0

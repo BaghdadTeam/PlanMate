@@ -1,11 +1,10 @@
-package org.baghdad.data.datasource.parser.audit
+package org.baghdad.data.datasource.mapper
 
-import org.baghdad.data.datasource.CsvParser
-import org.baghdad.data.datasource.parser.user.UserParser
+import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.AuditEntity
 import java.util.*
 
-class AuditParser : CsvParser<AuditEntity> {
+class AuditMapper : CsvMapper<AuditEntity> {
     override fun header(): String {
         return "id,entityType,entityId,action,user,timestamp"
     }
@@ -14,7 +13,7 @@ class AuditParser : CsvParser<AuditEntity> {
         val audit = Regex(""",(?=(?:[^\[\]]*\[[^\[\]]*])*[^\[\]]*$)""")
             .split(content)
             .map { it.trim() }
-        val userData = UserParser()
+        val userData = UserMapper()
             .deserializer(
                 audit[AuditColumns.USER]
                     .removePrefix("[")
@@ -32,7 +31,7 @@ class AuditParser : CsvParser<AuditEntity> {
     }
 
     override fun serializer(item: AuditEntity): String {
-        val serializedUser = UserParser().serializer(item.user)
+        val serializedUser = UserMapper().serializer(item.user)
         return "${item.id},${item.entityType},${item.entityId},${item.action},[${serializedUser}],${item.timestamp}"
     }
 }

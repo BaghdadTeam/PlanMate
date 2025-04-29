@@ -1,10 +1,10 @@
-package org.baghdad.data.datasource.parser.state
+package org.baghdad.data.datasource.mapper
 
-import org.baghdad.data.datasource.CsvParser
+import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.StateEntity
 import java.util.UUID
 
-class StateParser : CsvParser<StateEntity> {
+class StateMapper : CsvMapper<StateEntity> {
     override fun header(): String {
         return "id,name,projectId,creatorId"
     }
