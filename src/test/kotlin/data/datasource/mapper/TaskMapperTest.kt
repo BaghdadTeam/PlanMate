@@ -1,7 +1,7 @@
 package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.mapper.TaskMapper
+import org.baghdad.data.datasource.mapper.task.TaskMapper
 import org.baghdad.logic.model.entities.TaskEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows

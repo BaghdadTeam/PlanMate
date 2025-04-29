@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.mapper
+package org.baghdad.data.datasource.mapper.audit
 
 object AuditColumns {
     const val ID = 0

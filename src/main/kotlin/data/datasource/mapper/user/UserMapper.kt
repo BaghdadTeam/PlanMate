@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.mapper
+package org.baghdad.data.datasource.mapper.user
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.UserEntity
