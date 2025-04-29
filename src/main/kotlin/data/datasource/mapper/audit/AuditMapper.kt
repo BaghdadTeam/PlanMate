@@ -1,6 +1,7 @@
-package org.baghdad.data.datasource.mapper
+package org.baghdad.data.datasource.mapper.audit
 
 import org.baghdad.data.datasource.CsvMapper
+import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.AuditEntity
 import java.util.*
 

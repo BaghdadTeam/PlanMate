@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
-import org.baghdad.data.datasource.mapper.AuditMapper
-import org.baghdad.data.datasource.mapper.UserMapper
+import org.baghdad.data.datasource.mapper.audit.AuditMapper
+import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType

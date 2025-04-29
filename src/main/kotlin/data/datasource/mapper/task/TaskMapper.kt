@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.mapper
+package org.baghdad.data.datasource.mapper.task
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.TaskEntity

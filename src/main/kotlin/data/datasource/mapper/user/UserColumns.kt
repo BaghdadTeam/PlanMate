@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.mapper
+package org.baghdad.data.datasource.mapper.user
 
 object UserColumns {
     const val ID = 0

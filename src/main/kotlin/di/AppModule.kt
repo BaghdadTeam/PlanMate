@@ -5,12 +5,12 @@ import org.baghdad.data.datasource.csv.CsvDataSourceImpl
 import org.baghdad.data.datasource.csv.CsvReader
 import org.baghdad.data.datasource.csv.CsvWriter
 import org.baghdad.data.datasource.csv.StorageFileNames
-import org.baghdad.data.datasource.mapper.ProjectMapper
+import org.baghdad.data.datasource.mapper.project.ProjectMapper
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.datasource.mapper.AuditMapper
-import org.baghdad.data.datasource.mapper.StateMapper
-import org.baghdad.data.datasource.mapper.TaskMapper
-import org.baghdad.data.datasource.mapper.UserMapper
+import org.baghdad.data.datasource.mapper.audit.AuditMapper
+import org.baghdad.data.datasource.mapper.state.StateMapper
+import org.baghdad.data.datasource.mapper.task.TaskMapper
+import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.*
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
