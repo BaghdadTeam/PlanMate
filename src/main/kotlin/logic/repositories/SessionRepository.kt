@@ -1,6 +1,6 @@
-package org.baghdad.logic.repositories.authentication
+package org.baghdad.logic.repositories
 
-import org.baghdad.logic.entities.authentication.SessionEntity
+import SessionEntity
 
 interface SessionRepository {
     fun loadSession(): SessionEntity?

@@ -8,4 +8,5 @@ object StorageFileNames {
     val taskFile = File("task.csv")
     val projectFile = File("project.csv")
     val stateFile = File("state.csv")
+    val sessionFile = File("session.csv")
 }

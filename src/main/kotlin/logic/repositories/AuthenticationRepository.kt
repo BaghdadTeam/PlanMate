@@ -1,8 +1,9 @@
 package org.baghdad.logic.repositories
-
-import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.SessionEntity
 
 interface AuthenticationRepository {
 
-    fun login(username: String, password: String): UserEntity?
+    fun login(username: String, password: String): Result<SessionEntity>
+    fun logout(): Result<Unit>
+
 }

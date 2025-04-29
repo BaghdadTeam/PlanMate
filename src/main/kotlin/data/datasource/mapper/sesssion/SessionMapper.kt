@@ -1,9 +1,9 @@
-package org.baghdad.data.datasource.parser.session
+package org.baghdad.data.datasource.mapper.sesssion
 
-import org.baghdad.data.datasource.CsvParser
-import org.baghdad.logic.entities.authentication.SessionEntity
+import org.baghdad.data.datasource.CsvMapper
+import org.baghdad.logic.model.entities.SessionEntity
 
-class SessionParser : CsvParser<SessionEntity>{
+class SessionMapper : CsvMapper<SessionEntity>{
     override fun header(): String {
         TODO("Not yet implemented")
     }

@@ -1,5 +1,5 @@
 package org.baghdad.logic.model.entities
 
 enum class Entities {
-    Audit, User, Project, Task, State
+    Audit, User, Project, Task, State , Session
 }
