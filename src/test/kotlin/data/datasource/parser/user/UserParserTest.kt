@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.parser.user.UserParser
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
