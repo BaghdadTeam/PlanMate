@@ -18,7 +18,7 @@ import org.koin.dsl.module
 import java.io.File
 
 inline fun <reified T : Any> Module.bindCsvDataSource(name: Entities) {
-    single<DataSource<T>> {
+    single<DataSource<T>>(named(name.name)) {
         CsvDataSourceImpl(
             get(named(name)),
             get(named(name)),
