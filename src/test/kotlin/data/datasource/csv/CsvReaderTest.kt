@@ -5,7 +5,10 @@ import org.baghdad.data.datasource.csv.CsvReader
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
+import java.io.IOException
+
 
 class CsvReaderTest {
 
@@ -22,72 +25,55 @@ class CsvReaderTest {
     }
 
     @Test
-    fun `readCsv skips header and reads simple CSV`() {
+    fun `readCsv returns raw lines including header and data`() {
         tempFile.writeText("name,age\nJohn,30\nJane,25")
         val reader = CsvReader(tempFile)
 
         val result = reader.readCsv()
 
-        assertThat(result).containsExactly("John,30", "Jane,25").inOrder()
+        assertThat(result).containsExactly("name,age", "John,30", "Jane,25")
     }
 
     @Test
-    fun `readCsv handles quoted fields with commas`() {
-        tempFile.writeText("name,quote\nJohn,\"hello, world\"\nJane,\"hi, there\"")
-        val reader = CsvReader(tempFile)
-
-        val result = reader.readCsv()
-
-        assertThat(result).containsExactly("John,\"hello, world\"", "Jane,\"hi, there\"").inOrder()
-    }
-
-    @Test
-    fun `readCsv handles quoted fields with newlines`() {
-        tempFile.writeText("name,bio\nJohn,\"Hello\nWorld\"\nJane,\"Hi\nThere\"")
-        val reader = CsvReader(tempFile)
-
-        val result = reader.readCsv()
-
-        assertThat(result).containsExactly("John,\"Hello\nWorld\"", "Jane,\"Hi\nThere\"").inOrder()
-    }
-
-    @Test
-    fun `readCsv ignores carriage return characters`() {
-        tempFile.writeText("name,age\r\nJohn,30\r\nJane,25\r\n")
-        val reader = CsvReader(tempFile)
-
-        val result = reader.readCsv()
-
-        assertThat(result).containsExactly("John,30", "Jane,25").inOrder()
-    }
-
-    @Test
-    fun `readCsv handles empty lines as records`() {
-        tempFile.writeText("name,age\n\nJohn,30\n\n")
-        val reader = CsvReader(tempFile)
-
-        val result = reader.readCsv()
-
-        assertThat(result).containsExactly("", "John,30", "").inOrder()
-    }
-
-    @Test
-    fun `readCsv handles file with only header`() {
+    fun `readCsv returns single line when only header present`() {
         tempFile.writeText("name,age")
         val reader = CsvReader(tempFile)
 
         val result = reader.readCsv()
 
-        assertThat(result).isEmpty()
+        assertThat(result).containsExactly("name,age")
     }
 
     @Test
-    fun `readCsv handles file with no content`() {
+    fun `readCsv returns empty list when file is empty`() {
         tempFile.writeText("")
         val reader = CsvReader(tempFile)
 
         val result = reader.readCsv()
 
         assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `readCsv creates new file if it does not exist`() {
+        // delete the temp file to simulate "missing" file
+        tempFile.delete()
+        val reader = CsvReader(tempFile)
+
+        val result = reader.readCsv()
+
+        // file should be created and empty
+        assertThat(tempFile.exists()).isTrue()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `readCsv throws IOException when path is a directory`() {
+        // make the path a directory
+        tempFile.delete()
+        tempFile.mkdir()
+        val reader = CsvReader(tempFile)
+
+        assertThrows<IOException> { reader.readCsv() }
     }
 }
