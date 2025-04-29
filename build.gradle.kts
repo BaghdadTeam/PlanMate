@@ -56,7 +56,7 @@ tasks.jacocoTestReport {
     classDirectories.setFrom(
         fileTree("build/classes/kotlin/main") {
             exclude("**/di/**") // Exclude DI package
-            exclude("**/entities/**") // Exclude entities package
+            exclude("**/model/**") // Exclude entities package
             exclude("**/generated/**") // Exclude generated code if any
         }
     )
@@ -73,7 +73,7 @@ tasks.jacocoTestCoverageVerification {
         fileTree("build/classes/kotlin/main") {
             exclude("**/generated/**")
             exclude("**/di/**")
-            exclude("**/entities/**")
+            exclude("**/model/**")
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
@@ -116,7 +116,7 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
         fileTree("build/classes/kotlin/main") {
             exclude("**/generated/**")
             exclude("**/di/**")
-            exclude("**/entities/**")
+            exclude("**/model/**")
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))

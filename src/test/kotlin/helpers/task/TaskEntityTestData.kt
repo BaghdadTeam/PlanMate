@@ -1,6 +1,6 @@
 package helpers.task
 
-import org.baghdad.logic.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskEntity
 
 object TaskEntityTestData {
 
