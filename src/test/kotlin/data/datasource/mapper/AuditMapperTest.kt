@@ -1,4 +1,4 @@
-package data.datasource.mapper.audit
+package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
