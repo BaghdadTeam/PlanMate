@@ -1,4 +1,4 @@
-package org.baghdad.logic.entities
+package org.baghdad.logic.model.entities
 
 import java.util.UUID
 

@@ -1,10 +1,9 @@
-package org.baghdad.logic.entities
+package org.baghdad.logic.model.entities
 
 import java.util.UUID
 
-data class StateEntity(
+data class ProjectEntity(
     val id: UUID = UUID.randomUUID(),
     val name: String,
-    val projectId: String,
     val creatorId: String
 )
