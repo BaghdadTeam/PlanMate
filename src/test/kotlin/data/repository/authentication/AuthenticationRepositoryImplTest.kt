@@ -6,12 +6,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repository.authentication.AuthenticationRepositoryImpl
-import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.utils.passwordutils.md5WithSalt
 import org.junit.jupiter.api.*
-import java.time.LocalDateTime
-import java.util.UUID
 
 class AuthenticationRepositoryImplTest {
     private lateinit var sessionRepository: SessionRepository

@@ -1,6 +1,5 @@
 package org.baghdad.data.repository.authentication
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.SessionRepository
