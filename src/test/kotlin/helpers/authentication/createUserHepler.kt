@@ -1,7 +1,7 @@
 package helpers.authentication
 
-import org.baghdad.logic.entities.UserEntity
-import org.baghdad.logic.entities.UserType
+import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
 import org.baghdad.utils.passwordutils.md5WithSalt
 
 fun createUserHelper(userName: String = "itshaider", password : String= "password".md5WithSalt() ,

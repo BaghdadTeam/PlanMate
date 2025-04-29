@@ -1,19 +1,19 @@
-package data.datasource.parser.session
+package data.datasource.mapper
 
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import helpers.authentication.SessionTestData
-import org.baghdad.data.datasource.parser.session.SessionParser
-import org.baghdad.logic.entities.authentication.SessionEntity
-import org.junit.jupiter.api.*
+import org.baghdad.data.datasource.mapper.sesssion.SessionMapper
+import org.baghdad.logic.model.entities.SessionEntity
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
-
-class SessionParserTest {
-    lateinit var sessionParser: SessionParser
+class SessionMapperTest {
+    lateinit var sessionParser: SessionMapper
 
     @BeforeEach
     fun setUp() {
-        sessionParser = SessionParser()
+        sessionParser = SessionMapper()
     }
 
     @Test
@@ -26,7 +26,7 @@ class SessionParserTest {
         // When
         val result = sessionParser.serializer(session)
         // Then
-        assertThat(result).isEqualTo(expectedCsv)
+        Truth.assertThat(result).isEqualTo(expectedCsv)
     }
 
     @Test
@@ -37,9 +37,9 @@ class SessionParserTest {
         // When
         val result = sessionParser.deserializer(line)
         // Then
-        assertThat(result.id).isEqualTo(sessionData.id)
-        assertThat(result.token).isEqualTo(sessionData.token)
-        assertThat(result.loginTime).isEqualTo(sessionData.loginTime)
-        assertThat(result.userId).isEqualTo(sessionData.userId)
+        Truth.assertThat(result.id).isEqualTo(sessionData.id)
+        Truth.assertThat(result.token).isEqualTo(sessionData.token)
+        Truth.assertThat(result.loginTime).isEqualTo(sessionData.loginTime)
+        Truth.assertThat(result.userId).isEqualTo(sessionData.userId)
     }
 }
