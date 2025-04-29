@@ -1,7 +1,7 @@
 package org.baghdad.data.datasource.csv
 
-import org.baghdad.utils.customizedExceptions.CsvFileExceptions
-import org.baghdad.utils.customizedExceptions.EmptyHeaderException
+import org.baghdad.logic.model.exceptions.CsvFileExceptions
+import org.baghdad.logic.model.exceptions.EmptyHeaderException
 import java.io.File
 
 
@@ -27,12 +27,11 @@ class CsvWriter(private val file: File) {
 
     // Append a line to the file
     fun appendLine(record: String) {
-
         file.appendText(record + "\n")
     }
 
     // Overwrite the lines in the file
-    fun overwriteLines(lines: List<String>) {
+    fun updateLines(lines: List<String>) {
 
         file.writeText(lines.joinToString("\n") + "\n")
     }

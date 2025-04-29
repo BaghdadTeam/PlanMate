@@ -1,4 +1,4 @@
-package org.baghdad.utils.customizedExceptions
+package org.baghdad.logic.model.exceptions
 
 class CsvFileExceptions(message: String) : IllegalArgumentException(message)
 class EmptyHeaderException(message: String) : IllegalArgumentException(message)

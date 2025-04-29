@@ -1,6 +1,6 @@
 package org.baghdad.logic.repositories
 
-import org.baghdad.logic.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditEntity
 
 
 interface AuditRepository {

@@ -2,12 +2,12 @@ package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.*
-import org.baghdad.data.datasource.CsvParser
+import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
 import org.baghdad.data.datasource.csv.CsvReader
 import org.baghdad.data.datasource.csv.CsvWriter
-import org.baghdad.utils.customizedExceptions.CsvReadException
-import org.baghdad.utils.customizedExceptions.CsvWriteException
+import org.baghdad.logic.model.exceptions.CsvReadException
+import org.baghdad.logic.model.exceptions.CsvWriteException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -16,7 +16,7 @@ class CsvDataSourceImplTest {
 
     private lateinit var reader: CsvReader
     private lateinit var writer: CsvWriter
-    private lateinit var parser: CsvParser<MyData>
+    private lateinit var parser: CsvMapper<MyData>
     private lateinit var csvDataSource: CsvDataSourceImpl<MyData>
 
     @BeforeEach
@@ -56,6 +56,42 @@ class CsvDataSourceImplTest {
         assertThat(result).hasSize(1)
         assertThat(result[0].name).isEqualTo("John")
     }
+
+    @Test
+    fun `append writes header when file is completely empty`() {
+        // Given
+        val item = MyData("Alice", 30, "Female")
+        every { reader.readCsv() } returns emptyList()           // zero lines on disk
+        every { parser.header() } returns "Name,Age,Gender"
+        every { parser.serializer(item) } returns "Alice,30,Female"
+
+        // When
+        csvDataSource.append(item)
+
+        // Then – header, then record
+        verifyOrder {
+            writer.appendLine("Name,Age,Gender")
+            writer.appendLine("Alice,30,Female")
+        }
+    }
+
+    @Test
+    fun `append does not write header when file already contains header`() {
+        // Given
+        val item = MyData("Bob", 40, "Male")
+        // simulate a file that already has a header line
+        every { reader.readCsv() } returns listOf("Name,Age,Gender")
+        every { parser.serializer(item) } returns "Bob,40,Male"
+        every { writer.appendLine(any()) } just Runs
+
+        // When
+        csvDataSource.append(item)
+
+        // Then – only the record, no header
+        verify(exactly = 0) { writer.appendLine(parser.header()) }
+        verify { writer.appendLine("Bob,40,Male") }
+    }
+
 
     @Test
     fun `test loadAll throws CsvReadException when reader fails`() {
@@ -110,10 +146,10 @@ class CsvDataSourceImplTest {
         every { parser.header() } returns "Name, Age, Gender"
 
         // When
-        csvDataSource.saveAll(items)
+        csvDataSource.update(items)
 
         // Then
-        verify { writer.overwriteLines(listOf("Name, Age, Gender", "Serialized Data", "Serialized Data")) }
+        verify { writer.updateLines(listOf("Name, Age, Gender", "Serialized Data", "Serialized Data")) }
     }
 
     @Test
@@ -123,11 +159,11 @@ class CsvDataSourceImplTest {
         every { parser.serializer(any()) } returns "Serialized Data"
         every { parser.header() } returns "Name, Age, Gender"
 
-        every { writer.overwriteLines(any()) } throws Exception("Save error")
+        every { writer.updateLines(any()) } throws Exception("Save error")
 
         // When & Then
         val exception = assertThrows<CsvWriteException> {
-            csvDataSource.saveAll(items)
+            csvDataSource.update(items)
         }
 
         assertThat(exception.message).isEqualTo("Error saving to CSV file: Save error")
