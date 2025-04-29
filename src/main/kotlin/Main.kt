@@ -1,6 +1,6 @@
 package org.baghdad
 
-import org.baghdad.data.local.CsvProjectDataSource
+import org.baghdad.data.local.ProjectDataSource
 import org.baghdad.di.appModule
 import org.baghdad.logic.model.entities.Entities
 import org.koin.core.context.startKoin
@@ -12,7 +12,7 @@ fun main() {
         modules(appModule)
     }
 
-    val test = CsvProjectDataSource(
+    val test = ProjectDataSource(
         getKoin().get(qualifier = named(Entities.Project.name))
     )
     test.createProject()

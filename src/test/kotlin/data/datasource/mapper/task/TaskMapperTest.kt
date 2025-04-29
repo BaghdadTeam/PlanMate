@@ -1,19 +1,19 @@
-package data.datasource.parser.task
+package data.datasource.mapper.task
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.parser.task.TaskParser
+import org.baghdad.data.datasource.mapper.TaskMapper
 import org.baghdad.logic.model.entities.TaskEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 import kotlin.test.Test
 
-class TaskParserTest {
-    private lateinit var parser: TaskParser
+class TaskMapperTest {
+    private lateinit var parser: TaskMapper
 
     @BeforeEach
     fun setUp() {
-        parser = TaskParser()
+        parser = TaskMapper()
     }
 
     @Test

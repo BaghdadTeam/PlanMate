@@ -1,11 +1,11 @@
-package org.baghdad.data.datasource.parser.user
+package org.baghdad.data.datasource.mapper
 
-import org.baghdad.data.datasource.CsvParser
+import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import java.util.*
 
-class UserParser : CsvParser<UserEntity> {
+class UserMapper : CsvMapper<UserEntity> {
     override fun header(): String {
         return "id,name,username,hashedPassword,type"
     }

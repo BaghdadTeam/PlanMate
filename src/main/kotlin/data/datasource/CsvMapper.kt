@@ -1,6 +1,6 @@
 package org.baghdad.data.datasource
 
-interface CsvParser<T> {
+interface CsvMapper<T> {
 
     fun header(): String
     fun serializer(item: T): String

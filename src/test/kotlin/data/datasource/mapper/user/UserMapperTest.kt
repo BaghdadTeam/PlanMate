@@ -1,7 +1,7 @@
-package data.datasource.parser.user
+package data.datasource.mapper.user
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.parser.user.UserParser
+import org.baghdad.data.datasource.mapper.UserMapper
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.junit.jupiter.api.BeforeEach
@@ -9,12 +9,12 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 import kotlin.test.Test
 
-class UserParserTest {
-    private lateinit var parser: UserParser
+class UserMapperTest {
+    private lateinit var parser: UserMapper
 
     @BeforeEach
     fun setUp() {
-        parser = UserParser()
+        parser = UserMapper()
     }
 
     @Test
