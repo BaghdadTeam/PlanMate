@@ -1,4 +1,4 @@
-package data.datasource.mapper.project
+package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.mapper.ProjectMapper
