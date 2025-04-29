@@ -4,16 +4,19 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.repository.authentication.AuthenticationRepositoryImpl
 import org.baghdad.logic.model.entities.SessionEntity
+import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.utils.passwordutils.md5WithSalt
 import org.junit.jupiter.api.*
 import java.time.LocalDateTime
 import java.util.UUID
 
 class AuthenticationRepositoryImplTest {
-    private lateinit var sessionRepository: org.baghdad.logic.repositories.SessionRepository
-    private lateinit var userStorage: org.baghdad.data.local.UserDataSource
-    private lateinit var authRepository: org.baghdad.data.repository.authentication.AuthenticationRepositoryImpl
+    private lateinit var sessionRepository: SessionRepository
+    private lateinit var userStorage: UserDataSource
+    private lateinit var authRepository: AuthenticationRepositoryImpl
 
     val userName = "test"
     val password = "<PASSWORD>"
@@ -22,8 +25,7 @@ class AuthenticationRepositoryImplTest {
     fun setUp() {
         userStorage = mockk()
         sessionRepository = mockk()
-        authRepository =
-            _root_ide_package_.org.baghdad.data.repository.authentication.AuthenticationRepositoryImpl(userStorage)
+        authRepository = AuthenticationRepositoryImpl(userStorage, sessionRepository)
     }
 
     @Test
