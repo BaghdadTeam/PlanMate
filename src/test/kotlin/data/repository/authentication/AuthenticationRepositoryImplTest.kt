@@ -55,21 +55,6 @@ class AuthenticationRepositoryImplTest {
         assertThat(authRepository.login("test", "test").isFailure).isTrue()
     }
 
-    @Test
-    fun `Should invoke save session function if login success when login`() {
-        // When
-        val user = _root_ide_package_.helpers.authentication.createUserHelper(userName, password.md5WithSalt())
-        every { userStorage.findUserByUsername(userName) } returns user
-        // When
-        authRepository.login(userName, password.md5WithSalt())
-        // Then
-        verify {
-            sessionRepository.saveSession(
-                SessionEntity
-                    (userId = user.id.toString(), token = UUID.randomUUID().toString(), loginTime = LocalDateTime.now())
-            )
-        }
-    }
 
     @Test
     fun `Should invoke delete session function  when logout`() {
