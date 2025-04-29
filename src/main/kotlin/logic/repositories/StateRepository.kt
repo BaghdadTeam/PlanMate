@@ -1,6 +1,6 @@
 package org.baghdad.logic.repositories
 
-import org.baghdad.logic.entities.StateEntity
+import org.baghdad.logic.model.entities.StateEntity
 
 interface StateRepository {
 

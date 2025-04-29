@@ -1,6 +1,6 @@
 package org.baghdad.logic.repositories
 
-import org.baghdad.logic.entities.UserEntity
+import org.baghdad.logic.model.entities.UserEntity
 
 interface AuthenticationRepository {
 
