@@ -1,11 +1,13 @@
 package org.baghdad.logic.entities.authentication
 
-import kotlinx.datetime.LocalTime
+
 import org.baghdad.logic.entities.UserEntity
+import java.time.LocalDateTime
+import java.util.UUID
 
 data class SessionEntity(
-    val id: String,
+    val id: UUID = UUID.randomUUID(),
     val userData: UserEntity,
     val token: String,
-    val loginTime: LocalTime,
+    val loginTime: LocalDateTime
 )
