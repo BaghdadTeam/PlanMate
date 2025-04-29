@@ -3,7 +3,6 @@ package data.datasource.parser.project
 import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.parser.project.ProjectParser
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
