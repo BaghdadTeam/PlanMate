@@ -1,4 +1,91 @@
 package data.datasource.parser.user
 
+import com.google.common.truth.Truth.assertThat
+import org.baghdad.data.datasource.parser.user.UserParser
+import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
 import org.junit.jupiter.api.Assertions.*
- class UserParserTest
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
+import java.util.*
+import kotlin.test.Test
+
+class UserParserTest {
+    private lateinit var parser: UserParser
+
+    @BeforeEach
+    fun setUp() {
+        parser = UserParser()
+    }
+
+    @Test
+    fun `header returns correct CSV header`() {
+        assertThat(parser.header())
+            .isEqualTo("id,name,username,hashedPassword,type")
+    }
+
+    @Test
+    fun `deserializer parses line into UserEntity`() {
+        // Given
+        val uuid = UUID.randomUUID()
+        val name = "Alice"
+        val username = "alice123"
+        val hashedPassword = "hashedPw"
+        val type = UserType.Admin
+        val line = "$uuid,$name,$username,$hashedPassword,${type.name}"
+
+        // When
+        val result = parser.deserializer(line)
+
+        // Then
+        assertThat(result.id).isEqualTo(uuid)
+        assertThat(result.name).isEqualTo(name)
+        assertThat(result.username).isEqualTo(username)
+        assertThat(result.hashedPassword).isEqualTo(hashedPassword)
+        assertThat(result.type).isEqualTo(type)
+    }
+
+    @Test
+    fun `deserializer throws IllegalArgumentException for bad UUID`() {
+        val badLine = "not-a-uuid,Alice,alice,pass,Admin"
+        assertThrows<IllegalArgumentException> { parser.deserializer(badLine) }
+    }
+
+    @Test
+    fun `deserializer throws IllegalArgumentException for invalid user type`() {
+        val uuid = UUID.randomUUID()
+        val badTypeLine = "$uuid,Bob,bob,pass,INVALID_TYPE"
+        assertThrows<IllegalArgumentException> { parser.deserializer(badTypeLine) }
+    }
+
+    @Test
+    fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
+        // Only four fields instead of five
+        val uuid = UUID.randomUUID()
+        val malformed = "$uuid,Alice,alice,pass"
+        assertThrows<IndexOutOfBoundsException> { parser.deserializer(malformed) }
+    }
+
+    @Test
+    fun `serializer produces correct CSV line`() {
+        // Given
+        val uuid = UUID.randomUUID()
+        val name = "Charlie"
+        val username = "charlieX"
+        val hashedPassword = "pw123"
+        val type = UserType.Mate
+        val entity = UserEntity(
+            id = uuid,
+            name = name,
+            username = username,
+            hashedPassword = hashedPassword,
+            type = type
+        )
+
+        // When
+        val csvLine = parser.serializer(entity)
+
+        // Then
+        assertThat(csvLine).isEqualTo("$uuid,$name,$username,$hashedPassword,${type.name}")
+    }
+}
