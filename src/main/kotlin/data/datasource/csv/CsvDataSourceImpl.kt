@@ -1,20 +1,21 @@
 package org.baghdad.data.datasource.csv
 
 import org.baghdad.data.datasource.CsvParser
-import org.baghdad.data.storage.DataSource
-import org.baghdad.utils.customizedExceptions.CsvReadException
-import org.baghdad.utils.customizedExceptions.CsvWriteException
+import org.baghdad.data.datasource.DataSource
+import org.baghdad.logic.model.exceptions.CsvReadException
+import org.baghdad.logic.model.exceptions.CsvWriteException
+
 
 class CsvDataSourceImpl<T>(
-    private val reader: CsvReader,
-    private val writer: CsvWriter,
-    private val parser: CsvParser<T>
+    private var reader: CsvReader,
+    private var writer: CsvWriter,
+    private val parser: CsvParser<T>,
 ) : DataSource<T> {
 
     override fun loadAll(): List<T> {
         return try {
             val lines = reader.readCsv()
-            if (lines.isEmpty()) return emptyList()
+            if (lines.size <= 1) return emptyList()
 
             lines.drop(1).map(parser::deserializer)
         } catch (e: Exception) {
@@ -24,16 +25,21 @@ class CsvDataSourceImpl<T>(
 
     override fun append(item: T) {
         try {
+            val rawLines = reader.readCsv()
+            if (rawLines.isEmpty()) {
+                writer.appendLine(parser.header())
+            }
+
             writer.appendLine(parser.serializer(item))
         } catch (e: Exception) {
             throw CsvWriteException("Error writing to CSV file: ${e.message}")
         }
     }
 
-    override fun saveAll(items: List<T>) {
+    override fun update(items: List<T>) {
         try {
             val serializedLines = items.map(parser::serializer)
-            writer.overwriteLines(listOf(parser.header()) + serializedLines)
+            writer.updateLines(listOf(parser.header()) + serializedLines)
         } catch (e: Exception) {
             throw CsvWriteException("Error saving to CSV file: ${e.message}")
         }
