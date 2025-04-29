@@ -1,10 +1,9 @@
 package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.*
 import org.baghdad.data.datasource.csv.CsvWriter
-import org.baghdad.utils.customizedExceptions.CsvFileExceptions
-import org.baghdad.utils.customizedExceptions.EmptyHeaderException
+import org.baghdad.logic.model.exceptions.CsvFileExceptions
+import org.baghdad.logic.model.exceptions.EmptyHeaderException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -58,7 +57,7 @@ class CsvWriterTest {
 
         val exception = assertThrows<CsvFileExceptions> {
             CsvWriter(nonCsvFile)
-            CsvWriter(nonCsvFile).overwriteLines(listOf("Header", "Row 1", "Row 2"))
+            CsvWriter(nonCsvFile).updateLines(listOf("Header", "Row 1", "Row 2"))
         }
 
         assertThat(exception.message).isEqualTo("The file must have a .csv extension")
@@ -94,14 +93,14 @@ class CsvWriterTest {
 
     @Test
     fun `test overwrite lines overwrites content`() {
-        csvWriter.overwriteLines(listOf("Name, Age, Gender", "John, 30, Male"))
+        csvWriter.updateLines(listOf("Name, Age, Gender", "John, 30, Male"))
 
         assertThat(mockFile.readText()).isEqualTo("Name, Age, Gender\nJohn, 30, Male\n")
     }
 
     @Test
     fun `test overwrite lines when list is empty creates empty file`() {
-        csvWriter.overwriteLines(emptyList())
+        csvWriter.updateLines(emptyList())
 
         assertThat(mockFile.readText()).isEqualTo("\n")
     }
