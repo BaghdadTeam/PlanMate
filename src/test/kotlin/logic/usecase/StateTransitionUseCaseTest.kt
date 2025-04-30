@@ -112,7 +112,7 @@ class StateTransitionUseCaseTest {
             verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
         }
     }
-    //todo
+
     @Test
     fun `should not fail if transitioning to the same state`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
