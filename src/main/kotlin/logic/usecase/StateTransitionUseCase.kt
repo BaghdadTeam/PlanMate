@@ -39,7 +39,6 @@ class StateTransitionUseCase(
 
     private fun updateTaskState(taskId: String, newStateId: String): Boolean {
         val task = taskRepository.getTaskById(taskId)
-            ?: throw Exception("Task not found")
         val updatedTask = task.copy(stateId = newStateId)
         return taskRepository.updateTask(updatedTask)
     }

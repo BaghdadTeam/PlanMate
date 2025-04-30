@@ -17,6 +17,8 @@ import kotlin.test.Test
 import org.junit.jupiter.api.BeforeEach
 import io.mockk.verify
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 
 class StateTransitionUseCaseTest {
@@ -128,4 +130,39 @@ class StateTransitionUseCaseTest {
         verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
     }
 
+    @Test
+    fun `should fail if current state is not found`() {
+        val taskId = task.id.toString()
+        val newStateId = newState.id.toString()
+
+        every { taskRepository.getTaskById(taskId) } returns task
+        every { stateRepository.getStateById(task.stateId) } returns null // Simulate missing current state
+
+        val exception = assertThrows<Exception> {
+            service.changeTaskState(taskId, newStateId, user)
+        }
+
+        assertEquals("Current state not found", exception.message)
+        verify(exactly = 0) { taskRepository.updateTask(any()) }
+        verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+    }
+
+    @Test
+    fun `should fail if task state update fails`() {
+        val taskId = task.id.toString()
+        val newStateId = newState.id.toString()
+
+        every { taskRepository.getTaskById(taskId) } returns task
+        every { stateRepository.getStateById(task.stateId) } returns oldState
+        every { stateRepository.getStateById(newStateId) } returns newState
+        every { taskRepository.updateTask(any()) } returns false // Simulate failure
+        every { auditRepository.addAuditEntry(any()) } returns true
+
+        val exception = assertThrows<Exception> {
+            service.changeTaskState(taskId, newStateId, user)
+        }
+
+        assertEquals("Failed to update task state", exception.message)
+        verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+    }
 }
