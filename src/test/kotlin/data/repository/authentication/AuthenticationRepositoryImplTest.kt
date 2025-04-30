@@ -1,13 +1,14 @@
 package data.repository.authentication
 
 import com.google.common.truth.Truth.assertThat
+import helpers.authentication.createUserHelper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repository.authentication.AuthenticationRepositoryImpl
 import org.baghdad.logic.repositories.SessionRepository
-import org.baghdad.utils.passwordutils.md5WithSalt
+import org.baghdad.utils.md5WithSalt
 import org.junit.jupiter.api.*
 
 class AuthenticationRepositoryImplTest {
@@ -28,7 +29,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun ` should  return a success result if credentials are valid  when login`() {
         // Given
-        val user = _root_ide_package_.helpers.authentication.createUserHelper(userName, password.md5WithSalt())
+        val user = createUserHelper(userName, password.md5WithSalt())
         every { userStorage.findUserByUsername(userName) } returns user
         // When & Then
         assertThat(authRepository.login(userName, password).isSuccess).isTrue()
@@ -37,7 +38,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `Should return failure result password is invalid when login`() {
         // Given
-        val user = _root_ide_package_.helpers.authentication.createUserHelper(userName, "invalidPassword".md5WithSalt())
+        val user = createUserHelper(userName, "invalidPassword".md5WithSalt())
         every { userStorage.findUserByUsername(userName) } returns user
         // When & Then
         assertThat(authRepository.login(userName, password).isFailure).isTrue()

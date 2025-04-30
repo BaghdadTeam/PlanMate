@@ -1,4 +1,4 @@
-package org.baghdad.utils.passwordutils
+package org.baghdad.utils
 
 import java.security.MessageDigest
 
