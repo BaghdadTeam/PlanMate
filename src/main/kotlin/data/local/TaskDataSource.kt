@@ -2,7 +2,9 @@ package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.InvalidUUIDException
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
+import java.util.*
 
 class TaskDataSource(
     private val dataSource: DataSource<TaskEntity>
@@ -14,6 +16,17 @@ class TaskDataSource(
 
     fun addTask(task: TaskEntity) {
         dataSource.append(task)
+    }
+
+    fun getTaskById(taskId: String): TaskEntity {
+        val uuid = try {
+            UUID.fromString(taskId)
+        } catch (e: IllegalArgumentException) {
+            throw InvalidUUIDException("The UUID $taskId is invalid")
+        }
+
+        return loadTasks().firstOrNull { it.id == uuid }
+            ?: throw TasksNotFoundException("No tasks found for project ID: $taskId")
     }
 
     fun getTasksByProjectId(projectId: String): List<TaskEntity> {

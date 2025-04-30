@@ -6,6 +6,7 @@ import io.mockk.*
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.TaskDataSource
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.InvalidUUIDException
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,6 +48,42 @@ class TaskDataSourceTest {
 
         // Then
         verify { dataSource.append(task) }
+    }
+
+    @Test
+    fun `getTaskById returns task when found`() {
+        // Given
+        val task = TaskEntityTestData.normalTask
+        every { dataSource.loadAll() } returns listOf(task)
+
+        // When
+        val result = taskDataSource.getTaskById(task.id.toString())
+
+        // Then
+        assertThat(result).isEqualTo(task)
+    }
+
+    @Test
+    fun `getTaskById throws TasksNotFoundException when task not found`() {
+        val validId = UUID.randomUUID()
+        every { dataSource.loadAll() } returns emptyList()
+
+        val exception = assertThrows<TasksNotFoundException> {
+            taskDataSource.getTaskById(validId.toString())
+        }
+
+        assertThat(exception.message).isEqualTo("No tasks found for project ID: $validId")
+    }
+
+    @Test
+    fun `getTaskById throws IllegalArgumentException when id is not a valid UUID`() {
+        val invalidId = "not-a-uuid"
+        val task = TaskEntityTestData.normalTask
+        every { dataSource.loadAll() } returns listOf(task)
+
+        assertThrows<InvalidUUIDException> {
+            taskDataSource.getTaskById(invalidId)
+        }
     }
 
     @Test
