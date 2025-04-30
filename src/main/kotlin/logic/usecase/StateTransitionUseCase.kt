@@ -17,7 +17,6 @@ class StateTransitionUseCase(
 ) {
     fun changeTaskState(taskId: String, newStateId: String, user: UserEntity) {
         val task = taskRepository.getTaskById(taskId)
-            ?: throw Exception("Task not found")
 
         val currentState = stateRepository.getStateById(task.stateId)
             ?: throw Exception("Current state not found")
