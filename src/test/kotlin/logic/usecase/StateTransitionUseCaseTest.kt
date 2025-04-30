@@ -16,6 +16,7 @@ import java.util.UUID
 import kotlin.test.Test
 import org.junit.jupiter.api.BeforeEach
 import io.mockk.verify
+import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 
 
 class StateTransitionUseCaseTest {
@@ -62,22 +63,24 @@ class StateTransitionUseCaseTest {
         every { taskRepository.updateTask(any()) } returns true
         every { auditRepository.addAuditEntry(any()) } returns true
 
-        val result = service.changeTaskState(task.id.toString(), newState.id.toString(), user)
+        service.changeTaskState(task.id.toString(), newState.id.toString(), user)
 
-        Assertions.assertTrue(result.isSuccess)
         verify { taskRepository.updateTask(match { it.stateId == newState.id.toString() }) }
         verify { auditRepository.addAuditEntry(any()) }
     }
 
     @Test
-    fun `should fail if new state not found`() {
+    fun `should fail if new state not exists`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
         every { stateRepository.getStateById(any()) } returns null
 
-        val result = service.changeTaskState(task.id.toString(), "invalid-state", user)
-
-        Assertions.assertTrue(result.isFailure)
-        verify(exactly = 0) { taskRepository.updateTask(any()) }
+        try {
+            service.changeTaskState(task.id.toString(), "invalid-state", user)
+            Assertions.fail("Expected exception not thrown")
+        } catch (e: Exception) {
+            Assertions.assertTrue(e is NotFoundException)
+            verify(exactly = 0) { taskRepository.updateTask(any()) }
+        }
     }
 
     @Test
@@ -86,11 +89,13 @@ class StateTransitionUseCaseTest {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
         every { stateRepository.getStateById(otherProjectState.id.toString()) } returns otherProjectState
 
-        val result =
+        try {
             service.changeTaskState(task.id.toString(), otherProjectState.id.toString(), user)
-
-        Assertions.assertTrue(result.isFailure)
-        verify(exactly = 0) { taskRepository.updateTask(any()) }
+            Assertions.fail("Expected exception not thrown")
+        } catch (e: Exception) {
+            Assertions.assertTrue(e is NotFoundException)
+            verify(exactly = 0) { taskRepository.updateTask(any()) }
+        }
     }
 
     @Test
@@ -99,22 +104,24 @@ class StateTransitionUseCaseTest {
         every { stateRepository.getStateById(newState.id.toString()) } returns newState
         every { taskRepository.updateTask(any()) } returns false
 
-        val result = service.changeTaskState(task.id.toString(), newState.id.toString(), user)
+        try {
+            service.changeTaskState(task.id.toString(), newState.id.toString(), user)
+            Assertions.fail("Expected exception not thrown")
+        } catch (e: Exception) {
+            Assertions.assertTrue(e is Exception)
+            verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+        }
+    }
+    //todo
+    @Test
+    fun `should not fail if transitioning to the same state`() {
+        every { taskRepository.getTaskById(task.id.toString()) } returns task
+        every { stateRepository.getStateById(oldState.id.toString()) } returns oldState
 
-        Assertions.assertTrue(result.isFailure)
+        service.changeTaskState(task.id.toString(), oldState.id.toString(), user)
+
+        verify(exactly = 0) { taskRepository.updateTask(any()) }
         verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
-    }
-
-    @Test
-    fun `should update task state and log audit if state exists in same project`() {
-    }
-
-    @Test
-    fun `should fail if state does not belong to task's project`() {
-    }
-
-    @Test
-    fun `should fail if task or state does not exist`() {
     }
 
 }
