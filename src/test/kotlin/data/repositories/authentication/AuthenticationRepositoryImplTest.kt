@@ -1,4 +1,4 @@
-package data.repository.authentication
+package data.repositories.authentication
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.createUserHelper
@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.data.repository.authentication.AuthenticationRepositoryImpl
+import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.utils.md5WithSalt
 import org.junit.jupiter.api.*

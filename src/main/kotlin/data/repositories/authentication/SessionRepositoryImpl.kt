@@ -1,4 +1,4 @@
-package org.baghdad.data.repository.authentication
+package org.baghdad.data.repositories.authentication
 
 import org.baghdad.data.local.SessionDataSource
 import org.baghdad.logic.model.entities.SessionEntity
