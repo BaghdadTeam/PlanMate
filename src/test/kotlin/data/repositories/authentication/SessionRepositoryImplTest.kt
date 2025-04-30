@@ -1,4 +1,4 @@
-package data.repository.authentication
+package data.repositories.authentication
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.data.local.SessionDataSource
-import org.baghdad.data.repository.authentication.SessionRepositoryImpl
+import org.baghdad.data.repositories.authentication.SessionRepositoryImpl
 import org.junit.jupiter.api.*
 
 class SessionRepositoryImplTest {
