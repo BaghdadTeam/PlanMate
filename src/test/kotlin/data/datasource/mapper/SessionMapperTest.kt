@@ -1,19 +1,20 @@
 package data.datasource.mapper
 
-import com.google.common.truth.Truth
+
+import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
 import org.baghdad.data.datasource.mapper.sesssion.SessionMapper
 import org.baghdad.logic.model.entities.SessionEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
+import org.junit.jupiter.api.assertThrows
 
 class SessionMapperTest {
-    lateinit var sessionParser: SessionMapper
+    lateinit var sessionMapper: SessionMapper
 
     @BeforeEach
     fun setUp() {
-        sessionParser = SessionMapper()
+        sessionMapper = SessionMapper()
     }
 
     @Test
@@ -21,12 +22,17 @@ class SessionMapperTest {
 
         // Given
         val sessionData = SessionTestData.TestSession
-        val session = SessionEntity(id = sessionData.id, userId = sessionData.userId, token = sessionData.token, loginTime = LocalDateTime.now())
+        val session = SessionEntity(id = sessionData.id, userId = sessionData.userId, token = sessionData.token, loginTime = sessionData.loginTime)
         val expectedCsv = SessionTestData.TestSession.line
         // When
-        val result = sessionParser.serializer(session)
+        val result = sessionMapper.serializer(session)
         // Then
-        Truth.assertThat(result).isEqualTo(expectedCsv)
+        assertThat(result).isEqualTo(expectedCsv)
+    }
+    @Test
+    fun `Should parse header into csv file`() {
+        val header =  "id,userId,token,loginTime"
+        assertThat(sessionMapper.header()).isEqualTo(header)
     }
 
     @Test
@@ -35,11 +41,17 @@ class SessionMapperTest {
         val sessionData= SessionTestData.TestSession
         val line = SessionTestData.TestSession.line
         // When
-        val result = sessionParser.deserializer(line)
+        val result = sessionMapper.deserializer(line)
         // Then
-        Truth.assertThat(result.id).isEqualTo(sessionData.id)
-        Truth.assertThat(result.token).isEqualTo(sessionData.token)
-        Truth.assertThat(result.loginTime).isEqualTo(sessionData.loginTime)
-        Truth.assertThat(result.userId).isEqualTo(sessionData.userId)
+        assertThat(result.id).isEqualTo(sessionData.id)
+        assertThat(result.token).isEqualTo(sessionData.token)
+        assertThat(result.loginTime).isEqualTo(sessionData.loginTime)
+        assertThat(result.userId).isEqualTo(sessionData.userId)
+    }
+    @Test
+    fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
+        // Only two fields instead of four
+        val malformed = "123e4567-e89b-12d3-a456-426614174000,OnlyName"
+        assertThrows<IndexOutOfBoundsException> { sessionMapper.deserializer(malformed) }
     }
 }
