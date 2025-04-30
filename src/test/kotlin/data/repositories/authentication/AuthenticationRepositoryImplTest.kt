@@ -22,7 +22,7 @@ class AuthenticationRepositoryImplTest {
     @BeforeEach
     fun setUp() {
         userStorage = mockk()
-        sessionRepository = mockk()
+        sessionRepository = mockk(relaxed = true)
         authRepository = AuthenticationRepositoryImpl(userStorage, sessionRepository)
     }
 
@@ -56,14 +56,17 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun `Should invoke delete session function  when logout`() {
+        // Given
+        // When
         authRepository.logout()
+        // Then
         verify { sessionRepository.deleteSession() }
     }
 
     @Test
     fun `Should return failure result when logout fails`() {
         // Given
-        every { sessionRepository.deleteSession() } throws RuntimeException("Failed to delete session")
+        every { sessionRepository.deleteSession() } returns false
         // When
         val result = authRepository.logout()
         // Then
@@ -72,8 +75,11 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun `Should return success result when logout success`() {
+        // Given
         every { sessionRepository.deleteSession() } returns true
+        // When
         val result = authRepository.logout()
+        // Then
         assertThat(result.isSuccess).isTrue()
     }
 }
