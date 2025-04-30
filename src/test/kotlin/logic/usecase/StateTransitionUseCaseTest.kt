@@ -59,6 +59,7 @@ class StateTransitionUseCaseTest {
     @Test
     fun `should successfully transition task state`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
+        every { stateRepository.getStateById(task.stateId) } returns oldState
         every { stateRepository.getStateById(newState.id.toString()) } returns newState
         every { taskRepository.updateTask(any()) } returns true
         every { auditRepository.addAuditEntry(any()) } returns true
@@ -72,7 +73,8 @@ class StateTransitionUseCaseTest {
     @Test
     fun `should fail if new state not exists`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
-        every { stateRepository.getStateById(any()) } returns null
+        every { stateRepository.getStateById(task.stateId) } returns oldState
+        every { stateRepository.getStateById("invalid-state") } returns null
 
         try {
             service.changeTaskState(task.id.toString(), "invalid-state", user)
@@ -86,15 +88,18 @@ class StateTransitionUseCaseTest {
     @Test
     fun `should fail if new state belongs to different project`() {
         val otherProjectState = newState.copy(projectId = UUID.randomUUID().toString())
+
         every { taskRepository.getTaskById(task.id.toString()) } returns task
-        every { stateRepository.getStateById(otherProjectState.id.toString()) } returns otherProjectState
+        every { stateRepository.getStateById(task.stateId) } returns oldState
+        every { stateRepository.getStateById(newState.id.toString()) } returns otherProjectState
 
         try {
-            service.changeTaskState(task.id.toString(), otherProjectState.id.toString(), user)
+            service.changeTaskState(task.id.toString(), newState.id.toString(), user)
             Assertions.fail("Expected exception not thrown")
         } catch (e: Exception) {
             Assertions.assertTrue(e is NotFoundException)
             verify(exactly = 0) { taskRepository.updateTask(any()) }
+            verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
         }
     }
 
