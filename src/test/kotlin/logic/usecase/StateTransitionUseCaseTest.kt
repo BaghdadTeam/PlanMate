@@ -113,7 +113,6 @@ class StateTransitionUseCaseTest {
             service.changeTaskState(task.id.toString(), newState.id.toString(), user)
             Assertions.fail("Expected exception not thrown")
         } catch (e: Exception) {
-            Assertions.assertTrue(e is Exception)
             verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
         }
     }
