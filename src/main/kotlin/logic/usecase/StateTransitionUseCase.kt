@@ -5,42 +5,61 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.StateRepository
 import org.baghdad.logic.repositories.TaskRepository
-
 
 class StateTransitionUseCase(
     private val taskRepository: TaskRepository,
     private val stateRepository: StateRepository,
     private val auditRepository: AuditRepository
 ) {
-
-    fun changeTaskState(taskId: String, newStateId: String, user: UserEntity): Result<Unit> {
+    fun changeTaskState(taskId: String, newStateId: String, user: UserEntity) {
         val task = taskRepository.getTaskById(taskId)
-        val newState = stateRepository.getStateById(newStateId)
-            ?: return Result.failure(Exception("State not found"))
-        if (task.projectId != newState.projectId) {
-            return Result.failure(Exception("State does not belong to the same project"))
+            ?: throw Exception("Task not found")
+
+        val currentState = stateRepository.getStateById(task.stateId)
+            ?: throw Exception("Current state not found")
+
+        if (currentState.id.toString() == newStateId) {
+            println("Task is already in the requested state. No changes made.")
+            return
         }
+        validateNewState(task.projectId, newStateId)
 
+        val updateSuccessful = updateTaskState(taskId, newStateId)
+        if (!updateSuccessful) throw Exception("Failed to update task state")
+
+        logStateChange(taskId, task.stateId, newStateId, user)
+    }
+
+    private fun validateNewState(projectId: String, newStateId: String) =
+        stateRepository.getStateById(newStateId)?.takeIf { it.projectId == projectId }
+            ?: throw NotFoundException("State not found in this project")
+
+    private fun updateTaskState(taskId: String, newStateId: String): Boolean {
+        val task = taskRepository.getTaskById(taskId)
+            ?: throw Exception("Task not found")
         val updatedTask = task.copy(stateId = newStateId)
-        val updateSuccess = taskRepository.updateTask(updatedTask)
-        if (!updateSuccess) return Result.failure(Exception("Failed to update task"))
+        return taskRepository.updateTask(updatedTask)
+    }
 
-        val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val timestamp = currentTime.toString()
+    private fun logStateChange(
+        taskId: String, oldStateId: String, newStateId: String, user: UserEntity
+    ) {
+        val timestamp =
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()
+        val action = "${user.username} changed task $taskId from state $oldStateId to $newStateId"
+        println("Task $taskId moved from $oldStateId to $newStateId by ${user.username}")
+
         val auditEntry = AuditEntity(
             entityType = "Task",
             entityId = taskId,
-            action = "${user.username} changed task $taskId from state ${task.stateId} to $newStateId",
+            action = action,
             user = user,
             timestamp = timestamp
         )
         auditRepository.addAuditEntry(auditEntry)
-
-        println("Task ${task.id} moved from ${task.stateId} to $newStateId by ${user.username}")
-
-        return Result.success(Unit)
     }
 }
