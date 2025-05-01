@@ -11,6 +11,7 @@ data class SessionEntity(
 
 ) {
     fun isExpired(): Boolean {
+
         val expireAfter = Duration.ofMinutes(EXPIRE_AFTER_IN_MINUTES.toLong())
         return Duration.between(loginTime, LocalDateTime.now()) > expireAfter
     }

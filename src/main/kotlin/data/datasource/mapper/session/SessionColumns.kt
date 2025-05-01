@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.mapper.sesssion
+package org.baghdad.data.datasource.mapper.session
 
 object SessionColumns {
     const val ID = 0

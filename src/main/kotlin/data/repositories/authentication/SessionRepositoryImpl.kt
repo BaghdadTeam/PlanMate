@@ -7,15 +7,15 @@ import org.baghdad.logic.repositories.SessionRepository
 class SessionRepositoryImpl(
     private val sessionDataSource: SessionDataSource
 ): SessionRepository {
-    override fun loadSession(): SessionEntity? {
-        TODO("Not yet implemented")
+    override fun loadSession(): SessionEntity?{
+            return sessionDataSource.loadSession()
     }
 
     override fun saveSession(session: SessionEntity): Boolean {
-        TODO("Not yet implemented")
+        return sessionDataSource.saveSession(session)
     }
 
     override fun deleteSession(): Boolean {
-        TODO("Not yet implemented")
+        return sessionDataSource.deleteSession()
     }
 }

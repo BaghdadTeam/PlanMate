@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.mapper.sesssion
+package org.baghdad.data.datasource.mapper.session
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.SessionEntity

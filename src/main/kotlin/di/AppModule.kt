@@ -8,7 +8,7 @@ import org.baghdad.data.datasource.csv.StorageFileNames
 import org.baghdad.data.datasource.mapper.project.ProjectMapper
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
-import org.baghdad.data.datasource.mapper.sesssion.SessionMapper
+import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mapper.state.StateMapper
 import org.baghdad.data.datasource.mapper.task.TaskMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
