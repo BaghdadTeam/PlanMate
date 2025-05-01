@@ -1,4 +1,4 @@
-package org.baghdad.logic.usecases.authentication
+package org.baghdad.logic.usecase.authentication
 
 import org.baghdad.logic.repositories.AuthenticationRepository
 
@@ -7,6 +7,6 @@ class LogoutUseCase(
 )
 {
     operator fun invoke() {
-        TODO()
+        authenticationRepo.logout().getOrThrow()
     }
 }
