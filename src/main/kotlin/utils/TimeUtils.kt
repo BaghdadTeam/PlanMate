@@ -1,4 +1,4 @@
-package org.baghdad
+package org.baghdad.utils
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
