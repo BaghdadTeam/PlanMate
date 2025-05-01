@@ -50,6 +50,33 @@ class TaskDataSourceTest {
     }
 
     @Test
+    fun `should return task with the same id when calling getTaskById`() {
+        // Given
+        val tasks = TaskEntityTestData.tasks
+        every { dataSource.loadAll() } returns tasks
+
+        // When
+        val result = taskDataSource.getTaskById(tasks[0].id.toString())
+
+        // Then
+        assertThat(result).isEqualTo(tasks[0])
+    }
+
+    @Test
+    fun `should throw TasksNotFoundException if task not found`() {
+        // Given
+        val randomTask = TaskEntityTestData.randomTask
+        every { dataSource.loadAll() } returns listOf(randomTask)
+        val taskId = UUID.randomUUID().toString()
+
+        // When & Then
+        val exception = assertThrows<TasksNotFoundException> {
+            taskDataSource.getTaskById(taskId)
+        }
+        assertThat(exception.message).isEqualTo("Task with id $taskId not found")
+    }
+
+    @Test
     fun `should return matching tasks with the same projectId when calling getTasksByProjectId`() {
         // Given
         val tasksInSameProject = TaskEntityTestData.tasksInSameProject

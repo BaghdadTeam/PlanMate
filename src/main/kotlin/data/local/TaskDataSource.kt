@@ -24,6 +24,11 @@ class TaskDataSource(
         return tasks
     }
 
+    fun getTaskById(taskId: String): TaskEntity {
+        return loadTasks().firstOrNull { it.id.toString() == taskId }
+            ?: throw TasksNotFoundException("Task with id $taskId not found")
+    }
+
     fun getTasksByStateId(stateId: String): List<TaskEntity> {
         val tasks = loadTasks().filter { it.stateId == stateId }
         if (tasks.isEmpty()) {
