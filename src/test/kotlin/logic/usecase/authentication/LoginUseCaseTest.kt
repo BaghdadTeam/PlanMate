@@ -27,6 +27,7 @@ class LoginUseCaseTest {
     fun setUp() {
         authRepository = mockk(relaxed = true)
         sessionRepository = mockk(relaxed = true)
+        tokenProvider = mockk(relaxed = true)
 
         useCase = LoginUseCase(authRepository, sessionRepository, tokenProvider)
     }
