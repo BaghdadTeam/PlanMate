@@ -45,7 +45,6 @@ val appModule = module {
     }
 
     bindCsvDataSource<AuditEntity>(Entities.Audit)
-    bindCsvDataSource<UserEntity>(Entities.User)
     bindCsvDataSource<ProjectEntity>(Entities.Project)
     bindCsvDataSource<StateEntity>(Entities.State)
     bindCsvDataSource<UserEntity>(Entities.User)

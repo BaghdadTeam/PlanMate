@@ -7,7 +7,7 @@ class SessionDataSource(
     private val dataSource: DataSource<SessionEntity>
 ) {
     fun loadSession(): SessionEntity {
-        return dataSource.loadAll().firstOrNull()
+        return dataSource.loadAll().lastOrNull()
             ?: throw SessionNotFoundException("No session found")
     }
 
