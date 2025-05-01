@@ -1,6 +1,7 @@
 package org.baghdad.logic.usecase.authentication
 
 import org.baghdad.logic.model.entities.SessionEntity
+import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.InvalidCredentialsException
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.SessionRepository
@@ -20,14 +21,16 @@ class LoginUseCase (
         if (password.isBlank())
             return Result.failure(InvalidCredentialsException("Password must not be empty"))
         val result = authRepository.login(username, password.md5WithSalt())
-        return result.map { user ->
-            val session = SessionEntity(
-                userId = user.id.toString(),
-                token = tokenProvider.generateToken(),
-                loginTime = LocalDateTime.now(),
-            )
-            sessionRepository.saveSession(session)
-            session
+        return result.map (::createAndSaveSession)
+    }
+
+    private fun createAndSaveSession(user: UserEntity): SessionEntity {
+        return SessionEntity(
+            userId = user.id.toString(),
+            token = tokenProvider.generateToken(),
+            loginTime = LocalDateTime.now()
+        ).also {
+            sessionRepository.saveSession(it)
         }
     }
 }
