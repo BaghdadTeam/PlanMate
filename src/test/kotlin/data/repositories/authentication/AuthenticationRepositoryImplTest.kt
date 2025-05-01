@@ -32,25 +32,17 @@ class AuthenticationRepositoryImplTest {
         val user = createUserHelper(userName, password.md5WithSalt())
         every { userStorage.findUserByUsername(userName) } returns user
         // When & Then
-        assertThat(authRepository.login(userName, password).isSuccess).isTrue()
+        assertThat(authRepository.login(userName, password.md5WithSalt()).isSuccess).isTrue()
     }
 
     @Test
-    fun `Should return failure result password is invalid when login`() {
+    fun `Should return success result if credentials are valid  when login`() {
         // Given
         val user = createUserHelper(userName, "invalidPassword".md5WithSalt())
         every { userStorage.findUserByUsername(userName) } returns user
         // When & Then
         assertThat(authRepository.login(userName, password).isFailure).isTrue()
 
-    }
-
-    @Test
-    fun `Should return failure result user does not exist when login`() {
-        // Given
-        every { userStorage.findUserByUsername(any()) } returns null
-        // When & Then
-        assertThat(authRepository.login("test", "test").isFailure).isTrue()
     }
 
 

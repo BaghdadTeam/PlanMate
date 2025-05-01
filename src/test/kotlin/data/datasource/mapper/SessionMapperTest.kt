@@ -3,7 +3,7 @@ package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
-import org.baghdad.data.datasource.mapper.sesssion.SessionMapper
+import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.logic.model.entities.SessionEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

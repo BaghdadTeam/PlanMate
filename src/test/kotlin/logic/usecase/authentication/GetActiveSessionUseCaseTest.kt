@@ -1,23 +1,21 @@
-package logic.usecases.authentication
+package logic.usecase.authentication
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
 import io.mockk.every
 import io.mockk.mockk
-import org.baghdad.logic.model.entities.SessionEntity
-import org.baghdad.logic.model.exceptions.SessionEndedException
 import org.baghdad.logic.repositories.SessionRepository
-import org.baghdad.logic.usecases.authentication.LoadSessionUseCase
+import org.baghdad.logic.usecase.authentication.GetActiveSessionUseCase
 import org.junit.jupiter.api.*
 
-class LoadSessionUseCaseTest {
-    private lateinit var useCase: LoadSessionUseCase
+class GetActiveSessionUseCaseTest {
+    private lateinit var useCase: GetActiveSessionUseCase
     private lateinit var repository: SessionRepository
 
     @BeforeEach
     fun setUp() {
         repository = mockk(relaxed = true)
-        useCase = LoadSessionUseCase(repository)
+        useCase = GetActiveSessionUseCase(repository)
     }
 
     @Test
@@ -42,8 +40,10 @@ class LoadSessionUseCaseTest {
     @Test
     fun `Should throw session ended exception if session is expired`() {
         // Given
-        every { repository.loadSession() } returns null
+        every { repository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
+        // Then
+        val result = useCase.invoke()
         // When & Then
-        assertThrows <SessionEndedException>{ useCase.invoke() }
+       assertThat(result.isFailure).isTrue()
     }
 }
