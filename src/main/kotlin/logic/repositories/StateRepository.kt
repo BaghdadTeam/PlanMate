@@ -9,4 +9,5 @@ interface StateRepository {
     fun getStateById(id: String): StateEntity?
     fun editState(stateId: String, newState: StateEntity): Boolean
     fun deleteState(stateId: String): Boolean
+    fun getAllStates(): List<StateEntity>
 }

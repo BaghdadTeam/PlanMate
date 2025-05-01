@@ -9,4 +9,5 @@ interface TaskRepository {
     fun getTasksByProjectId(id: String): List<TaskEntity>
     fun updateTask(task: TaskEntity): Boolean
     fun deleteTask(id: String): Boolean
+    fun getTasks(): List<TaskEntity>
 }
