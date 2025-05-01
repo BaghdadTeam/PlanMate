@@ -1,5 +1,6 @@
 package org.baghdad.di
 
+import logic.presentation.ReportUI
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.csv.*
 import org.baghdad.data.datasource.DataSource
@@ -9,6 +10,7 @@ import org.baghdad.data.datasource.mapper.state.StateMapper
 import org.baghdad.data.datasource.mapper.task.TaskMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.usecase.report.ReportService
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -47,5 +49,8 @@ val appModule = module {
     bindCsvDataSource<ProjectEntity>(Entities.Project)
     bindCsvDataSource<StateEntity>(Entities.State)
     bindCsvDataSource<TaskEntity>(Entities.Task)
+
+    single { ReportService( get(), get(), get() ) }
+    single { ReportUI( get() ) }
 }
 
