@@ -9,10 +9,11 @@ object SessionTestData {
     object TestSession {
         val id = UUID.randomUUID()
         val token = UUID.randomUUID().toString()
-        val loginTime = LocalDateTime.now()
+        val loginTime: LocalDateTime = LocalDateTime.now()
         val userId = UUID.randomUUID().toString()
         val line = "$id,$userId,$token,$loginTime"
     }
+
     val baseSession = SessionEntity(
         id = UUID.randomUUID(),
         userId = UUID.randomUUID().toString(),
@@ -23,6 +24,6 @@ object SessionTestData {
         id = UUID.randomUUID(),
         userId = UUID.randomUUID().toString(),
         token = UUID.randomUUID().toString(),
-        loginTime = LocalDateTime.parse("2025-04-30T10:55:40.986676") ,
+        loginTime = LocalDateTime.parse("2025-04-30T10:55:40.986676"),
     )
 }

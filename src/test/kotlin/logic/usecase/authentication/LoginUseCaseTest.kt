@@ -9,6 +9,8 @@ import org.baghdad.logic.model.exceptions.InvalidCredentialsException
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.SessionRepository
+import org.baghdad.logic.repositories.TokenProvider
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.authentication.LoginUseCase
 import org.baghdad.utils.md5WithSalt
 import org.junit.jupiter.api.BeforeEach
@@ -19,12 +21,14 @@ class LoginUseCaseTest {
     private lateinit var useCase: LoginUseCase
     private lateinit var authRepository: AuthenticationRepository
     private lateinit var sessionRepository: SessionRepository
+    private lateinit var tokenProvider: TokenProvider
 
     @BeforeEach
     fun setUp() {
         authRepository = mockk(relaxed = true)
         sessionRepository = mockk(relaxed = true)
-        useCase = LoginUseCase(authRepository, sessionRepository)
+
+        useCase = LoginUseCase(authRepository, sessionRepository, tokenProvider)
     }
 
     @Test
