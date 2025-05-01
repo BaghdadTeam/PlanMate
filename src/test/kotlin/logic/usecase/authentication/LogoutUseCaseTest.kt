@@ -1,6 +1,5 @@
 package logic.usecase.authentication
 
-import com.google.common.base.Verify.verify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

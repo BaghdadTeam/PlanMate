@@ -10,7 +10,6 @@ import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.logic.repositories.TokenProvider
-import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.authentication.LoginUseCase
 import org.baghdad.utils.md5WithSalt
 import org.junit.jupiter.api.BeforeEach
