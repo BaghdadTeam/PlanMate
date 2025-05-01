@@ -1,12 +1,9 @@
 package org.baghdad.di
 
 import org.baghdad.data.datasource.CsvMapper
-import org.baghdad.data.datasource.csv.CsvDataSourceImpl
-import org.baghdad.data.datasource.csv.CsvReader
-import org.baghdad.data.datasource.csv.CsvWriter
-import org.baghdad.data.datasource.csv.StorageFileNames
-import org.baghdad.data.datasource.mapper.project.ProjectMapper
+import org.baghdad.data.datasource.csv.*
 import org.baghdad.data.datasource.DataSource
+import org.baghdad.data.datasource.mapper.project.ProjectMapper
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mapper.state.StateMapper
@@ -53,6 +50,6 @@ val appModule = module {
     bindCsvDataSource<StateEntity>(Entities.State)
     bindCsvDataSource<UserEntity>(Entities.User)
     bindCsvDataSource<SessionEntity>(Entities.Session)
-
+    bindCsvDataSource<TaskEntity>(Entities.Task)
 }
 
