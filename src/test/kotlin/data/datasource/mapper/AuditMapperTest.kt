@@ -7,9 +7,10 @@ import io.mockk.unmockkAll
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.AuditEntity
-import org.baghdad.logic.model.entities.AuditEntityType
+import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -53,7 +54,7 @@ class AuditMapperTest {
         every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
 
         val timestamp = LocalDateTime.now()
-        val auditEntityType = AuditEntityType.Task
+        val auditEntityType = Entities.Task
         val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
 
         // When
@@ -101,7 +102,7 @@ class AuditMapperTest {
 
         val entity = AuditEntity(
             id = uuid,
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
             entityId = entityId,
             action = "UPDATE",
             user = user,
@@ -130,12 +131,12 @@ class AuditMapperTest {
 
         val entity = AuditEntity(
             id = uuid,
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
             entityId = entityId,
             action = "DELETE",
             user = user,
 
-        )
+            )
 
         // When
         val csvLine = parser.serializer(entity)
@@ -147,7 +148,7 @@ class AuditMapperTest {
 
 
     @Test
-    fun `throw IllegalArgumentException when deserializer parses line with wrong format for datetime`() {
+    fun `throw UnSupportedTimeStampFormatException when deserializer parses line with wrong format for datetime`() {
         // Given
         val uuid = UUID.randomUUID()
         val typeId = UUID.randomUUID()
@@ -164,10 +165,10 @@ class AuditMapperTest {
         val timestamp = "2020-01-02" +
                 "" +
                 ""
-        val auditEntityType = AuditEntityType.Task
+        val auditEntityType = Entities.Task
         val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
 
         // When
-        assertThrows<IllegalArgumentException> { parser.deserializer(line) }
+        assertThrows<UnSupportedTimeStampFormatException> { parser.deserializer(line) }
     }
 }
