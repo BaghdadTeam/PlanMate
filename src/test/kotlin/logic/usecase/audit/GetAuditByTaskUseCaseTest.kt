@@ -21,9 +21,9 @@ class GetAuditByTaskUseCaseTest {
     @Test
     fun `Should throw no exception when get audit by task id`(){
         // Given
-        val ProjectUUID = UUID.randomUUID()
+        val projectID = UUID.randomUUID()
         // when & then
-        getAuditByTaskUseCase.invoke(ProjectUUID)
+        getAuditByTaskUseCase.invoke(projectID)
 
     }
 }
