@@ -1,6 +1,5 @@
 package presentation.user
 
-
 import org.baghdad.presentation.PlanMateCLI
 import org.baghdad.presentation.Console
 import org.baghdad.presentation.user.CreateUserUI
@@ -13,41 +12,32 @@ import kotlin.test.assertTrue
 
 class PlanMateCLITest {
     @Test
-    fun `exits on choice 3`() {
-        // تحضير فاكَّكونسول يعيد "3"
+    fun `exit on 3`() {
         val console = FakeConsole("3")
         val createUI = FakeCreateUserUI()
-        val getUI = FakeGetUserUI()
-
+        val getUI    = FakeGetUserUI()
         val cli = PlanMateCLI(console, createUI, getUI)
         cli.start()
-
-        // بعد run، يجب أن نرى "Goodbye!"
         assertTrue(console.outputs.any { it.contains("Goodbye!") })
     }
 
     @Test
-    fun `delegates to createUserUI on choice 1`() {
-        val console = FakeConsole("1","3")  // أولاً اختيار 1، ثم خروج
+    fun `option 1 invokes createUI`() {
+        val console = FakeConsole("1","3")
         val createUI = FakeCreateUserUI()
-        val getUI = FakeGetUserUI()
-
+        val getUI    = FakeGetUserUI()
         val cli = PlanMateCLI(console, createUI, getUI)
         cli.start()
-
-        // يجب أن يتم استدعاء createUI مع Admin
         assertTrue(createUI.invokedWith?.type?.name == "Admin")
     }
 
     @Test
-    fun `delegates to getUserUI on choice 2`() {
+    fun `option 2 invokes getUI`() {
         val console = FakeConsole("2","3")
         val createUI = FakeCreateUserUI()
-        val getUI = FakeGetUserUI()
-
+        val getUI    = FakeGetUserUI()
         val cli = PlanMateCLI(console, createUI, getUI)
         cli.start()
-
         assertTrue(getUI.invoked)
     }
 }
