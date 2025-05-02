@@ -5,6 +5,7 @@ import org.baghdad.data.datasource.csv.*
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.datasource.mapper.project.ProjectMapper
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
+import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mapper.state.StateMapper
 import org.baghdad.data.datasource.mapper.task.TaskMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
@@ -33,6 +34,7 @@ val appModule = module {
         Triple(Entities.Project, StorageFileNames.projectFile, ProjectMapper()),
         Triple(Entities.State, StorageFileNames.stateFile, StateMapper()),
         Triple(Entities.Task, StorageFileNames.taskFile, TaskMapper()),
+        Triple(Entities.Session, StorageFileNames.sessionFile, SessionMapper())
     )
 
     entitiesInfo.forEach { (name, file, parser) ->
@@ -43,9 +45,10 @@ val appModule = module {
     }
 
     bindCsvDataSource<AuditEntity>(Entities.Audit)
-    bindCsvDataSource<UserEntity>(Entities.User)
     bindCsvDataSource<ProjectEntity>(Entities.Project)
     bindCsvDataSource<StateEntity>(Entities.State)
+    bindCsvDataSource<UserEntity>(Entities.User)
+    bindCsvDataSource<SessionEntity>(Entities.Session)
     bindCsvDataSource<TaskEntity>(Entities.Task)
 }
 
