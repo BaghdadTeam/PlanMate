@@ -10,4 +10,5 @@ interface TaskRepository {
     fun getTasksByStateId(id: String): List<TaskEntity>
     fun updateTask(task: TaskEntity)
     fun deleteTask(id: String)
+    fun getAllTasks(): List<TaskEntity>
 }
