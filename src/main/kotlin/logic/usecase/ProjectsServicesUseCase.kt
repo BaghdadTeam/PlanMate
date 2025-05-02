@@ -13,7 +13,8 @@ class ProjectsServicesUseCase(
 ) {
     fun create(projectName: String, user: UserEntity) {
         requireAdmin(user = user)
-        val project = ProjectEntity(name = projectName)
+        val projectId = UUID.randomUUID()
+        val project = ProjectEntity(id = projectId, name = projectName, creatorId = user.id)
         projectRepository.createProject(project)
     }
 
