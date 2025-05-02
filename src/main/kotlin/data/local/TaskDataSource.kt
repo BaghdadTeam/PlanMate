@@ -53,9 +53,8 @@ class TaskDataSource(
         val allTasks = loadTasks().toMutableList()
         val removed = allTasks.removeIf { it.id.toString() == taskId }
 
-        if (!removed) {
-            throw TasksNotFoundException("Task with id $taskId not found")
-        }
+        if (!removed) throw TasksNotFoundException("Task with id $taskId not found")
+
         dataSource.update(allTasks)
     }
 }

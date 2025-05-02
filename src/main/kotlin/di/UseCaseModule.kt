@@ -10,12 +10,12 @@ val useCaseModule = module {
 
     single { StateTransitionUseCase(get(), get(), get()) }
     single { CreateTaskUseCase(get(), get()) }
+    single { DeleteTaskUseCase(get(), get()) }
+    single { UpdateTaskUseCase(get(), get()) }
 
     single { GetTasksByStateIdUseCase(get()) }
     single { GetTaskByIdUseCase(get()) }
     single { GetAllTasksUseCase(get()) }
     single { GetTasksByProjectIdUseCase(get()) }
-    single { UpdateTaskUseCase(get(), get()) }
-    single { DeleteTaskUseCase(get(), get()) }
     // endregion
 }
