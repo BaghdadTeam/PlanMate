@@ -45,8 +45,8 @@ bin/
 .DS_Store
 build
 .csv
-
 .gradle
 .idea
+session.csv
 
 /local.properties
