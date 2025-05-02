@@ -6,5 +6,6 @@ interface UserRepository {
 
     fun createUser(username: String, userCreator: UserEntity)
     fun getUserByUsername(username: String): UserEntity?
+    fun getUserById(id: String): UserEntity
     fun getAllUsers(): List<UserEntity>
 }

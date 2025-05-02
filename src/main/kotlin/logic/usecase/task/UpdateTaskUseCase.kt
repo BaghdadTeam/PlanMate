@@ -7,20 +7,24 @@ import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.repositories.AuditRepository
+import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.utils.getFormattedTimestamp
 
 class UpdateTaskUseCase(
     private val taskRepository: TaskRepository,
-    private val auditRepository: AuditRepository
+    private val auditRepository: AuditRepository,
+    private val userRepository: UserRepository
 ) {
 
-    operator fun invoke(newTask: TaskEntity, user: UserEntity) {
+    operator fun invoke(newTask: TaskEntity, userId: String) {
         val oldTask = taskRepository.getTaskById(newTask.id.toString())
 
         val validatedTask = validateNewTask(newTask)
 
         val result = taskRepository.updateTask(validatedTask)
+        val user = userRepository.getUserById(userId)
 
         if (result) {
             logTaskUpdate(validatedTask, oldTask, user)
