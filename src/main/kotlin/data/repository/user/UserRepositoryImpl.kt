@@ -7,7 +7,9 @@ import org.baghdad.logic.repositories.UserRepository
 class UserRepositoryImpl(
     private val dataSource: UserDataSource
 ) : UserRepository {
+
     override fun createUser(user: UserEntity) = dataSource.addUser(user)
+
     override fun findByUsername(username: String): UserEntity? =
         try {
             dataSource.findUserByUsername(username)
@@ -20,10 +22,4 @@ class UserRepositoryImpl(
 
     override fun getAllUsers(): List<UserEntity> = dataSource.loadUsers()
 
-//    override fun getUserByUsername(username: String): UserEntity? {
-//        return dataSource.getUserByUsername(username)
-//    }
-//    override fun saveUser(user: UserEntity) {
-//        dataSource.addUser(user)
-//    }
 }
