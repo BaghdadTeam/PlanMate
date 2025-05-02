@@ -10,6 +10,7 @@ class TaskRepositoryImpl(
     override fun getAllTasks(): List<TaskEntity> {
         return dataSource.loadTasks()
     }
+
     override fun createTask(task: TaskEntity) {
         dataSource.addTask(task)
     }
@@ -18,16 +19,21 @@ class TaskRepositoryImpl(
         return dataSource.getTaskById(id)
     }
 
-    override fun getTasksByProjectId(projectId: String): List<TaskEntity> {
-        return dataSource.getTasksByProjectId(projectId)
+    override fun getTasksByProjectId(id: String): List<TaskEntity> {
+        return dataSource.getTasksByProjectId(id)
     }
 
     override fun getTasksByStateId(stateId: String): List<TaskEntity> {
         return dataSource.getTasksByStateId(stateId)
     }
 
-    override fun updateTask(task: TaskEntity) {
-        dataSource.updateTask(task)
+    override fun updateTask(task: TaskEntity): Boolean {
+        try {
+            dataSource.updateTask(task)
+            return true
+        } catch (_: Exception) {
+            return false
+        }
     }
 
     override fun deleteTask(id: String) {
