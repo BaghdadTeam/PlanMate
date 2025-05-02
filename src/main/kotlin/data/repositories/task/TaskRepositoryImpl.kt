@@ -4,7 +4,7 @@ import org.baghdad.data.local.TaskDataSource
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.TaskRepository
 
-class TaskRepositoryImpl(
+class   TaskRepositoryImpl(
     private val dataSource: TaskDataSource
 ) : TaskRepository {
     override fun getAllTasks(): List<TaskEntity> {
