@@ -2,7 +2,7 @@ package logic.usecase.audit
 
 import io.mockk.mockk
 import org.baghdad.logic.model.entities.AuditEntity
-import org.baghdad.logic.model.entities.AuditEntityType
+import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.audit.EmptyActionInAuditEntityException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
@@ -30,7 +30,7 @@ class AddAuditUseCaseTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // when
@@ -46,7 +46,7 @@ class AddAuditUseCaseTest {
             entityId = randomUUID,
             action = "",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // when & Then
@@ -62,7 +62,7 @@ class AddAuditUseCaseTest {
             entityId = randomUUID,
             action = " ",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // when & Then
