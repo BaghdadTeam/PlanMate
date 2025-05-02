@@ -2,8 +2,9 @@ package org.baghdad.data.datasource.mapper.audit
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
+import org.baghdad.data.utils.parseTimestamp
 import org.baghdad.logic.model.entities.AuditEntity
-import org.baghdad.logic.model.entities.AuditEntityType
+import org.baghdad.logic.model.entities.Entities
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -27,7 +28,7 @@ class AuditMapper : CsvMapper<AuditEntity> {
 
         return AuditEntity(
             id = UUID.fromString(audit[AuditColumns.ID]),
-            entityType = AuditEntityType.valueOf(audit[AuditColumns.ENTITY_TYPE]),
+            entityType = Entities.valueOf(audit[AuditColumns.ENTITY_TYPE]),
             entityId = UUID.fromString(audit[AuditColumns.ENTITY_ID]),
             action = audit[AuditColumns.ACTION],
             user = userData,
@@ -36,17 +37,6 @@ class AuditMapper : CsvMapper<AuditEntity> {
 
 
     }
-
-
-
-    private fun parseTimestamp(timestampString: String): LocalDateTime {
-        return try {
-            LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        } catch (e: DateTimeParseException) {
-            throw IllegalArgumentException("Invalid timestamp format: $timestampString. Expected: yyyy-MM-dd'T'HH:mm:ss'Z'", e)
-        }
-    }
-
 
 
     override fun serializer(item: AuditEntity): String {
