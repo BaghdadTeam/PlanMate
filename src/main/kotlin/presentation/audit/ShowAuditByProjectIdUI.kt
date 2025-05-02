@@ -1,7 +1,7 @@
 package org.baghdad.presentation.audit
 
-import org.baghdad.logic.model.exceptions.audit.NoProjectFoundException
-import org.baghdad.logic.model.exceptions.audit.UnSupportedTimeStampFormatException
+import org.baghdad.logic.model.exceptions.NoProjectFoundException
+import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID

@@ -1,7 +1,7 @@
 package org.baghdad.logic.usecase.audit
 
 import org.baghdad.logic.model.entities.AuditEntity
-import org.baghdad.logic.model.exceptions.audit.EmptyActionInAuditEntityException
+import org.baghdad.logic.model.exceptions.EmptyActionInAuditEntityException
 import org.baghdad.logic.repositories.AuditRepository
 
 class AddAuditUseCase(
