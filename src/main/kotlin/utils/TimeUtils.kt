@@ -4,8 +4,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-fun getFormattedTimestamp(): String {
-    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+fun getFormattedTimestamp(clock: Clock = Clock.System): String {
+    val now = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
     val year = now.year.toString().padStart(4, '0')
     val month = now.monthNumber.toString().padStart(2, '0')
