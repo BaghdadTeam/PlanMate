@@ -2,7 +2,7 @@ package data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.AuditEntity
-import org.baghdad.logic.model.entities.AuditEntityType
+import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.audit.NoProjectFoundException
 import org.baghdad.logic.model.exceptions.audit.NoTaskFoundException
 import java.util.UUID
@@ -17,7 +17,7 @@ class AuditDataSource(
 
      fun getAuditByTaskId(taskId: UUID): List<AuditEntity> {
         return dataSources.loadAll()
-            .filter { (it.entityType == AuditEntityType.Task) && (it.entityId == taskId) }
+            .filter { (it.entityType == Entities.Task) && (it.entityId == taskId) }
             .takeIf { it.isNotEmpty() }
             ?:throw NoTaskFoundException("No audit found for task with ID: $taskId")
 
@@ -25,7 +25,7 @@ class AuditDataSource(
 
      fun getAuditByProjectId(projectId: UUID): List<AuditEntity> {
          return dataSources.loadAll()
-             .filter { (it.entityType == AuditEntityType.Project) && (it.entityId == projectId) }
+             .filter { (it.entityType == Entities.Project) && (it.entityId == projectId) }
              .takeIf { it.isNotEmpty() }
              ?:throw NoProjectFoundException("No audit found for task with ID: $projectId")
     }
