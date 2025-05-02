@@ -8,4 +8,5 @@ interface ProjectRepository {
     fun getProjectById(id: String): ProjectEntity?
     fun getAllProjects(): List<ProjectEntity>
     fun deleteProject(id: String): Boolean
+    fun editProject(project: ProjectEntity)
 }
