@@ -6,8 +6,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.exceptions.audit.NoProjectFoundException
-import org.baghdad.logic.model.exceptions.audit.UnSupportedTimeStampFormatException
+import org.baghdad.logic.model.exceptions.NoProjectFoundException
+import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.output.Viewer

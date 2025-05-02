@@ -3,7 +3,7 @@ package logic.usecase.audit
 import io.mockk.mockk
 import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.exceptions.audit.EmptyActionInAuditEntityException
+import org.baghdad.logic.model.exceptions.EmptyActionInAuditEntityException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
 import org.junit.jupiter.api.BeforeEach

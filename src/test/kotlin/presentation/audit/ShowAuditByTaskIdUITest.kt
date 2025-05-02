@@ -6,8 +6,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.exceptions.audit.NoTaskFoundException
-import org.baghdad.logic.model.exceptions.audit.UnSupportedTimeStampFormatException
+import org.baghdad.logic.model.exceptions.NoTaskFoundException
+import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.output.Viewer
