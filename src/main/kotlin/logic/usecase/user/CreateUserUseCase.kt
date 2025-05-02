@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.utils.md5WithSalt
+import org.baghdad.logic.utils.md5WithSalt
 
 private val logger = KotlinLogging.logger {}
 

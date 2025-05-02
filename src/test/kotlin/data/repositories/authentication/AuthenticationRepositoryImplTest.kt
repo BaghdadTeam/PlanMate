@@ -8,7 +8,7 @@ import io.mockk.verify
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
 import org.baghdad.logic.repositories.SessionRepository
-import org.baghdad.utils.md5WithSalt
+import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.*
 
 class AuthenticationRepositoryImplTest {

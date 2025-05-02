@@ -1,6 +1,6 @@
 package utils
 
-import org.baghdad.utils.md5WithSalt
+import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

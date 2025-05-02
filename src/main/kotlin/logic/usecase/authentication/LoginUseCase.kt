@@ -6,7 +6,7 @@ import org.baghdad.logic.model.exceptions.InvalidCredentialsException
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.logic.repositories.TokenProvider
-import org.baghdad.utils.md5WithSalt
+import org.baghdad.logic.utils.md5WithSalt
 import java.time.LocalDateTime
 
 class LoginUseCase (
