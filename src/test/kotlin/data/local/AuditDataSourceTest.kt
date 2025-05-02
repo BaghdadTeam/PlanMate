@@ -7,7 +7,7 @@ import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.datasource.csv.CsvReader
 import org.baghdad.data.datasource.csv.CsvWriter
 import org.baghdad.logic.model.entities.AuditEntity
-import org.baghdad.logic.model.entities.AuditEntityType
+import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.audit.EmptyInputProjectIdException
 import org.baghdad.logic.model.exceptions.audit.EmptyInputTaskIdException
 import org.baghdad.logic.model.exceptions.audit.NoProjectFoundException
@@ -39,7 +39,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // When & Then
@@ -54,7 +54,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // When
@@ -73,7 +73,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Project,
+            entityType = Entities.Project,
         )
 
         // When
@@ -91,7 +91,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // When & Then
@@ -108,7 +108,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // When & Then
@@ -125,7 +125,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.State,
+            entityType = Entities.State,
         )
 
         // When & Then
@@ -141,7 +141,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
 
         // When & Then
@@ -157,7 +157,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Task,
+            entityType = Entities.Task,
         )
         val inputRandomUUID = UUID.randomUUID()
 
@@ -175,7 +175,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.Project,
+            entityType = Entities.Project,
         )
         val inputRandomUUID = UUID.randomUUID()
 
@@ -193,7 +193,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.State,
+            entityType = Entities.State,
         )
         val inputRandomUUID = UUID.randomUUID()
 
@@ -212,7 +212,7 @@ class AuditDataSourceTest {
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = AuditEntityType.State,
+            entityType = Entities.State,
         )
         val inputRandomUUID = UUID.randomUUID()
 
