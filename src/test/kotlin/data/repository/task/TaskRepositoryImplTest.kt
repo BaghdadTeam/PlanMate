@@ -1,6 +1,5 @@
 package data.repository.task
 
-import com.google.common.base.Verify.verify
 import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
 import io.mockk.every
@@ -8,9 +7,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.data.local.TaskDataSource
 import org.baghdad.data.repository.task.TaskRepositoryImpl
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class TaskRepositoryImplTest {
@@ -97,5 +95,16 @@ class TaskRepositoryImplTest {
         taskRepository.deleteTask(taskId)
 
         verify { dataSource.deleteTask(taskId) }
+    }
+
+    @Test
+    fun `updateTask should return false when dataSource throws exception`() {
+        val task = TaskEntityTestData.normalTask
+        every { dataSource.updateTask(task) } throws RuntimeException("Update failed")
+
+        val result = taskRepository.updateTask(task)
+
+        assertThat(result).isFalse()
+        verify { dataSource.updateTask(task) }
     }
 }
