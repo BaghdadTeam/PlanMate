@@ -8,7 +8,10 @@ import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.state.StateMapper
 import org.baghdad.data.datasource.mapper.task.TaskMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
+import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.repository.user.UserRepositoryImpl
 import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.repositories.UserRepository
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -40,6 +43,8 @@ val appModule = module {
         single(named(name)) { CsvWriter(get(named(name))) }
         single(named(name)) { CsvReader(get(named(name))) }
         single<CsvMapper<*>>(named(name)) { parser }
+        //  bindCsvDataSource<Any>(entity) // تصحيح النوع لـ T الفعلي
+
     }
 
     bindCsvDataSource<AuditEntity>(Entities.Audit)
@@ -47,5 +52,10 @@ val appModule = module {
     bindCsvDataSource<ProjectEntity>(Entities.Project)
     bindCsvDataSource<StateEntity>(Entities.State)
     bindCsvDataSource<TaskEntity>(Entities.Task)
+
+    // Data Sources & Repositories
+    single { UserDataSource(get(named(Entities.User.name))) }
+    single<UserRepository> { UserRepositoryImpl(get()) }
 }
+
 
