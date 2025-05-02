@@ -2,45 +2,49 @@ package org.baghdad.logic.usecase
 
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.usecase.common.AccessPolicy
 import org.baghdad.logic.usecase.common.AccessPolicy.requireAdmin
 import java.util.UUID
+import org.baghdad.logic.usecase.common.AccessPolicy.requireAdmin
+import org.baghdad.logic.usecase.common.Result
+import java.util.*
 
 class ProjectsServicesUseCase(
     private val projectRepository: ProjectRepository,
     private val taskRepository: TaskRepository
 ) {
-    fun create(projectName: String, user: UserEntity) {
-        requireAdmin(user = user)
+    fun create(name: String, user: UserEntity): Result<Unit> {
+        val access = AccessPolicy.requireAdmin(user)
+        if (access is Result.Failure) return access
         val projectId = UUID.randomUUID()
-        val project = ProjectEntity(id = projectId, name = projectName, creatorId = user.id.toString())
+        val project = ProjectEntity(projectId, name, user.id.toString())
         projectRepository.createProject(project)
+        return Result.Success()
     }
 
-    fun edit(projectId: UUID, newProjectName: String, user: UserEntity) {
-        requireAdmin(user = user)
-        val existingProject = projectRepository.getProjectById(projectId.toString())
-            ?: throw NoSuchElementException("Project not found!.")
-        val updateProject = existingProject.copy(
-            name = newProjectName,
-        )
-        projectRepository.editProject(updateProject)
+    fun edit(id: UUID, newName: String, user: UserEntity): Result<Unit> {
+        val access = AccessPolicy.requireAdmin(user)
+        if (access is Result.Failure) return access
+        val existing = projectRepository.getProjectById(id.toString())
+            ?: return Result.Failure("Project not found.")
+        val updated = existing.copy(name = newName)
+        projectRepository.editProject(updated)
+        return Result.Success()
     }
 
-    fun delete(projectId: UUID, user: UserEntity) {
-        requireAdmin(user = user)
-        val tasks = taskRepository.getTasksByProjectId(projectId.toString())
-        if (tasks.isNotEmpty())
-            throw IllegalStateException("Can't delete project with active task!.")
-        projectRepository.deleteProject(projectId.toString())
+    fun delete(id: UUID, user: UserEntity): Result<Unit> {
+        val access = AccessPolicy.requireAdmin(user)
+        if (access is Result.Failure) return access
+        if (taskRepository.getTasksByProjectId(id.toString()).isNotEmpty())
+            return Result.Failure("Cannot delete project with active tasks.")
+        projectRepository.deleteProject(id.toString())
+        return Result.Success()
     }
 
-    fun list(): List<ProjectEntity> = projectRepository.getAllProjects()
-
-    fun createProjectId(name: String): String {
-        val clean = name.replace("\\s+".toRegex(), "").take(5).uppercase()
-        val suffix = UUID.randomUUID().toString().take(4)
-        return "PRJ-${clean}-$suffix"
+    fun list(): Result<List<ProjectEntity>> {
+        return Result.Success(projectRepository.getAllProjects())
     }
 }
