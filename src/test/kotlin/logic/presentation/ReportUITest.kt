@@ -87,9 +87,9 @@ class ReportUITest {
     }
 
     @Test
-    fun `when task per state is empty with project`() {
+    fun `when task per state and per user are empty`() {
         val fakeReport = ProjectSummaryReport(
-            projectName = "Test Project",
+            projectName = "Empty Stats Project",
             totalTasks = 3,
             tasksPerState = emptyMap(),
             tasksPerUser = emptyMap()
@@ -101,7 +101,8 @@ class ReportUITest {
         reportUI.viewReportCommand()
         val output = outputStream.toString()
 
-        assertTrue(output.contains("  No data available."))
+        assertTrue(output.contains("Empty Stats Project"))
+        assertTrue(output.contains("No data available."))
     }
 
 }
