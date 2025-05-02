@@ -1,6 +1,6 @@
-package data.repository.task
+package data.repositories.task
 
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import helpers.task.TaskEntityTestData
 import io.mockk.every
 import io.mockk.mockk
@@ -8,7 +8,7 @@ import io.mockk.verify
 import org.baghdad.data.local.TaskDataSource
 import org.baghdad.data.repositories.task.TaskRepositoryImpl
 import org.junit.jupiter.api.BeforeEach
-import java.util.*
+import java.util.UUID
 import kotlin.test.Test
 
 class TaskRepositoryImplTest {
@@ -32,7 +32,7 @@ class TaskRepositoryImplTest {
 
         val result = taskRepository.getAllTasks()
 
-        assertThat(result).isEqualTo(mockTasks)
+        Truth.assertThat(result).isEqualTo(mockTasks)
         verify { dataSource.loadTasks() }
     }
 
@@ -53,7 +53,7 @@ class TaskRepositoryImplTest {
 
         val result = taskRepository.getTaskById(id.toString())
 
-        assertThat(result).isEqualTo(task)
+        Truth.assertThat(result).isEqualTo(task)
         verify { dataSource.getTaskById(id.toString()) }
     }
 
@@ -64,7 +64,7 @@ class TaskRepositoryImplTest {
 
         val result = taskRepository.getTasksByProjectId("p1")
 
-        assertThat(result).isEqualTo(tasks)
+        Truth.assertThat(result).isEqualTo(tasks)
         verify { dataSource.getTasksByProjectId("p1") }
     }
 
@@ -75,7 +75,7 @@ class TaskRepositoryImplTest {
 
         val result = taskRepository.getTasksByStateId("s1")
 
-        assertThat(result).isEqualTo(tasks)
+        Truth.assertThat(result).isEqualTo(tasks)
         verify { dataSource.getTasksByStateId("s1") }
     }
 
@@ -104,7 +104,7 @@ class TaskRepositoryImplTest {
 
         val result = taskRepository.updateTask(task)
 
-        assertThat(result).isFalse()
+        Truth.assertThat(result).isFalse()
         verify { dataSource.updateTask(task) }
     }
 }
