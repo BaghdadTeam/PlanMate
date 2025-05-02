@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.data.local.TaskDataSource
-import org.baghdad.data.repository.task.TaskRepositoryImpl
+import org.baghdad.data.repositories.task.TaskRepositoryImpl
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.test.Test

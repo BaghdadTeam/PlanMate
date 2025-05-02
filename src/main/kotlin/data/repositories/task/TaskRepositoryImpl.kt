@@ -1,4 +1,4 @@
-package org.baghdad.data.repository.task
+package org.baghdad.data.repositories.task
 
 import org.baghdad.data.local.TaskDataSource
 import org.baghdad.logic.model.entities.TaskEntity
