@@ -1,4 +1,6 @@
 package org.baghdad.presentation.reportSummary
+import org.baghdad.logic.model.exceptions.EmptyProjectSummaryReportException
+import org.baghdad.logic.model.exceptions.EmptyProjectsException
 import org.baghdad.logic.usecase.report.ReportUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -55,9 +57,18 @@ class ReportUI(
             }
         }
 
+        catch (_:EmptyProjectsException){
+          viewer.logError("there is no project")
+        }
+
+        catch (_: EmptyProjectSummaryReportException){
+            viewer.logError("there is not summary report")
+        }
+
         catch (_:Exception){
           viewer.logError("something went wrong")
         }
+
 
     }
 }
