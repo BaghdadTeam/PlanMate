@@ -13,19 +13,19 @@ class StartApp(
     fun run() {
         try {
             sessionManger.clearExpiredSession()
-            val result = sessionManger.getActiveSession()
-            val session = result.getOrElse { exception ->
-                viewer.logMessage("Failed to load session: ${exception.message}")
-                val newSession = loginUi.execute()
-                newSession
-
+            val session = try {
+                val result = sessionManger.getActiveSession()
+                result.getOrElse { exception ->
+                    viewer.logMessage("Failed to load session: ${exception.message}")
+                    loginUi.execute()
+                }
+            } catch (e: SessionNotFoundException) {
+                viewer.logMessage("No active session found, starting login...")
+                loginUi.execute()
             }
             sessionManger.setSession(session)
-
-        } catch (_: SessionNotFoundException) {
-            viewer.logError("No session found")
-        } catch (_: Exception) {
-            viewer.logError("Something went wrong")
+        } catch (e: Exception) {
+            viewer.logError("Something went wrong: ${e.message}")
         }
     }
 }
