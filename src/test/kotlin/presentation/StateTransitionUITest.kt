@@ -8,8 +8,8 @@ import io.mockk.verify
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.StateTransitionUI
-import org.baghdad.presentation.helper.Reader
-import org.example.presentation.Viewer
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
@@ -36,7 +36,7 @@ class StateTransitionUITest {
 
         ui.execute()
 
-        verify { viewer.log("Task state changed successfully.") }
+        verify { viewer.logMessage("Task state changed successfully.") }
     }
 
     @Test
@@ -52,7 +52,7 @@ class StateTransitionUITest {
 
         ui.execute()
 
-        verify { viewer.log("State not found in this project: State not found") }
+        verify { viewer.logError("State not found in this project: State not found") }
     }
 
     @Test
@@ -68,7 +68,7 @@ class StateTransitionUITest {
 
         ui.execute()
 
-        verify { viewer.log("Invalid operation: Not allowed") }
+        verify { viewer.logError("Invalid operation: Not allowed") }
     }
 
     @Test
@@ -84,7 +84,7 @@ class StateTransitionUITest {
 
         ui.execute()
 
-        verify { viewer.log("Unexpected error: Something went wrong") }
+        verify { viewer.logError("Unexpected error: Something went wrong") }
     }
 
     @Test
