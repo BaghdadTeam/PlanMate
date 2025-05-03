@@ -18,7 +18,7 @@ class ProjectUi(
 
         when (val result = projectsServicesUseCase.create(projectName, user)) {
             is Result.Success -> println("✅ Project \"$projectName\" created successfully.")
-            is Result.Failure -> println("❌ ${result.message}")
+            is Result.Failure -> println(" ${result.message}")
         }
     }
 
@@ -31,13 +31,13 @@ class ProjectUi(
 
         val projectUUID = runCatching { UUID.fromString(projectIdInput) }.getOrNull()
         if (projectUUID == null) {
-            println("❌ Invalid UUID format.")
+            println("Invalid UUID format.")
             return
         }
 
         when (val result = projectsServicesUseCase.edit(projectUUID, newName, user)) {
             is Result.Success -> println("✅ Project updated successfully.")
-            is Result.Failure -> println("❌ ${result.message}")
+            is Result.Failure -> println(" ${result.message}")
         }
     }
 
@@ -45,7 +45,7 @@ class ProjectUi(
         println("=== List of Projects ===")
 
         when (val result = projectsServicesUseCase.list()) {
-            is Result.Failure -> println("❌ ${result.message}")
+            is Result.Failure -> println(" ${result.message}")
             is Result.Success -> {
                 val projects = result.data.orEmpty()
                 if (projects.isEmpty()) {
@@ -71,13 +71,13 @@ class ProjectUi(
 
         val projectUUID = runCatching { UUID.fromString(projectIdInput) }.getOrNull()
         if (projectUUID == null) {
-            println("❌ Invalid UUID format.")
+            println(" Invalid UUID format.")
             return
         }
 
         when (val result = projectsServicesUseCase.delete(projectUUID, user)) {
             is Result.Success -> println("✅ Project deleted successfully.")
-            is Result.Failure -> println("❌ ${result.message}")
+            is Result.Failure -> println(" ${result.message}")
         }
     }
 }
