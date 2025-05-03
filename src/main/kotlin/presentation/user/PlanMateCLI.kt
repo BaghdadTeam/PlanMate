@@ -1,17 +1,18 @@
 package org.baghdad.presentation
 
-// org.baghdad.presentation.PlanMateCLI.kt
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.user.CreateUserUI
 import org.baghdad.presentation.user.GetUserUI
-import org.koin.core.component.KoinComponent
 
 class PlanMateCLI(
-    private val console: Console,
+    private val reader: Reader,
+    private val viewer: Viewer,
     private val createUserUI: CreateUserUI,
     private val getUserUI: GetUserUI
-) : KoinComponent {
+) {
 
     private var loggedInUser: UserEntity? = null
 
@@ -23,20 +24,24 @@ class PlanMateCLI(
             type = UserType.Admin
         )
         while (true) {
-            console.writeLine("\n--- PlanMate CLI Menu ---")
-            console.writeLine("1) Create Mate User")
-            console.writeLine("2) Find User by Username")
-            console.writeLine("3) Exit")
-            when (console.readLine("Choice: ").trim()) {
+            viewer.logMessage("1) Create Mate User")
+            viewer.logMessage("2) Find User by Username")
+            viewer.logMessage("3) Exit")
+
+            val choice = reader.readInput()?.trim()
+            when (choice) {
                 "1" -> createUserUI.run(loggedInUser)
                 "2" -> getUserUI.run()
                 "3" -> {
-                    console.writeLine("Goodbye!")
+                    viewer.logMessage("Goodbye!")
                     return
                 }
 
-                else -> console.writeLine("Invalid choice.")
+                null, "" -> viewer.logMessage("Invalid choice.")
+                else -> viewer.logMessage("Invalid choice.")
             }
         }
+
     }
+
 }

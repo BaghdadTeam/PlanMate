@@ -1,37 +1,127 @@
-package presentation.user
+package org.baghdad.presentation.user
 
 import io.mockk.every
 import io.mockk.mockk
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.usecase.user.GetUserResult
-import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
-import org.baghdad.presentation.user.GetUserUI
-import test.helpers.FakeConsole
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
+import org.baghdad.presentation.input.Reader
+import helpers.task.user.FakeReader
+import helpers.task.user.FakeViewer
 
 class GetUserUITest {
-    private val uc = mockk<GetUserByUsernameUseCase>()
-    private lateinit var console: FakeConsole
-    private lateinit var ui: GetUserUI
+    private lateinit var reader: Reader
+    private lateinit var viewer: FakeViewer
+    private lateinit var useCase: GetUserByUsernameUseCase
+    private lateinit var user: GetUserUI
 
-    @Test
-    fun `prints not found message`() {
-        every { uc.invoke("x") } returns GetUserResult.NotFound
-        console = FakeConsole("x")
-        ui = GetUserUI(console, uc)
-        ui.run()
-        assertTrue(console.outputs.any { it.contains("not found") })
+    private val sampleUser = UserEntity(
+        name = "Alice",
+        username = "alice",
+        hashedPassword = "hashed",
+        type = UserType.Mate
+    )
+
+    @BeforeTest
+    fun setup() {
+        useCase = mockk(relaxed = true)
     }
 
     @Test
-    fun `prints user details when found`() {
-        val u = UserEntity(name="Name", username="u", hashedPassword="", type=UserType.Mate)
-        every { uc.invoke("u") } returns GetUserResult.Success(u)
-        console = FakeConsole("u")
-        ui = GetUserUI(console, uc)
-        ui.run()
-        assertTrue(console.outputs.any { it.contains("Found: u") })
+    fun `run shows success when user found`() {
+        reader = FakeReader("alice")
+        viewer = FakeViewer()
+        every { useCase.invoke("alice") } returns Result.success(sampleUser)
+        user = GetUserUI(reader, viewer, useCase)
+
+        user.run()
+
+        assertTrue(viewer.messages.any { it.contains("=== Find User ===") })
+        assertTrue(viewer.messages.any {
+            it.contains("Found: alice") &&
+                    it.contains("Name: Alice") &&
+                    it.contains("Role: Mate")
+        })
+    }
+
+    @Test
+    fun `run shows not found when user is missing`() {
+        reader = FakeReader("bob")
+        viewer = FakeViewer()
+        every { useCase.invoke("bob") } returns Result.failure(Exception("not found"))
+        user = GetUserUI(reader, viewer, useCase)
+
+        user.run()
+
+        assertTrue(viewer.messages.any { it.contains("=== Find User ===") })
+        assertTrue(viewer.messages.any { it.contains("User 'bob' not found.") })
+    }
+
+    @Test
+    fun `run handles null input as empty and shows not found`() {
+        reader = FakeReader(null)
+        viewer = FakeViewer()
+        every { useCase.invoke("") } returns Result.failure(Exception("no user"))
+        user = GetUserUI(reader, viewer, useCase)
+
+        user.run()
+
+        assertTrue(viewer.messages.any { it.contains("=== Find User ===") })
+        assertTrue(viewer.messages.any { it.contains("User '' not found.") })
+    }
+
+    @Test
+    fun `run trims whitespace and finds user`() {
+        reader = FakeReader("   alice   ")
+        viewer = FakeViewer()
+        every { useCase.invoke("alice") } returns Result.success(sampleUser)
+        user = GetUserUI(reader, viewer, useCase)
+
+        user.run()
+
+        assertTrue(viewer.messages.any {
+            it.contains("Found: alice") &&
+                    it.contains("Name: Alice") &&
+                    it.contains("Role: Mate")
+        })
+    }
+
+    @Test
+    fun `run shows not found when input is empty string`() {
+        reader = FakeReader("")
+        viewer = FakeViewer()
+        every { useCase.invoke("") } returns Result.failure(Exception("no user"))
+        user = GetUserUI(reader, viewer, useCase)
+
+        user.run()
+
+        assertTrue(viewer.messages.any { it.contains("User '' not found.") })
+    }
+
+    @Test
+    fun `run shows not found when input is whitespace only`() {
+        reader = FakeReader("   ")
+        viewer = FakeViewer()
+        every { useCase.invoke("") } returns Result.failure(Exception("no user"))
+        user = GetUserUI(reader, viewer, useCase)
+
+        user.run()
+
+        assertTrue(viewer.messages.any { it.contains("User '' not found.") })
+    }
+
+    @Test
+    fun `run passes internal spaces as-is to use case`() {
+        reader = FakeReader("ali ce")
+        viewer = FakeViewer()
+        every { useCase.invoke("ali ce") } returns Result.failure(Exception("not found"))
+        user = GetUserUI(reader, viewer, useCase)
+
+        user.run()
+
+        assertTrue(viewer.messages.any { it.contains("User 'ali ce' not found.") })
     }
 }

@@ -1,49 +1,80 @@
-package logic.usecase.user
-
+package org.baghdad.logic.usecase.user
 
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.usecase.user.CreateUserResult
-import org.baghdad.logic.usecase.user.CreateUserUseCase
+import org.baghdad.logic.model.exceptions.user.UnauthorizedException
+import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
-import kotlin.test.Test
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class CreateUserUseCaseTest {
-    private val repo = mockk<UserRepository>(relaxed = true)
-    private val uc = CreateUserUseCase(repo)
 
-    private val admin = UserEntity(name="A", username="a", hashedPassword="h", type=UserType.Admin)
-    private val mate  = UserEntity(name="M", username="m", hashedPassword="h", type=UserType.Mate)
+    private val repository = mockk<UserRepository>(relaxed = true)
+    private val useCase   = CreateUserUseCase(repository)
+
+    private val admin = UserEntity(
+        name = "Admin Name",
+        username = "admin",
+        hashedPassword = "ignored",
+        type = UserType.Admin
+    )
+    private val mate = UserEntity(
+        name = "Mate Name",
+        username = "mate",
+        hashedPassword = "ignored",
+        type = UserType.Mate
+    )
 
     @Test
-    fun `returns Success when admin and unique username`() {
-        every { repo.existsByUsername("u") } returns false
+    fun `invoke returns success for admin and unique username`() {
+        // Given
+        every { repository.existsByUsername("newUser") } returns false
 
-        val result = uc("u","p","Name", admin)
-        assertIs<CreateUserResult.Success>(result)
-        val created = (result as CreateUserResult.Success).user
-        assertTrue(created.username == "u" && created.type == UserType.Mate)
-        verify { repo.createUser(created) }
+        // When
+        val result = useCase("newUser", "password", "New User", admin)
+
+        // Then
+        assertTrue(result.isSuccess, "Expected success Result")
+        val created = result.getOrNull()!!
+        assertEquals("newUser", created.username)
+        assertEquals("New User", created.name)
+        assertEquals(UserType.Mate, created.type)
+        verify(exactly = 1) { repository.createUser(created) }
     }
 
     @Test
-    fun `returns Failure when non-admin`() {
-        val result = uc("u","p","Name", mate)
-        assertIs<CreateUserResult.Failure>(result)
-        assertTrue((result as CreateUserResult.Failure).error.contains("Only admins"))
+    fun `invoke returns failure for non-admin creator`() {
+        // When
+        val result = useCase("whatever", "password", "Name", mate)
+
+        // Then
+        assertTrue(result.isFailure, "Expected failure Result")
+        val ex = result.exceptionOrNull()!!
+        assertTrue(ex is UnauthorizedException)
+        assertEquals("Only admins can create users.", ex.message)
+        verify(exactly = 0) { repository.existsByUsername(any()) }
+        verify(exactly = 0) { repository.createUser(any()) }
     }
 
     @Test
-    fun `returns Failure when username exists`() {
-        every { repo.existsByUsername("u") } returns true
+    fun `invoke returns failure for duplicate username`() {
+        // Given
+        every { repository.existsByUsername("dupUser") } returns true
 
-        val result = uc("u","p","Name", admin)
-        assertIs<CreateUserResult.Failure>(result)
-        assertTrue((result as CreateUserResult.Failure).error.contains("already exists"))
+        // When
+        val result = useCase("dupUser", "password", "Name", admin)
+
+        // Then
+        assertTrue(result.isFailure, "Expected failure Result")
+        val ex = result.exceptionOrNull()!!
+        assertTrue(ex is UserAlreadyExistsException)
+        assertEquals("Username 'dupUser' already exists.", ex.message)
+        verify(exactly = 1) { repository.existsByUsername("dupUser") }
+        verify(exactly = 0) { repository.createUser(any()) }
     }
 }

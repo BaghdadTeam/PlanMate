@@ -13,7 +13,7 @@ class CreateUserUI(
 ) {
     fun run(currentUser: UserEntity?) {
         if (currentUser?.type != UserType.Admin) {
-            viewer.logError("🚫 Only administrators can create new users.")
+            viewer.logError(" Only administrators can create new users.")
             return
         }
 
@@ -27,10 +27,10 @@ class CreateUserUI(
 
         result
             .onSuccess { user ->
-                viewer.logMessage("✅ User '${user.username}' created successfully.")
+                viewer.logMessage("User '${user.username}' created successfully.")
             }
             .onFailure { ex ->
-                viewer.logError("⚠️ Error: ${ex.message}")
+                viewer.logError(" Error: ${ex.message}")
             }
     }
 
