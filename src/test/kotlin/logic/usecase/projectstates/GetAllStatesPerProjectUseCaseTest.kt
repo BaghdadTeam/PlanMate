@@ -8,7 +8,7 @@ import io.mockk.verify
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.projectstate.GetAllStatesPerProjectUseCase
+import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

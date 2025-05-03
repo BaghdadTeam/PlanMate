@@ -10,6 +10,7 @@ import io.mockk.mockk
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -17,12 +18,17 @@ import org.junit.jupiter.api.assertThrows
 class ProjectStatesDataSourceTest {
 
     private lateinit var dataSource: DataSource<StateEntity>
+    private lateinit var taskDataSource: DataSource<TaskEntity>
     private lateinit var projectStatesDataSource: ProjectStatesDataSource
 
     @BeforeEach
     fun setup() {
         dataSource = mockk(relaxed = true)
-        projectStatesDataSource = ProjectStatesDataSource(dataSource)
+        taskDataSource = mockk(relaxed = true)
+        projectStatesDataSource = ProjectStatesDataSource(
+            dataSource,
+            taskDataSource = taskDataSource
+        )
     }
 
     @Test
@@ -45,7 +51,7 @@ class ProjectStatesDataSourceTest {
         // When
         val result = projectStatesDataSource.getStateById(projectStates.id.toString())
         // Then
-        Truth.assertThat(result).isEqualTo(projectStates)
+        assertThat(result).isEqualTo(projectStates)
     }
 
     @Test
@@ -58,7 +64,7 @@ class ProjectStatesDataSourceTest {
         val result = projectStatesDataSource.getStateById(projectStates.id.toString())
 
         // Then
-        Truth.assertThat(result).isEqualTo(projectStates)
+        assertThat(result).isEqualTo(projectStates)
     }
 
 

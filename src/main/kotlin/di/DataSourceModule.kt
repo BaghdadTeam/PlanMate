@@ -9,7 +9,14 @@ import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mapper.state.StateMapper
 import org.baghdad.data.datasource.mapper.task.TaskMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
+import org.baghdad.data.local.ProjectDataSource
+import org.baghdad.data.local.ProjectStatesDataSource
+import org.baghdad.data.local.SessionDataSource
+import org.baghdad.data.local.TaskDataSource
+import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.repositories.authentication.TokenProviderImpl
 import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.repositories.TokenProvider
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -50,5 +57,27 @@ val appModule = module {
     bindCsvDataSource<UserEntity>(Entities.User)
     bindCsvDataSource<SessionEntity>(Entities.Session)
     bindCsvDataSource<TaskEntity>(Entities.Task)
+
+    single(named(Entities.Project)) {
+        ProjectDataSource(
+            get(named(Entities.Project)),
+            get(named(Entities.State)),
+            get(named(Entities.Task))
+        )
+    }
+    single(named(Entities.State)) {
+        ProjectStatesDataSource(
+            get(named(Entities.State)),
+            get(named(Entities.Task))
+        )
+    }
+
+    single(named(Entities.Task)) { TaskDataSource(get(named(Entities.Task))) }
+
+    single(named(Entities.Session)) { SessionDataSource(get(named(Entities.Session))) }
+
+    single(named(Entities.User)) { UserDataSource(get(named(Entities.User))) }
+
+    single<TokenProvider> { TokenProviderImpl() }
 }
 

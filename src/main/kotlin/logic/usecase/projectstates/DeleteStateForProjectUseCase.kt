@@ -1,4 +1,4 @@
-package org.baghdad.logic.usecase.projectstate
+package org.baghdad.logic.usecase.projectstates
 
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.repositories.AuditRepository

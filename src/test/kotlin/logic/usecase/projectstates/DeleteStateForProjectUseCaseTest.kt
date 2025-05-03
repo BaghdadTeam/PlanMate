@@ -11,7 +11,7 @@ import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.projectstate.DeleteStateForProjectUseCase
+import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
