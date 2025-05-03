@@ -1,19 +1,16 @@
 package org.baghdad
 
-import org.baghdad.data.local.ProjectDataSource
-import org.baghdad.di.appModule
-import org.baghdad.logic.model.entities.Entities
+import org.baghdad.di.*
+import org.baghdad.presentation.app.StartApp
 import org.koin.core.context.startKoin
-import org.koin.core.qualifier.named
 import org.koin.mp.KoinPlatform.getKoin
 
 fun main() {
-    startKoin {
-        modules(appModule)
-    }
 
-    val test = ProjectDataSource(
-        getKoin().get(qualifier = named(Entities.Project.name))
-    )
-    test.createProject()
+    startKoin {
+        printLogger()
+        modules(appModule, useCaseModule, repositoryModule, uiModule, dataSourceModule)
+    }
+    val startApp = getKoin().get<StartApp>()
+    startApp.run()
 }
