@@ -15,6 +15,7 @@ import org.baghdad.logic.model.exceptions.TaskWithMissingStateIdException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.CreateTaskUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -25,6 +26,7 @@ class CreateTaskUseCaseTest {
     private lateinit var taskRepository: TaskRepository
     private lateinit var auditRepository: AuditRepository
     private lateinit var createTaskUseCase: CreateTaskUseCase
+    private lateinit var userRepository: UserRepository
     private val user = UserEntity(
         name = "Youssef Mohamed",
         username = "Pixelise",
@@ -36,14 +38,15 @@ class CreateTaskUseCaseTest {
     fun setup() {
         taskRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        createTaskUseCase = CreateTaskUseCase(taskRepository, auditRepository)
+        userRepository = mockk(relaxed = true)
+        createTaskUseCase = CreateTaskUseCase(taskRepository, auditRepository, userRepository)
     }
 
     @Test
     fun `should create task and log audit when task is valid`() {
         val task = TaskEntityTestData.normalTask
 
-        createTaskUseCase(task, user)
+        createTaskUseCase(task, user.id)
 
         verify { taskRepository.createTask(task) }
 
@@ -54,7 +57,6 @@ class CreateTaskUseCaseTest {
         assertThat(audit.entityType).isEqualTo("Task")
         assertThat(audit.entityId).isNotEmpty() // assuming ID is auto-generated or assigned
         assertThat(audit.action).isEqualTo("created task ${task.title}")
-        assertThat(audit.user).isEqualTo(user)
         assertThat(audit.timestamp).isNotEmpty()
     }
 
@@ -63,7 +65,7 @@ class CreateTaskUseCaseTest {
         val task = TaskEntityTestData.taskWithBlankTitle()
 
         val exception = assertThrows<TaskWithMissingTitleException> {
-            createTaskUseCase(task, user)
+            createTaskUseCase(task, user.id)
         }
 
         assertThat(exception).hasMessageThat().contains("title cannot be empty")
@@ -76,7 +78,7 @@ class CreateTaskUseCaseTest {
         val task = TaskEntityTestData.taskWithBlankDescription()
 
         val exception = assertThrows<TaskWithMissingDescriptionException> {
-            createTaskUseCase(task, user)
+            createTaskUseCase(task, user.id)
         }
 
         assertThat(exception).hasMessageThat().contains("description cannot be empty")
@@ -89,7 +91,7 @@ class CreateTaskUseCaseTest {
         val task = TaskEntityTestData.taskWithBlankStateId()
 
         val exception = assertThrows<TaskWithMissingStateIdException> {
-            createTaskUseCase(task, user)
+            createTaskUseCase(task, user.id)
         }
 
         assertThat(exception).hasMessageThat().contains("state ID cannot be empty")
@@ -102,7 +104,7 @@ class CreateTaskUseCaseTest {
         val task = TaskEntityTestData.taskWithBlankProjectId()
 
         val exception = assertThrows<TaskWithMissingProjectIdException> {
-            createTaskUseCase(task, user)
+            createTaskUseCase(task, user.id)
         }
 
         assertThat(exception).hasMessageThat().contains("project ID cannot be empty")

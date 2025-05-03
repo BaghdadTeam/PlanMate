@@ -7,18 +7,23 @@ import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.*
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.utils.getFormattedTimestamp
+import java.util.UUID
 
 class CreateTaskUseCase(
     private val taskRepository: TaskRepository,
-    private val auditRepository: AuditRepository
+    private val auditRepository: AuditRepository,
+    private val userRepository: UserRepository
 ) {
 
-    operator fun invoke(task: TaskEntity, user: UserEntity) {
+    operator fun invoke(task: TaskEntity, userId: UUID) {
         val validatedTask = validateTask(task)
         taskRepository.createTask(validatedTask)
 
+        val user = userRepository.getUserById(userId)
         val auditTask = logTaskCreation(validatedTask, user)
+
         auditRepository.addAuditEntry(auditTask)
     }
 
