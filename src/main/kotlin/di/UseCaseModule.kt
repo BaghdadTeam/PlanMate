@@ -9,7 +9,6 @@ import org.koin.dsl.module
 
 val useCaseModule = module {
     single { StateTransitionUseCase(get(), get(), get()) }
-    // Use Cases for Projects
     single { CreateProjectUseCase(get()) }
     single { EditProjectUseCase(get()) }
     single { DeleteProjectUseCase(get(), get()) }
