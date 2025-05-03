@@ -13,14 +13,13 @@ import java.util.UUID
 
 class UpdateTaskUI(
     private val useCase: UpdateTaskUseCase,
-    private var tasks: List<TaskEntity>,
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
 ) {
 
-    fun execute() {
-        val taskIndex = promptForTaskIndex() ?: return
+    fun execute(tasks: List<TaskEntity>) {
+        val taskIndex = promptForTaskIndex(tasks) ?: return
         var task = tasks[taskIndex]
 
         viewer.logMessage("Selected task: ${task.title}")
@@ -31,7 +30,7 @@ class UpdateTaskUI(
         tryUpdateTask(task)
     }
 
-    private fun promptForTaskIndex(): Int? {
+    private fun promptForTaskIndex(tasks: List<TaskEntity>): Int? {
         viewer.logMessage("Please enter the task number to update:")
         val index = reader.readInput()?.toIntOrNull()
 

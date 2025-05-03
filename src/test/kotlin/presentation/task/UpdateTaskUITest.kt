@@ -61,13 +61,13 @@ class UpdateTaskUITest {
         }
         viewer = mockk(relaxed = true)
         reader = mockk()
-        updateTaskUI = UpdateTaskUI(useCase, dummyTasks, sessionManager, viewer, reader)
+        updateTaskUI = UpdateTaskUI(useCase, sessionManager, viewer, reader)
     }
 
     @Test
     fun `test invalid task number`() {
         every { reader.readInput() } returns "5"
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
         verify { viewer.logMessage("Invalid task number.") }
         confirmVerified(useCase)
     }
@@ -75,7 +75,7 @@ class UpdateTaskUITest {
     @Test
     fun `entering null for task number`() {
         every { reader.readInput() } returns null
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
         verify { viewer.logMessage("Invalid task number.") }
         confirmVerified(useCase)
     }
@@ -84,7 +84,7 @@ class UpdateTaskUITest {
     fun `test valid task update success`() {
         every { reader.readInput() } returnsMany listOf("1", "New Title", "New Description")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         val expectedTask = dummyTasks[0].copy(title = "New Title", description = "New Description")
 
@@ -96,7 +96,7 @@ class UpdateTaskUITest {
     fun `test empty title then valid input`() {
         every { reader.readInput() } returnsMany listOf("1", "", "Valid Title", "Valid Description")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Task title cannot be empty. Please try again.") }
         verify { viewer.logMessage("Task updated successfully.") }
@@ -106,7 +106,7 @@ class UpdateTaskUITest {
     fun `test empty description then valid input`() {
         every { reader.readInput() } returnsMany listOf("1", "New Title", "", "New Description")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Task description cannot be empty. Please try again.") }
         verify { viewer.logMessage("Task updated successfully.") }
@@ -118,9 +118,9 @@ class UpdateTaskUITest {
 
         every { useCase(any(), UUID.fromString(dummySession.userId)) } throws TaskWithMissingTitleException("Title is missing") andThen Unit
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
-        verify { viewer.logMessage("Error: Task title is missing.") }
+        verify { viewer.logMessage("Task title is missing.") }
         verify { viewer.logMessage("Task updated successfully.") }
     }
 
@@ -130,9 +130,9 @@ class UpdateTaskUITest {
 
         every { useCase(any(), UUID.fromString(dummySession.userId)) } throws TaskWithMissingDescriptionException("Description is missing") andThen Unit
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
-        verify { viewer.logMessage("Error: Task description is missing.") }
+        verify { viewer.logMessage("Task description is missing.") }
         verify { viewer.logMessage("Task updated successfully.") }
     }
 
@@ -141,9 +141,9 @@ class UpdateTaskUITest {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
         every { useCase(any(), UUID.fromString(dummySession.userId)) } throws TasksNotFoundException("Task not found")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
-        verify { viewer.logMessage("Error: Task not found.") }
+        verify { viewer.logMessage("Task not found.") }
     }
 
     @Test
@@ -151,7 +151,7 @@ class UpdateTaskUITest {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
         every { useCase(any(), UUID.fromString(dummySession.userId)) } throws CsvWriteException("CSV write failed")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Error: Failed to write task to CSV.") }
     }
@@ -161,7 +161,7 @@ class UpdateTaskUITest {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
         every { useCase(any(), UUID.fromString(dummySession.userId)) } throws RuntimeException("Unexpected Error")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Failed to update task: Unexpected Error") }
     }
@@ -175,7 +175,7 @@ class UpdateTaskUITest {
     @Test
     fun `test non-numeric input for task index`() {
         every { reader.readInput() } returns "abc"
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
         verify { viewer.logMessage("Invalid task number.") }
         confirmVerified(useCase)
     }
@@ -184,7 +184,7 @@ class UpdateTaskUITest {
     fun `test title with only whitespace then valid input`() {
         every { reader.readInput() } returnsMany listOf("1", "   ", "Valid Title", "Valid Description")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Task title cannot be empty. Please try again.") }
         verify { viewer.logMessage("Task updated successfully.") }
@@ -194,7 +194,7 @@ class UpdateTaskUITest {
     fun `test description with null then valid input`() {
         every { reader.readInput() } returnsMany listOf("1", "Valid Title", null, "Fixed Description")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Task description cannot be empty. Please try again.") }
         verify { viewer.logMessage("Task updated successfully.") }
@@ -203,7 +203,7 @@ class UpdateTaskUITest {
     @Test
     fun `test task index out of bounds`() {
         every { reader.readInput() } returns "100" // index = 100, index-1 = 99 -> out of bounds
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
         verify { viewer.logMessage("Invalid task number.") }
         confirmVerified(useCase)
     }
@@ -212,7 +212,7 @@ class UpdateTaskUITest {
     fun `test title input is null`() {
         every { reader.readInput() } returnsMany listOf("1", null, "Valid Title", "Valid Description")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Task title cannot be empty. Please try again.") }
         verify { viewer.logMessage("Task updated successfully.") }
@@ -222,7 +222,7 @@ class UpdateTaskUITest {
     fun `test description input is blank`() {
         every { reader.readInput() } returnsMany listOf("1", "Valid Title", "   ", "Fixed Description")
 
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Task description cannot be empty. Please try again.") }
         verify { viewer.logMessage("Task updated successfully.") }
@@ -231,7 +231,7 @@ class UpdateTaskUITest {
     @Test
     fun `test invalid task index (out of bounds)`() {
         every { reader.readInput() } returns "100"
-        updateTaskUI.execute()
+        updateTaskUI.execute(dummyTasks)
 
         verify { viewer.logMessage("Invalid task number.") }
         confirmVerified(useCase)
