@@ -31,7 +31,7 @@ class DeleteProjectWithTasksTest {
             useCase(project.id, admin)
         }
 
-        assertEquals("Can't delete project with active task!.", exception.message)
+        assertEquals("Only Admins can perform this action!.", exception.message)
     }
 }
 
