@@ -26,7 +26,7 @@ class LoginUseCase (
 
     private fun createAndSaveSession(user: UserEntity): SessionEntity {
         return SessionEntity(
-            userId = user.id.toString(),
+            userId = user.id,
             token = tokenProvider.generateToken(),
             loginTime = LocalDateTime.now()
         ).also {
