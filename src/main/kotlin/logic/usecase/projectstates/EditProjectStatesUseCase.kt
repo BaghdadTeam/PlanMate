@@ -32,7 +32,5 @@ class EditProjectStatesUseCase (
             timestamp = getFormattedTimestamp(),
         )
         return audit
-
     }
-
 }
