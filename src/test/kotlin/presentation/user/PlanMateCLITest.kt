@@ -11,7 +11,6 @@ import org.baghdad.presentation.user.CreateUserUI
 import org.baghdad.presentation.user.GetUserUI
 import org.baghdad.logic.model.entities.UserType
 
-// --- Fake Implementations ---
 class FakeReader(vararg inputs: String?) : Reader {
     private val queue = inputs.iterator()
     override fun readInput(): String? =
