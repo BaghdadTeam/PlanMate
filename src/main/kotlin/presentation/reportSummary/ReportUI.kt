@@ -1,4 +1,4 @@
-package logic.presentation
+package org.baghdad.presentation.reportSummary
 import org.baghdad.logic.usecase.report.ReportUseCase
 
 class ReportUI(

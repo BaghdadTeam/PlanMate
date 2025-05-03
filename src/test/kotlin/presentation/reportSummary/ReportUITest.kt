@@ -1,9 +1,10 @@
-package logic.presentation
+package presentation.reportSummary
 import org.junit.jupiter.api.Assertions.*
 import io.mockk.*
 import org.baghdad.logic.model.entities.ProjectSummaryReport
 import kotlin.test.*
 import org.baghdad.logic.usecase.report.ReportUseCase
+import org.baghdad.presentation.reportSummary.ReportUI
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
