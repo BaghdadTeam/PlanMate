@@ -1,9 +1,8 @@
 package org.baghdad
 
+import di.presentationModuleWithReaderAndViewer
 import org.baghdad.di.appModule
-import org.baghdad.di.useCaseModule
 import org.baghdad.di.domainModule
-import org.baghdad.di.presentationModule
 import org.baghdad.presentation.PlanMateCLI
 import org.koin.core.context.startKoin
 import org.koin.mp.KoinPlatform.getKoin
@@ -14,12 +13,12 @@ fun main() {
             listOf(
                 appModule,
                 domainModule,
-                presentationModule
+                presentationModuleWithReaderAndViewer
             )
         )
-        startKoin {
-            modules(appModule, useCaseModule)
-        }
+//        startKoin {
+//            modules(appModule, useCaseModule)
+//        }
 
         val cli: PlanMateCLI = getKoin().get()
         cli.start()

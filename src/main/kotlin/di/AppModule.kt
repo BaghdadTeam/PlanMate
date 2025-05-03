@@ -13,6 +13,9 @@ import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repository.user.UserRepositoryImpl
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.presentation.PlanMateCLI
+import org.baghdad.presentation.user.CreateUserUI
+import org.baghdad.presentation.user.GetUserUI
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -59,6 +62,10 @@ val appModule = module {
     // Data Sources & Repositories
     single { UserDataSource(get(named(Entities.User.name))) }
     single<UserRepository> { UserRepositoryImpl(get()) }
+
+    single { CreateUserUI(get(), get(),get()) }
+    single { GetUserUI(get(), get(),get()) }
+    single { PlanMateCLI(get(),get(),get(),get()) }
 }
 
 

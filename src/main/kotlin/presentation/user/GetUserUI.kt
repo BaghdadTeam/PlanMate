@@ -1,25 +1,24 @@
 package org.baghdad.presentation.user
 
-import org.baghdad.presentation.Console
 import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
-import org.baghdad.logic.usecase.user.GetUserResult
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
 
 class GetUserUI(
-    private val console: Console,
+    private val reader: Reader,  // تغيير من Console إلى Reader
+    private val viewer: Viewer,  // تغيير من Console إلى Viewer
     private val getByUsername: GetUserByUsernameUseCase
 ) {
     fun run() {
-        console.writeLine("=== Find User ===")
-        val username = console.readLine("Username: ").trim()
-
-        when (val result = getByUsername(username)) {
-            is GetUserResult.Success -> {
-                val u = result.user
-                console.writeLine("✅ Found: ${u.username}  Name: ${u.name}  Role: ${u.type}")
+        viewer.logMessage("=== Find User ===")
+        val username = reader.readInput()?.trim() ?: ""
+        val result = getByUsername(username)
+        result
+            .onSuccess { user ->
+                viewer.logMessage("✅ Found: ${user.username}  Name: ${user.name}  Role: ${user.type}")
             }
-            GetUserResult.NotFound -> {
-                console.writeLine("⚠️ User '$username' not found.")
+            .onFailure {
+                viewer.logMessage("⚠️ User '$username' not found.")
             }
-        }
     }
 }

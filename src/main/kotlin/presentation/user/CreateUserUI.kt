@@ -1,27 +1,41 @@
 package org.baghdad.presentation.user
 
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.usecase.user.CreateUserResult
+import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.usecase.user.CreateUserUseCase
-import org.baghdad.presentation.Console
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
 
 class CreateUserUI(
-    private val console: Console,
+    private val reader: Reader,
+    private val viewer: Viewer,
     private val createUser: CreateUserUseCase
 ) {
     fun run(currentUser: UserEntity?) {
-        if (currentUser?.type != org.baghdad.logic.model.entities.UserType.Admin) {
-            console.writeLine("🚫 Only administrators can create new users.")
+        if (currentUser?.type != UserType.Admin) {
+            viewer.logError("🚫 Only administrators can create new users.")
             return
         }
-        console.writeLine("=== Create New Mate ===")
-        val username = console.readLine("Username: ").trim()
-        val name     = console.readLine("Name:     ").trim()
-        val pass     = console.readLine("Password: ").trim()
 
-        when (val result = createUser(username, pass, name, currentUser)) {
-            is CreateUserResult.Success -> console.writeLine("✅ User '${result.user.username}' created successfully.")
-            is CreateUserResult.Failure -> console.writeLine("⚠️ Error: ${result.error}")
-        }
+        viewer.logMessage("=== Create New Mate ===")
+
+        val username = prompt("Username: ")
+        val name = prompt("Name: ")
+        val pass = prompt("Password: ")
+
+        val result = createUser(username, pass, name, currentUser)
+
+        result
+            .onSuccess { user ->
+                viewer.logMessage("✅ User '${user.username}' created successfully.")
+            }
+            .onFailure { ex ->
+                viewer.logError("⚠️ Error: ${ex.message}")
+            }
+    }
+
+    private fun prompt(label: String): String {
+        viewer.logMessage(label)
+        return reader.readInput()?.trim().orEmpty()
     }
 }

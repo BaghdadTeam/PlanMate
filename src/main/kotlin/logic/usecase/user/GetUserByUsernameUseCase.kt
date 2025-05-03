@@ -9,15 +9,14 @@ private val logger = KotlinLogging.logger {}
 class GetUserByUsernameUseCase(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(username: String): GetUserResult {
+    operator fun invoke(username: String): Result<UserEntity> {
         logger.info { "Looking up user '$username'" }
-        val user = userRepository.findByUsername(username)
-        return if (user != null) {
+
+        return runCatching {
+            val user = userRepository.findByUsername(username)
+                ?: throw NoSuchElementException("User '$username' not found.")
             logger.info { "User '$username' found" }
-            GetUserResult.Success(user)
-        } else {
-            logger.warn { "User '$username' not found" }
-            GetUserResult.NotFound
+            user
         }
     }
 }
