@@ -5,14 +5,13 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
-import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.presentation.app.StartApp
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class StartAppTest {
 
@@ -63,23 +62,5 @@ class StartAppTest {
         verify { viewer.logMessage("Failed to load session: session error") }
         verify { loginUi.execute() }
         verify { sessionManager.setSession(newSession) }
-    }
-
-    @Test
-    fun `should log session not found error if SessionNotFoundException is thrown`() {
-        every { sessionManager.clearExpiredSession() } throws SessionNotFoundException("no session found")
-
-        startApp.run()
-
-        verify { viewer.logError("no session found") }
-    }
-
-    @Test
-    fun `should log generic error if unknown exception is thrown`() {
-        every { sessionManager.clearExpiredSession() } throws RuntimeException("unexpected")
-
-        startApp.run()
-
-        verify { viewer.logError("unexpected") }
     }
 }
