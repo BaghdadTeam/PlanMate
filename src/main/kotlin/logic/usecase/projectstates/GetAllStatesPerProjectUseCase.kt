@@ -10,5 +10,4 @@ class GetAllStatesPerProjectUseCase(
     fun invoke(projectId: String): List<StateEntity>{
         return repository.getAllStatesPerProject(projectId)
     }
-
 }
