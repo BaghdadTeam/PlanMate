@@ -8,7 +8,7 @@ import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.AuditRepository
-import org.baghdad.logic.repositories.StateRepository
+import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.junit.jupiter.api.Assertions
@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 class StateTransitionUseCaseTest {
 
     private val taskRepository = mockk<TaskRepository>()
-    private val stateRepository = mockk<StateRepository>()
+    private val projectStatesRepository = mockk<ProjectStatesRepository>()
     private val auditRepository = mockk<AuditRepository>()
     private lateinit var service: StateTransitionUseCase
 
@@ -35,7 +35,7 @@ class StateTransitionUseCaseTest {
 
     @BeforeEach
     fun setup() {
-        service = StateTransitionUseCase(taskRepository, stateRepository, auditRepository)
+        service = StateTransitionUseCase(taskRepository, projectStatesRepository, auditRepository)
 
         val projectId = UUID.randomUUID().toString()
         val oldStateId = UUID.randomUUID().toString()
@@ -61,8 +61,8 @@ class StateTransitionUseCaseTest {
     @Test
     fun `should successfully transition task state`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
-        every { stateRepository.getStateById(task.stateId) } returns oldState
-        every { stateRepository.getStateById(newState.id.toString()) } returns newState
+        every { projectStatesRepository.getStateById(task.stateId) } returns oldState
+        every { projectStatesRepository.getStateById(newState.id.toString()) } returns newState
         every { taskRepository.updateTask(any()) } returns true
         every { auditRepository.addAuditEntry(any()) } returns true
 
@@ -75,8 +75,8 @@ class StateTransitionUseCaseTest {
     @Test
     fun `should fail if new state not exists`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
-        every { stateRepository.getStateById(task.stateId) } returns oldState
-        every { stateRepository.getStateById("invalid-state") } returns null
+        every { projectStatesRepository.getStateById(task.stateId) } returns oldState
+        every { projectStatesRepository.getStateById("invalid-state") } returns null
 
         try {
             service.changeTaskState(task.id.toString(), "invalid-state", user)
@@ -92,8 +92,8 @@ class StateTransitionUseCaseTest {
         val otherProjectState = newState.copy(projectId = UUID.randomUUID().toString())
 
         every { taskRepository.getTaskById(task.id.toString()) } returns task
-        every { stateRepository.getStateById(task.stateId) } returns oldState
-        every { stateRepository.getStateById(newState.id.toString()) } returns otherProjectState
+        every { projectStatesRepository.getStateById(task.stateId) } returns oldState
+        every { projectStatesRepository.getStateById(newState.id.toString()) } returns otherProjectState
 
         try {
             service.changeTaskState(task.id.toString(), newState.id.toString(), user)
@@ -108,7 +108,7 @@ class StateTransitionUseCaseTest {
     @Test
     fun `should fail if task update fails`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
-        every { stateRepository.getStateById(newState.id.toString()) } returns newState
+        every { projectStatesRepository.getStateById(newState.id.toString()) } returns newState
         every { taskRepository.updateTask(any()) } returns false
 
         try {
@@ -122,7 +122,7 @@ class StateTransitionUseCaseTest {
     @Test
     fun `should not fail if transitioning to the same state`() {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
-        every { stateRepository.getStateById(oldState.id.toString()) } returns oldState
+        every { projectStatesRepository.getStateById(oldState.id.toString()) } returns oldState
 
         service.changeTaskState(task.id.toString(), oldState.id.toString(), user)
 
@@ -136,7 +136,7 @@ class StateTransitionUseCaseTest {
         val newStateId = newState.id.toString()
 
         every { taskRepository.getTaskById(taskId) } returns task
-        every { stateRepository.getStateById(task.stateId) } returns null // Simulate missing current state
+        every { projectStatesRepository.getStateById(task.stateId) } returns null // Simulate missing current state
 
         val exception = assertThrows<Exception> {
             service.changeTaskState(taskId, newStateId, user)
@@ -153,8 +153,8 @@ class StateTransitionUseCaseTest {
         val newStateId = newState.id.toString()
 
         every { taskRepository.getTaskById(taskId) } returns task
-        every { stateRepository.getStateById(task.stateId) } returns oldState
-        every { stateRepository.getStateById(newStateId) } returns newState
+        every { projectStatesRepository.getStateById(task.stateId) } returns oldState
+        every { projectStatesRepository.getStateById(newStateId) } returns newState
         every { taskRepository.updateTask(any()) } returns false // Simulate failure
         every { auditRepository.addAuditEntry(any()) } returns true
 

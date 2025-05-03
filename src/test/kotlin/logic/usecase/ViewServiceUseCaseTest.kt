@@ -5,14 +5,14 @@ import io.mockk.every
 import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.repositories.StateRepository
+import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.junit.jupiter.api.Test
 import java.util.*
 
 class ViewServiceUseCaseTest {
     private val taskRepository: TaskRepository = mockk()
-    private val stateRepository: StateRepository = mockk()
+    private val stateRepository: ProjectStatesRepository = mockk()
     private val useCase = ViewServiceUseCase(taskRepository, stateRepository)
 
     @Test
