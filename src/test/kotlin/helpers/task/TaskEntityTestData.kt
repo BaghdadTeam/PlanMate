@@ -4,12 +4,49 @@ import org.baghdad.logic.model.entities.TaskEntity
 
 object TaskEntityTestData {
 
-    fun normalTask() = createTaskHelper(
+    val normalTask = createTaskHelper(
         title = "Task Management",
         description = "This is task due thursday for the chance program",
-        stateId = "123123",
-        projectId = "321321",
+        stateId = "3",
+        projectId = "1",
         creatorId = "50012"
+    )
+
+    val tasksInSameProject = listOf(
+        normalTask,
+        normalTask.copy(
+            title = "Plan mate",
+            stateId = "3",
+        ),
+        normalTask.copy(
+            title = "Food App",
+            stateId = "2",
+        )
+    )
+
+    val tasks = listOf(
+        tasksInSameProject,
+        listOf(
+            normalTask.copy(
+                projectId = "3",
+                stateId = "5"
+            )
+        )
+    ).flatten()
+
+    val randomTask = normalTask.copy(
+        projectId = "99",
+        stateId = "500"
+    )
+
+    val tasksInSameState = listOf(
+        normalTask,
+        normalTask.copy(
+            title = "Plan mate",
+        ),
+        normalTask.copy(
+            title = "Food App",
+        )
     )
 
     fun taskWithEmptyTitle() = createTaskHelper(

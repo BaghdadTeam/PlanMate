@@ -22,10 +22,10 @@ class StartApp(
             }
             sessionManger.setSession(session)
 
-        } catch (e: SessionNotFoundException) {
-            viewer.logError(e.message ?: "No session found")
-        } catch (e: Exception) {
-            viewer.logError(e.message ?: "Something went wrong")
+        } catch (_: SessionNotFoundException) {
+            viewer.logError("No session found")
+        } catch (_: Exception) {
+            viewer.logError("Something went wrong")
         }
     }
 }
