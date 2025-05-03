@@ -11,7 +11,8 @@ class ReportServiceTest {
 
     private lateinit var projectRepo: ProjectRepository
     private lateinit var taskRepo: TaskRepository
-    private lateinit var stateRepo: StateRepository
+    private lateinit var stateRepo: ProjectStatesRepository
+
     private lateinit var reportService: ReportService
 
     private val projectId = UUID.randomUUID()

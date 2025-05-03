@@ -1,13 +1,13 @@
 package org.baghdad.logic.usecase.report
 import org.baghdad.logic.model.entities.ProjectSummaryReport
 import org.baghdad.logic.repositories.ProjectRepository
-import org.baghdad.logic.repositories.StateRepository
+import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 
 class ReportService (
     private val projectRepository: ProjectRepository,
     private val taskRepository: TaskRepository,
-    private val stateRepository: StateRepository
+    private val stateRepository: ProjectStatesRepository
 ) {
     fun summary(): List<ProjectSummaryReport> {
         val projects = projectRepository.getAllProjects()
