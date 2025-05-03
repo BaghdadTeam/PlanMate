@@ -6,16 +6,22 @@ import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.utils.getFormattedTimestamp
+import java.util.UUID
 
 class DeleteTaskUseCase(
     private val taskRepository: TaskRepository,
-    private val auditRepository: AuditRepository
+    private val auditRepository: AuditRepository,
+    private val userRepository: UserRepository
 ) {
 
-    operator fun invoke(taskId: String, user: UserEntity) {
+    operator fun invoke(taskId: String, userId: UUID) {
         val task = taskRepository.getTaskById(taskId)
         taskRepository.deleteTask(taskId)
+
+        val user = userRepository.getUserById(userId)
+
         val audit = logTaskDeletion(task, user)
         auditRepository.addAuditEntry(audit)
     }

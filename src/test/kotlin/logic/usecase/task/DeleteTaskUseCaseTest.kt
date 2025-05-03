@@ -9,6 +9,7 @@ import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.DeleteTaskUseCase
 import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
@@ -18,6 +19,7 @@ class DeleteTaskUseCaseTest {
     private lateinit var taskRepository: TaskRepository
     private lateinit var auditRepository: AuditRepository
     private lateinit var deleteTaskUseCase: DeleteTaskUseCase
+    private lateinit var userRepository: UserRepository
 
     private val user = UserEntity(
         name = "Youssef Mohamed",
@@ -30,7 +32,8 @@ class DeleteTaskUseCaseTest {
     fun setUp() {
         taskRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        deleteTaskUseCase = DeleteTaskUseCase(taskRepository, auditRepository)
+        userRepository = mockk(relaxed = true)
+        deleteTaskUseCase = DeleteTaskUseCase(taskRepository, auditRepository, userRepository)
     }
 
     @Test
@@ -39,12 +42,14 @@ class DeleteTaskUseCaseTest {
         val taskId = task.id.toString()
 
         every { taskRepository.getTaskById(taskId) } returns task
+        every { userRepository.getUserById(user.id) } returns user
 
-        deleteTaskUseCase(taskId, user)
+        deleteTaskUseCase(taskId, user.id)
 
         verifySequence {
             taskRepository.getTaskById(taskId)
             taskRepository.deleteTask(taskId)
+            userRepository.getUserById(user.id)
             auditRepository.addAuditEntry(match {
                 it.entityType == Entities.Task.name &&
                         it.entityId == taskId &&
@@ -53,4 +58,5 @@ class DeleteTaskUseCaseTest {
             })
         }
     }
+
 }
