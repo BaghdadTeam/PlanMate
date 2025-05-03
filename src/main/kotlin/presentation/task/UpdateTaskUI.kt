@@ -9,6 +9,7 @@ import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import java.util.UUID
 
 class UpdateTaskUI(
     private val useCase: UpdateTaskUseCase,
@@ -69,7 +70,7 @@ class UpdateTaskUI(
     private fun tryUpdateTask(task: TaskEntity) {
         try {
             val session = sessionManager.currentSession
-            useCase(task, session.userId)
+            useCase(task, UUID.fromString(session.userId))
             viewer.logMessage("Task updated successfully.")
         } catch (_: TaskWithMissingTitleException) {
             viewer.logMessage("Task title is missing.")

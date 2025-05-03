@@ -15,7 +15,6 @@ import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
-import org.baghdad.utils.getFormattedTimestamp
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
@@ -52,9 +51,9 @@ class UpdateTaskUseCaseTest {
 
         every { taskRepository.getTaskById(task.id.toString()) } returns oldTask
         every { taskRepository.updateTask(task) } returns true
-        every { userRepository.getUserById(user.id.toString()) } returns user
+        every { userRepository.getUserById(user.id) } returns user
 
-        updateTaskUseCase.invoke(task, user.id.toString())
+        updateTaskUseCase.invoke(task, user.id)
 
         val auditSlot = slot<AuditEntity>()
         verify { taskRepository.updateTask(task) }
@@ -75,7 +74,7 @@ class UpdateTaskUseCaseTest {
         every { taskRepository.getTaskById(task.id.toString()) } returns task
         every { taskRepository.updateTask(task) } returns true
 
-        updateTaskUseCase.invoke(task, user.id.toString())
+        updateTaskUseCase.invoke(task, user.id)
 
         verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
         verify { taskRepository.updateTask(task) }
@@ -86,7 +85,7 @@ class UpdateTaskUseCaseTest {
         val task = TaskEntityTestData.normalTask.copy(title = "   ")
 
         assertThrows<TaskWithMissingTitleException> {
-            updateTaskUseCase.invoke(task, user.id.toString())
+            updateTaskUseCase.invoke(task, user.id)
         }
 
         verify(exactly = 0) { taskRepository.updateTask(any()) }
@@ -98,7 +97,7 @@ class UpdateTaskUseCaseTest {
         val task = TaskEntityTestData.normalTask.copy(description = "   ")
 
         assertThrows<TaskWithMissingDescriptionException> {
-            updateTaskUseCase.invoke(task, user.id.toString())
+            updateTaskUseCase.invoke(task, user.id)
         }
 
         verify(exactly = 0) { taskRepository.updateTask(any()) }
@@ -112,7 +111,7 @@ class UpdateTaskUseCaseTest {
         every { taskRepository.updateTask(task) } returns false
 
         val exception = assertThrows<Exception> {
-            updateTaskUseCase.invoke(task, user.id.toString())
+            updateTaskUseCase.invoke(task, user.id)
         }
 
         assertThat(exception.message).isEqualTo("Failed to update task")
