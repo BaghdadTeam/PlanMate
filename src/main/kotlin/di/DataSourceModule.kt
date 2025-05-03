@@ -1,22 +1,18 @@
 package org.baghdad.di
 
 import org.baghdad.data.datasource.CsvMapper
-import org.baghdad.data.datasource.csv.*
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.datasource.mapper.project.ProjectMapper
+import org.baghdad.data.datasource.csv.CsvDataSourceImpl
+import org.baghdad.data.datasource.csv.CsvReader
+import org.baghdad.data.datasource.csv.CsvWriter
+import org.baghdad.data.datasource.csv.StorageFileNames
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
+import org.baghdad.data.datasource.mapper.project.ProjectMapper
 import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mapper.state.StateMapper
 import org.baghdad.data.datasource.mapper.task.TaskMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
-import org.baghdad.data.local.ProjectDataSource
-import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.data.local.SessionDataSource
-import org.baghdad.data.local.TaskDataSource
-import org.baghdad.data.local.UserDataSource
-import org.baghdad.data.repositories.authentication.TokenProviderImpl
 import org.baghdad.logic.model.entities.*
-import org.baghdad.logic.repositories.TokenProvider
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -32,8 +28,7 @@ inline fun <reified T : Any> Module.bindCsvDataSource(name: Entities) {
     }
 }
 
-val appModule = module {
-
+val dataSourceModule = module {
 
     val entitiesInfo = listOf(
         Triple(Entities.Audit, StorageFileNames.auditFile, AuditMapper()),
@@ -52,32 +47,23 @@ val appModule = module {
     }
 
     bindCsvDataSource<AuditEntity>(Entities.Audit)
+    single<DataSource<AuditEntity>> {get(named(Entities.Audit.name)) }
+
     bindCsvDataSource<ProjectEntity>(Entities.Project)
+    single<DataSource<ProjectEntity>> {get(named(Entities.Project.name)) }
+
     bindCsvDataSource<StateEntity>(Entities.State)
+    single<DataSource<StateEntity>> {get(named(Entities.State.name)) }
+
     bindCsvDataSource<UserEntity>(Entities.User)
+    single<DataSource<UserEntity>> { get(named(Entities.User.name)) }
+
     bindCsvDataSource<SessionEntity>(Entities.Session)
+    single<DataSource<SessionEntity>> {get(named(Entities.Session.name)) }
+
     bindCsvDataSource<TaskEntity>(Entities.Task)
+    single<DataSource<TaskEntity>> {get(named(Entities.Task.name)) }
 
-    single(named(Entities.Project)) {
-        ProjectDataSource(
-            get(named(Entities.Project)),
-            get(named(Entities.State)),
-            get(named(Entities.Task))
-        )
-    }
-    single(named(Entities.State)) {
-        ProjectStatesDataSource(
-            get(named(Entities.State)),
-            get(named(Entities.Task))
-        )
-    }
 
-    single(named(Entities.Task)) { TaskDataSource(get(named(Entities.Task))) }
-
-    single(named(Entities.Session)) { SessionDataSource(get(named(Entities.Session))) }
-
-    single(named(Entities.User)) { UserDataSource(get(named(Entities.User))) }
-
-    single<TokenProvider> { TokenProviderImpl() }
 }
 
