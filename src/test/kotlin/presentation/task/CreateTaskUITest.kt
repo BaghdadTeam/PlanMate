@@ -38,9 +38,7 @@ class CreateTaskUITest {
     @BeforeEach
     fun setUp() {
         createTaskUseCase = mockk(relaxed = true)
-        sessionManager = mockk {
-            every { currentSession } returns dummySession
-        }
+        sessionManager = mockk { every { currentSession } returns dummySession }
         viewer = mockk(relaxed = true)
         reader = mockk()
         createTaskUI = CreateTaskUI(createTaskUseCase, sessionManager, viewer, reader)
