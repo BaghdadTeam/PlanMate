@@ -10,8 +10,6 @@ import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
-import org.baghdad.logic.model.exceptions.TaskWithMissingProjectIdException
-import org.baghdad.logic.model.exceptions.TaskWithMissingStateIdException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
@@ -82,32 +80,6 @@ class CreateTaskUseCaseTest {
         }
 
         assertThat(exception).hasMessageThat().contains("description cannot be empty")
-        verify { taskRepository wasNot Called }
-        verify { auditRepository wasNot Called }
-    }
-
-    @Test
-    fun `should throw TaskWithMissingStateIdException when stateId is blank`() {
-        val task = TaskEntityTestData.taskWithBlankStateId()
-
-        val exception = assertThrows<TaskWithMissingStateIdException> {
-            createTaskUseCase(task, user.id)
-        }
-
-        assertThat(exception).hasMessageThat().contains("state ID cannot be empty")
-        verify { taskRepository wasNot Called }
-        verify { auditRepository wasNot Called }
-    }
-
-    @Test
-    fun `should throw TaskWithMissingProjectIdException when projectId is blank`() {
-        val task = TaskEntityTestData.taskWithBlankProjectId()
-
-        val exception = assertThrows<TaskWithMissingProjectIdException> {
-            createTaskUseCase(task, user.id)
-        }
-
-        assertThat(exception).hasMessageThat().contains("project ID cannot be empty")
         verify { taskRepository wasNot Called }
         verify { auditRepository wasNot Called }
     }

@@ -45,8 +45,6 @@ class CreateTaskUseCase(
     private fun validateTask(task: TaskEntity): TaskEntity {
         if (task.title.isBlank()) throw TaskWithMissingTitleException("Task title cannot be empty or blank")
         if (task.description.isBlank()) throw TaskWithMissingDescriptionException("Task description cannot be empty or blank")
-        if (task.stateId.isBlank()) throw TaskWithMissingStateIdException("Task state ID cannot be empty or blank")
-        if (task.projectId.isBlank()) throw TaskWithMissingProjectIdException("Task project ID cannot be empty or blank")
 
         return task
     }
