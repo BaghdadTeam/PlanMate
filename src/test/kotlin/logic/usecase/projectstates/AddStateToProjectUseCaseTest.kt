@@ -2,6 +2,7 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -50,6 +51,7 @@ class AddStateToProjectUseCaseTest {
     fun `should create state and add audit when state is valid`() {
         // given
         val state = ProjectStatesEntityTestData.todoState()
+        every { userRepository.getUserById(adminUser.id) } returns adminUser
 
         // when
         createStateUseCase.invoke(state, adminUser.id)
@@ -81,11 +83,11 @@ class AddStateToProjectUseCaseTest {
     fun `should throw exception when state name is empty`() {
         // given
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
+        every { userRepository.getUserById(adminUser.id) } returns adminUser
         // Then
         val exception = assertThrows<Exception> {
             createStateUseCase.invoke(state, adminUser.id)
         }
         Truth.assertThat(exception.message).contains("state name can't be empty")
     }
-
 }
