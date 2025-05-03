@@ -1,13 +1,13 @@
 package org.baghdad.logic.usecase
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.repositories.StateRepository
+import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 
 
 class ViewServiceUseCase(
     private val taskRepository: TaskRepository,
-    private val stateRepository: StateRepository
+    private val stateRepository: ProjectStatesRepository
 ) {
 
     fun swimlane(projectId: String): Result<Map<StateEntity, List<TaskEntity>>> {
