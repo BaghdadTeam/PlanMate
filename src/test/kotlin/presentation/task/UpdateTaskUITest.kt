@@ -1,0 +1,240 @@
+package presentation.task
+
+import com.google.common.truth.Truth.assertThat
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.entities.SessionEntity
+import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.CsvWriteException
+import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
+import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
+import org.baghdad.logic.model.exceptions.TasksNotFoundException
+import org.baghdad.logic.usecase.task.UpdateTaskUseCase
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.task.UpdateTaskUI
+import org.junit.jupiter.api.BeforeEach
+import java.time.LocalDateTime
+import java.util.UUID
+import kotlin.test.Test
+
+class UpdateTaskUITest {
+
+    private lateinit var useCase: UpdateTaskUseCase
+    private lateinit var sessionManager: SessionManager
+    private lateinit var viewer: Viewer
+    private lateinit var reader: Reader
+    private lateinit var updateTaskUI: UpdateTaskUI
+
+    private val dummyTasks = listOf(
+        TaskEntity(
+            title = "Old Title",
+            description = "Old Description",
+            stateId = "state1",
+            projectId = "project1",
+            creatorId = "user123"
+        ),
+        TaskEntity(
+            title = "Another Task",
+            description = "Some Desc",
+            stateId = "state2",
+            projectId = "project1",
+            creatorId = "user123"
+        )
+    )
+
+    private val dummySession = SessionEntity(
+        id = UUID.randomUUID(),
+        userId = "user123",
+        token = "dummy-token",
+        loginTime = LocalDateTime.now().minusMinutes(10)
+    )
+
+    @BeforeEach
+    fun setUp() {
+        useCase = mockk(relaxed = true)
+        sessionManager = mockk {
+            every { currentSession } returns dummySession
+        }
+        viewer = mockk(relaxed = true)
+        reader = mockk()
+        updateTaskUI = UpdateTaskUI(useCase, dummyTasks, sessionManager, viewer, reader)
+    }
+
+    @Test
+    fun `test invalid task number`() {
+        every { reader.readInput() } returns "5"
+        updateTaskUI.execute()
+        verify { viewer.logMessage("Invalid task number.") }
+        confirmVerified(useCase)
+    }
+
+    @Test
+    fun `entering null for task number`() {
+        every { reader.readInput() } returns null
+        updateTaskUI.execute()
+        verify { viewer.logMessage("Invalid task number.") }
+        confirmVerified(useCase)
+    }
+
+    @Test
+    fun `test valid task update success`() {
+        every { reader.readInput() } returnsMany listOf("1", "New Title", "New Description")
+
+        updateTaskUI.execute()
+
+        val expectedTask = dummyTasks[0].copy(title = "New Title", description = "New Description")
+
+        verify { useCase(expectedTask, dummySession.userId) }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test empty title then valid input`() {
+        every { reader.readInput() } returnsMany listOf("1", "", "Valid Title", "Valid Description")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Task title cannot be empty. Please try again.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test empty description then valid input`() {
+        every { reader.readInput() } returnsMany listOf("1", "New Title", "", "New Description")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Task description cannot be empty. Please try again.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test TaskWithMissingTitleException is retried`() {
+        every { reader.readInput() } returnsMany listOf("1", "", "Fixed Title", "Valid")
+
+        every { useCase(any(), dummySession.userId) } throws TaskWithMissingTitleException("Title is missing") andThen Unit
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Error: Task title is missing.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test TaskWithMissingDescriptionException is retried`() {
+        every { reader.readInput() } returnsMany listOf("1", "Valid", "", "Fixed Description")
+
+        every { useCase(any(), dummySession.userId) } throws TaskWithMissingDescriptionException("Description is missing") andThen Unit
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Error: Task description is missing.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test TasksNotFoundException is handled`() {
+        every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
+        every { useCase(any(), dummySession.userId) } throws TasksNotFoundException("Task not found")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Error: Task not found.") }
+    }
+
+    @Test
+    fun `test CsvWriteException is handled`() {
+        every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
+        every { useCase(any(), dummySession.userId) } throws CsvWriteException("CSV write failed")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Error: Failed to write task to CSV.") }
+    }
+
+    @Test
+    fun `test unknown exception is handled`() {
+        every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
+        every { useCase(any(), dummySession.userId) } throws RuntimeException("Unexpected Error")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Failed to update task: Unexpected Error") }
+    }
+
+    @Test
+    fun `test expired session returns true`() {
+        val expiredSession = dummySession.copy(loginTime = LocalDateTime.now().minusMinutes(31))
+        assertThat(expiredSession.isExpired()).isTrue()
+    }
+
+    @Test
+    fun `test non-numeric input for task index`() {
+        every { reader.readInput() } returns "abc"
+        updateTaskUI.execute()
+        verify { viewer.logMessage("Invalid task number.") }
+        confirmVerified(useCase)
+    }
+
+    @Test
+    fun `test title with only whitespace then valid input`() {
+        every { reader.readInput() } returnsMany listOf("1", "   ", "Valid Title", "Valid Description")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Task title cannot be empty. Please try again.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test description with null then valid input`() {
+        every { reader.readInput() } returnsMany listOf("1", "Valid Title", null, "Fixed Description")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Task description cannot be empty. Please try again.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test task index out of bounds`() {
+        every { reader.readInput() } returns "100" // index = 100, index-1 = 99 -> out of bounds
+        updateTaskUI.execute()
+        verify { viewer.logMessage("Invalid task number.") }
+        confirmVerified(useCase)
+    }
+
+    @Test
+    fun `test title input is null`() {
+        every { reader.readInput() } returnsMany listOf("1", null, "Valid Title", "Valid Description")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Task title cannot be empty. Please try again.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test description input is blank`() {
+        every { reader.readInput() } returnsMany listOf("1", "Valid Title", "   ", "Fixed Description")
+
+        updateTaskUI.execute()
+
+        verify { viewer.logMessage("Task description cannot be empty. Please try again.") }
+        verify { viewer.logMessage("Task updated successfully.") }
+    }
+
+    @Test
+    fun `test invalid task index (out of bounds)`() {
+        every { reader.readInput() } returns "100" // Task index = 100, but there are less tasks (assuming tasks.size < 100)
+        updateTaskUI.execute()
+
+        // Verifying the 'Invalid task number.' message gets logged when the index is out of bounds
+        verify { viewer.logMessage("Invalid task number.") }
+        confirmVerified(useCase)
+    }
+}
