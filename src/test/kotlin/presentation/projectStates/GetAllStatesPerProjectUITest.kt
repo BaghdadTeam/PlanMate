@@ -9,6 +9,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
 import org.junit.jupiter.api.BeforeEach
+import java.util.UUID
 import kotlin.test.Test
 
 class GetAllStatesPerProjectUITest {
@@ -29,14 +30,15 @@ class GetAllStatesPerProjectUITest {
 
     @Test
     fun `test valid project ID with multiple states`() {
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
+        val creatorId = UUID.randomUUID()
         val states = listOf(
-            StateEntity(name = "Backlog", projectId = projectId, creatorId = "creatorId"),
-            StateEntity(name = "In Progress", projectId = projectId, creatorId = "creatorId"),
-            StateEntity(name = "Done", projectId = projectId, creatorId = "creatorId")
+            StateEntity(name = "Backlog", projectId = projectId, creatorId = creatorId),
+            StateEntity(name = "In Progress", projectId = projectId, creatorId = creatorId),
+            StateEntity(name = "Done", projectId = projectId, creatorId = creatorId)
         )
 
-        every { reader.readInput() } returns projectId
+        every { reader.readInput() } returns projectId.toString()
         every { useCase.invoke(projectId) } returns states
 
         getAllStatesPerProjectUI.execute()
@@ -49,8 +51,8 @@ class GetAllStatesPerProjectUITest {
 
     @Test
     fun `test valid project ID with no states`() {
-        val projectId = "emptyProject"
-        every { reader.readInput() } returns projectId
+        val projectId = UUID.randomUUID()
+        every { reader.readInput() } returns projectId.toString()
         every { useCase.invoke(projectId) } returns emptyList()
 
         getAllStatesPerProjectUI.execute()
@@ -60,8 +62,9 @@ class GetAllStatesPerProjectUITest {
 
     @Test
     fun `test blank input retried until valid project ID`() {
+        val projectId = UUID.randomUUID()
         every { reader.readInput() } returnsMany listOf("", "  ", "validProjectId")
-        every { useCase.invoke("validProjectId") } returns emptyList()
+        every { useCase.invoke(projectId) } returns emptyList()
 
         getAllStatesPerProjectUI.execute()
 

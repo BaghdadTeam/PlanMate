@@ -39,8 +39,8 @@ class DeleteStateForProjectUITest {
 
     @Test
     fun `execute should call useCase with correct values`() {
-        val stateId = "state-123"
-        every { reader.readInput() } returns stateId
+        val stateId = UUID.randomUUID()
+        every { reader.readInput() } returns stateId.toString()
 
         ui.execute()
 

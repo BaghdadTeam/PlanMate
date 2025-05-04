@@ -24,7 +24,7 @@ class EditProjectStateUITest {
     private lateinit var reader: Reader
     private lateinit var ui: EditProjectStateUI
     private val session = mockk<SessionEntity>()
-    private val userId = UUID.randomUUID().toString()
+    private val userId = UUID.randomUUID()
 
     @BeforeEach
     fun setUp() {
@@ -33,7 +33,7 @@ class EditProjectStateUITest {
         viewer = mockk(relaxed = true)
         reader = mockk()
 
-        every { session.userId } returns userId
+        every { session.userId } returns userId.toString()
         every { sessionManager.currentSession } returns session
 
         ui = EditProjectStateUI(useCase, sessionManager, viewer, reader)
@@ -43,9 +43,9 @@ class EditProjectStateUITest {
     fun `execute should call useCase with correct stateId and newState`() {
         val stateId = "state-001"
         val name = "In Review"
-        val projectId = "proj-001"
+        val projectId = UUID.randomUUID()
 
-        every { reader.readInput() } returnsMany listOf(stateId, name, projectId)
+        every { reader.readInput() } returnsMany listOf(stateId, name, projectId.toString())
 
         ui.execute(projectId)
 
@@ -76,10 +76,10 @@ class EditProjectStateUITest {
         )
         method.isAccessible = true
 
-        val state = StateEntity(name = "To Do", projectId = "proj-123", creatorId = userId)
+        val state = StateEntity(name = "To Do", projectId = UUID.randomUUID(), creatorId = userId)
         every { useCase.invoke(any(), any(), any()) } throws Exception("state not found")
 
-        method.invoke(ui, "state-xyz", state, UUID.fromString(userId))
+        method.invoke(ui, "state-xyz", state, userId)
 
         verify { viewer.logError("Failed to update state: state not found") }
     }

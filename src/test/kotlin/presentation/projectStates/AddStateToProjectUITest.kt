@@ -25,7 +25,7 @@ class AddStateToProjectUITest {
     private lateinit var ui: AddStateToProjectUI
 
     private val fakeSession = mockk<SessionEntity>(relaxed = true)
-    private val userId = UUID.randomUUID().toString()
+    private val userId = UUID.randomUUID()
 
     @BeforeEach
     fun setup() {
@@ -33,7 +33,7 @@ class AddStateToProjectUITest {
         sessionManager = mockk()
         viewer = mockk(relaxed = true)
         reader = mockk()
-        every { fakeSession.userId } returns userId
+        every { fakeSession.userId } returns userId.toString()
         every { sessionManager.currentSession } returns fakeSession
 
         ui = AddStateToProjectUI(useCase, sessionManager, viewer, reader)
@@ -52,10 +52,10 @@ class AddStateToProjectUITest {
             useCase.invoke(
                 match {
                     it.name == stateName &&
-                            it.projectId == projectId &&
+                            it.projectId.toString() == projectId &&
                             it.creatorId == userId
                 },
-                UUID.fromString(userId)
+                userId
             )
         }
         verify { viewer.logMessage("State 'To Do' added to project successfully.") }
@@ -83,14 +83,17 @@ class AddStateToProjectUITest {
 
     @Test
     fun `tryAddState should show error message when useCase throws exception`() {
-        val state = StateEntity(name = "Done", projectId = "project-123", creatorId = userId)
-        val uuid = UUID.fromString(userId)
+        // given
+        val state = StateEntity(name = "Done", projectId = UUID.randomUUID(), creatorId = userId)
+        val uuid = userId
         every { useCase.invoke(any(), any()) } throws RuntimeException("Something went wrong")
 
+        //when
         val method = ui.javaClass.getDeclaredMethod("tryAddState", StateEntity::class.java, UUID::class.java)
         method.isAccessible = true
         method.invoke(ui, state, uuid)
 
+        // then
         verify { viewer.logError("Failed to add state: Something went wrong") }
     }
 }

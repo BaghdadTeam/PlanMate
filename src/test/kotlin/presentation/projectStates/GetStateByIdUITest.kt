@@ -30,10 +30,10 @@ class GetStateByIdUITest {
 
     @Test
     fun `should display state name when found`() {
-        val state = StateEntity(name = "In Progress", projectId = "123", creatorId = "456")
+        val state = StateEntity(name = "In Progress", projectId = UUID.randomUUID(), creatorId = UUID.randomUUID())
 
         every { reader.readInput() } returns state.id.toString()
-        every { useCase.invoke(state.id.toString()) } returns state
+        every { useCase.invoke(state.id) } returns state
 
         getStateByIdUI.execute()
 
@@ -56,10 +56,10 @@ class GetStateByIdUITest {
     fun `should retry when input is blank`() {
         val id = UUID.randomUUID()
         every { reader.readInput() } returnsMany listOf("", "  ", "$id")
-        every { useCase.invoke(id.toString()) } returns StateEntity(
+        every { useCase.invoke(id) } returns StateEntity(
             id = id, name = "To Do",
-            projectId = "123",
-            creatorId = "456"
+            projectId = UUID.randomUUID(),
+            creatorId = UUID.randomUUID()
         )
 
         getStateByIdUI.execute()
