@@ -7,18 +7,18 @@ import org.baghdad.logic.model.entities.AuditEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
-import org.baghdad.logic.repositories.StateRepository
+import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 
 class StateTransitionUseCase(
     private val taskRepository: TaskRepository,
-    private val stateRepository: StateRepository,
+    private val projectStatesRepository: ProjectStatesRepository,
     private val auditRepository: AuditRepository
 ) {
     fun changeTaskState(taskId: String, newStateId: String, user: UserEntity) {
         val task = taskRepository.getTaskById(taskId)
 
-        val currentState = stateRepository.getStateById(task.stateId)
+        val currentState = projectStatesRepository.getStateById(task.stateId)
             ?: throw Exception("Current state not found")
 
         if (currentState.id.toString() == newStateId) {
@@ -34,7 +34,7 @@ class StateTransitionUseCase(
     }
 
     private fun validateNewState(projectId: String, newStateId: String) =
-        stateRepository.getStateById(newStateId)?.takeIf { it.projectId == projectId }
+        projectStatesRepository.getStateById(newStateId)?.takeIf { it.projectId == projectId }
             ?: throw NotFoundException("State not found in this project")
 
     private fun updateTaskState(taskId: String, newStateId: String): Boolean {

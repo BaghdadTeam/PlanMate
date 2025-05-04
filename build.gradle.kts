@@ -58,6 +58,7 @@ tasks.jacocoTestReport {
             exclude("**/di/**") // Exclude DI package
             exclude("**/model/**") // Exclude entities package
             exclude("**/generated/**") // Exclude generated code if any
+            exclude("**/main.kt") // Exclude main.kt file
         }
     )
 
@@ -74,6 +75,7 @@ tasks.jacocoTestCoverageVerification {
             exclude("**/generated/**")
             exclude("**/di/**")
             exclude("**/model/**")
+            exclude("**/main.kt") // Exclude main.kt file
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
@@ -117,6 +119,7 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
             exclude("**/generated/**")
             exclude("**/di/**")
             exclude("**/model/**")
+            exclude("**/main.kt") // Exclude main.kt file
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
