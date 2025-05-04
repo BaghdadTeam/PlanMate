@@ -1,5 +1,4 @@
 package org.baghdad.di
-
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
