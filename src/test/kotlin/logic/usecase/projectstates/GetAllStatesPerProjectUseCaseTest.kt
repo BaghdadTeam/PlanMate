@@ -32,23 +32,29 @@ class GetAllStatesPerProjectUseCaseTest {
     fun `should return list of sates when there is a states for project`() {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        every { statesRepository.getAllStatesPerProject("123") } returns projectStates
+        val stateId = projectStates[0].projectId
+        every { statesRepository.getAllStatesPerProject(stateId) } returns projectStates
+
         // When
-        val result = getStatesUseCase.invoke("123")
+        val result = getStatesUseCase.invoke(stateId)
+
         // Then
         Truth.assertThat(result).isEqualTo(projectStates)
     }
 
     @Test
-    fun `should return empty list of sates when there is a states for project`() {
+    fun `should return empty list of states when there is no states for project`() {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        every { statesRepository.getAllStatesPerProject("123") } returns projectStates
+        val stateId = projectStates[0].projectId
+        every { statesRepository.getAllStatesPerProject(stateId) } returns emptyList()
+
         // When
-        val result = getStatesUseCase.invoke("154")
+        val result = getStatesUseCase.invoke(stateId)
+
         // Then
         Truth.assertThat(result).isEmpty()
-        verify { statesRepository.getAllStatesPerProject("154") }
+        verify { statesRepository.getAllStatesPerProject(stateId) }
     }
 
 
