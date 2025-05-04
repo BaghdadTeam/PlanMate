@@ -55,7 +55,7 @@ class GetStateByIdUseCaseTest {
 
     }
     @Test
-    fun `should return empty list of states when there is no states for project`() {
+    fun `should throw exception when there is no states for project`() {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val stateId = projectStates[0].projectId
