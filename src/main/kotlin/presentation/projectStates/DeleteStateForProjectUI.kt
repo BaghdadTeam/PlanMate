@@ -19,7 +19,7 @@ class DeleteStateForProjectUI(
 
         val stateId = promptForStateId() ?: return
 
-        tryDeleteState(stateId, userId)
+        tryDeleteState(UUID.fromString(stateId), userId)
     }
 
     private fun promptForStateId(): String? {
@@ -31,7 +31,7 @@ class DeleteStateForProjectUI(
         }
     }
 
-    private fun tryDeleteState(stateId: String, userId: UUID) {
+    private fun tryDeleteState(stateId: UUID, userId: UUID) {
         try {
             useCase.invoke(stateId, userId)
             viewer.logMessage("State deleted successfully.")
