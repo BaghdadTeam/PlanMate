@@ -4,7 +4,6 @@ import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.usecase.authentication.LogoutUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import sun.jvm.hotspot.HelloWorld.e
 
 class LogoutUi(
     private val useCase: LogoutUseCase,

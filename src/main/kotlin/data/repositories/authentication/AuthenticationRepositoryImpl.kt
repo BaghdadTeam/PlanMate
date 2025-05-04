@@ -12,18 +12,17 @@ class AuthenticationRepositoryImpl(
     private val sessionRepository: SessionRepository
 ): AuthenticationRepository {
 
-    override fun login(username: String, inputHashedPassword: String): Result<UserEntity> {
+    override fun login(username: String, inputHashedPassword: String):UserEntity {
         val user = userDataSource.findUserByUsername(username)
         if (inputHashedPassword != user.hashedPassword)
-            return Result.failure(InvalidPasswordException("Invalid hashedPassword"))
-        return Result.success(user)
+            throw InvalidPasswordException("Invalid hashedPassword")
+        return user
     }
 
-    override fun logout(): Result<Unit> {
+    override fun logout() {
         return if (sessionRepository.deleteSession()) {
-            Result.success(Unit)
         } else {
-            Result.failure(LogoutFailedException("Logout failed"))
+            throw LogoutFailedException("Logout failed")
         }
     }
 }

@@ -16,7 +16,7 @@ class EditProjectStateUI(
 
     fun execute(projectId: String) {
         val session = sessionManager.currentSession
-        val userId = UUID.fromString(session.userId)
+        val userId = session.userId
 
         val stateId = promptForStateId() ?: return
         val newState = promptForNewStateDetails(userId.toString(), projectId) ?: return
@@ -39,7 +39,7 @@ class EditProjectStateUI(
         return StateEntity(
             name = name,
             projectId = projectId,
-            creatorId = userId
+            creatorId = UUID.fromString(userId),
         )
     }
 

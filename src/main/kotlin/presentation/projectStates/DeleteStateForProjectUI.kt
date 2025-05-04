@@ -15,7 +15,7 @@ class DeleteStateForProjectUI(
 
     fun execute() {
         val session = sessionManager.currentSession
-        val userId = UUID.fromString(session.userId)
+        val userId = session.userId
 
         val stateId = promptForStateId() ?: return
 

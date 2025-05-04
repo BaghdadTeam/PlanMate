@@ -7,6 +7,6 @@ class LogoutUseCase(
 )
 {
     operator fun invoke() {
-        authenticationRepo.logout().getOrThrow()
+        authenticationRepo.logout()
     }
 }

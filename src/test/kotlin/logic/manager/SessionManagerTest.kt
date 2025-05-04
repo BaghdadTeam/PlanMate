@@ -6,9 +6,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.logic.repositories.SessionRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class SessionManagerTest {
@@ -25,9 +27,8 @@ class SessionManagerTest {
         // Given
         every { sessionRepository.loadSession() }.returns(null)
         // When
-        val result = sessionManager.getActiveSession()
         // Then
-        assertThat(result.isFailure).isTrue()
+        assertThrows<SessionNotFoundException> { sessionManager.getActiveSession() }
     }
     @Test
     fun `getActiveSession() returns result with pass if session exists`() {

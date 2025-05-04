@@ -14,14 +14,14 @@ class LoginUseCase (
     private val sessionRepository: SessionRepository,
     private val tokenProvider: TokenProvider
 ) {
-    operator fun invoke(username: String, password: String): Result<SessionEntity> {
+    operator fun invoke(username: String, password: String): SessionEntity {
 
         if (username.isBlank())
-            return Result.failure(InvalidCredentialsException("username must not be blank"))
+           throw InvalidCredentialsException("username must not be blank")
         if (password.isBlank())
-            return Result.failure(InvalidCredentialsException("Password must not be empty"))
-        val result = authRepository.login(username, password.md5WithSalt())
-        return result.map (::createAndSaveSession)
+            throw InvalidCredentialsException("Password must not be empty")
+        val userInfo = authRepository.login(username, password.md5WithSalt())
+        return createAndSaveSession(userInfo)
     }
 
     private fun createAndSaveSession(user: UserEntity): SessionEntity {
