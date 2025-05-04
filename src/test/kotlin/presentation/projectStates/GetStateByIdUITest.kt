@@ -42,9 +42,9 @@ class GetStateByIdUITest {
 
     @Test
     fun `should show error when state is not found`() {
-        val stateId = "invalid123"
+        val stateId = UUID.randomUUID()
 
-        every { reader.readInput() } returns stateId
+        every { reader.readInput() } returns stateId.toString()
         every { useCase.invoke(stateId) } throws Exception("No state found")
 
         getStateByIdUI.execute()

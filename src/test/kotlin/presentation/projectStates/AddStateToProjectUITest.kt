@@ -42,9 +42,9 @@ class AddStateToProjectUITest {
     @Test
     fun `execute should call useCase with correct state`() {
         val stateName = "To Do"
-        val projectId = "project-123"
+        val projectId = UUID.randomUUID()
 
-        every { reader.readInput() } returnsMany listOf(stateName, projectId)
+        every { reader.readInput() } returnsMany listOf(stateName, projectId.toString())
 
         ui.execute()
 
@@ -52,7 +52,7 @@ class AddStateToProjectUITest {
             useCase.invoke(
                 match {
                     it.name == stateName &&
-                            it.projectId.toString() == projectId &&
+                            it.projectId == projectId &&
                             it.creatorId == userId
                 },
                 userId

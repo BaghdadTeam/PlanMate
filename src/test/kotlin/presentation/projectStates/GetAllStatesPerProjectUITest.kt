@@ -1,5 +1,6 @@
 package presentation.projectStates
 
+import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -63,19 +64,19 @@ class GetAllStatesPerProjectUITest {
     @Test
     fun `test blank input retried until valid project ID`() {
         val projectId = UUID.randomUUID()
-        every { reader.readInput() } returnsMany listOf("", "  ", "validProjectId")
-        every { useCase.invoke(projectId) } returns emptyList()
 
+        every { reader.readInput() } returnsMany listOf("", "  ", projectId.toString())
+        every { useCase.invoke(projectId) } returns emptyList()
         getAllStatesPerProjectUI.execute()
 
         verify(exactly = 2) { viewer.logError("Project ID cannot be blank. Please try again.") }
-        verify { viewer.logMessage("No states found for project ID: validProjectId") }
+        verify { viewer.logMessage("No states found for project ID: $projectId") }
     }
 
     @Test
     fun `test exception is handled during use case invocation`() {
-        val projectId = "failProject"
-        every { reader.readInput() } returns projectId
+        val projectId = UUID.randomUUID()
+        every { reader.readInput() } returns projectId.toString()
         every { useCase.invoke(projectId) } throws RuntimeException("Something went wrong")
 
         getAllStatesPerProjectUI.execute()

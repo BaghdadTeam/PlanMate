@@ -41,11 +41,11 @@ class EditProjectStateUITest {
 
     @Test
     fun `execute should call useCase with correct stateId and newState`() {
-        val stateId = "state-001"
+        val stateId = UUID.randomUUID()
         val name = "In Review"
         val projectId = UUID.randomUUID()
 
-        every { reader.readInput() } returnsMany listOf(stateId, name, projectId.toString())
+        every { reader.readInput() } returnsMany listOf(stateId.toString(), name, projectId.toString())
 
         ui.execute(projectId)
 
@@ -72,14 +72,14 @@ class EditProjectStateUITest {
     @Test
     fun `tryEditState should show error message on failure`() {
         val method = ui.javaClass.getDeclaredMethod(
-            "tryEditState", String::class.java, StateEntity::class.java, UUID::class.java
+            "tryEditState", UUID::class.java, StateEntity::class.java, UUID::class.java
         )
         method.isAccessible = true
 
         val state = StateEntity(name = "To Do", projectId = UUID.randomUUID(), creatorId = userId)
         every { useCase.invoke(any(), any(), any()) } throws Exception("state not found")
 
-        method.invoke(ui, "state-xyz", state, userId)
+        method.invoke(ui, UUID.randomUUID() , state, userId)
 
         verify { viewer.logError("Failed to update state: state not found") }
     }
