@@ -39,7 +39,7 @@ class ProjectStatesRepositoryImpTest{
     }
 
     @Test
-    fun `should not return data when there is no states for project`() {
+    fun `should not return data when there is no project id match`() {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = UUID.randomUUID()
