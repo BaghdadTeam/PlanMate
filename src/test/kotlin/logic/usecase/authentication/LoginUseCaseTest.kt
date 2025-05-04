@@ -49,7 +49,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    fun `should return failed result with exception when login fails due to invalid credentials`() {
+    fun `should throws InvalidCredentialsException when login fails due to invalid credentials`() {
         // Given
         val hashed = "password".md5WithSalt()
         every {
@@ -64,7 +64,7 @@ class LoginUseCaseTest {
 
 
     @Test
-    fun `should return fail result due to invalid password`() {
+    fun `should throws InvalidPasswordException due to invalid password`() {
         // Given
         val hashed = "password".md5WithSalt()
         every { authRepository.login("itshaider", hashed) } throws InvalidPasswordException("Invalid password")
@@ -88,7 +88,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    fun `should return failed result when login fails due blank username `() {
+    fun `should throws InvalidCredentialsException when login fails due blank username `() {
         val hashed = "password".md5WithSalt()
         val username = "itshaider"
         every { authRepository.login(username, hashed) } returns createUserHelper()
@@ -97,7 +97,7 @@ class LoginUseCaseTest {
     }
 
     @Test
-    fun `should return failed result when login fails due blank password `() {
+    fun `should throws InvalidCredentialsException when login fails due blank password `() {
         val hashed = "password".md5WithSalt()
         val username = "itshaider"
         every { authRepository.login(username, hashed) } returns createUserHelper()

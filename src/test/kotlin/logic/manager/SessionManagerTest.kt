@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.exceptions.SessionEndedException
 import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.logic.repositories.SessionRepository
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +24,7 @@ class SessionManagerTest {
         sessionManager = SessionManager(sessionRepository)
     }
     @Test
-    fun `getActiveSession() returns result with failer if there is no active session`() {
+    fun `getActiveSession() throw SessionNotFoundException if there is no active session`() {
         // Given
         every { sessionRepository.loadSession() }.returns(null)
         // When
@@ -31,7 +32,7 @@ class SessionManagerTest {
         assertThrows<SessionNotFoundException> { sessionManager.getActiveSession() }
     }
     @Test
-    fun `getActiveSession() returns result with pass if session exists`() {
+    fun `getActiveSession() returns SessionEntity if session exists`() {
         // Given
         every { sessionRepository.loadSession() } returns SessionTestData.baseSession
         // When
@@ -47,11 +48,11 @@ class SessionManagerTest {
         verify { sessionRepository.deleteSession() }
     }
     @Test
-    fun `getActiveSession() returns result failure if there is no active session`() {
+    fun `getActiveSession() throws SessionEndedException if there is no active session`() {
         // Given
         every { sessionRepository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
         // When & Then
-        assertThrows<SessionNotFoundException> { sessionManager.getActiveSession() }
+        assertThrows<SessionEndedException> { sessionManager.getActiveSession() }
     }
     @Test
     fun `clearExpiredSession() should not do anything if there is no expired session`() {
