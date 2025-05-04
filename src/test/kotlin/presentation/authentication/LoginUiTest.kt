@@ -3,7 +3,7 @@ package presentation.authentication
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
 import io.mockk.*
-import org.baghdad.logic.model.entities.SessionEntity
+import org.baghdad.logic.model.exceptions.InvalidCredentialsException
 import org.baghdad.logic.usecase.authentication.LoginUseCase
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.input.Reader
@@ -33,20 +33,20 @@ class LoginUiTest {
     fun `execute() returns SessionEntity on successful login`(username: String, password: String) {
         // Given
         every { reader.readInput() } returnsMany listOf(username, password)
-        every { useCase(username, password) } returns Result.success(SessionTestData.baseSession)
+        every { useCase(username, password) } returns SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then
-        assertThat(result).isEqualTo(SessionTestData.baseSession)
+        assertThat(result.id).isEqualTo(SessionTestData.baseSession.id)
         verify { viewer.logMessage("Successfully logged in as $username") }
     }
 
     @Test
     fun `execute() loops on failed login and succeeds later`() {
         // Given
-        every { reader.readInput() } returnsMany listOf("wrong", "badpass", "admin", "1234")
-        every { useCase("wrong", "badpass") } returns Result.failure(Exception("Invalid"))
-        every { useCase("admin", "1234") } returns Result.success(SessionTestData.baseSession)
+        every { reader.readInput() } returnsMany listOf("wrong", "IncorrectPass", "admin", "1234")
+        every { useCase("wrong", "IncorrectPass") } throws InvalidCredentialsException("Invalid login")
+        every { useCase("admin", "1234") } returns  SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then
@@ -66,7 +66,7 @@ class LoginUiTest {
         val password = if (rawPassword == "null") null else rawPassword
         // Given
         every { reader.readInput() } returnsMany listOf(username, password, "admin", "1234")
-        every { useCase("admin", "1234") } returns Result.success(SessionTestData.baseSession)
+        every { useCase("admin", "1234") } returns SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then
@@ -76,8 +76,8 @@ class LoginUiTest {
 
     @ParameterizedTest
     @CsvSource(
-        "wrong1, badpass1, Invalid 1",
-        "wrong2, badpass2, Invalid 2"
+        "wrong1, IncorrectPass1, Invalid 1",
+        "wrong2, IncorrectPass2, Invalid 2"
     )
     fun `execute() handles failed login with retry`(
         firstUsername: String,
@@ -86,8 +86,8 @@ class LoginUiTest {
     ) {
         // Given
         every { reader.readInput() } returnsMany listOf(firstUsername, firstPassword, "admin", "1234")
-        every { useCase(firstUsername, firstPassword) } returns Result.failure(Exception(errorMessage))
-        every { useCase("admin", "1234") } returns Result.success(SessionTestData.baseSession)
+        every { useCase(firstUsername, firstPassword) } throws InvalidCredentialsException(errorMessage)
+        every { useCase("admin", "1234") } returns SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then

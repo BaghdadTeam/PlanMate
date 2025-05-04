@@ -37,7 +37,7 @@ class SessionManagerTest {
         // When
         val result = sessionManager.getActiveSession()
         // Then
-        assertThat(result.isSuccess).isTrue()
+        assertThat(result.id).isEqualTo(SessionTestData.baseSession.id)
     }
 
     @Test
@@ -50,10 +50,8 @@ class SessionManagerTest {
     fun `getActiveSession() returns result failure if there is no active session`() {
         // Given
         every { sessionRepository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
-        // When
-        val result = sessionManager.getActiveSession()
-        // Then
-        assertThat(result.isFailure).isTrue()
+        // When & Then
+        assertThrows<SessionNotFoundException> { sessionManager.getActiveSession() }
     }
     @Test
     fun `clearExpiredSession() should not do anything if there is no expired session`() {
