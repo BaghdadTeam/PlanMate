@@ -21,12 +21,13 @@ class GetTasksByProjectIdUITest {
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
 
+    private val projectId = UUID.randomUUID()
+
     private val tasks = listOf(
-        TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", "state1", "project1", "creator1"),
-        TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", "state2", "project1", "creator2")
+        TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", UUID.randomUUID(), projectId, UUID.randomUUID()),
+        TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", UUID.randomUUID(), projectId, UUID.randomUUID())
     )
 
-    private val projectId = "project123"
     private val emptyProjectId = ""
 
     @BeforeEach
@@ -40,7 +41,7 @@ class GetTasksByProjectIdUITest {
 
     @Test
     fun `test valid project ID input with tasks found`() {
-        every { reader.readInput() } returns projectId // User enters valid project ID
+        every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         every { getTasksByProjectIdUseCase(projectId) } returns tasks
 
         getTasksByProjectIdUI.execute()
@@ -53,7 +54,7 @@ class GetTasksByProjectIdUITest {
 
     @Test
     fun `test valid project ID input with no tasks found`() {
-        every { reader.readInput() } returns projectId // User enters valid project ID
+        every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         every { getTasksByProjectIdUseCase(projectId) } returns emptyList()
 
         getTasksByProjectIdUI.execute()
@@ -73,7 +74,7 @@ class GetTasksByProjectIdUITest {
 
     @Test
     fun `test exception handling when tasks not found`() {
-        every { reader.readInput() } returns projectId // User enters valid project ID
+        every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         every { getTasksByProjectIdUseCase(projectId) } throws TasksNotFoundException("No tasks found")
 
         getTasksByProjectIdUI.execute()
@@ -83,7 +84,7 @@ class GetTasksByProjectIdUITest {
 
     @Test
     fun `test exception handling for other errors`() {
-        every { reader.readInput() } returns projectId // User enters valid project ID
+        every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         every { getTasksByProjectIdUseCase(projectId) } throws Exception("Unexpected error")
 
         getTasksByProjectIdUI.execute()

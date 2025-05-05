@@ -6,7 +6,6 @@ import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.DeleteTaskUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import java.util.UUID
 
 class DeleteTaskUI(
     private val useCase: DeleteTaskUseCase,
@@ -38,7 +37,8 @@ class DeleteTaskUI(
     private fun tryDeleteTask(task: TaskEntity) {
         try {
             val session = sessionManager.currentSession
-            useCase(task.id.toString(), session.userId)
+            useCase(task.id, session.userId)
+
             viewer.logMessage("Task deleted successfully.")
         } catch (_: TasksNotFoundException) {
             viewer.logMessage("Task not found.")
