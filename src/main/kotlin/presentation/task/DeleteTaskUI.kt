@@ -38,7 +38,7 @@ class DeleteTaskUI(
     private fun tryDeleteTask(task: TaskEntity) {
         try {
             val session = sessionManager.currentSession
-            useCase(task.id.toString(), UUID.fromString(session.userId))
+            useCase(task.id.toString(), session.userId)
             viewer.logMessage("Task deleted successfully.")
         } catch (_: TasksNotFoundException) {
             viewer.logMessage("Task not found.")

@@ -69,7 +69,7 @@ class UpdateTaskUI(
     private fun tryUpdateTask(task: TaskEntity) {
         try {
             val session = sessionManager.currentSession
-            useCase(task, UUID.fromString(session.userId))
+            useCase(task, session.userId)
             viewer.logMessage("Task updated successfully.")
         } catch (_: TaskWithMissingTitleException) {
             viewer.logMessage("Task title is missing.")

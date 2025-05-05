@@ -42,8 +42,11 @@ class StateTransitionUI(
             viewer.logError("State not found in this project: ${e.message}")
         } catch (e: IllegalStateException) {
             viewer.logError("Invalid operation: ${e.message}")
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             viewer.logError("Unexpected error: ${e.message}")
+        }
+        catch (e:Exception) {
+            viewer.logError(" something went wrong while trying to change task state.")
         }
     }
 }

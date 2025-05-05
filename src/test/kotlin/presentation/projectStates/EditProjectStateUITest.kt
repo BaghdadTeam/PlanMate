@@ -33,7 +33,7 @@ class EditProjectStateUITest {
         viewer = mockk(relaxed = true)
         reader = mockk()
 
-        every { session.userId } returns userId.toString()
+        every { session.userId } returns userId
         every { sessionManager.currentSession } returns session
 
         ui = EditProjectStateUI(useCase, sessionManager, viewer, reader)
