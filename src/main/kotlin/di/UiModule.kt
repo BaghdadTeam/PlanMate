@@ -1,6 +1,5 @@
 package org.baghdad.di
 
-import org.baghdad.presentation.project.ProjectUi
 import org.baghdad.presentation.task.*
 import org.koin.dsl.module
 

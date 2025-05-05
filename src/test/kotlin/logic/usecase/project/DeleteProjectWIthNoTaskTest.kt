@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 class DeleteProjectWithNoTaskTest {
 
     @Test
-    fun `delete project with no tasks`() {
+    fun `should return success when project exists and has no tasks`() {
         // Arrange
         val projectRepo = mockk<ProjectRepository>(relaxed = true)
         val taskRepo = mockk<TaskRepository>()

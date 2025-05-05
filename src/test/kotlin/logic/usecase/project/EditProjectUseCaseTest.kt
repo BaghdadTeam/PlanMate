@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 class EditProjectUseCaseTest {
 
     @Test
-    fun `edit project name`() {
+    fun `should return success when project exists and is edited successfully`() {
         // Arrange
         val projectRepo = mockk<ProjectRepository>()
         val useCase = EditProjectUseCase(projectRepo)

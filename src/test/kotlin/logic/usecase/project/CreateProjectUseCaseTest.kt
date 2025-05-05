@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 class CreateProjectUseCaseTest {
 
     @Test
-    fun `create project with unique name`() {
+    fun `should return success when project is created with valid name and creator`() {
         // Arrange
         val repo = mockk<ProjectRepository>(relaxed = true)
         val useCase = CreateProjectUseCase(repo)
