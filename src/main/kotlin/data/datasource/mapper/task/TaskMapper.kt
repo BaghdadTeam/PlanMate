@@ -15,9 +15,9 @@ class TaskMapper : CsvMapper<TaskEntity> {
             id = UUID.fromString(task[TaskColumns.ID]),
             title = task[TaskColumns.TITLE],
             description = task[TaskColumns.DESCRIPTION],
-            stateId = task[TaskColumns.STATE_ID],
-            projectId = task[TaskColumns.PROJECT_ID],
-            creatorId = task[TaskColumns.CREATOR_ID],
+            stateId = UUID.fromString(task[TaskColumns.STATE_ID]),
+            projectId = UUID.fromString(task[TaskColumns.PROJECT_ID]),
+            creatorId = UUID.fromString(task[TaskColumns.CREATOR_ID]),
         )
     }
 

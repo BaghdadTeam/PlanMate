@@ -64,9 +64,9 @@ class TaskMapperTest {
         val uuid = UUID.randomUUID()
         val title = "Fix bug"
         val description = "Null pointer on load"
-        val stateId = "state789"
-        val projectId = "projABC"
-        val creatorId = "user99"
+        val stateId = UUID.randomUUID()
+        val projectId = UUID.randomUUID()
+        val creatorId = UUID.randomUUID()
         val entity = TaskEntity(
             id = uuid,
             title = title,

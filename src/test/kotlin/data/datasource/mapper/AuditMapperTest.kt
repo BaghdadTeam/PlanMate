@@ -97,7 +97,7 @@ class AuditMapperTest {
         val entity = AuditEntity(
             id = uuid,
             entityType = "Product",
-            entityId = "456",
+            entityId = UUID.randomUUID(),
             action = "UPDATE",
             user = user,
             timestamp = timestamp
@@ -126,7 +126,7 @@ class AuditMapperTest {
         val entity = AuditEntity(
             id = uuid,
             entityType = "Invoice",
-            entityId = "789",
+            entityId = UUID.randomUUID(),
             action = "DELETE",
             user = user,
             timestamp = timestamp

@@ -3,6 +3,7 @@ package org.baghdad.data.repositories.task
 import org.baghdad.data.local.TaskDataSource
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.TaskRepository
+import java.util.UUID
 
 class   TaskRepositoryImpl(
     private val dataSource: TaskDataSource
@@ -15,15 +16,15 @@ class   TaskRepositoryImpl(
         dataSource.addTask(task)
     }
 
-    override fun getTaskById(id: String): TaskEntity {
+    override fun getTaskById(id: UUID): TaskEntity {
         return dataSource.getTaskById(id)
     }
 
-    override fun getTasksByProjectId(id: String): List<TaskEntity> {
+    override fun getTasksByProjectId(id: UUID): List<TaskEntity> {
         return dataSource.getTasksByProjectId(id)
     }
 
-    override fun getTasksByStateId(stateId: String): List<TaskEntity> {
+    override fun getTasksByStateId(stateId: UUID): List<TaskEntity> {
         return dataSource.getTasksByStateId(stateId)
     }
 
@@ -36,7 +37,7 @@ class   TaskRepositoryImpl(
         }
     }
 
-    override fun deleteTask(id: String) {
+    override fun deleteTask(id: UUID) {
         dataSource.deleteTask(id)
     }
 }

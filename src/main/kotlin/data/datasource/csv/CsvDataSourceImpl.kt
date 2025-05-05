@@ -4,13 +4,16 @@ import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.exceptions.CsvReadException
 import org.baghdad.logic.model.exceptions.CsvWriteException
+import java.io.File
 
 
 class CsvDataSourceImpl<T>(
-    private var reader: CsvReader,
-    private var writer: CsvWriter,
     private val parser: CsvMapper<T>,
+    file: File
 ) : DataSource<T> {
+
+    private val reader = CsvReader(file)
+    private val writer = CsvWriter(file)
 
     override fun loadAll(): List<T> {
         return try {

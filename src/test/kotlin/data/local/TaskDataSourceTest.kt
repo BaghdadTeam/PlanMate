@@ -56,7 +56,7 @@ class TaskDataSourceTest {
         every { dataSource.loadAll() } returns tasks
 
         // When
-        val result = taskDataSource.getTaskById(tasks[0].id.toString())
+        val result = taskDataSource.getTaskById(tasks[0].id)
 
         // Then
         assertThat(result).isEqualTo(tasks[0])
@@ -67,7 +67,7 @@ class TaskDataSourceTest {
         // Given
         val randomTask = TaskEntityTestData.randomTask
         every { dataSource.loadAll() } returns listOf(randomTask)
-        val taskId = UUID.randomUUID().toString()
+        val taskId = UUID.randomUUID()
 
         // When & Then
         val exception = assertThrows<TasksNotFoundException> {
@@ -95,7 +95,7 @@ class TaskDataSourceTest {
         // Given
         val randomTask = TaskEntityTestData.randomTask
         every { dataSource.loadAll() } returns listOf(randomTask)
-        val projectId = "2"
+        val projectId = UUID.randomUUID()
 
         // When & Then
         val exception = assertThrows<TasksNotFoundException> {
@@ -122,7 +122,7 @@ class TaskDataSourceTest {
         // Given
         val randomTask = TaskEntityTestData.randomTask
         every { dataSource.loadAll() } returns listOf(randomTask)
-        val stateId = "2"
+        val stateId = UUID.randomUUID()
 
         // When & Then
         val exception = assertThrows<TasksNotFoundException> {
@@ -175,7 +175,7 @@ class TaskDataSourceTest {
         every { dataSource.loadAll() } returns existingTasks
         every { dataSource.update(any()) } just Runs
 
-        taskDataSource.deleteTask(taskToRemove.id.toString())
+        taskDataSource.deleteTask(taskToRemove.id)
 
         verify {
             dataSource.update(match { list -> list.none { it.id == taskToRemove.id } })
@@ -189,7 +189,7 @@ class TaskDataSourceTest {
         every { dataSource.loadAll() } returns existingTasks
 
         val exception = assertThrows<TasksNotFoundException> {
-            taskDataSource.deleteTask("unknown-id")
+            taskDataSource.deleteTask(UUID.randomUUID())
         }
 
         assertThat(exception.message).contains("Task with id unknown-id not found")

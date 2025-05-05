@@ -24,7 +24,7 @@ class AuditMapper : CsvMapper<AuditEntity> {
         return AuditEntity(
             id = UUID.fromString(audit[AuditColumns.ID]),
             entityType = audit[AuditColumns.ENTITY_TYPE],
-            entityId = audit[AuditColumns.ENTITY_ID],
+            entityId = UUID.fromString(audit[AuditColumns.ENTITY_ID]),
             action = audit[AuditColumns.ACTION],
             user = userData,
             timestamp = audit[AuditColumns.TIMESTAMP],

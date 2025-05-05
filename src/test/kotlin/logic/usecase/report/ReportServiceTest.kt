@@ -47,29 +47,29 @@ class ReportServiceTest {
             TaskEntity(
                 title = "T1",
                 description = "D1",
-                stateId = states[0].name,
-                projectId = projectId.toString(),
-                creatorId = "user1"
+                stateId = states[0].id,
+                projectId = projectId,
+                creatorId = UUID.randomUUID()
             ),
             TaskEntity(
                 title = "T2",
                 description = "D2",
-                stateId = states[0].name,
-                projectId = projectId.toString(),
-                creatorId = "user1"
+                stateId = states[0].id,
+                projectId = projectId,
+                creatorId = UUID.randomUUID()
             ),
             TaskEntity(
                 title = "T3",
                 description = "D3",
-                stateId = "s1",
-                projectId = projectId.toString(),
-                creatorId = "user2"
+                stateId = UUID.randomUUID(),
+                projectId = projectId,
+                creatorId = UUID.randomUUID()
             )
         )
 
 
         every { projectRepo.getAllProjects() } returns listOf(project)
-        every { taskRepo.getTasksByProjectId(projectId.toString()) } returns tasks
+        every { taskRepo.getTasksByProjectId(projectId) } returns tasks
         every { stateRepo.getAllStatesPerProject(projectId) } returns states
     }
 
@@ -78,7 +78,7 @@ class ReportServiceTest {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 
-        assertEquals(2, report.tasksPerState["To Do"] ?: 0
+        assertEquals(2, report.tasksPerState[UUID.randomUUID()] ?: 0
         )
     }
 
@@ -87,7 +87,7 @@ class ReportServiceTest {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 
-        assertEquals(1, report.tasksPerUser["user2"] ?: 0)
+        assertEquals(1, report.tasksPerUser[UUID.randomUUID()] ?: 0)
     }
 
 
@@ -107,10 +107,3 @@ class ReportServiceTest {
         assertEquals("Test Project", report.projectName)
     }
 }
-
-
-
-
-
-
-
