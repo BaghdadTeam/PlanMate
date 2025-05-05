@@ -2,6 +2,7 @@ package org.baghdad.presentation.task
 
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
+import org.baghdad.presentation.app.Feature
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
@@ -10,9 +11,12 @@ class GetTasksByStateIdUI(
     private val getTasksByStateIdUseCase: GetTasksByStateIdUseCase,
     private val viewer: Viewer,
     private val reader: Reader
-) {
+) : Feature {
 
-    fun execute() {
+    override val id: Int = 5
+    override val name: String = "List Tasks by State"
+
+    override fun execute() {
         val stateId = promptForStateId() ?: return
         tryGetTasks(stateId)
     }

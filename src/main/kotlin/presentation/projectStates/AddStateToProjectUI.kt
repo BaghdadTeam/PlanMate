@@ -3,6 +3,7 @@ package org.baghdad.presentation.projectStates
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
+import org.baghdad.presentation.app.Feature
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
@@ -12,9 +13,11 @@ class AddStateToProjectUI(
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
-) {
+) : Feature {
+    override val id: Int = 6
+    override val name: String = "Add State to Project"
 
-    fun execute() {
+    override fun execute() {
         val session = sessionManager.currentSession
 
         val userId = session.userId

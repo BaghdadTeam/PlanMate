@@ -4,22 +4,47 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.DeleteTaskUseCase
+import org.baghdad.presentation.app.Feature
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import java.util.UUID
 
 class DeleteTaskUI(
     private val useCase: DeleteTaskUseCase,
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
-) {
+) : Feature {
+
+    override val id: Int = 3
+    override val name: String = "Delete Task"
+
+    override fun execute() {
+        viewer.logMessage("Enter the ID of the task you want to delete:")
+        val input = reader.readInput()?.trim()
+
+        if (input.isNullOrBlank()) {
+            viewer.logError("Task ID cannot be empty.")
+            return
+        }
+
+        val taskId = try {
+            UUID.fromString(input)
+        } catch (e: IllegalArgumentException) {
+            viewer.logError("Invalid UUID format.")
+            return
+        }
+
+        tryDeleteTask(taskId)
+    }
+
 
     fun execute(tasks: List<TaskEntity>) {
         val taskIndex = promptForTaskIndex(tasks) ?: return
         val task = tasks[taskIndex]
 
         viewer.logMessage("Selected task: ${task.title}")
-        tryDeleteTask(task)
+        tryDeleteTask(UUID.fromString(task.id.toString()))
     }
 
     private fun promptForTaskIndex(tasks: List<TaskEntity>): Int? {
@@ -34,11 +59,12 @@ class DeleteTaskUI(
         return index - 1
     }
 
-    private fun tryDeleteTask(task: TaskEntity) {
+    private fun tryDeleteTask(taskId: UUID) {
         try {
             val session = sessionManager.currentSession
-            useCase(task.id, session.userId)
+            useCase(taskId, session.userId)
 
+            useCase(taskId, session.userId)
             viewer.logMessage("Task deleted successfully.")
         } catch (_: TasksNotFoundException) {
             viewer.logMessage("Task not found.")

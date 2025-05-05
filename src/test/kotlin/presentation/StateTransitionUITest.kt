@@ -7,9 +7,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
-import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.task.StateTransitionUI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
@@ -74,7 +74,6 @@ class StateTransitionUITest {
 
     @Test
     fun `should log unexpected error`() {
-        // Given
         every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
         every {
             useCase.changeTaskState(
@@ -84,25 +83,20 @@ class StateTransitionUITest {
             )
         } throws RuntimeException("Something went wrong")
 
-        // when
         ui.execute()
 
-        // then
         verify { viewer.logError("Unexpected error: Something went wrong") }
     }
 
     @Test
     fun `should trim and pass both taskId and newStateId correctly`() {
-        // Given
         val taskId = UUID.randomUUID()
         val newStateId = UUID.randomUUID()
         every { reader.readInput() } returnsMany listOf(taskId.toString(), newStateId.toString())
         every { useCase.changeTaskState(any(), any(), any()) } just Runs
 
-        // when
         ui.execute()
 
-        // then
         verify { useCase.changeTaskState(taskId, newStateId, any()) }
     }
 

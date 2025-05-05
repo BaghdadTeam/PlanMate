@@ -3,6 +3,7 @@ package org.baghdad.presentation.projectStates
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
+import org.baghdad.presentation.app.Feature
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
@@ -12,7 +13,12 @@ class EditProjectStateUI(
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
-) {
+) : Feature {
+    override val id: Int = 7
+    override val name: String = "Edit Project State"
+    override fun execute() {
+        TODO("Not yet implemented")
+    }
 
     fun execute(projectId: UUID) {
         val session = sessionManager.currentSession

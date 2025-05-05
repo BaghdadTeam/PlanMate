@@ -7,16 +7,21 @@ import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
+import org.baghdad.presentation.app.Feature
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import java.util.UUID
 
 class UpdateTaskUI(
     private val useCase: UpdateTaskUseCase,
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
-) {
+) : Feature{
+    override val id: Int = 2
+    override val name: String = "Update Task"
+    override fun execute() {
+        TODO("Not yet implemented")
+    }
 
     fun execute(tasks: List<TaskEntity>) {
         val taskIndex = promptForTaskIndex(tasks) ?: return

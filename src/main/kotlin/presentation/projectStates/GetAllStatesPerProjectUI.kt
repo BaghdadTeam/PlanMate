@@ -1,6 +1,7 @@
 package org.baghdad.presentation.projectStates
 
 import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
+import org.baghdad.presentation.app.Feature
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
@@ -9,9 +10,12 @@ class GetAllStatesPerProjectUI(
     private val useCase: GetAllStatesPerProjectUseCase,
     private val viewer: Viewer,
     private val reader: Reader
-) {
+) : Feature{
 
-    fun execute() {
+    override val id: Int = 9
+    override val name: String = "List States for Project"
+
+    override fun execute() {
         val projectId = promptForProjectId() ?: return
 
         try {

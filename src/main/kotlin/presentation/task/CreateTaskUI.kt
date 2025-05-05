@@ -5,6 +5,7 @@ import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.usecase.task.CreateTaskUseCase
+import org.baghdad.presentation.app.Feature
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.*
@@ -14,7 +15,12 @@ class CreateTaskUI(
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
-) {
+) : Feature {
+    override val id: Int = 1
+    override val name: String = "Create Task"
+    override fun execute() {
+        TODO("Not yet implemented")
+    }
 
     fun execute(projectId: UUID, stateId: UUID) {
 
@@ -75,7 +81,7 @@ class CreateTaskUI(
             viewer.logError("Task description is missing.")
             val updatedTask = promptForDescription()?.let { task.copy(description = it) } ?: task
             tryCreateTask(updatedTask, userId)
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
             viewer.logError("Failed to create task: ${e.message}")
         }
     }
