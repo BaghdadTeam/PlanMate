@@ -19,7 +19,7 @@ class AddStateToProjectUI(
 
         val userId = session.userId
 
-        val state = promptForStateDetails(userId) ?: return
+        val state = promptForStateDetails(UUID.fromString(userId)) ?: return
 
         tryAddState(state, userId)
     }
@@ -30,7 +30,7 @@ class AddStateToProjectUI(
 
         return StateEntity(
             name = name,
-            projectId = projectId,
+            projectId = UUID.fromString(projectId),
             creatorId = userId
         )
     }

@@ -31,15 +31,15 @@ class ReportServiceTest {
             StateEntity(
                 id = UUID.randomUUID(),
                 name = "To Do",
-                projectId = projectId.toString(),
-                creatorId = "user1"
+                projectId = UUID.randomUUID(),
+                creatorId = UUID.randomUUID()
             ),
 
             StateEntity(
                 id = UUID.randomUUID(),
                 name = "In Progress",
-                projectId = projectId.toString(),
-                creatorId = "user1"
+                projectId = UUID.randomUUID(),
+                creatorId = UUID.randomUUID()
             )
         )
 
@@ -70,7 +70,7 @@ class ReportServiceTest {
 
         every { projectRepo.getAllProjects() } returns listOf(project)
         every { taskRepo.getTasksByProjectId(projectId.toString()) } returns tasks
-        every { stateRepo.getAllStatesPerProject(projectId.toString()) } returns states
+        every { stateRepo.getAllStatesPerProject(projectId) } returns states
     }
 
     @Test

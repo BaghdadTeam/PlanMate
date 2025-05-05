@@ -22,7 +22,7 @@ class DeleteStateForProjectUITest {
     private lateinit var reader: Reader
     private lateinit var ui: DeleteStateForProjectUI
     private val session = mockk<SessionEntity>()
-    private val userId = UUID.randomUUID().toString()
+    private val userId = UUID.randomUUID()
 
     @BeforeEach
     fun setUp() {
@@ -31,7 +31,7 @@ class DeleteStateForProjectUITest {
         viewer = mockk(relaxed = true)
         reader = mockk()
 
-        every { session.userId } returns userId
+        every { session.userId } returns userId.toString()
         every { sessionManager.currentSession } returns session
 
         ui = DeleteStateForProjectUI(useCase, sessionManager, viewer, reader)
@@ -39,13 +39,13 @@ class DeleteStateForProjectUITest {
 
     @Test
     fun `execute should call useCase with correct values`() {
-        val stateId = "state-123"
-        every { reader.readInput() } returns stateId
+        val stateId = UUID.randomUUID()
+        every { reader.readInput() } returns stateId.toString()
 
         ui.execute()
 
         verify {
-            useCase.invoke(stateId, UUID.fromString(userId))
+            useCase.invoke(stateId, userId)
         }
         verify { viewer.logMessage("State deleted successfully.") }
     }
@@ -64,12 +64,12 @@ class DeleteStateForProjectUITest {
 
     @Test
     fun `tryDeleteState should log error on exception`() {
-        val method = ui.javaClass.getDeclaredMethod("tryDeleteState", String::class.java, UUID::class.java)
+        val method = ui.javaClass.getDeclaredMethod("tryDeleteState", UUID::class.java, UUID::class.java)
         method.isAccessible = true
 
         every { useCase.invoke(any(), any()) } throws Exception("State not found")
 
-        method.invoke(ui, "state-999", UUID.fromString(userId))
+        method.invoke(ui, UUID.randomUUID(), userId)
 
         verify { viewer.logError("Failed to delete state: State not found") }
     }

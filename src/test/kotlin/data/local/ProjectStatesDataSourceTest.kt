@@ -49,7 +49,7 @@ class ProjectStatesDataSourceTest {
         val projectStates = ProjectStatesEntityTestData.todoState()
         every { dataSource.loadAll() } returns listOf(projectStates)
         // When
-        val result = projectStatesDataSource.getStateById(projectStates.id.toString())
+        val result = projectStatesDataSource.getStateById(projectStates.id)
         // Then
         assertThat(result).isEqualTo(projectStates)
     }
@@ -61,7 +61,7 @@ class ProjectStatesDataSourceTest {
         every { dataSource.loadAll() } returns listOf(projectStates)
         // When
         projectStatesDataSource.createState(projectStates)
-        val result = projectStatesDataSource.getStateById(projectStates.id.toString())
+        val result = projectStatesDataSource.getStateById(projectStates.id)
 
         // Then
         assertThat(result).isEqualTo(projectStates)
@@ -117,7 +117,7 @@ class ProjectStatesDataSourceTest {
         every { dataSource.update(stateAfterDelete) } just Runs
 
         // When
-        projectStatesDataSource.deleteState(allStates.last().id.toString())
+        projectStatesDataSource.deleteState(allStates.last().id)
         val result = projectStatesDataSource.getAllStatesForProject()//.getStateById(deleteState.id.toString())
 
         // Then
@@ -137,7 +137,7 @@ class ProjectStatesDataSourceTest {
 
         // Then
         val exception = assertThrows<Exception> {
-            projectStatesDataSource.deleteState(deleteState.id.toString())
+            projectStatesDataSource.deleteState(deleteState.id)
         }
         assertThat(exception.message).contains("No state found")
 

@@ -6,6 +6,7 @@ import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import java.util.UUID
 
 class StateTransitionUI(
     private val useCase: StateTransitionUseCase,
@@ -35,7 +36,7 @@ class StateTransitionUI(
 
         try {
             //todo
-            useCase.changeTaskState(taskId, newStateId, user)
+            useCase.changeTaskState(UUID.fromString(taskId), UUID.fromString(newStateId), user)
             viewer.logMessage("Task state changed successfully.")
         } catch (e: NotFoundException) {
             viewer.logError("State not found in this project: ${e.message}")
