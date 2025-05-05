@@ -1,31 +1,50 @@
 package logic.usecase.project
 
-import org.baghdad.logic.model.entities.ProjectEntity
+import com.google.common.truth.Truth.assertThat
+import io.mockk.mockk
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
 import java.util.UUID
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import io.mockk.*
+import org.baghdad.logic.model.entities.ProjectEntity
+import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.repositories.ProjectRepository
+import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.usecase.common.Result
+import java.util.*
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
-class DeleteProjectWIthNoTaskTest {
+class DeleteProjectWithNoTaskTest {
+
     @Test
     fun `delete project with no tasks`() {
-        val repo = FakeProjectRepository()
-        val taskRepo = FakeTaskRepository()
-        val useCase = DeleteProjectUseCase(repo, taskRepo)
+        // Arrange
+        val projectRepo = mockk<ProjectRepository>(relaxed = true)
+        val taskRepo = mockk<TaskRepository>()
+        val useCase = DeleteProjectUseCase(projectRepo, taskRepo)
+
+        val projectId = UUID.randomUUID()
         val admin = UserEntity(UUID.randomUUID(), "admin", "pass", "", UserType.Admin)
+        val project = ProjectEntity(projectId, "Project", admin.id.toString())
 
-        val project = ProjectEntity(UUID.randomUUID(), "Project", admin.id.toString())
-        repo.createProject(project)
+        every { taskRepo.getTasksByProjectId(projectId.toString()) } returns emptyList()
+        every { projectRepo.deleteProject(projectId.toString()) } returns true
 
-        useCase(project.id, admin)
+        // Act
+        val result = useCase(projectId, admin)
 
-        assertNull(repo.getProjectById(project.id.toString()))
+        // Assert
+        assertTrue(result is Result.Success)
+
+        verify(exactly = 1) { taskRepo.getTasksByProjectId(projectId.toString()) }
+        verify(exactly = 1) { projectRepo.deleteProject(projectId.toString()) }
+
+        confirmVerified(projectRepo, taskRepo)
     }
-
-
 }
