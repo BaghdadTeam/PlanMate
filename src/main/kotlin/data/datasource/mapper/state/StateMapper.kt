@@ -14,7 +14,7 @@ class StateMapper : CsvMapper<StateEntity> {
         return StateEntity(
             id = UUID.fromString(state[StateColumns.ID]),
             name = state[StateColumns.NAME],
-            projectId = state[StateColumns.PROJECT_ID],
+            projectId = UUID.fromString(state[StateColumns.PROJECT_ID]),
             creatorId = UUID.fromString(state[StateColumns.CREATOR_ID]),
         )
     }
