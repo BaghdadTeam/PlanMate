@@ -6,27 +6,25 @@ import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 
-class GetUserUI(
+class GetUserByUsernameUI(
     private val reader: Reader,
     private val viewer: Viewer,
     private val getByUsername: GetUserByUsernameUseCase
 ) {
     fun run() {
         viewer.logMessage("=== Find User ===")
-        viewer.logMessage("Username: ")
+        viewer.logMessage("Please enter the username:")
         val username = reader.readInput()?.trim().orEmpty()
 
-        if (username.isEmpty()) {
-            viewer.logMessage(" User '' not found.")
-            return
-        }
         try {
             val user = getByUsername(username)
-            viewer.logMessage(" Found: ${user.username}  Name: ${user.name}  Role: ${user.type}")
-        } catch (e: InvalidUsernameException) {
-            viewer.logError(" Invalid username: ${e.message}")
-        } catch (e: UserNotFoundException) {
-            viewer.logError(" ${e.message}")
+            viewer.logMessage("Found: ${user.username}  Name: ${user.name}  Role: ${user.type}")
+        } catch (exception: InvalidUsernameException) {
+            viewer.logError("Invalid username: ${exception.message}")
+        } catch (exception: UserNotFoundException) {
+            viewer.logError(exception.message ?: "User not found.")
         }
     }
 }
+
+//

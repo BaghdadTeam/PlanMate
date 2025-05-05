@@ -10,6 +10,9 @@ class UserMapper : CsvMapper<UserEntity> {
         return "id,name,username,hashedPassword,type"
     }
 
+    override fun serializer(item: UserEntity): String {
+        return "${item.id},${item.name},${item.username},${item.hashedPassword},${item.type.name}"
+    }
 
 
     override fun deserializer(content: String): UserEntity {
@@ -23,8 +26,6 @@ class UserMapper : CsvMapper<UserEntity> {
         )
     }
 
-    override fun serializer(item: UserEntity): String {
-        return "${item.id},${item.name},${item.username},${item.hashedPassword},${item.type.name}"
-    }
+
 
 }

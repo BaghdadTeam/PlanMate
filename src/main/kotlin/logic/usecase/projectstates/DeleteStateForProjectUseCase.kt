@@ -15,14 +15,14 @@ class DeleteStateForProjectUseCase (
 
     fun invoke(stateId: UUID, userId: UUID){
         val user = userRepository.getUserById(userId)
-        if (user?.type?.name == UserType.Mate.name) throw Exception("Only Admin can add tasks")
+        if (user.type.name == UserType.Mate.name) throw Exception("Only Admin can add tasks")
         repository.deleteState(stateId)
         val audit = createAudit(stateId, user)
         auditRepository.addAuditEntry(audit)
 
     }
 
-    private fun createAudit(stateId: UUID, user: UserEntity?):AuditEntity {
+    private fun createAudit(stateId: UUID, user: UserEntity):AuditEntity {
         val action = "delete  state is deleted successfully"
         val audit = AuditEntity(
             entityType = Entities.Task.name,

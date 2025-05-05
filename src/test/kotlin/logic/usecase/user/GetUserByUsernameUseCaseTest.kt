@@ -2,6 +2,7 @@ package org.baghdad.logic.usecase.user
 
 import io.mockk.every
 import io.mockk.mockk
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -12,40 +13,43 @@ import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 
 class GetUserByUsernameUseCaseTest {
-    private val repo = mockk<UserRepository>()
-    private val uc   = GetUserByUsernameUseCase(repo)
-    private val sampleUser = UserEntity(
-        name = "Alice",
-        username = "alice",
-        hashedPassword = "hashed",
-        type = UserType.Mate
-    )
+    private lateinit var repo: UserRepository
+    private lateinit var uc: GetUserByUsernameUseCase
+    private val sample =
+        UserEntity(name = "Alice", username = "alice", hashedPassword = "", type = UserType.Mate)
+
+    @BeforeTest
+    fun setup() {
+        repo = mockk()
+        uc = GetUserByUsernameUseCase(repo)
+    }
 
     @Test
-    fun `success for existing`() {
+    fun `success when user exists`() {
         // Given
-        every { repo.findByUsername("alice") } returns sampleUser
+        every { repo.findByUsername("alice") } returns sample
         // When
         val user = uc("alice")
         // Then
-        assertEquals(sampleUser, user)
+        assertEquals(sample, user)
     }
 
     @Test
     fun `throws for blank username`() {
-        // When & Then
         assertFailsWith<InvalidUsernameException> {
             uc("")
         }
     }
 
+
     @Test
-    fun `throws when not found`() {
+    fun `throws when user not found`() {
         // Given
-        every { repo.findByUsername("bob") } returns null
-        // When & Then
+        every { repo.findByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
+        // Then
         assertFailsWith<UserNotFoundException> {
             uc("bob")
         }
     }
+
 }

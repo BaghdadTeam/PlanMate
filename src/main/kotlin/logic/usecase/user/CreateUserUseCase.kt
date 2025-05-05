@@ -7,6 +7,7 @@ import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
 import org.baghdad.logic.model.exceptions.user.UnauthorizedException
 import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
+import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.utils.md5WithSalt
 
@@ -60,9 +61,10 @@ class CreateUserUseCase(
     }
 
     private fun ensureUsernameUnique(username: String) {
-        if (userRepository.findByUsername(username) != null) {
+        try {
+            userRepository.findByUsername(username)
             throw UserAlreadyExistsException("Username '$username' already exists.")
-        }
+        } catch (exception: UserNotFoundException) { }
     }
 
     private fun createUserEntity(username: String, password: String, name: String): UserEntity {
@@ -74,3 +76,4 @@ class CreateUserUseCase(
         )
     }
 }
+//

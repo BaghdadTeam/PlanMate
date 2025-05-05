@@ -1,102 +1,67 @@
+// File: src/test/kotlin/org/baghdad/presentation/user/GetUserByUsernameUITest.kt
 package org.baghdad.presentation.user
 
-import io.mockk.*
-import kotlin.test.*
-import org.baghdad.logic.model.entities.*
-import org.baghdad.logic.model.exceptions.user.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-class GetUserUITest {
+class GetUserByUsernameUITest {
+    private lateinit var reader: Reader
+    private lateinit var viewer: Viewer
+    private lateinit var uc: GetUserByUsernameUseCase
+    private lateinit var ui: GetUserByUsernameUI
 
-    private lateinit var inputReader: Reader
-    private lateinit var outputViewer: Viewer
-    private lateinit var getUserByUsernameUseCase: GetUserByUsernameUseCase
-    private lateinit var getUserUI: GetUserUI
+    private val sample = UserEntity(name = "Alice", username = "alice", hashedPassword = "h", type = UserType.Mate)
 
-    @BeforeTest
-    fun setup() {
-        getUserByUsernameUseCase = mockk()
-        outputViewer = mockk(relaxed = true)
+    @BeforeTest fun setup() {
+        reader = mockk()
+        viewer = mockk(relaxed = true)
+        uc = mockk()
+        ui = GetUserByUsernameUI(reader, viewer, uc)
     }
 
-    @Test
-    fun `عند إدخال اسم مستخدم فارغ، يجب عرض رسالة تفيد بعدم العثور على المستخدم`() {
-        // Given
-        inputReader = mockk {
-            every { readInput() } returns ""
-        }
-        getUserUI = GetUserUI(inputReader, outputViewer, getUserByUsernameUseCase)
-
-        // When
-        getUserUI.run()
-
-        // Then
-        verify {
-            outputViewer.logMessage(match { it.contains("not found", ignoreCase = true) })
-        }
+    @Test fun `shows success`() {
+        every { reader.readInput() } returns "alice"
+        every { uc.invoke("alice") } returns sample
+        ui.run()
+        verify { viewer.logMessage("Found: alice  Name: Alice  Role: Mate") }
     }
 
-    @Test
-    fun `عند إدخال اسم مستخدم غير صالح، يجب عرض رسالة خطأ توضح أن اسم المستخدم غير صالح`() {
-        // Given
-        val invalidUsername = "invalid"
-        inputReader = mockk {
-            every { readInput() } returns invalidUsername
-        }
-        every { getUserByUsernameUseCase.invoke(invalidUsername) } throws InvalidUsernameException("Username is invalid")
-
-        getUserUI = GetUserUI(inputReader, outputViewer, getUserByUsernameUseCase)
-
-        // When
-        getUserUI.run()
-
-        // Then
-        verify {
-            outputViewer.logError(match { it.contains("Invalid username", ignoreCase = true) })
-        }
+    @Test fun `empty input treated as invalid username`() {
+        every { reader.readInput() } returns ""
+        every { uc.invoke("") } throws InvalidUsernameException("blank")
+        ui.run()
+        verify { viewer.logError("Invalid username: blank") }
     }
 
-    @Test
-    fun `عند إدخال اسم مستخدم غير موجود، يجب عرض رسالة توضح أن المستخدم غير موجود`() {
-        // Given
-        val nonExistentUsername = "notExist"
-        inputReader = mockk {
-            every { readInput() } returns nonExistentUsername
-        }
-        every { getUserByUsernameUseCase.invoke(nonExistentUsername) } throws UserNotFoundException(nonExistentUsername)
-
-        getUserUI = GetUserUI(inputReader, outputViewer, getUserByUsernameUseCase)
-
-        // When
-        getUserUI.run()
-
-        // Then
-        verify {
-            outputViewer.logError(match { it.contains(nonExistentUsername) })
-        }
+    @Test fun `invalid username exception`() {
+        every { reader.readInput() } returns "x!"
+        every { uc.invoke("x!") } throws InvalidUsernameException("bad char")
+        ui.run()
+        verify { viewer.logError("Invalid username: bad char") }
     }
 
-    @Test
-    fun `عند إدخال اسم مستخدم موجود، يجب عرض رسالة تؤكد العثور عليه بنجاح`() {
-        // Given
-        val validUsername = "foundUser"
-        val foundUser = UserEntity(name = "Ali", username = validUsername, hashedPassword = "secret", type = UserType.Mate)
+    @Test fun `user not found exception`() {
+        every { reader.readInput() } returns "bob"
+        every { uc.invoke("bob") } throws UserNotFoundException("bob not found")
+        ui.run()
+        verify { viewer.logError("bob not found") }
+    }
 
-        inputReader = mockk {
-            every { readInput() } returns validUsername
-        }
-        every { getUserByUsernameUseCase.invoke(validUsername) } returns foundUser
-
-        getUserUI = GetUserUI(inputReader, outputViewer, getUserByUsernameUseCase)
-
-        // When
-        getUserUI.run()
-
-        // Then
-        verify {
-            outputViewer.logMessage(match { it.contains("Found: $validUsername") })
-        }
+    @Test fun `prompt and header always shown`() {
+        every { reader.readInput() } returns "u"
+        every { uc.invoke("u") } returns sample
+        ui.run()
+        verify { viewer.logMessage("=== Find User ===") }
+        verify { viewer.logMessage("Please enter the username:") }
     }
 }

@@ -18,7 +18,7 @@ class CreateUserUI(
 ) {
     fun run(currentUser: UserEntity?) {
         if (currentUser?.type != UserType.Admin) {
-            viewer.logError(" Only administrators can create new users.")
+            viewer.logError("Only administrators can create new users.")
             return
         }
 
@@ -28,25 +28,26 @@ class CreateUserUI(
         val name = prompt("Name: ")
         val password = prompt("Password: ")
 
-        val newUser = createUser(username, password, name, currentUser)
         try {
-            viewer.logMessage(" User '${newUser.username}' created successfully.")
+            val newUser = createUser(username, password, name, currentUser)
+            viewer.logMessage("User '${newUser.username}' created successfully.")
         } catch (e: InvalidUsernameException) {
-            viewer.logError(" Invalid username: ${e.message}")
+            viewer.logError("Invalid username: ${e.message}")
         } catch (e: InvalidNameException) {
-            viewer.logError(" Invalid name: ${e.message}")
+            viewer.logError("Invalid name: ${e.message}")
         } catch (e: InvalidPasswordException) {
-            viewer.logError(" Invalid password: ${e.message}")
+            viewer.logError("Invalid password: ${e.message}")
         } catch (e: UserAlreadyExistsException) {
-            viewer.logError(" ${e.message}")
+            viewer.logError("${e.message}")
         } catch (e: UnauthorizedException) {
-            viewer.logError(" ${e.message}")
+            viewer.logError("${e.message}")
         }
-
     }
+
 
     private fun prompt(label: String): String {
         viewer.logMessage(label)
         return reader.readInput()?.trim().orEmpty()
     }
 }
+//

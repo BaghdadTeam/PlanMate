@@ -15,17 +15,14 @@ class AddStateToProjectUseCase(
 
     fun invoke(state: StateEntity, userId: UUID){
         val user = userRepository.getUserById(userId)
-        if (user != null) {
-            if (user.type.name != UserType.Admin.name) throw Exception("Only Admin can add tasks")
-        }
+        if (user.type.name != UserType.Admin.name) throw Exception("Only Admin can add tasks")
         if (state.name.isBlank()) throw Exception("state name can't be empty")
         projectStatesRepository.createState(state)
         val audit = createAudit(state, user)
         auditRepository.addAuditEntry(audit)
     }
 
-    private fun createAudit(state: StateEntity, user: UserEntity?):AuditEntity {
-        val actualUser = user ?: throw IllegalArgumentException("Cannot create audit without a user")
+    private fun createAudit(state: StateEntity,user: UserEntity):AuditEntity {
         val action = "create ${state.name} state is created successfully"
         val audit = AuditEntity(
             entityType = Entities.Task.name,

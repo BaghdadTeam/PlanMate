@@ -1,8 +1,6 @@
 package org.baghdad.di
 
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
-import org.baghdad.logic.usecase.user.CreateUserUseCase
-import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.authentication.LogoutUi
 import org.baghdad.presentation.projectStates.AddStateToProjectUI
@@ -11,7 +9,7 @@ import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
 import org.baghdad.presentation.projectStates.GetStateByIdUI
 import org.baghdad.presentation.task.*
 import org.baghdad.presentation.user.CreateUserUI
-import org.baghdad.presentation.user.GetUserUI
+import org.baghdad.presentation.user.GetUserByUsernameUI
 import org.koin.dsl.module
 
 val uiModule = module {
@@ -45,7 +43,7 @@ val uiModule = module {
 
     // region  :: User Management ::
     single { CreateUserUI(get(),get(),get()) }
-    single { GetUserUI(get(),get(),get()) }
+    single { GetUserByUsernameUI(get(),get(),get()) }
     single { GetStateByIdUI(get(),get(),get()) }
     // endregion
 }
