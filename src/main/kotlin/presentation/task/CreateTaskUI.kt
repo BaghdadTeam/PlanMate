@@ -16,7 +16,7 @@ class CreateTaskUI(
     private val reader: Reader
 ) {
 
-    fun execute(projectId: String, stateId: String) {
+    fun execute(projectId: UUID, stateId: UUID) {
 
         val user = sessionManager.currentSession
 
@@ -25,7 +25,7 @@ class CreateTaskUI(
         tryCreateTask(task, user.id)
     }
 
-    private fun promptForTaskDetails(id: UUID, projectId: String, stateId: String): TaskEntity? {
+    private fun promptForTaskDetails(id: UUID, projectId: UUID, stateId: UUID): TaskEntity? {
 
         val title = promptForTitle() ?: ""
         val description = promptForDescription() ?: ""
@@ -35,7 +35,7 @@ class CreateTaskUI(
             description = description,
             stateId = stateId,
             projectId = projectId,
-            creatorId = id.toString()
+            creatorId = id
         )
     }
 

@@ -6,7 +6,7 @@ data class TaskEntity(
     val id: UUID = UUID.randomUUID(),
     val title: String,
     val description: String,
-    val stateId: String,
-    val projectId: String,
-    val creatorId: String
+    val stateId: UUID,
+    val projectId: UUID,
+    val creatorId: UUID
 )

@@ -32,8 +32,8 @@ class CreateTaskUITest {
         loginTime = LocalDateTime.now().minusMinutes(10)
     )
 
-    private val projectId = "project123"
-    private val stateId = "state123"
+    private val projectId = UUID.randomUUID()
+    private val stateId = UUID.randomUUID()
 
     @BeforeEach
     fun setUp() {

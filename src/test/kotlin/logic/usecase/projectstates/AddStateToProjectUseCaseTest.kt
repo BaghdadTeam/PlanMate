@@ -16,6 +16,7 @@ import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 
 class AddStateToProjectUseCaseTest {
 
@@ -63,7 +64,7 @@ class AddStateToProjectUseCaseTest {
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isNotEmpty()
+        Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
         Truth.assertThat(audit.timestamp).isNotEmpty()
     }
 

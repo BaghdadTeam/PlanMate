@@ -26,7 +26,7 @@ class AddStateToProjectUseCase(
         val action = "create ${state.name} state is created successfully"
         val audit = AuditEntity(
             entityType = Entities.Task.name,
-            entityId = state.id.toString(),
+            entityId = state.id,
             action = action,
             user = user,
             timestamp = getFormattedTimestamp(),

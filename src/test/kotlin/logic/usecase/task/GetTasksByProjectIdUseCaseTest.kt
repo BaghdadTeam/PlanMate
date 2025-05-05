@@ -8,6 +8,7 @@ import io.mockk.verify
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.task.GetTasksByProjectIdUseCase
 import org.junit.jupiter.api.BeforeEach
+import java.util.UUID
 import kotlin.test.Test
 
 class GetTasksByProjectIdUseCaseTest {
@@ -23,9 +24,9 @@ class GetTasksByProjectIdUseCaseTest {
 
     @Test
     fun `should return tasks for given project id`() {
-        val projectId = "project-123"
-        val expectedTasks = TaskEntityTestData.tasksInSameProject
 
+        val expectedTasks = TaskEntityTestData.tasksInSameProject
+        val projectId = expectedTasks[0].projectId
         every { taskRepository.getTasksByProjectId(projectId) } returns expectedTasks
 
         val result = getTasksByProjectIdUseCase(projectId)
@@ -36,7 +37,7 @@ class GetTasksByProjectIdUseCaseTest {
 
     @Test
     fun `should return empty list when no tasks found for project id`() {
-        val projectId = "project-empty"
+        val projectId = UUID.randomUUID()
         every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
 
         val result = getTasksByProjectIdUseCase(projectId)

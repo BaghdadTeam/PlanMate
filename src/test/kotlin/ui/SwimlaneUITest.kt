@@ -24,16 +24,16 @@ class SwimlaneUITest {
             id = UUID.randomUUID(),
             title = "Task",
             description = "Desc",
-            stateId = state.id.toString(),
-            projectId = projectId.toString(),
-            creatorId = "user1"
+            stateId = state.id,
+            projectId = projectId,
+            creatorId = creatorId
         )
         val expectedMap = mapOf(state to listOf(task))
-        every { viewServiceUseCase.swimlane(projectId.toString())
+        every { viewServiceUseCase.swimlane(projectId)
         } returns Result.success(expectedMap)
 
         // when
-        val result = ui.viewSwimlaneCommand(projectId.toString())
+        val result = ui.viewSwimlaneCommand(projectId)
 
         // then
         result shouldBe Result.success(expectedMap)
@@ -42,7 +42,7 @@ class SwimlaneUITest {
     @Test
     fun `viewSwimlaneCommand should return failure result when useCase fails`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         val error = Exception("oops")
         every { viewServiceUseCase.swimlane(projectId)
         } returns Result.failure(error)
@@ -59,7 +59,7 @@ class SwimlaneUITest {
     @Test
     fun `should return error message when swimlane retrieval fails`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         every { viewServiceUseCase.swimlane(projectId)
         } returns Result.failure(Exception("Failed to fetch data"))
 
@@ -79,15 +79,15 @@ class SwimlaneUITest {
             id = UUID.randomUUID(),
             title = "Task 1",
             description = "Some description",
-            stateId = state.id.toString(),
-            projectId = projectId.toString(),
-            creatorId = "user1"
+            stateId = state.id,
+            projectId = projectId,
+            creatorId = creatorId
         )
-        every { viewServiceUseCase.swimlane(projectId.toString())
+        every { viewServiceUseCase.swimlane(projectId)
         } returns Result.success(mapOf(state to listOf(task)))
 
         // when
-        val result = ui.renderAsciiSwimlane(projectId.toString())
+        val result = ui.renderAsciiSwimlane(projectId)
 
         // then
         result.contains("To Do") shouldBe true

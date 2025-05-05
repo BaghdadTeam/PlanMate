@@ -20,12 +20,28 @@ class GetTasksByStateIdUITest {
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
 
+    private val stateId = UUID.randomUUID()
+    private val tasksInSameState = UUID.randomUUID()
+    private val tasksInSameProject = UUID.randomUUID()
     private val tasks = listOf(
-        TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", "state1", "project1", "creator1"),
-        TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", "state1", "project1", "creator2")
+        TaskEntity(
+            UUID.randomUUID(),
+            "Task 1",
+            "Description 1",
+            tasksInSameState,
+            tasksInSameProject,
+            UUID.randomUUID()
+        ),
+        TaskEntity(
+            UUID.randomUUID(),
+            "Task 2",
+            "Description 2",
+            tasksInSameState,
+            tasksInSameProject,
+            UUID.randomUUID()
+        )
     )
 
-    private val stateId = "state123"
     private val emptyStateId = ""
 
     @BeforeEach
@@ -39,7 +55,7 @@ class GetTasksByStateIdUITest {
 
     @Test
     fun `test valid state ID input with tasks found`() {
-        every { reader.readInput() } returns stateId // User enters valid state ID
+        every { reader.readInput() } returns stateId.toString() // User enters valid state ID
         every { getTasksByStateIdUseCase(stateId) } returns tasks
 
         getTasksByStateIdUI.execute()
@@ -52,7 +68,7 @@ class GetTasksByStateIdUITest {
 
     @Test
     fun `test valid state ID input with no tasks found`() {
-        every { reader.readInput() } returns stateId // User enters valid state ID
+        every { reader.readInput() } returns stateId.toString() // User enters valid state ID
         every { getTasksByStateIdUseCase(stateId) } returns emptyList()
 
         getTasksByStateIdUI.execute()
@@ -72,7 +88,7 @@ class GetTasksByStateIdUITest {
 
     @Test
     fun `test exception handling when tasks not found`() {
-        every { reader.readInput() } returns stateId // User enters valid state ID
+        every { reader.readInput() } returns stateId.toString() // User enters valid state ID
         every { getTasksByStateIdUseCase(stateId) } throws TasksNotFoundException("No tasks found")
 
         getTasksByStateIdUI.execute()
@@ -82,7 +98,7 @@ class GetTasksByStateIdUITest {
 
     @Test
     fun `test exception handling for other errors`() {
-        every { reader.readInput() } returns stateId // User enters valid state ID
+        every { reader.readInput() } returns stateId.toString() // User enters valid state ID
         every { getTasksByStateIdUseCase(stateId) } throws Exception("Unexpected error")
 
         getTasksByStateIdUI.execute()
