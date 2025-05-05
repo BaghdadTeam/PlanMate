@@ -6,7 +6,7 @@ import org.baghdad.logic.usecase.report.ReportUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.reportSummary.ReportUI
-import java.io.ByteArrayOutputStream
+import java.util.UUID
 
 class ReportUITest {
 
@@ -19,13 +19,12 @@ class ReportUITest {
         ProjectSummaryReport(
             projectName = "Demo Project",
             totalTasks = 4,
-            tasksPerState = mapOf("To Do" to 2, "Done" to 2),
-            tasksPerUser = mapOf("user1" to 3, "user2" to 1)
+            tasksPerState = mapOf(UUID.randomUUID() to 2, UUID.randomUUID() to 2),
+            tasksPerUser = mapOf(UUID.randomUUID() to 3, UUID.randomUUID() to 1)
         )
     )
 
     private val originalOut = System.out
-    private lateinit var outputStream: ByteArrayOutputStream
 
     @BeforeTest
     fun setup() {

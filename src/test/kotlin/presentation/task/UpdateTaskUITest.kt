@@ -29,20 +29,22 @@ class UpdateTaskUITest {
     private lateinit var reader: Reader
     private lateinit var updateTaskUI: UpdateTaskUI
 
+    private val projectID = UUID.randomUUID()
+
     private val dummyTasks = listOf(
         TaskEntity(
             title = "Old Title",
             description = "Old Description",
-            stateId = "state1",
-            projectId = "project1",
-            creatorId = "user123"
+            stateId = UUID.randomUUID(),
+            projectId = projectID,
+            creatorId = UUID.randomUUID()
         ),
         TaskEntity(
             title = "Another Task",
             description = "Some Desc",
-            stateId = "state2",
-            projectId = "project1",
-            creatorId = "user123"
+            stateId = UUID.randomUUID(),
+            projectId = projectID,
+            creatorId = UUID.randomUUID()
         )
     )
 
