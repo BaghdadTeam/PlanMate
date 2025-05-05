@@ -12,5 +12,6 @@ val uiModule = module {
     single { GetTasksByStateIdUI(get(), get(), get()) }
     single { UpdateTaskUI(get(), get(), get(), get()) }
     single { GetTaskByIdUI(get(), get(), get()) }
+    //-----------------------------ProjectUI-------------------------------------
     single { ProjectUi(get(), get(), get(), get()) }
 }
