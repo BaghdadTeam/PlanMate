@@ -185,13 +185,13 @@ class TaskDataSourceTest {
     @Test
     fun `deleteTask should throw when task not found`() {
         val existingTasks = TaskEntityTestData.tasks
-
+        val unknownId = UUID.randomUUID()
         every { dataSource.loadAll() } returns existingTasks
 
         val exception = assertThrows<TasksNotFoundException> {
-            taskDataSource.deleteTask(UUID.randomUUID())
+            taskDataSource.deleteTask(unknownId)
         }
 
-        assertThat(exception.message).contains("Task with id unknown-id not found")
+        assertThat(exception.message).contains("Task with id $unknownId not found")
     }
 }
