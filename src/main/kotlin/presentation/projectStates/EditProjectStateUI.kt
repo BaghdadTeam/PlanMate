@@ -39,7 +39,7 @@ class EditProjectStateUI(
         return StateEntity(
             name = name,
             projectId = projectId,
-            creatorId = UUID.fromString(userId),
+            creatorId = userId
         )
     }
 
