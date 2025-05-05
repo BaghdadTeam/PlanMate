@@ -15,12 +15,17 @@ class ReportUITest {
     private lateinit var reader: Reader
     private lateinit var viewer: Viewer
 
+    private val toDoStateId = UUID.fromString("00000000-0000-0000-0000-000000000001")
+    private val doneStateId = UUID.fromString("00000000-0000-0000-0000-000000000002")
+    private val user1Id = UUID.fromString("00000000-0000-0000-0000-000000000011")
+    private val user2Id = UUID.fromString("00000000-0000-0000-0000-000000000012")
+
     private val fakeReports = listOf(
         ProjectSummaryReport(
             projectName = "Demo Project",
             totalTasks = 4,
-            tasksPerState = mapOf(UUID.randomUUID() to 2, UUID.randomUUID() to 2),
-            tasksPerUser = mapOf(UUID.randomUUID() to 3, UUID.randomUUID() to 1)
+            tasksPerState = mapOf(toDoStateId to 2, doneStateId to 2),
+            tasksPerUser = mapOf(user1Id to 3, user2Id to 1)
         )
     )
 
@@ -52,10 +57,10 @@ class ReportUITest {
             viewer.logMessage(match { it.contains("Demo Project") })
             viewer.logMessage(match { it.contains("Project Report") })
             viewer.logMessage(match { it.contains("Total Tasks") })
-            viewer.logMessage(match { it.contains("To Do: 2") })
-            viewer.logMessage(match { it.contains("Done: 2") })
-            viewer.logMessage(match { it.contains("user1: 3") })
-            viewer.logMessage(match { it.contains("user2: 1") })
+            viewer.logMessage(match { it.contains("00000000-0000-0000-0000-000000000001: 2") }) // To Do
+            viewer.logMessage(match { it.contains("00000000-0000-0000-0000-000000000002: 2") }) // Done
+            viewer.logMessage(match { it.contains("00000000-0000-0000-0000-000000000011: 3") }) // user1
+            viewer.logMessage(match { it.contains("00000000-0000-0000-0000-000000000012: 1") }) // user2
         }
     }
 
