@@ -14,7 +14,7 @@ class DeleteProjectUseCase(
     operator fun invoke(id: UUID, user: UserEntity): Result<Unit> {
         val access = AccessPolicy.requireAdmin(user)
         if (access is Result.Failure) return access
-        if (taskRepository.getTasksByProjectId(id.toString()).isNotEmpty())
+        if (taskRepository.getTasksByProjectId(id).isNotEmpty())
             return Result.Failure("Cannot delete project with active tasks.")
         projectRepository.deleteProject(id.toString())
         return Result.Success()
