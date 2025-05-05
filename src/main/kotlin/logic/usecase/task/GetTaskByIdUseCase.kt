@@ -9,6 +9,6 @@ class GetTaskByIdUseCase(
 ) {
 
     operator fun invoke(id: UUID): TaskEntity {
-        return taskRepository.getTaskById(id.toString())
+        return taskRepository.getTaskById(id)
     }
 }

@@ -14,7 +14,7 @@ class ReportService (
 
 
         return projects.map { project ->
-            val tasks = taskRepository.getTasksByProjectId(project.id.toString())
+            val tasks = taskRepository.getTasksByProjectId(project.id)
             val totalTasks = tasks.size
             val tasksPerState = tasks.groupingBy { task -> task.stateId }.eachCount()
             val tasksPerUser = tasks.groupingBy { task -> task.creatorId }.eachCount()

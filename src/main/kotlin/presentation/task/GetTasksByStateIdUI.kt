@@ -4,6 +4,7 @@ import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import java.util.UUID
 
 class GetTasksByStateIdUI(
     private val getTasksByStateIdUseCase: GetTasksByStateIdUseCase,
@@ -16,7 +17,7 @@ class GetTasksByStateIdUI(
         tryGetTasks(stateId)
     }
 
-    private fun promptForStateId(): String? {
+    private fun promptForStateId(): UUID? {
         viewer.logMessage("Please enter the state ID to fetch tasks:")
         val input = reader.readInput()
 
@@ -25,10 +26,10 @@ class GetTasksByStateIdUI(
             return null
         }
 
-        return input
+        return UUID.fromString(input)
     }
 
-    private fun tryGetTasks(stateId: String) {
+    private fun tryGetTasks(stateId: UUID) {
         try {
             val tasks = getTasksByStateIdUseCase(stateId)
             if (tasks.isEmpty()) {

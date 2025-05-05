@@ -6,6 +6,7 @@ import org.baghdad.logic.model.entities.ProjectSummaryReport
 import org.baghdad.logic.usecase.report.ReportService
 import org.baghdad.logic.usecase.report.ReportUseCase
 import org.junit.jupiter.api.Assertions.*
+import java.util.UUID
 import kotlin.test.Test
 
 class ReportUseCaseTest{
@@ -24,8 +25,8 @@ class ReportUseCaseTest{
             ProjectSummaryReport(
                 projectName = "Test Project",
                 totalTasks = 5,
-                tasksPerState = mapOf("To Do" to 3),
-                tasksPerUser = mapOf("user1" to 5)
+                tasksPerState = mapOf(UUID.randomUUID() to 3),
+                tasksPerUser = mapOf(UUID.randomUUID() to 5)
             )
         )
         every { reportService.summary() } returns fakeReports

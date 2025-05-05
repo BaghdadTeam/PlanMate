@@ -49,34 +49,36 @@ class TaskRepositoryImplTest {
     fun `getTaskById should return correct task`() {
         val task = TaskEntityTestData.normalTask
         val id = task.id
-        every { dataSource.getTaskById(id.toString()) } returns task
+        every { dataSource.getTaskById(id) } returns task
 
-        val result = taskRepository.getTaskById(id.toString())
+        val result = taskRepository.getTaskById(id)
 
         Truth.assertThat(result).isEqualTo(task)
-        verify { dataSource.getTaskById(id.toString()) }
+        verify { dataSource.getTaskById(id) }
     }
 
     @Test
     fun `getTasksByProjectId should return filtered tasks`() {
         val tasks = TaskEntityTestData.tasksInSameProject
-        every { dataSource.getTasksByProjectId("p1") } returns tasks
+        val projectID = UUID.randomUUID()
+        every { dataSource.getTasksByProjectId(projectID) } returns tasks
 
-        val result = taskRepository.getTasksByProjectId("p1")
+        val result = taskRepository.getTasksByProjectId(projectID)
 
         Truth.assertThat(result).isEqualTo(tasks)
-        verify { dataSource.getTasksByProjectId("p1") }
+        verify { dataSource.getTasksByProjectId(projectID) }
     }
 
     @Test
     fun `getTasksByStateId should return filtered tasks`() {
         val tasks = TaskEntityTestData.tasksInSameState
-        every { dataSource.getTasksByStateId("s1") } returns tasks
+        val stateID = UUID.randomUUID()
+        every { dataSource.getTasksByStateId(stateID) } returns tasks
 
-        val result = taskRepository.getTasksByStateId("s1")
+        val result = taskRepository.getTasksByStateId(stateID)
 
         Truth.assertThat(result).isEqualTo(tasks)
-        verify { dataSource.getTasksByStateId("s1") }
+        verify { dataSource.getTasksByStateId(stateID) }
     }
 
     @Test
@@ -90,7 +92,7 @@ class TaskRepositoryImplTest {
 
     @Test
     fun `deleteTask should call dataSource deleteTask`() {
-        val taskId = "1"
+        val taskId = UUID.randomUUID()
 
         taskRepository.deleteTask(taskId)
 

@@ -1,4 +1,4 @@
-package org.baghdad.logic.usecase
+package logic.usecase
 
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -7,6 +7,7 @@ import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -30,25 +31,25 @@ class ViewServiceUseCaseTest {
             id = UUID.randomUUID(),
             title = "Task 1",
             description = "Description 1",
-            stateId = state1Id.toString(),
-            projectId = projectId.toString(),
-            creatorId = "user1"
+            stateId = state1Id,
+            projectId = projectId,
+            creatorId = UUID.randomUUID()
         )
         val task2 = TaskEntity(
             id = UUID.randomUUID(),
             title = "Task 2",
             description = "Description 2",
-            stateId = state2Id.toString(),
-            projectId = projectId.toString(),
-            creatorId = "user1"
+            stateId = state2Id,
+            projectId = projectId,
+            creatorId = UUID.randomUUID()
         )
         val tasks = listOf(task1, task2)
 
         every { stateRepository.getAllStatesPerProject(projectId) } returns states
-        every { taskRepository.getTasksByProjectId(projectId.toString()) } returns tasks
+        every { taskRepository.getTasksByProjectId(projectId) } returns tasks
 
         // when
-        val result = useCase.swimlane(projectId.toString())
+        val result = useCase.swimlane(projectId)
 
         // then
         result shouldBe Result.success(
@@ -64,10 +65,10 @@ class ViewServiceUseCaseTest {
         // give
         val projectId = UUID.randomUUID()
         every { stateRepository.getAllStatesPerProject(projectId) } returns emptyList()
-        every { taskRepository.getTasksByProjectId(projectId.toString()) } returns emptyList()
+        every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
 
         // when
-        val result = useCase.swimlane(projectId.toString())
+        val result = useCase.swimlane(projectId)
 
         // then
         result shouldBe Result.success(emptyMap())
@@ -81,7 +82,7 @@ class ViewServiceUseCaseTest {
         } throws RuntimeException("Database error")
 
         // when
-        val result = useCase.swimlane(projectId.toString())
+        val result = useCase.swimlane(projectId)
 
         // then
         result.isFailure shouldBe true

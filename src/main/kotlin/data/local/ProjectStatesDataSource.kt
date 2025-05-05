@@ -36,7 +36,7 @@ class ProjectStatesDataSource(
         val state = allData.find { it.id == stateId } ?: throw Exception("No state found")
 
         val tasks = taskDataSource.loadAll().toMutableList()
-        val filteredTasks = tasks.filterNot { it.stateId == stateId.toString() }
+        val filteredTasks = tasks.filterNot { it.stateId == stateId }
 
         allData.remove(state)
         projectStateDataSource.update(allData)

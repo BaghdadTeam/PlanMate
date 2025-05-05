@@ -1,3 +1,5 @@
+package logic.usecase.report
+
 import io.mockk.*
 import kotlin.test.*
 import org.junit.jupiter.api.BeforeEach
@@ -16,6 +18,10 @@ class ReportServiceTest {
     private lateinit var reportService: ReportService
 
     private val projectId = UUID.randomUUID()
+    private val state1Id = UUID.randomUUID()
+    private val state2Id = UUID.randomUUID()
+    private val user1Id = UUID.randomUUID()
+    private val user2Id = UUID.randomUUID()
 
     @BeforeEach
     fun setup() {
@@ -25,74 +31,44 @@ class ReportServiceTest {
 
         reportService = ReportService(projectRepo, taskRepo, stateRepo)
 
-        val project = ProjectEntity(id = projectId, name = "Test Project", creatorId = "user1")
+        val project = ProjectEntity(id = projectId, name = "Test Project", creatorId = user1Id.toString())
 
         val states = listOf(
-            StateEntity(
-                id = UUID.randomUUID(),
-                name = "To Do",
-                projectId = UUID.randomUUID(),
-                creatorId = UUID.randomUUID()
-            ),
-
-            StateEntity(
-                id = UUID.randomUUID(),
-                name = "In Progress",
-                projectId = UUID.randomUUID(),
-                creatorId = UUID.randomUUID()
-            )
+            StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = user1Id),
+            StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = user1Id)
         )
 
         val tasks = listOf(
             TaskEntity(
                 title = "T1",
                 description = "D1",
-                stateId = states[0].name,
-                projectId = projectId.toString(),
-                creatorId = "user1"
+                stateId = state1Id,
+                projectId = projectId,
+                creatorId = user1Id
             ),
             TaskEntity(
                 title = "T2",
                 description = "D2",
-                stateId = states[0].name,
-                projectId = projectId.toString(),
-                creatorId = "user1"
+                stateId = state1Id,
+                projectId = projectId,
+                creatorId = user1Id
             ),
             TaskEntity(
                 title = "T3",
                 description = "D3",
-                stateId = "s1",
-                projectId = projectId.toString(),
-                creatorId = "user2"
+                stateId = state2Id,
+                projectId = projectId,
+                creatorId = user2Id
             )
         )
 
-
         every { projectRepo.getAllProjects() } returns listOf(project)
-        every { taskRepo.getTasksByProjectId(projectId.toString()) } returns tasks
+        every { taskRepo.getTasksByProjectId(projectId) } returns tasks
         every { stateRepo.getAllStatesPerProject(projectId) } returns states
     }
 
     @Test
-    fun `test summary with mockk`() {
-        val summaryList = reportService.summary()
-        val report = summaryList.first()
-
-        assertEquals(2, report.tasksPerState["To Do"] ?: 0
-        )
-    }
-
-    @Test
-    fun `test summary with user`() {
-        val summaryList = reportService.summary()
-        val report = summaryList.first()
-
-        assertEquals(1, report.tasksPerUser["user2"] ?: 0)
-    }
-
-
-    @Test
-    fun `test summary with totalTask`() {
+    fun `test summary returns correct totalTask`() {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 
@@ -100,17 +76,28 @@ class ReportServiceTest {
     }
 
     @Test
-    fun `test summary with projectName`() {
+    fun `test summary returns correct projectName`() {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 
         assertEquals("Test Project", report.projectName)
     }
+
+    @Test
+    fun `test summary returns correct tasks per state`() {
+        val summaryList = reportService.summary()
+        val report = summaryList.first()
+
+        assertEquals(2, report.tasksPerState[state1Id])
+        assertEquals(1, report.tasksPerState[state2Id])
+    }
+
+    @Test
+    fun `test summary returns correct tasks per user`() {
+        val summaryList = reportService.summary()
+        val report = summaryList.first()
+
+        assertEquals(2, report.tasksPerUser[user1Id])
+        assertEquals(1, report.tasksPerUser[user2Id])
+    }
 }
-
-
-
-
-
-
-
