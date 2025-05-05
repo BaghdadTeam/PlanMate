@@ -8,11 +8,9 @@ class ProjectDataSource(
 ) {
 
     fun createProject() {
-        csvDataSource.append(
-            ProjectEntity(
-                name = "Plane Mate",
-                creatorId = "rtwo' unq3fq3[rkom "
-            )
-        )
+        csvDataSource.append(ProjectEntity(
+            name = "Plane Mate",
+            creatorId = "rtwo' unq3fq3[rkom "
+        ))
     }
 }

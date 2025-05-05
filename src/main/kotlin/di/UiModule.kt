@@ -1,7 +1,6 @@
 package org.baghdad.di
 
 import org.baghdad.presentation.task.*
-import org.baghdad.presentation.project.ProjectUi
 import org.koin.dsl.module
 
 val uiModule = module {
@@ -12,6 +11,4 @@ val uiModule = module {
     single { GetTasksByStateIdUI(get(), get(), get()) }
     single { UpdateTaskUI(get(), get(), get(), get()) }
     single { GetTaskByIdUI(get(), get(), get()) }
-    //-----------------------------ProjectUI-------------------------------------
-    single { ProjectUi(get(), get(), get(), get()) }
 }

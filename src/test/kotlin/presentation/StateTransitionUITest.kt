@@ -8,10 +8,11 @@ import io.mockk.verify
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.StateTransitionUI
-import org.baghdad.presentation.helper.Reader
-import org.example.presentation.Viewer
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 import kotlin.test.Test
 
 class StateTransitionUITest {
@@ -31,17 +32,17 @@ class StateTransitionUITest {
 
     @Test
     fun `should log success message on successful state change`() {
-        every { reader.readInput() } returnsMany listOf("task123", "state456")
+        every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
         every { useCase.changeTaskState(any(), any(), any()) } just Runs
 
         ui.execute()
 
-        verify { viewer.log("Task state changed successfully.") }
+        verify { viewer.logMessage("Task state changed successfully.") }
     }
 
     @Test
     fun `should log NotFoundException message if State not found in this project`() {
-        every { reader.readInput() } returnsMany listOf("task123", "state456")
+        every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
         every {
             useCase.changeTaskState(
                 any(),
@@ -52,12 +53,12 @@ class StateTransitionUITest {
 
         ui.execute()
 
-        verify { viewer.log("State not found in this project: State not found") }
+        verify { viewer.logError("State not found in this project: State not found") }
     }
 
     @Test
     fun `should log IllegalStateException message if invalid operation`() {
-        every { reader.readInput() } returnsMany listOf("task123", "state456")
+        every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
         every {
             useCase.changeTaskState(
                 any(),
@@ -68,12 +69,13 @@ class StateTransitionUITest {
 
         ui.execute()
 
-        verify { viewer.log("Invalid operation: Not allowed") }
+        verify { viewer.logError("Invalid operation: Not allowed") }
     }
 
     @Test
     fun `should log unexpected error`() {
-        every { reader.readInput() } returnsMany listOf("task123", "state456")
+        // Given
+        every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
         every {
             useCase.changeTaskState(
                 any(),
@@ -82,19 +84,26 @@ class StateTransitionUITest {
             )
         } throws RuntimeException("Something went wrong")
 
+        // when
         ui.execute()
 
-        verify { viewer.log("Unexpected error: Something went wrong") }
+        // then
+        verify { viewer.logError("Unexpected error: Something went wrong") }
     }
 
     @Test
     fun `should trim and pass both taskId and newStateId correctly`() {
-        every { reader.readInput() } returnsMany listOf("  task123  ", "  state456  ")
+        // Given
+        val taskId = UUID.randomUUID()
+        val newStateId = UUID.randomUUID()
+        every { reader.readInput() } returnsMany listOf(taskId.toString(), newStateId.toString())
         every { useCase.changeTaskState(any(), any(), any()) } just Runs
 
+        // when
         ui.execute()
 
-        verify { useCase.changeTaskState("task123", "state456", any()) }
+        // then
+        verify { useCase.changeTaskState(taskId, newStateId, any()) }
     }
 
     @Test

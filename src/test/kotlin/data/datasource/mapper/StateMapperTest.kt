@@ -27,8 +27,8 @@ class StateMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val name = "InProgress"
-        val projectId = "proj001"
-        val creatorId = "userA"
+        val projectId = UUID.randomUUID()
+        val creatorId = UUID.randomUUID()
         val line = "$uuid,$name,$projectId,$creatorId"
 
         // When
@@ -52,7 +52,7 @@ class StateMapperTest {
     @Test
     fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
         // Only three fields instead of four
-        val malformed = "123e4567-e89b-12d3-a456-426614174000,OnlyName,projId"
+        val malformed = "123e4567-e89b-12d3-a456-426614174000,OnlyName,123e4567-e89b-12d3-a456-426614174000"
         assertThrows<IndexOutOfBoundsException> { parser.deserializer(malformed) }
     }
 
@@ -61,8 +61,8 @@ class StateMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val name = "Done"
-        val projectId = "proj002"
-        val creatorId = "userB"
+        val projectId = UUID.randomUUID()
+        val creatorId = UUID.randomUUID()
         val entity = StateEntity(
             id = uuid,
             name = name,

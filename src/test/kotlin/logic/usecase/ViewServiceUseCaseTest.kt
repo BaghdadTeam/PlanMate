@@ -5,25 +5,25 @@ import io.mockk.every
 import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.repositories.StateRepository
+import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.junit.jupiter.api.Test
 import java.util.*
 
 class ViewServiceUseCaseTest {
     private val taskRepository: TaskRepository = mockk()
-    private val stateRepository: StateRepository = mockk()
+    private val stateRepository: ProjectStatesRepository = mockk()
     private val useCase = ViewServiceUseCase(taskRepository, stateRepository)
 
     @Test
     fun `should group tasks by state for given project`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         val state1Id = UUID.randomUUID()
         val state2Id = UUID.randomUUID()
 
-        val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = "user1")
-        val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = "user1")
+        val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
+        val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
         val states = listOf(state1, state2)
 
         val task1 = TaskEntity(
@@ -31,7 +31,7 @@ class ViewServiceUseCaseTest {
             title = "Task 1",
             description = "Description 1",
             stateId = state1Id.toString(),
-            projectId = projectId,
+            projectId = projectId.toString(),
             creatorId = "user1"
         )
         val task2 = TaskEntity(
@@ -39,16 +39,16 @@ class ViewServiceUseCaseTest {
             title = "Task 2",
             description = "Description 2",
             stateId = state2Id.toString(),
-            projectId = projectId,
+            projectId = projectId.toString(),
             creatorId = "user1"
         )
         val tasks = listOf(task1, task2)
 
         every { stateRepository.getAllStatesPerProject(projectId) } returns states
-        every { taskRepository.getTasksByProjectId(projectId) } returns tasks
+        every { taskRepository.getTasksByProjectId(projectId.toString()) } returns tasks
 
         // when
-        val result = useCase.swimlane(projectId)
+        val result = useCase.swimlane(projectId.toString())
 
         // then
         result shouldBe Result.success(
@@ -62,12 +62,12 @@ class ViewServiceUseCaseTest {
     @Test
     fun `should return empty map when no states exist for project`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         every { stateRepository.getAllStatesPerProject(projectId) } returns emptyList()
-        every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+        every { taskRepository.getTasksByProjectId(projectId.toString()) } returns emptyList()
 
         // when
-        val result = useCase.swimlane(projectId)
+        val result = useCase.swimlane(projectId.toString())
 
         // then
         result shouldBe Result.success(emptyMap())
@@ -76,12 +76,12 @@ class ViewServiceUseCaseTest {
     @Test
     fun `should handle repository exception gracefully`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         every { stateRepository.getAllStatesPerProject(projectId)
         } throws RuntimeException("Database error")
 
         // when
-        val result = useCase.swimlane(projectId)
+        val result = useCase.swimlane(projectId.toString())
 
         // then
         result.isFailure shouldBe true
