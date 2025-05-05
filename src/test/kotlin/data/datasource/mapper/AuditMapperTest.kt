@@ -50,7 +50,8 @@ class AuditMapperTest {
         every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
 
         val timestamp = "2025-04-29T12:34:56Z"
-        val line = "$uuid,Order,123,CREATE,[Pixel,Youssef],$timestamp"
+        val entityId = UUID.randomUUID()
+        val line = "$uuid,Order,$entityId,CREATE,[Pixel,Youssef],$timestamp"
 
         // When
         val result = parser.deserializer(line)
@@ -58,7 +59,7 @@ class AuditMapperTest {
         // Then
         assertThat(result.id).isEqualTo(uuid)
         assertThat(result.entityType).isEqualTo("Order")
-        assertThat(result.entityId).isEqualTo("123")
+        assertThat(result.entityId).isEqualTo(entityId)
         assertThat(result.action).isEqualTo("CREATE")
         assertThat(result.user).isEqualTo(user)
         assertThat(result.timestamp).isEqualTo(timestamp)
@@ -94,10 +95,11 @@ class AuditMapperTest {
         )
         every { anyConstructed<UserMapper>().serializer(user) } returns "Pixel,Youssef Mohamed"
         val timestamp = "2025-04-29T12:34:56Z"
+        val entityId = UUID.randomUUID()
         val entity = AuditEntity(
             id = uuid,
             entityType = "Product",
-            entityId = UUID.randomUUID(),
+            entityId = entityId,
             action = "UPDATE",
             user = user,
             timestamp = timestamp
@@ -107,7 +109,7 @@ class AuditMapperTest {
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,Product,456,UPDATE,[Pixel,Youssef Mohamed],$timestamp")
+        assertThat(csvLine).isEqualTo("$uuid,Product,$entityId,UPDATE,[Pixel,Youssef Mohamed],$timestamp")
     }
 
     @Test
@@ -123,10 +125,11 @@ class AuditMapperTest {
         // simulate a user serializer with multiple commas
         every { anyConstructed<UserMapper>().serializer(user) } returns "Bodi,ASDASD,Extra"
         val timestamp = "2025-05-01T00:00:00Z"
+        val entityId = UUID.randomUUID()
         val entity = AuditEntity(
             id = uuid,
             entityType = "Invoice",
-            entityId = UUID.randomUUID(),
+            entityId = entityId,
             action = "DELETE",
             user = user,
             timestamp = timestamp
@@ -137,6 +140,6 @@ class AuditMapperTest {
 
         // Then
         // The user part should be wrapped in a single pair of brackets
-        assertThat(csvLine).isEqualTo("$uuid,Invoice,789,DELETE,[Bodi,ASDASD,Extra],$timestamp")
+        assertThat(csvLine).isEqualTo("$uuid,Invoice,$entityId,DELETE,[Bodi,ASDASD,Extra],$timestamp")
     }
 }
