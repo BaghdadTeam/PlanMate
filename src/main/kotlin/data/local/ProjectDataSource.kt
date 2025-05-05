@@ -39,7 +39,7 @@ class ProjectDataSource(
         val projectStates = projectStatesDataSource.loadAll().toMutableList()
         val tasks = taskDataSource.loadAll().toMutableList()
 
-        val filteredProjectStates = projectStates.filterNot { it.projectId == projectId }
+        val filteredProjectStates = projectStates.filterNot { it.projectId.toString() == projectId }
         val filteredTasks = tasks.filterNot { it.projectId == projectId }
 
         projects.removeAt(project)
