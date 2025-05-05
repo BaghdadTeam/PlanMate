@@ -45,5 +45,8 @@ class StateTransitionUI(
         } catch (e: RuntimeException) {
             viewer.logError("Unexpected error: ${e.message}")
         }
+        catch (e:Exception) {
+            viewer.logError(" something went wrong while trying to change task state.")
+        }
     }
 }
