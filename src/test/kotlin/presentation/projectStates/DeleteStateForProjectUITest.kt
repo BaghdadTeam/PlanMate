@@ -31,7 +31,7 @@ class DeleteStateForProjectUITest {
         viewer = mockk(relaxed = true)
         reader = mockk()
 
-        every { session.userId } returns userId.toString()
+        every { session.userId } returns userId
         every { sessionManager.currentSession } returns session
 
         ui = DeleteStateForProjectUI(useCase, sessionManager, viewer, reader)

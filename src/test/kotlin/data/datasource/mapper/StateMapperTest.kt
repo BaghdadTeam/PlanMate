@@ -67,7 +67,7 @@ class StateMapperTest {
             id = uuid,
             name = name,
             projectId = projectId,
-            creatorId =
+            creatorId = creatorId,
         )
 
         // When
