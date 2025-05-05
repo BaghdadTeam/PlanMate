@@ -2,6 +2,11 @@ package org.baghdad.presentation.user
 
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.user.InvalidNameException
+import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.user.UnauthorizedException
+import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
 import org.baghdad.logic.usecase.user.CreateUserUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -21,17 +26,23 @@ class CreateUserUI(
 
         val username = prompt("Username: ")
         val name = prompt("Name: ")
-        val pass = prompt("Password: ")
+        val password = prompt("Password: ")
 
-        val result = createUser(username, pass, name, currentUser)
+        val newUser = createUser(username, password, name, currentUser)
+        try {
+            viewer.logMessage(" User '${newUser.username}' created successfully.")
+        } catch (e: InvalidUsernameException) {
+            viewer.logError(" Invalid username: ${e.message}")
+        } catch (e: InvalidNameException) {
+            viewer.logError(" Invalid name: ${e.message}")
+        } catch (e: InvalidPasswordException) {
+            viewer.logError(" Invalid password: ${e.message}")
+        } catch (e: UserAlreadyExistsException) {
+            viewer.logError(" ${e.message}")
+        } catch (e: UnauthorizedException) {
+            viewer.logError(" ${e.message}")
+        }
 
-        result
-            .onSuccess { user ->
-                viewer.logMessage("User '${user.username}' created successfully.")
-            }
-            .onFailure { ex ->
-                viewer.logError(" Error: ${ex.message}")
-            }
     }
 
     private fun prompt(label: String): String {

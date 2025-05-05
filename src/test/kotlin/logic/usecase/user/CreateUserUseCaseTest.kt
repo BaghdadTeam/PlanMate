@@ -3,78 +3,85 @@ package org.baghdad.logic.usecase.user
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.user.UnauthorizedException
-import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
+import org.baghdad.logic.model.exceptions.user.*
 import org.baghdad.logic.repositories.UserRepository
+import org.junit.jupiter.api.assertThrows
 
 class CreateUserUseCaseTest {
+    private val repo = mockk<UserRepository>(relaxed = true)
+    private val uc   = CreateUserUseCase(repo)
+    private val admin = UserEntity( name = "A",
+        username = "a",
+        hashedPassword = "h",
+        type = UserType.Admin)
+    private val mate  = UserEntity(name = "M",
+        username = "m",
+        hashedPassword = "h",
+        type = UserType.Mate)
 
-    private val repository = mockk<UserRepository>(relaxed = true)
-    private val useCase   = CreateUserUseCase(repository)
+    @Test fun `success when admin, valid inputs, unique`() {
+        every { repo.findByUsername("u1") } returns null
 
-    private val admin = UserEntity(
-        name = "Admin Name",
-        username = "admin",
-        hashedPassword = "ignored",
-        type = UserType.Admin
-    )
-    private val mate = UserEntity(
-        name = "Mate Name",
-        username = "mate",
-        hashedPassword = "ignored",
-        type = UserType.Mate
-    )
+        val created = uc("u1","secret", "Name", admin)
 
-    @Test
-    fun `invoke returns success for admin and unique username`() {
-        // Given
-        every { repository.existsByUsername("newUser") } returns false
-
-        // When
-        val result = useCase("newUser", "password", "New User", admin)
-
-        // Then
-        assertTrue(result.isSuccess, "Expected success Result")
-        val created = result.getOrNull()!!
-        assertEquals("newUser", created.username)
-        assertEquals("New User", created.name)
+        assertEquals("u1",    created.username)
+        assertEquals("Name",  created.name)
         assertEquals(UserType.Mate, created.type)
-        verify(exactly = 1) { repository.createUser(created) }
+        verify(exactly=1) { repo.createUser(created) }
+    }
+    @Test
+    fun `throws when non-admin`() {
+        assertThrows<UnauthorizedException> {
+            uc("user1", "goodPass", "Good Name", mate)
+        }
     }
 
     @Test
-    fun `invoke returns failure for non-admin creator`() {
-        // When
-        val result = useCase("whatever", "password", "Name", mate)
+    fun `throws for blank username`() {
+        assertThrows<InvalidUsernameException> {
+            uc("", "goodPass", "Good Name", admin)
+        }
+    }
 
-        // Then
-        assertTrue(result.isFailure, "Expected failure Result")
-        val ex = result.exceptionOrNull()!!
-        assertTrue(ex is UnauthorizedException)
-        assertEquals("Only admins can create users.", ex.message)
-        verify(exactly = 0) { repository.existsByUsername(any()) }
-        verify(exactly = 0) { repository.createUser(any()) }
+
+    @Test
+    fun `throws for bad username pattern`() {
+        assertThrows<InvalidUsernameException> {
+            uc("no spaces!", "goodPass", "Good Name", admin)
+        }
     }
 
     @Test
-    fun `invoke returns failure for duplicate username`() {
-        // Given
-        every { repository.existsByUsername("dupUser") } returns true
+    fun `throws for blank name`() {
+        assertThrows<InvalidNameException> {
+            uc("goodUser", "goodPass", "", admin)
+        }
+    }
 
-        // When
-        val result = useCase("dupUser", "password", "Name", admin)
+    @Test
+    fun `throws for short password`() {
+        assertThrows<InvalidPasswordException> {
+            uc("goodUser", "123", "Good Name", admin)
+        }
+    }
 
-        // Then
-        assertTrue(result.isFailure, "Expected failure Result")
-        val ex = result.exceptionOrNull()!!
-        assertTrue(ex is UserAlreadyExistsException)
-        assertEquals("Username 'dupUser' already exists.", ex.message)
-        verify(exactly = 1) { repository.existsByUsername("dupUser") }
-        verify(exactly = 0) { repository.createUser(any()) }
+    @Test fun `throws when username exists`() {
+        every { repo.findByUsername("dup") } returns UserEntity(id=UUID.randomUUID(),"X","dup","h",UserType.Mate)
+        assertFailsWith<UserAlreadyExistsException> {
+            uc("dup","passwd","N", admin)
+        }
+    }
+    @Test
+    fun `throws on duplicate username`() {
+        every { repo.findByUsername("dup") } returns UserEntity(name="x",username="dup",hashedPassword="",type=UserType.Mate)
+        assertThrows<UserAlreadyExistsException> {
+            uc("dup", "goodPass", "Good Name", admin)
+        }
     }
 }

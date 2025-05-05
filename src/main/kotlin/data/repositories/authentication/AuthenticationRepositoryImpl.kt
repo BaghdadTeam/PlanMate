@@ -14,7 +14,7 @@ class AuthenticationRepositoryImpl(
 
     override fun login(username: String, inputHashedPassword: String):UserEntity {
         val user = userDataSource.findUserByUsername(username)
-        if (inputHashedPassword != user.hashedPassword)
+        if (inputHashedPassword != user?.hashedPassword)
             throw InvalidPasswordException("Invalid hashedPassword")
         return user
     }

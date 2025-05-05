@@ -12,22 +12,14 @@ class UserRepositoryImpl(
 
     override fun createUser(user: UserEntity) = dataSource.addUser(user)
 
-    override fun findByUsername(username: String): UserEntity? =
-        try {
-            dataSource.findUserByUsername(username)
-        } catch (_: Exception) {
-            null
+    override fun findByUsername(username: String): UserEntity? {
+          return  dataSource.findUserByUsername(username)
+
         }
 
-    override fun getUserById(id: UUID): UserEntity {
+    override fun getUserById(id: UUID): UserEntity? {
         return dataSource.findUserById(id)
-            ?: throw UserNotFoundException("User with id $id not found")
     }
-
-
-
-    override fun existsByUsername(username: String): Boolean =
-        dataSource.existsByUsername(username)
 
     override fun getAllUsers(): List<UserEntity> = dataSource.loadUsers()
 

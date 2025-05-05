@@ -14,12 +14,10 @@ class UserDataSource(
         dataSource.append(user)
     }
 
-    fun existsByUsername(username: String) = loadUsers().any { it.username == username }
-
-    fun findUserByUsername(username: String): UserEntity {
+    fun findUserByUsername(username: String): UserEntity? {
         return loadUsers().firstOrNull { it.username == username }
-            ?: throw UserNotFoundException("User $username not found")
     }
+
     fun findUserById(id: UUID): UserEntity? {
         return loadUsers().find { it.id == id }
     }

@@ -1,14 +1,15 @@
 package org.baghdad.logic.usecase.user
 
-import mu.KotlinLogging
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.user.InvalidNameException
+import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
 import org.baghdad.logic.model.exceptions.user.UnauthorizedException
 import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.utils.md5WithSalt
 
-private val logger = KotlinLogging.logger {}
 
 class CreateUserUseCase(
     private val userRepository: UserRepository
@@ -18,18 +19,28 @@ class CreateUserUseCase(
         passwordPlain: String,
         name: String,
         creator: UserEntity
-    ): Result<UserEntity> {
-        logger.info { "CreateUser invoked by ${creator.username} for new user '$username'" }
+    ): UserEntity {
+        checkAdmin(creator)
+        validateUsername(username)
+        validateName(name)
+        validatePassword(passwordPlain)
+        ensureUsernameUnique(username)
 
-        return runCatching {
-            checkAdmin(creator)
-            ensureUsernameUnique(username)
+        val newUser = createUserEntity(username, passwordPlain, name)
+        userRepository.createUser(newUser)
 
-            val newUser = createUserEntity(username, passwordPlain, name)
-            userRepository.createUser(newUser)
+        return newUser
+    }
 
-            logger.info { "User '${newUser.username}' created successfully." }
-            newUser
+    private fun validateUsername(username: String) {
+        if (username.isBlank()) {
+            throw InvalidUsernameException("Username must not be empty.")
+        }
+        val re = Regex("^[A-Za-z0-9_]{3,20}\$")
+        if (!username.matches(re)) {
+            throw InvalidUsernameException(
+                "Username must be 3–20 chars, letters, digits or underscore only."
+            )
         }
     }
 
@@ -39,8 +50,17 @@ class CreateUserUseCase(
         }
     }
 
+    private fun validateName(name: String) {
+        if (name.isBlank()) throw InvalidNameException("Name must not be empty.")
+    }
+
+
+    private fun validatePassword(password: String) {
+        if (password.length < 6) throw InvalidPasswordException("Password must be at least 6 characters.")
+    }
+
     private fun ensureUsernameUnique(username: String) {
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.findByUsername(username) != null) {
             throw UserAlreadyExistsException("Username '$username' already exists.")
         }
     }

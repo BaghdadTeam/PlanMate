@@ -6,7 +6,6 @@ import org.baghdad.logic.usecase.authentication.LogoutUseCase
 import org.baghdad.logic.usecase.projectstates.*
 import org.baghdad.logic.usecase.task.*
 import org.baghdad.logic.usecase.user.CreateUserUseCase
-import org.baghdad.logic.usecase.user.GetUserByIdUseCase
 import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.koin.dsl.module
 
@@ -45,6 +44,5 @@ val useCaseModule = module {
     // region  ::  User Management  Use Cases  ::
     single { CreateUserUseCase(get()) }
     single { GetUserByUsernameUseCase(get()) }
-    single { GetUserByIdUseCase(get()) }
     // endregion
 }

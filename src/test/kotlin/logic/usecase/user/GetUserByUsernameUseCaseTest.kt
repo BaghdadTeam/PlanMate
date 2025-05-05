@@ -2,55 +2,50 @@ package org.baghdad.logic.usecase.user
 
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlin.test.Test
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 
 class GetUserByUsernameUseCaseTest {
-
-    private val repository = mockk<UserRepository>(relaxed = true)
-    private val useCase   = GetUserByUsernameUseCase(repository)
-
-    private val existingUser = UserEntity(
+    private val repo = mockk<UserRepository>()
+    private val uc   = GetUserByUsernameUseCase(repo)
+    private val sampleUser = UserEntity(
         name = "Alice",
         username = "alice",
-        hashedPassword = "ignored",
+        hashedPassword = "hashed",
         type = UserType.Mate
     )
 
     @Test
-    fun `invoke returns success when user exists`() {
+    fun `success for existing`() {
         // Given
-        every { repository.findByUsername("alice") } returns existingUser
-
+        every { repo.findByUsername("alice") } returns sampleUser
         // When
-        val result = useCase("alice")
-
+        val user = uc("alice")
         // Then
-        assertTrue(result.isSuccess, "Expected success Result")
-        val user = result.getOrNull()!!
-        assertEquals(existingUser, user)
-        verify(exactly = 1) { repository.findByUsername("alice") }
+        assertEquals(sampleUser, user)
     }
 
     @Test
-    fun `invoke returns failure when user does not exist`() {
+    fun `throws for blank username`() {
+        // When & Then
+        assertFailsWith<InvalidUsernameException> {
+            uc("")
+        }
+    }
+
+    @Test
+    fun `throws when not found`() {
         // Given
-        every { repository.findByUsername("bob") } returns null
-
-        // When
-        val result = useCase("bob")
-
-        // Then
-        assertTrue(result.isFailure, "Expected failure Result")
-        val ex = result.exceptionOrNull()!!
-        assertIs<NoSuchElementException>(ex)
-        assertEquals("User 'bob' not found.", ex.message)
-        verify(exactly = 1) { repository.findByUsername("bob") }
+        every { repo.findByUsername("bob") } returns null
+        // When & Then
+        assertFailsWith<UserNotFoundException> {
+            uc("bob")
+        }
     }
 }
