@@ -16,7 +16,7 @@ class EditProjectStateUI(
 
     fun execute(projectId: UUID) {
         val session = sessionManager.currentSession
-        val userId = UUID.fromString(session.userId)
+        val userId = session.userId
 
         val stateId = promptForStateId() ?: return
         val newState = promptForNewStateDetails(userId, projectId) ?: return

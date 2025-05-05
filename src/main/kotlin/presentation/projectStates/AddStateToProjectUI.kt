@@ -19,9 +19,9 @@ class AddStateToProjectUI(
 
         val userId = session.userId
 
-        val state = promptForStateDetails(UUID.fromString(userId)) ?: return
+        val state = promptForStateDetails(userId) ?: return
 
-        tryAddState(state, UUID.fromString(userId))
+        tryAddState(state, userId)
     }
 
     private fun promptForStateDetails(userId: UUID): StateEntity? {

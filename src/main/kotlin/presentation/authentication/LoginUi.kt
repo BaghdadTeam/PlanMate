@@ -4,6 +4,8 @@ import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.usecase.authentication.LoginUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.logic.model.exceptions.InvalidCredentialsException
+import org.baghdad.logic.model.exceptions.UserCanNotBeFoundException
 
 class LoginUi(
     private val useCase: LoginUseCase,
@@ -18,12 +20,17 @@ class LoginUi(
             val password = reader.readInput()
 
             if (username != null && password != null) {
-                val result = useCase(username, password)
-                result.onSuccess {
+                try {
+                    val session = useCase(username, password)
                     viewer.logMessage("Successfully logged in as $username")
-                    return it
-                }.onFailure {
-                    viewer.logMessage("Login failed: ${it.message}")
+                    return session
+                } catch (e: InvalidCredentialsException) {
+                    viewer.logMessage("Login failed: ${e.message}")
+
+                } catch (e: UserCanNotBeFoundException) {
+                    viewer.logMessage("Login failed ${e.message}")
+                } catch (e: Exception) {
+                    viewer.logMessage("Unexpected error: ${e.message}")
                 }
             } else {
                 viewer.logMessage("Username and password cannot be null")

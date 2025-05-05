@@ -7,6 +7,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
+import org.baghdad.logic.model.exceptions.InvalidCredentialsException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.utils.md5WithSalt
 import org.junit.jupiter.api.*
@@ -27,21 +30,21 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun ` should  return a success result if credentials are valid  when login`() {
+    fun ` should  return user entity if credentials are valid  when login`() {
         // Given
         val user = createUserHelper(userName, password.md5WithSalt())
         every { userStorage.findUserByUsername(userName) } returns user
         // When & Then
-        assertThat(authRepository.login(userName, password.md5WithSalt()).isSuccess).isTrue()
+        assertThat(authRepository.login(userName, password.md5WithSalt()).id).isEqualTo(user.id)
     }
 
     @Test
-    fun `Should return success result if credentials are valid  when login`() {
+    fun `Should throw InvalidPasswordException  if credentials are valid  when login`() {
         // Given
         val user = createUserHelper(userName, "invalidPassword".md5WithSalt())
         every { userStorage.findUserByUsername(userName) } returns user
         // When & Then
-        assertThat(authRepository.login(userName, password).isFailure).isTrue()
+        assertThrows<InvalidPasswordException>{authRepository.login(userName, password)}
 
     }
 
@@ -49,6 +52,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `Should invoke delete session function  when logout`() {
         // Given
+        every { sessionRepository.deleteSession() } returns true
         // When
         authRepository.logout()
         // Then
@@ -56,22 +60,11 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `Should return failure result when logout fails`() {
+    fun `Should throw LogoutFailedException when logout fails`() {
         // Given
         every { sessionRepository.deleteSession() } returns false
-        // When
-        val result = authRepository.logout()
-        // Then
-        assertThat(result.isFailure).isTrue()
+        // When & Then
+        assertThrows<LogoutFailedException> { authRepository.logout() }
     }
 
-    @Test
-    fun `Should return success result when logout success`() {
-        // Given
-        every { sessionRepository.deleteSession() } returns true
-        // When
-        val result = authRepository.logout()
-        // Then
-        assertThat(result.isSuccess).isTrue()
-    }
 }
