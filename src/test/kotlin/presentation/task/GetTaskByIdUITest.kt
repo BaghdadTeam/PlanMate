@@ -53,7 +53,7 @@ class GetTaskByIdUITest {
         getTaskByIdUI.execute()
 
         verify { viewer.logMessage("Invalid task ID format.") }
-        verify(exactly = 0) { getTaskByIdUseCase(any()) } // Ensure use case is not called
+        verify(exactly = 0) { getTaskByIdUseCase(any()) } // Ensure the use case is not called
     }
 
     @Test

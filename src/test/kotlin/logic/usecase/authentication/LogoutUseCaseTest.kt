@@ -34,8 +34,8 @@ class LogoutUseCaseTest {
     @Test
     fun `Should re throw exceptions from auth repo `(){
         // Given
-        every {authRepo.logout()} returns Result.failure(LogoutFailedException("logout failed"))
-        // When
+        every {authRepo.logout()} throws LogoutFailedException("logout failed")
+        // When & Then
         assertThrows<LogoutFailedException> { useCase.invoke() }
     }
 }

@@ -33,7 +33,7 @@ class AddStateToProjectUITest {
         sessionManager = mockk()
         viewer = mockk(relaxed = true)
         reader = mockk()
-        every { fakeSession.userId } returns userId.toString()
+        every { fakeSession.userId } returns userId
         every { sessionManager.currentSession } returns fakeSession
 
         ui = AddStateToProjectUI(useCase, sessionManager, viewer, reader)
