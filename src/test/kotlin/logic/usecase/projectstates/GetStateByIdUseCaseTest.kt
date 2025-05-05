@@ -11,6 +11,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.GetStateByIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class GetStateByIdUseCaseTest {
@@ -34,24 +35,38 @@ class GetStateByIdUseCaseTest {
         val projectState = ProjectStatesEntityTestData.todoState()
         val id = projectState.id
 
-        every { statesRepository.getStateById(id.toString()) } returns projectState
+        every { statesRepository.getStateById(id) } returns projectState
 
-        val result = getStateByIdUseCase.invoke(id.toString())
+        val result = getStateByIdUseCase.invoke(id)
 
         Truth.assertThat(result).isEqualTo(projectState)
-        verify { statesRepository.getStateById(id.toString()) }
+        verify { statesRepository.getStateById(id) }
     }
 
     @Test
     fun `should throw exception when there is no states with this id`() {
         val id = UUID.randomUUID()
-        every { statesRepository.getStateById(id.toString()) } throws Exception("No State found")
+        every { statesRepository.getStateById(id) } throws Exception("No State found")
 
         org.junit.jupiter.api.assertThrows<Exception> {
-            getStateByIdUseCase.invoke(id.toString())
+            getStateByIdUseCase.invoke(id)
         }
-        verify { statesRepository.getStateById(id.toString()) }
+        verify { statesRepository.getStateById(id) }
 
+    }
+    @Test
+    fun `should throw exception when there is no states for project`() {
+        // Given
+        val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
+        val stateId = projectStates[0].projectId
+        every { statesRepository.getStateById(stateId) } returns null
+
+        // when
+        val exception = assertThrows<Exception> {
+            getStateByIdUseCase.invoke(stateId)
+        }
+        // then
+        Truth.assertThat(exception.message).contains("No state found")
     }
 
 }

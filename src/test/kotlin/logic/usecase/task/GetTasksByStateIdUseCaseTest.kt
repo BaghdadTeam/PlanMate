@@ -8,6 +8,7 @@ import io.mockk.verify
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
 import org.junit.jupiter.api.BeforeEach
+import java.util.UUID
 import kotlin.test.Test
 
 class GetTasksByStateIdUseCaseTest {
@@ -23,9 +24,9 @@ class GetTasksByStateIdUseCaseTest {
 
     @Test
     fun `should return tasks for given state id`() {
-        val stateId = "state-xyz"
-        val expectedTasks = TaskEntityTestData.tasksInSameState
 
+        val expectedTasks = TaskEntityTestData.tasksInSameState
+        val stateId = expectedTasks[0].stateId
         every { taskRepository.getTasksByStateId(stateId) } returns expectedTasks
 
         val result = getTasksByStateIdUseCase(stateId)
@@ -36,7 +37,7 @@ class GetTasksByStateIdUseCaseTest {
 
     @Test
     fun `should return empty list when no tasks match state id`() {
-        val stateId = "unknown-state"
+        val stateId = UUID.randomUUID()
         every { taskRepository.getTasksByStateId(stateId) } returns emptyList()
 
         val result = getTasksByStateIdUseCase(stateId)

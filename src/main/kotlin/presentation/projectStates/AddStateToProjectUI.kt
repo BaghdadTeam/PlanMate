@@ -21,16 +21,16 @@ class AddStateToProjectUI(
 
         val state = promptForStateDetails(userId) ?: return
 
-        tryAddState(state, UUID.fromString(userId))
+        tryAddState(state, userId)
     }
 
-    private fun promptForStateDetails(userId: String): StateEntity? {
+    private fun promptForStateDetails(userId: UUID): StateEntity? {
         val name = promptForStateName() ?: return null
         val projectId = promptForProjectId() ?: return null
 
         return StateEntity(
             name = name,
-            projectId = projectId,
+            projectId = UUID.fromString(projectId),
             creatorId = userId
         )
     }

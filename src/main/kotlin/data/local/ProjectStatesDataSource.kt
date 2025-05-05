@@ -3,6 +3,7 @@ package org.baghdad.data.local
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import java.util.UUID
 
 class ProjectStatesDataSource(
     private val projectStateDataSource: DataSource<StateEntity>,
@@ -13,9 +14,9 @@ class ProjectStatesDataSource(
         return projectStateDataSource.loadAll()
     }
 
-    fun getStateById(id: String): StateEntity? {
+    fun getStateById(id: UUID): StateEntity? {
         val allData = projectStateDataSource.loadAll().toMutableList()
-        return allData.find { it.id.toString() == id }
+        return allData.find { it.id == id }
     }
 
     fun createState(state: StateEntity) {
@@ -30,9 +31,9 @@ class ProjectStatesDataSource(
         projectStateDataSource.update(allData)
     }
 
-    fun deleteState(stateId: String) {
+    fun deleteState(stateId: UUID) {
         val allData = projectStateDataSource.loadAll().toMutableList()
-        val state = allData.find { it.id.toString() == stateId } ?: throw Exception("No state found")
+        val state = allData.find { it.id == stateId } ?: throw Exception("No state found")
 
         val tasks = taskDataSource.loadAll().toMutableList()
         val filteredTasks = tasks.filterNot { it.stateId == stateId }

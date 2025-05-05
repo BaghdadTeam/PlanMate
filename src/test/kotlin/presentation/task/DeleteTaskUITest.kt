@@ -24,9 +24,10 @@ class DeleteTaskUITest {
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
 
-    private val dummySession = SessionEntity(UUID.randomUUID(), UUID.randomUUID().toString(), "", LocalDateTime.now())
-    private val task1 = TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", "state1", "project1", "creator1")
-    private val task2 = TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", "state2", "project2", "creator2")
+    private val dummySession = SessionEntity(UUID.randomUUID(), UUID.randomUUID(), "", LocalDateTime.now())
+    private val task1 = TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID())
+    private val task2 = TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID())
+
     private val tasks = listOf(task1, task2)
 
     @BeforeEach
@@ -46,13 +47,14 @@ class DeleteTaskUITest {
 
         deleteTaskUI.execute(tasks)
 
-        verify { useCase(task1.id.toString(), UUID.fromString(dummySession.userId)) }
+        verify { useCase(task1.id, dummySession.userId) }
+
         verify { viewer.logMessage("Task deleted successfully.") }
     }
 
     @Test
     fun `test invalid task number`() {
-        every { reader.readInput() } returns "3" // User selects invalid task number (out of bounds)
+        every { reader.readInput() } returns "3" // User selects an invalid task number (out of bounds)
 
         deleteTaskUI.execute(tasks)
 

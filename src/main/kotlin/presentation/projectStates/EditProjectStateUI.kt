@@ -14,14 +14,14 @@ class EditProjectStateUI(
     private val reader: Reader
 ) {
 
-    fun execute(projectId: String) {
+    fun execute(projectId: UUID) {
         val session = sessionManager.currentSession
-        val userId = UUID.fromString(session.userId)
+        val userId = session.userId
 
         val stateId = promptForStateId() ?: return
-        val newState = promptForNewStateDetails(userId.toString(), projectId) ?: return
+        val newState = promptForNewStateDetails(userId, projectId) ?: return
 
-        tryEditState(stateId, newState, userId)
+        tryEditState(UUID.fromString(stateId), newState, userId)
     }
 
     private fun promptForStateId(): String? {
@@ -33,7 +33,7 @@ class EditProjectStateUI(
         }
     }
 
-    private fun promptForNewStateDetails(userId: String, projectId: String): StateEntity? {
+    private fun promptForNewStateDetails(userId: UUID, projectId: UUID): StateEntity? {
         val name = promptForStateName() ?: return null
 
         return StateEntity(
@@ -53,7 +53,7 @@ class EditProjectStateUI(
     }
 
 
-    private fun tryEditState(stateId: String, newState: StateEntity, userId: UUID) {
+    private fun tryEditState(stateId: UUID, newState: StateEntity, userId: UUID) {
         try {
             useCase.invoke(stateId, newState, userId)
             viewer.logMessage("State updated successfully.")

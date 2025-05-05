@@ -1,4 +1,4 @@
-package org.baghdad.logic.usecase
+package logic.usecase
 
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -7,6 +7,7 @@ import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -18,29 +19,29 @@ class ViewServiceUseCaseTest {
     @Test
     fun `should group tasks by state for given project`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         val state1Id = UUID.randomUUID()
         val state2Id = UUID.randomUUID()
 
-        val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = "user1")
-        val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = "user1")
+        val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
+        val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
         val states = listOf(state1, state2)
 
         val task1 = TaskEntity(
             id = UUID.randomUUID(),
             title = "Task 1",
             description = "Description 1",
-            stateId = state1Id.toString(),
+            stateId = state1Id,
             projectId = projectId,
-            creatorId = "user1"
+            creatorId = UUID.randomUUID()
         )
         val task2 = TaskEntity(
             id = UUID.randomUUID(),
             title = "Task 2",
             description = "Description 2",
-            stateId = state2Id.toString(),
+            stateId = state2Id,
             projectId = projectId,
-            creatorId = "user1"
+            creatorId = UUID.randomUUID()
         )
         val tasks = listOf(task1, task2)
 
@@ -62,7 +63,7 @@ class ViewServiceUseCaseTest {
     @Test
     fun `should return empty map when no states exist for project`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         every { stateRepository.getAllStatesPerProject(projectId) } returns emptyList()
         every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
 
@@ -76,7 +77,7 @@ class ViewServiceUseCaseTest {
     @Test
     fun `should handle repository exception gracefully`() {
         // give
-        val projectId = "project123"
+        val projectId = UUID.randomUUID()
         every { stateRepository.getAllStatesPerProject(projectId)
         } throws RuntimeException("Database error")
 

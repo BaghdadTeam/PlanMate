@@ -20,7 +20,7 @@ class GetTaskByIdUITest {
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
 
-    private val task = TaskEntity(UUID.randomUUID(), "Test Task", "Task Description", "state", "project", "creator")
+    private val task = TaskEntity(UUID.randomUUID(), "Test Task", "Task Description", UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID())
     private val invalidTaskId = "invalid-uuid"
 
     @BeforeEach
@@ -53,7 +53,7 @@ class GetTaskByIdUITest {
         getTaskByIdUI.execute()
 
         verify { viewer.logMessage("Invalid task ID format.") }
-        verify(exactly = 0) { getTaskByIdUseCase(any()) } // Ensure use case is not called
+        verify(exactly = 0) { getTaskByIdUseCase(any()) } // Ensure the use case is not called
     }
 
     @Test

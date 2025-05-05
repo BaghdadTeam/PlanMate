@@ -39,7 +39,7 @@ class DeleteTaskUseCaseTest {
     @Test
     fun `should delete task and log audit`() {
         val task = TaskEntityTestData.normalTask
-        val taskId = task.id.toString()
+        val taskId = task.id
 
         every { taskRepository.getTaskById(taskId) } returns task
         every { userRepository.getUserById(user.id) } returns user

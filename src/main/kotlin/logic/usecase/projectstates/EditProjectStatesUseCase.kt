@@ -13,8 +13,7 @@ class EditProjectStatesUseCase (
     private val userRepository: UserRepository
 ) {
 
-    fun invoke(stateId: String, newState: StateEntity , userId: UUID){
-        if (stateId.isBlank()) throw Exception("state id can't be empty")
+    fun invoke(stateId: UUID, newState: StateEntity , userId: UUID){
         val user = userRepository.getUserById(userId)
       //  if (user.type.name != UserType.Admin.name) throw Exception("Only Admin can add tasks")
         repository.editState(stateId, newState)
@@ -26,7 +25,7 @@ class EditProjectStatesUseCase (
         val action = "create ${state.name} state is updated successfully"
         val audit = AuditEntity(
             entityType = Entities.Task.name,
-            entityId = state.id.toString(),
+            entityId = state.id,
             action = action,
             user = user,
             timestamp = getFormattedTimestamp(),

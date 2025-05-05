@@ -10,19 +10,19 @@ object SessionTestData {
         val id = UUID.randomUUID()
         val token = UUID.randomUUID().toString()
         val loginTime: LocalDateTime = LocalDateTime.now()
-        val userId = UUID.randomUUID().toString()
+        val userId = UUID.randomUUID()
         val line = "$id,$userId,$token,$loginTime"
     }
 
     val baseSession = SessionEntity(
         id = UUID.randomUUID(),
-        userId = UUID.randomUUID().toString(),
+        userId = UUID.randomUUID(),
         token = UUID.randomUUID().toString(),
         loginTime = LocalDateTime.now(),
     )
     val baseSessionWithExpiredDate = SessionEntity(
         id = UUID.randomUUID(),
-        userId = UUID.randomUUID().toString(),
+        userId = UUID.randomUUID(),
         token = UUID.randomUUID().toString(),
         loginTime = LocalDateTime.parse("2025-04-30T10:55:40.986676"),
     )

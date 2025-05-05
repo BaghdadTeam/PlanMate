@@ -9,19 +9,20 @@ import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
+import java.util.UUID
 
 class StateTransitionUseCase(
     private val taskRepository: TaskRepository,
     private val projectStatesRepository: ProjectStatesRepository,
     private val auditRepository: AuditRepository
 ) {
-    fun changeTaskState(taskId: String, newStateId: String, user: UserEntity) {
+    fun changeTaskState(taskId: UUID, newStateId: UUID, user: UserEntity) {
         val task = taskRepository.getTaskById(taskId)
 
         val currentState = projectStatesRepository.getStateById(task.stateId)
             ?: throw Exception("Current state not found")
 
-        if (currentState.id.toString() == newStateId) {
+        if (currentState.id == newStateId) {
             println("Task is already in the requested state. No changes made.")
             return
         }
@@ -33,18 +34,18 @@ class StateTransitionUseCase(
         logStateChange(taskId, task.stateId, newStateId, user)
     }
 
-    private fun validateNewState(projectId: String, newStateId: String) =
+    private fun validateNewState(projectId: UUID, newStateId: UUID) =
         projectStatesRepository.getStateById(newStateId)?.takeIf { it.projectId == projectId }
             ?: throw NotFoundException("State not found in this project")
 
-    private fun updateTaskState(taskId: String, newStateId: String): Boolean {
+    private fun updateTaskState(taskId: UUID, newStateId: UUID): Boolean {
         val task = taskRepository.getTaskById(taskId)
         val updatedTask = task.copy(stateId = newStateId)
         return taskRepository.updateTask(updatedTask)
     }
 
     private fun logStateChange(
-        taskId: String, oldStateId: String, newStateId: String, user: UserEntity
+        taskId: UUID, oldStateId: UUID, newStateId: UUID, user: UserEntity
     ) {
         val timestamp =
             Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()

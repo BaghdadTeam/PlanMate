@@ -4,6 +4,7 @@ import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import java.util.UUID
 
 class ProjectDataSource(
     private val projectDataSource: DataSource<ProjectEntity>,
@@ -31,9 +32,9 @@ class ProjectDataSource(
         projectDataSource.update(allData)
     }
 
-    fun deleteProject(projectId: String) {
+    fun deleteProject(projectId: UUID) {
         val projects = projectDataSource.loadAll().toMutableList()
-        val project = projects.indexOfFirst { it.id.toString() == projectId }
+        val project = projects.indexOfFirst { it.id == projectId }
         if (project == -1) throw Exception("No project found")
 
         val projectStates = projectStatesDataSource.loadAll().toMutableList()

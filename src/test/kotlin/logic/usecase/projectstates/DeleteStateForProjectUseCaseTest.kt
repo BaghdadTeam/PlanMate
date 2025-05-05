@@ -2,6 +2,7 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -14,6 +15,8 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 
 class DeleteStateForProjectUseCaseTest {
 
@@ -50,28 +53,33 @@ class DeleteStateForProjectUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState()
         val id = state.id
         // when
-        deleteStateUseCase.invoke(id.toString(), adminUser.id)
+        deleteStateUseCase.invoke(id, adminUser.id)
 
         // then
-        verify { statesRepository.deleteState(id.toString()) }
+        verify { statesRepository.deleteState(id) }
 
         val auditSlot = slot<AuditEntity>()
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isNotEmpty()
+        Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
         Truth.assertThat(audit.timestamp).isNotEmpty()
     }
 
+
     @Test
-    fun `should throw exception when state name is empty`() {
+    fun `should throw exception when user type is mate`() {
         // given
-        val state = ProjectStatesEntityTestData.todoState().copy(name = "")
-        // Then
-        val exception = org.junit.jupiter.api.assertThrows<Exception> {
-            deleteStateUseCase.invoke("", adminUser.id)
+        val stateId = UUID.randomUUID()
+        every { userRepository.getUserById(mateUser.id) } returns mateUser
+
+        // when
+        val exception = assertThrows<Exception> {
+            deleteStateUseCase.invoke(stateId, mateUser.id)
         }
-        Truth.assertThat(exception.message).contains("Current state not found")
+        // then
+        Truth.assertThat(exception.message).contains("Only Admin can add tasks")
     }
+
 
 }

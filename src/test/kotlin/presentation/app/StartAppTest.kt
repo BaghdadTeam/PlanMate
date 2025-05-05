@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
+import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.presentation.app.StartApp
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.output.Viewer
@@ -21,7 +22,7 @@ class StartAppTest {
     private lateinit var startApp: StartApp
 
     private val dummySession = SessionEntity(
-        userId = UUID.randomUUID().toString(),
+        userId = UUID.randomUUID(),
         token = "dummy-token",
         loginTime = LocalDateTime.now().minusMinutes(5)
     )
@@ -36,7 +37,7 @@ class StartAppTest {
 
     @Test
     fun `should set session when getActiveSession succeeds`() {
-        every { sessionManager.getActiveSession() } returns Result.success(dummySession)
+        every { sessionManager.getActiveSession() } returns dummySession
 
         startApp.run()
 
@@ -50,16 +51,14 @@ class StartAppTest {
 
     @Test
     fun `should fallback to loginUi when getActiveSession fails`() {
-        val exception = Exception("session error")
         val newSession = dummySession.copy(id = UUID.randomUUID())
-        every { sessionManager.getActiveSession() } returns Result.failure(exception)
+        every { sessionManager.getActiveSession() } throws SessionNotFoundException("Session not found")
         every { loginUi.execute() } returns newSession
 
         startApp.run()
 
         verify { sessionManager.clearExpiredSession() }
         verify { sessionManager.getActiveSession() }
-        verify { viewer.logMessage("Failed to load session: session error") }
         verify { loginUi.execute() }
         verify { sessionManager.setSession(newSession) }
     }

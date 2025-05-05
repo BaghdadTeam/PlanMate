@@ -15,11 +15,11 @@ class DeleteStateForProjectUI(
 
     fun execute() {
         val session = sessionManager.currentSession
-        val userId = UUID.fromString(session.userId)
+        val userId = session.userId
 
         val stateId = promptForStateId() ?: return
 
-        tryDeleteState(stateId, userId)
+        tryDeleteState(UUID.fromString(stateId), userId)
     }
 
     private fun promptForStateId(): String? {
@@ -31,7 +31,7 @@ class DeleteStateForProjectUI(
         }
     }
 
-    private fun tryDeleteState(stateId: String, userId: UUID) {
+    private fun tryDeleteState(stateId: UUID, userId: UUID) {
         try {
             useCase.invoke(stateId, userId)
             viewer.logMessage("State deleted successfully.")

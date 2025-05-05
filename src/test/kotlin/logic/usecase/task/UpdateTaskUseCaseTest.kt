@@ -49,7 +49,7 @@ class UpdateTaskUseCaseTest {
         val task = TaskEntityTestData.normalTask.copy(title = "Changed")
         val oldTask = TaskEntityTestData.normalTask
 
-        every { taskRepository.getTaskById(task.id.toString()) } returns oldTask
+        every { taskRepository.getTaskById(task.id) } returns oldTask
         every { taskRepository.updateTask(task) } returns true
         every { userRepository.getUserById(user.id) } returns user
 
@@ -60,7 +60,7 @@ class UpdateTaskUseCaseTest {
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         assertThat(auditSlot.captured.entityType).isEqualTo("Task")
-        assertThat(auditSlot.captured.entityId).isEqualTo(task.id.toString())
+        assertThat(auditSlot.captured.entityId).isEqualTo(task.id)
         assertThat(auditSlot.captured.action).isEqualTo(
             "Task “${oldTask.title}” was updated: title changed from “${oldTask.title}” to “${task.title}”"
         )
@@ -71,7 +71,7 @@ class UpdateTaskUseCaseTest {
     fun `should update task but not log audit when no changes detected`() {
         val task = TaskEntityTestData.normalTask
 
-        every { taskRepository.getTaskById(task.id.toString()) } returns task
+        every { taskRepository.getTaskById(task.id) } returns task
         every { taskRepository.updateTask(task) } returns true
 
         updateTaskUseCase.invoke(task, user.id)
@@ -107,7 +107,7 @@ class UpdateTaskUseCaseTest {
     @Test
     fun `should throw exception when updateTask returns false`() {
         val task = TaskEntityTestData.normalTask.copy(title = "Changed")
-        every { taskRepository.getTaskById(task.id.toString()) } returns TaskEntityTestData.normalTask
+        every { taskRepository.getTaskById(task.id) } returns TaskEntityTestData.normalTask
         every { taskRepository.updateTask(task) } returns false
 
         val exception = assertThrows<Exception> {

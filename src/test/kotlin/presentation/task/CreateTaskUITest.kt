@@ -27,13 +27,13 @@ class CreateTaskUITest {
 
     private val dummySession = SessionEntity(
         id = UUID.randomUUID(),
-        userId = UUID.randomUUID().toString(),
+        userId = UUID.randomUUID(),
         token = "dummy-token",
         loginTime = LocalDateTime.now().minusMinutes(10)
     )
 
-    private val projectId = "project123"
-    private val stateId = "state123"
+    private val projectId = UUID.randomUUID()
+    private val stateId = UUID.randomUUID()
 
     @BeforeEach
     fun setUp() {

@@ -19,7 +19,7 @@ class UpdateTaskUseCase(
 ) {
 
     operator fun invoke(newTask: TaskEntity, userId: UUID) {
-        val oldTask = taskRepository.getTaskById(newTask.id.toString())
+        val oldTask = taskRepository.getTaskById(newTask.id)
 
         val validatedTask = validateNewTask(newTask)
 
@@ -56,7 +56,7 @@ class UpdateTaskUseCase(
 
         val audit = AuditEntity(
             entityType = Entities.Task.name,
-            entityId = newTask.id.toString(),
+            entityId = newTask.id,
             action = action,
             user = user,
             timestamp = timestamp
