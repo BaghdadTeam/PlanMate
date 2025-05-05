@@ -5,38 +5,34 @@ import io.mockk.every
 import io.mockk.mockk
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
-import org.baghdad.logic.model.exceptions.CsvReadException
 import org.baghdad.logic.model.exceptions.CsvWriteException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
 
 class CsvDataSourceImplTest {
 
-    private lateinit var file: File
+    private lateinit var tempFile: File
     private lateinit var parser: CsvMapper<MyData>
     private lateinit var csvDataSource: CsvDataSourceImpl<MyData>
 
     @BeforeEach
     fun setUp() {
-        val tempPath: Path = Files.createTempFile("temp", ".csv")
-        file = tempPath.toFile().apply { deleteOnExit() }
+        tempFile = File.createTempFile("test", ".csv")
         parser = mockk(relaxed = true)
-        csvDataSource = CsvDataSourceImpl(parser, file)
+        csvDataSource = CsvDataSourceImpl(parser, tempFile)
     }
 
     @AfterEach
     fun tearDown() {
-        file.delete()
+        tempFile.delete()
     }
 
     @Test
     fun `test loadAll when csv is empty returns empty list`() {
-        file.writeText("") // empty file
+        tempFile.writeText("") // empty file
 
         val result = csvDataSource.loadAll()
 
@@ -45,7 +41,7 @@ class CsvDataSourceImplTest {
 
     @Test
     fun `test loadAll when csv has data returns parsed data`() {
-        file.writeText("Name,Age,Gender\nJohn,25,Male")
+        tempFile.writeText("Name,Age,Gender\nJohn,25,Male")
 
         val parsedData = MyData("John", 25, "Male")
         every { parser.deserializer("John,25,Male") } returns parsedData
@@ -64,32 +60,21 @@ class CsvDataSourceImplTest {
 
         csvDataSource.append(item)
 
-        val lines = file.readLines()
+        val lines = tempFile.readLines()
         assertThat(lines).containsExactly("Name,Age,Gender", "Alice,30,Female")
     }
 
     @Test
     fun `append does not write header when file already contains header`() {
-        file.writeText("Name,Age,Gender\n")
+        tempFile.writeText("Name,Age,Gender\n")
 
         val item = MyData("Bob", 40, "Male")
         every { parser.serializer(item) } returns "Bob,40,Male"
 
         csvDataSource.append(item)
 
-        val lines = file.readLines()
+        val lines = tempFile.readLines()
         assertThat(lines).containsExactly("Name,Age,Gender", "Bob,40,Male")
-    }
-
-    @Test
-    fun `test loadAll throws CsvReadException when reader fails`() {
-        file.delete()
-
-        val exception = assertThrows<CsvReadException> {
-            csvDataSource.loadAll()
-        }
-
-        assertThat(exception.message).startsWith("Error reading CSV file")
     }
 
     @Test
@@ -101,13 +86,13 @@ class CsvDataSourceImplTest {
 
         csvDataSource.append(item)
 
-        val lines = file.readLines()
+        val lines = tempFile.readLines()
         assertThat(lines).containsExactly("Name,Age,Gender", "John,25,Male")
     }
 
     @Test
     fun `test append throws CsvWriteException when writer fails`() {
-        file.setReadOnly()
+        tempFile.setReadOnly()
 
         val item = MyData("John", 25, "Male")
         every { parser.serializer(item) } returns "John,25,Male"
@@ -118,7 +103,7 @@ class CsvDataSourceImplTest {
 
         assertThat(exception.message).startsWith("Error writing to CSV file")
 
-        file.setWritable(true) // cleanup
+        tempFile.setWritable(true) // cleanup
     }
 
     @Test
@@ -130,13 +115,13 @@ class CsvDataSourceImplTest {
 
         csvDataSource.update(items)
 
-        val lines = file.readLines()
+        val lines = tempFile.readLines()
         assertThat(lines).containsExactly("Name,Age,Gender", "John,25,Male", "Jane,30,Female")
     }
 
     @Test
     fun `test saveAll throws CsvWriteException when writer fails`() {
-        file.setReadOnly()
+        tempFile.setReadOnly()
 
         val items = listOf(MyData("John", 25, "Male"))
         every { parser.header() } returns "Name,Age,Gender"
@@ -148,7 +133,7 @@ class CsvDataSourceImplTest {
 
         assertThat(exception.message).startsWith("Error saving to CSV file")
 
-        file.setWritable(true)
+        tempFile.setWritable(true)
     }
 }
 

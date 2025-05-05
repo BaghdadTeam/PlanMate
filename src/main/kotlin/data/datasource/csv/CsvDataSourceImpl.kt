@@ -2,7 +2,6 @@ package org.baghdad.data.datasource.csv
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.logic.model.exceptions.CsvReadException
 import org.baghdad.logic.model.exceptions.CsvWriteException
 import java.io.File
 
@@ -16,14 +15,11 @@ class CsvDataSourceImpl<T>(
     private val writer = CsvWriter(file)
 
     override fun loadAll(): List<T> {
-        return try {
-            val lines = reader.readCsv()
-            if (lines.size <= 1) return emptyList()
 
-            lines.drop(1).map(parser::deserializer)
-        } catch (e: Exception) {
-            throw CsvReadException("Error reading CSV file: ${e.message}")
-        }
+        val lines = reader.readCsv()
+        if (lines.size <= 1) return emptyList()
+
+        return lines.drop(1).map(parser::deserializer)
     }
 
     override fun append(item: T) {
