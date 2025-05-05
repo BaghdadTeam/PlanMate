@@ -27,9 +27,9 @@ class TaskMapperTest {
         val uuid = UUID.randomUUID()
         val title = "Implement feature"
         val description = "Add user login"
-        val stateId = "state123"
-        val projectId = "projXYZ"
-        val creatorId = "user42"
+        val stateId = UUID.randomUUID()
+        val projectId = UUID.randomUUID()
+        val creatorId = UUID.randomUUID()
         val line = "$uuid,$title,$description,$stateId,$projectId,$creatorId"
 
         // When
@@ -54,7 +54,7 @@ class TaskMapperTest {
     @Test
     fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
         // Only five fields instead of six
-        val malformed = "123e4567-e89b-12d3-a456-426614174000,Title,Desc,state,proj"
+        val malformed = "123e4567-e89b-12d3-a456-426614174000,Title,Desc,123e4567-e89b-12d3-a456-426614174000,123e4567-e89b-12d3-a456-426614174000"
         assertThrows<IndexOutOfBoundsException> { parser.deserializer(malformed) }
     }
 
