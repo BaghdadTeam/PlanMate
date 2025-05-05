@@ -3,6 +3,7 @@ package org.baghdad.logic.model.entities
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.util.UUID
 
 class SessionEntityTest {
 
@@ -11,7 +12,7 @@ class SessionEntityTest {
         // Given
         val recentLogin = LocalDateTime.now().minusMinutes(10)
         val session = SessionEntity(
-            userId = "user123",
+            userId = UUID.randomUUID(),
             token = "token123",
             loginTime = recentLogin
         )
@@ -25,7 +26,7 @@ class SessionEntityTest {
         // Given
         val oldLogin = LocalDateTime.now().minusMinutes(45)
         val session = SessionEntity(
-            userId = "user123",
+            userId = UUID.randomUUID(),
             token = "token123",
             loginTime = oldLogin
         )

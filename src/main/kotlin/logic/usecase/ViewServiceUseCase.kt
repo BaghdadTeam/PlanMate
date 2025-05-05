@@ -1,8 +1,10 @@
 package org.baghdad.logic.usecase
+
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
+import java.util.UUID
 
 
 class ViewServiceUseCase(
@@ -12,11 +14,11 @@ class ViewServiceUseCase(
 
     fun swimlane(projectId: String): Result<Map<StateEntity, List<TaskEntity>>> {
         return try {
-            val stateEntities = stateRepository.getAllStatesPerProject(projectId)
+            val stateEntities = stateRepository.getAllStatesPerProject(UUID.fromString(projectId))
             val states = stateEntities.map { stateEntity ->
                 StateEntity(
                     id = stateEntity.id,
-                    name = stateEntity.name ,
+                    name = stateEntity.name,
                     projectId = stateEntity.projectId,
                     creatorId = stateEntity.creatorId
                 )
@@ -35,15 +37,20 @@ class ViewServiceUseCase(
                 )
             }
 
-            val tasksByStateId:Map<String,List<TaskEntity>> = tasks.groupBy { it.stateId }
+            val tasksByStateId: Map<String, List<TaskEntity>> = tasks.groupBy { it.stateId }
             val groupedTasks = states.associateWith { state ->
                 tasksByStateId[state.id.toString()] ?: emptyList<TaskEntity>()
             }
 
             Result.success(groupedTasks)
         } catch (e: Exception) {
-            Result.failure(Exception("Failed to fetch states or tasks for project $projectId: ${e.message}", e))
+            Result.failure(
+                Exception(
+                    "Failed to fetch states or tasks for project $projectId: ${e.message}",
+                    e
+                )
+            )
         }
     }
 
-    }
+}

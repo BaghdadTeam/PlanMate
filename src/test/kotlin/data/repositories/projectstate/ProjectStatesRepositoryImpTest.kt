@@ -8,7 +8,6 @@ import io.mockk.slot
 import io.mockk.verify
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
-import org.baghdad.logic.model.entities.AuditEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -29,20 +28,26 @@ class ProjectStatesRepositoryImpTest{
     fun `should return data when there is a states for project`() {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
+        val projectId = projectStates[0].projectId
         every { dataSource.getAllStatesForProject() } returns projectStates
+
         // When
-        val result = projectStatesDataSource.getAllStatesPerProject("123")
+        val result = projectStatesDataSource.getAllStatesPerProject(projectId)
+
         // Then
-        Truth.assertThat(result).isEqualTo(projectStates)
+        Truth.assertThat(result).isEqualTo(listOf(projectStates[0]))
     }
 
     @Test
-    fun `should not return data when there is a states for project`() {
+    fun `should not return data when there is no project id match`() {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
+        val projectId = UUID.randomUUID()
         every { dataSource.getAllStatesForProject() } returns projectStates
+
         // When
-        val result = projectStatesDataSource.getAllStatesPerProject("111")
+        val result = projectStatesDataSource.getAllStatesPerProject(projectId)
+
         // Then
         Truth.assertThat(result).isEmpty()
     }
@@ -52,13 +57,14 @@ class ProjectStatesRepositoryImpTest{
     fun `should return state when there is a state with same id`() {
         val projectStates = ProjectStatesEntityTestData.todoState()
         val id = projectStates.id
+        every { dataSource.getStateById(id) } returns projectStates
 
-        every { dataSource.getStateById(id.toString()) } returns projectStates
         // When
-        val result = projectStatesDataSource.getStateById(id.toString())
+        val result = projectStatesDataSource.getStateById(id)
+
         // Then
         Truth.assertThat(result).isEqualTo(projectStates)
-        verify { dataSource.getStateById(id.toString()) }
+        verify { dataSource.getStateById(id) }
     }
 
 
