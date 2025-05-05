@@ -12,9 +12,9 @@ class ViewServiceUseCase(
     private val stateRepository: ProjectStatesRepository
 ) {
 
-    fun swimlane(projectId: String): Result<Map<StateEntity, List<TaskEntity>>> {
+    fun swimlane(projectId: UUID): Result<Map<StateEntity, List<TaskEntity>>> {
         return try {
-            val stateEntities = stateRepository.getAllStatesPerProject(UUID.fromString(projectId))
+            val stateEntities = stateRepository.getAllStatesPerProject(projectId)
             val states = stateEntities.map { stateEntity ->
                 StateEntity(
                     id = stateEntity.id,
@@ -37,7 +37,7 @@ class ViewServiceUseCase(
                 )
             }
 
-            val tasksByStateId: Map<String, List<TaskEntity>> = tasks.groupBy { it.stateId }
+            val tasksByStateId: Map<String, List<TaskEntity>> = tasks.groupBy { it.stateId.toString() }
             val groupedTasks = states.associateWith { state ->
                 tasksByStateId[state.id.toString()] ?: emptyList<TaskEntity>()
             }

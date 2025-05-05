@@ -17,6 +17,8 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.CreateTaskUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
+import kotlin.jvm.java
 import kotlin.test.Test
 
 class CreateTaskUseCaseTest {
@@ -53,7 +55,7 @@ class CreateTaskUseCaseTest {
 
         val audit = auditSlot.captured
         assertThat(audit.entityType).isEqualTo("Task")
-        assertThat(audit.entityId).isNotEmpty() // assuming ID is auto-generated or assigned
+        assertThat(audit.entityId).isInstanceOf(UUID::class.java) // assuming ID is auto-generated or assigned
         assertThat(audit.action).isEqualTo("created task ${task.title}")
         assertThat(audit.timestamp).isNotEmpty()
     }

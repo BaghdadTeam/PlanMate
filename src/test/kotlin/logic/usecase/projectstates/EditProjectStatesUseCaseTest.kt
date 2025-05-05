@@ -62,7 +62,7 @@ class EditProjectStatesUseCaseTest {
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isNotEmpty()
+        Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
         Truth.assertThat(audit.timestamp).isNotEmpty()
     }
 

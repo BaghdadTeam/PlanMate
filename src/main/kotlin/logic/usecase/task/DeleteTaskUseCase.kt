@@ -16,7 +16,7 @@ class DeleteTaskUseCase(
     private val userRepository: UserRepository
 ) {
 
-    operator fun invoke(taskId: String, userId: UUID) {
+    operator fun invoke(taskId: UUID, userId: UUID) {
         val task = taskRepository.getTaskById(taskId)
         taskRepository.deleteTask(taskId)
 
@@ -32,7 +32,7 @@ class DeleteTaskUseCase(
         return AuditEntity(
             entityType = Entities.Task.name,
             timestamp = getFormattedTimestamp(),
-            entityId = task.id.toString(),
+            entityId = task.id,
             action = action,
             user = user,
         )

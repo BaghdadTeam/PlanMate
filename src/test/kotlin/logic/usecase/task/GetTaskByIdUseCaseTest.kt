@@ -28,22 +28,22 @@ class GetTaskByIdUseCaseTest {
         val task = TaskEntityTestData.normalTask
         val id = task.id
 
-        every { taskRepository.getTaskById(id.toString()) } returns task
+        every { taskRepository.getTaskById(id) } returns task
 
         val result = getTaskByIdUseCase(id)
 
         assertThat(result).isEqualTo(task)
-        verify { taskRepository.getTaskById(id.toString()) }
+        verify { taskRepository.getTaskById(id) }
     }
 
     @Test
     fun `invoke should throw exception when repository throws`() {
         val id = UUID.randomUUID()
-        every { taskRepository.getTaskById(id.toString()) } throws NoSuchElementException("Task not found")
+        every { taskRepository.getTaskById(id) } throws NoSuchElementException("Task not found")
 
         assertThrows<NoSuchElementException> {
             getTaskByIdUseCase(id)
         }
-        verify { taskRepository.getTaskById(id.toString()) }
+        verify { taskRepository.getTaskById(id) }
     }
 }
