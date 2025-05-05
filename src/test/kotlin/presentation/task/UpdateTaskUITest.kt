@@ -50,7 +50,7 @@ class UpdateTaskUITest {
 
     private val dummySession = SessionEntity(
         id = UUID.randomUUID(),
-        userId = UUID.randomUUID().toString(),
+        userId = UUID.randomUUID(),
         token = "dummy-token",
         loginTime = LocalDateTime.now().minusMinutes(10)
     )
@@ -90,7 +90,7 @@ class UpdateTaskUITest {
 
         val expectedTask = dummyTasks[0].copy(title = "New Title", description = "New Description")
 
-        verify { useCase(expectedTask, UUID.fromString(dummySession.userId)) }
+        verify { useCase(expectedTask, dummySession.userId) }
         verify { viewer.logMessage("Task updated successfully.") }
     }
 
@@ -118,7 +118,7 @@ class UpdateTaskUITest {
     fun `test TaskWithMissingTitleException is retried`() {
         every { reader.readInput() } returnsMany listOf("1", "", "Fixed Title", "Valid")
 
-        every { useCase(any(), UUID.fromString(dummySession.userId)) } throws TaskWithMissingTitleException("Title is missing") andThen Unit
+        every { useCase(any(), dummySession.userId) } throws TaskWithMissingTitleException("Title is missing") andThen Unit
 
         updateTaskUI.execute(dummyTasks)
 
@@ -130,7 +130,7 @@ class UpdateTaskUITest {
     fun `test TaskWithMissingDescriptionException is retried`() {
         every { reader.readInput() } returnsMany listOf("1", "Valid", "", "Fixed Description")
 
-        every { useCase(any(), UUID.fromString(dummySession.userId)) } throws TaskWithMissingDescriptionException("Description is missing") andThen Unit
+        every { useCase(any(), dummySession.userId) } throws TaskWithMissingDescriptionException("Description is missing") andThen Unit
 
         updateTaskUI.execute(dummyTasks)
 
@@ -141,7 +141,7 @@ class UpdateTaskUITest {
     @Test
     fun `test TasksNotFoundException is handled`() {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
-        every { useCase(any(), UUID.fromString(dummySession.userId)) } throws TasksNotFoundException("Task not found")
+        every { useCase(any(), dummySession.userId) } throws TasksNotFoundException("Task not found")
 
         updateTaskUI.execute(dummyTasks)
 
@@ -151,7 +151,7 @@ class UpdateTaskUITest {
     @Test
     fun `test CsvWriteException is handled`() {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
-        every { useCase(any(), UUID.fromString(dummySession.userId)) } throws CsvWriteException("CSV write failed")
+        every { useCase(any(), dummySession.userId) } throws CsvWriteException("CSV write failed")
 
         updateTaskUI.execute(dummyTasks)
 
@@ -161,7 +161,7 @@ class UpdateTaskUITest {
     @Test
     fun `test unknown exception is handled`() {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
-        every { useCase(any(), UUID.fromString(dummySession.userId)) } throws RuntimeException("Unexpected Error")
+        every { useCase(any(), dummySession.userId) } throws RuntimeException("Unexpected Error")
 
         updateTaskUI.execute(dummyTasks)
 

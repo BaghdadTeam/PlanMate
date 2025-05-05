@@ -27,7 +27,7 @@ class CreateTaskUITest {
 
     private val dummySession = SessionEntity(
         id = UUID.randomUUID(),
-        userId = UUID.randomUUID().toString(),
+        userId = UUID.randomUUID(),
         token = "dummy-token",
         loginTime = LocalDateTime.now().minusMinutes(10)
     )

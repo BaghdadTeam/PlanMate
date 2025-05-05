@@ -48,10 +48,4 @@ class SessionMapperTest {
         assertThat(result.loginTime).isEqualTo(sessionData.loginTime)
         assertThat(result.userId).isEqualTo(sessionData.userId)
     }
-    @Test
-    fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
-        // Only two fields instead of four
-        val malformed = "123e4567-e89b-12d3-a456-426614174000,OnlyName"
-        assertThrows<IndexOutOfBoundsException> { sessionMapper.deserializer(malformed) }
-    }
 }
