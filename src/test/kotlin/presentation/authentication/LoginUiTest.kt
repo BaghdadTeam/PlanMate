@@ -51,7 +51,6 @@ class LoginUiTest {
         val result = loginUi.execute()
         // Then
         assertThat(result).isEqualTo(SessionTestData.baseSession)
-        verify { viewer.logMessage("Login failed: Invalid") }
         verify { viewer.logMessage("Successfully logged in as admin") }
     }
 

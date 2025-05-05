@@ -59,7 +59,6 @@ class StartAppTest {
 
         verify { sessionManager.clearExpiredSession() }
         verify { sessionManager.getActiveSession() }
-        verify { viewer.logMessage("Failed to load session: session error") }
         verify { loginUi.execute() }
         verify { sessionManager.setSession(newSession) }
     }

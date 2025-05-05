@@ -8,6 +8,7 @@ import io.mockk.verify
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
 import org.baghdad.logic.model.exceptions.InvalidCredentialsException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.utils.md5WithSalt
@@ -38,12 +39,12 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `Should throw InvalidCredentialsException  if credentials are valid  when login`() {
+    fun `Should throw InvalidPasswordException  if credentials are valid  when login`() {
         // Given
         val user = createUserHelper(userName, "invalidPassword".md5WithSalt())
         every { userStorage.findUserByUsername(userName) } returns user
         // When & Then
-        assertThrows<InvalidCredentialsException>{authRepository.login(userName, password)}
+        assertThrows<InvalidPasswordException>{authRepository.login(userName, password)}
 
     }
 
@@ -51,6 +52,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `Should invoke delete session function  when logout`() {
         // Given
+        every { sessionRepository.deleteSession() } returns true
         // When
         authRepository.logout()
         // Then
