@@ -1,4 +1,4 @@
-package org.baghdad.ui
+package ui
 
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -6,6 +6,7 @@ import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
+import org.baghdad.ui.SwimlaneUI
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -16,22 +17,23 @@ class SwimlaneUITest {
     @Test
     fun `viewSwimlaneCommand should return success result when useCase succeeds`() {
         // give
-        val projectId = "project123"
-        val state = StateEntity(UUID.randomUUID(), "To Do", projectId, "user1")
+        val projectId = UUID.randomUUID()
+        val creatorId = UUID.randomUUID()
+        val state = StateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
         val task = TaskEntity(
             id = UUID.randomUUID(),
             title = "Task",
             description = "Desc",
             stateId = state.id.toString(),
-            projectId = projectId,
+            projectId = projectId.toString(),
             creatorId = "user1"
         )
         val expectedMap = mapOf(state to listOf(task))
-        every { viewServiceUseCase.swimlane(projectId)
+        every { viewServiceUseCase.swimlane(projectId.toString())
         } returns Result.success(expectedMap)
 
         // when
-        val result = ui.viewSwimlaneCommand(projectId)
+        val result = ui.viewSwimlaneCommand(projectId.toString())
 
         // then
         result shouldBe Result.success(expectedMap)
@@ -70,21 +72,22 @@ class SwimlaneUITest {
     @Test
     fun `should render ASCII swimlane correctly`() {
         // give
-        val projectId = "project123"
-        val state = StateEntity(UUID.randomUUID(), "To Do", projectId, "user1")
+        val projectId = UUID.randomUUID()
+        val creatorId = UUID.randomUUID()
+        val state = StateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
         val task = TaskEntity(
             id = UUID.randomUUID(),
             title = "Task 1",
             description = "Some description",
             stateId = state.id.toString(),
-            projectId = projectId,
+            projectId = projectId.toString(),
             creatorId = "user1"
         )
-        every { viewServiceUseCase.swimlane(projectId)
+        every { viewServiceUseCase.swimlane(projectId.toString())
         } returns Result.success(mapOf(state to listOf(task)))
 
         // when
-        val result = ui.renderAsciiSwimlane(projectId)
+        val result = ui.renderAsciiSwimlane(projectId.toString())
 
         // then
         result.contains("To Do") shouldBe true

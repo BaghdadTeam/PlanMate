@@ -14,6 +14,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
 class EditProjectStatesUseCaseTest {
 
@@ -52,10 +53,10 @@ class EditProjectStatesUseCaseTest {
         val name = "to dooo"
         val newState = state.copy(id = id, name = name)
         // when
-        editStateUseCase.invoke(id.toString(), newState, adminUser.id)
+        editStateUseCase.invoke(id, newState, adminUser.id)
 
         // then
-        verify { statesRepository.editState(id.toString(), newState) }
+        verify { statesRepository.editState(id, newState) }
 
         val auditSlot = slot<AuditEntity>()
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
@@ -65,15 +66,5 @@ class EditProjectStatesUseCaseTest {
         Truth.assertThat(audit.timestamp).isNotEmpty()
     }
 
-    @Test
-    fun `should throw exception when state name is empty`() {
-        // given
-        val state = ProjectStatesEntityTestData.todoState().copy(name = "")
-        // Then
-        val exception = org.junit.jupiter.api.assertThrows<Exception> {
-            editStateUseCase.invoke("",state, adminUser.id)
-        }
-        Truth.assertThat(exception.message).contains("state id can't be empty")
-    }
 
 }
