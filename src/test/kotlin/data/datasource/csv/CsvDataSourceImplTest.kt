@@ -1,174 +1,157 @@
 package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
-import org.baghdad.data.datasource.csv.CsvReader
-import org.baghdad.data.datasource.csv.CsvWriter
 import org.baghdad.logic.model.exceptions.CsvReadException
 import org.baghdad.logic.model.exceptions.CsvWriteException
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 class CsvDataSourceImplTest {
 
-    private lateinit var reader: CsvReader
-    private lateinit var writer: CsvWriter
+    private lateinit var file: File
     private lateinit var parser: CsvMapper<MyData>
     private lateinit var csvDataSource: CsvDataSourceImpl<MyData>
 
     @BeforeEach
     fun setUp() {
-        reader = mockk(relaxed = true)
-        writer = mockk(relaxed = true)
+        val tempPath: Path = Files.createTempFile("temp", ".csv")
+        file = tempPath.toFile().apply { deleteOnExit() }
         parser = mockk(relaxed = true)
+        csvDataSource = CsvDataSourceImpl(parser, file)
+    }
 
-        csvDataSource = CsvDataSourceImpl(reader, writer, parser)
+    @AfterEach
+    fun tearDown() {
+        file.delete()
     }
 
     @Test
     fun `test loadAll when csv is empty returns empty list`() {
-        // Given
-        every { reader.readCsv() } returns emptyList()
+        file.writeText("") // empty file
 
-        // When
         val result = csvDataSource.loadAll()
 
-        // Then
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `test loadAll when csv has data returns parsed data`() {
-        // Given
-        val lines = listOf("Header", "John, 25, Male")
-        every { reader.readCsv() } returns lines
+        file.writeText("Name,Age,Gender\nJohn,25,Male")
 
         val parsedData = MyData("John", 25, "Male")
-        every { parser.deserializer("John, 25, Male") } returns parsedData
+        every { parser.deserializer("John,25,Male") } returns parsedData
 
-        // When
         val result = csvDataSource.loadAll()
 
-        // Then
-        assertThat(result).hasSize(1)
-        assertThat(result[0].name).isEqualTo("John")
+        assertThat(result).containsExactly(parsedData)
     }
 
     @Test
     fun `append writes header when file is completely empty`() {
-        // Given
         val item = MyData("Alice", 30, "Female")
-        every { reader.readCsv() } returns emptyList()           // zero lines on disk
+
         every { parser.header() } returns "Name,Age,Gender"
         every { parser.serializer(item) } returns "Alice,30,Female"
 
-        // When
         csvDataSource.append(item)
 
-        // Then – header, then record
-        verifyOrder {
-            writer.appendLine("Name,Age,Gender")
-            writer.appendLine("Alice,30,Female")
-        }
+        val lines = file.readLines()
+        assertThat(lines).containsExactly("Name,Age,Gender", "Alice,30,Female")
     }
 
     @Test
     fun `append does not write header when file already contains header`() {
-        // Given
-        val item = MyData("Bob", 40, "Male")
-        // simulate a file that already has a header line
-        every { reader.readCsv() } returns listOf("Name,Age,Gender")
-        every { parser.serializer(item) } returns "Bob,40,Male"
-        every { writer.appendLine(any()) } just Runs
+        file.writeText("Name,Age,Gender\n")
 
-        // When
+        val item = MyData("Bob", 40, "Male")
+        every { parser.serializer(item) } returns "Bob,40,Male"
+
         csvDataSource.append(item)
 
-        // Then – only the record, no header
-        verify(exactly = 0) { writer.appendLine(parser.header()) }
-        verify { writer.appendLine("Bob,40,Male") }
+        val lines = file.readLines()
+        assertThat(lines).containsExactly("Name,Age,Gender", "Bob,40,Male")
     }
-
 
     @Test
     fun `test loadAll throws CsvReadException when reader fails`() {
-        // Given
-        every { reader.readCsv() } throws Exception("File read error")
+        file.delete()
 
-        // When & Then
         val exception = assertThrows<CsvReadException> {
             csvDataSource.loadAll()
         }
 
-        assertThat(exception.message).isEqualTo("Error reading CSV file: File read error")
+        assertThat(exception.message).startsWith("Error reading CSV file")
     }
 
     @Test
     fun `test append successfully appends data`() {
         val item = MyData("John", 25, "Male")
 
-        // Given
-        every { parser.serializer(item) } returns "John, 25, Male"
+        every { parser.header() } returns "Name,Age,Gender"
+        every { parser.serializer(item) } returns "John,25,Male"
 
-        // When
         csvDataSource.append(item)
 
-        // Then
-        verify { writer.appendLine("John, 25, Male") }
+        val lines = file.readLines()
+        assertThat(lines).containsExactly("Name,Age,Gender", "John,25,Male")
     }
 
     @Test
     fun `test append throws CsvWriteException when writer fails`() {
+        file.setReadOnly()
+
         val item = MyData("John", 25, "Male")
+        every { parser.serializer(item) } returns "John,25,Male"
 
-        // Given
-        every { parser.serializer(item) } returns "John, 25, Male"
-
-        every { writer.appendLine(any()) } throws Exception("Write error")
-
-        // When & Then
         val exception = assertThrows<CsvWriteException> {
             csvDataSource.append(item)
         }
 
-        assertThat(exception.message).isEqualTo("Error writing to CSV file: Write error")
+        assertThat(exception.message).startsWith("Error writing to CSV file")
+
+        file.setWritable(true) // cleanup
     }
 
     @Test
     fun `test saveAll successfully saves all items`() {
         val items = listOf(MyData("John", 25, "Male"), MyData("Jane", 30, "Female"))
 
-        // Given
-        every { parser.serializer(any()) } returns "Serialized Data"
-        every { parser.header() } returns "Name, Age, Gender"
+        every { parser.header() } returns "Name,Age,Gender"
+        every { parser.serializer(any()) } returnsMany listOf("John,25,Male", "Jane,30,Female")
 
-        // When
         csvDataSource.update(items)
 
-        // Then
-        verify { writer.updateLines(listOf("Name, Age, Gender", "Serialized Data", "Serialized Data")) }
+        val lines = file.readLines()
+        assertThat(lines).containsExactly("Name,Age,Gender", "John,25,Male", "Jane,30,Female")
     }
 
     @Test
     fun `test saveAll throws CsvWriteException when writer fails`() {
+        file.setReadOnly()
+
         val items = listOf(MyData("John", 25, "Male"))
-        // Given
-        every { parser.serializer(any()) } returns "Serialized Data"
-        every { parser.header() } returns "Name, Age, Gender"
+        every { parser.header() } returns "Name,Age,Gender"
+        every { parser.serializer(any()) } returns "John,25,Male"
 
-        every { writer.updateLines(any()) } throws Exception("Save error")
-
-        // When & Then
         val exception = assertThrows<CsvWriteException> {
             csvDataSource.update(items)
         }
 
-        assertThat(exception.message).isEqualTo("Error saving to CSV file: Save error")
+        assertThat(exception.message).startsWith("Error saving to CSV file")
+
+        file.setWritable(true)
     }
 }
+
 
 // Sample data class for testing purposes
 data class MyData(val name: String, val age: Int, val gender: String)
