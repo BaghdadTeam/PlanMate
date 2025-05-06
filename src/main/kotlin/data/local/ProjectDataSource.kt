@@ -20,8 +20,8 @@ class ProjectDataSource(
         return projectDataSource.loadAll()
     }
 
-    fun getProjectById(id: String): ProjectEntity? {
-        return projectDataSource.loadAll().find { it.id.toString() == id }
+    fun getProjectById(id: UUID): ProjectEntity? {
+        return projectDataSource.loadAll().find { it.id == id }
     }
 
     fun updateProject(project: ProjectEntity) {
