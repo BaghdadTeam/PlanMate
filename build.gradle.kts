@@ -36,6 +36,7 @@ dependencies {
 
     // Kotlin Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
     // MongoDB Driver
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.10.1")
