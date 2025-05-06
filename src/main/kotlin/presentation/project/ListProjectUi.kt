@@ -24,7 +24,7 @@ class ListProjectUi(
                 println("| Project ID                           | Name                 | Created By           |")
                 println("+--------------------------------------+----------------------+----------------------+")
                 for (project in projects) {
-                    println("| ${project.id} | ${project.name.padEnd(20)} | ${project.creatorId.padEnd(20)} |")
+                    println("| ${project.id} | ${project.name.padEnd(20)} | ${project.creatorId.toString().padEnd(20)} |")
                 }
                 println("+--------------------------------------+----------------------+----------------------+")
             }
