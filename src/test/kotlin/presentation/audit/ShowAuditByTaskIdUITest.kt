@@ -4,7 +4,7 @@ import helpers.authentication.createUserHelper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.NoTaskFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
@@ -79,8 +79,8 @@ class ShowAuditByTaskIdUITest {
         val haider = createUserHelper()
         val taskID = UUID.randomUUID()
         val auditEntities = listOf(
-            AuditEntity(
-            entityType = Entities.Task,
+            AuditLogEntity(
+            entityUnderAudit = Entities.Task.name,
             entityId = taskID,
             action = "Create Task Aboud",
             user = haider ,
