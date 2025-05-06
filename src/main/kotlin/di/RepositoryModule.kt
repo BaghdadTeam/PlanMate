@@ -5,7 +5,6 @@ import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
 import org.baghdad.data.repositories.authentication.SessionRepositoryImpl
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
 import org.baghdad.data.repositories.task.TaskRepositoryImpl
-import org.baghdad.data.repository.project.ProjectRepositoryImpl
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.ProjectRepository
