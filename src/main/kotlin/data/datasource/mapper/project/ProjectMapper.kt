@@ -14,7 +14,7 @@ class ProjectMapper : CsvMapper<ProjectEntity> {
         return ProjectEntity(
             id = UUID.fromString(project[ProjectColumns.ID]),
             name = project[ProjectColumns.NAME],
-            creatorId = project[ProjectColumns.CREATOR_ID]
+            creatorId = UUID.fromString(project[ProjectColumns.CREATOR_ID])
         )
     }
 
