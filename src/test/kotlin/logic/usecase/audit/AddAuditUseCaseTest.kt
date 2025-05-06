@@ -1,7 +1,7 @@
 package logic.usecase.audit
 
 import io.mockk.mockk
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.EmptyActionInAuditEntityException
 import org.baghdad.logic.repositories.AuditRepository
@@ -26,15 +26,15 @@ class AddAuditUseCaseTest {
     fun `should throw no exception when add audit`(){
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // when
-        addAuditUseCase.invoke(auditEntity)
+        addAuditUseCase.invoke(auditLogEntity)
 
     }
 
@@ -42,15 +42,15 @@ class AddAuditUseCaseTest {
     fun `should throw EmptyActionInAuditEntityException when add audit with empty action`(){
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // when & Then
-        assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditEntity)}
+        assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditLogEntity)}
 
     }
 
@@ -58,15 +58,15 @@ class AddAuditUseCaseTest {
     fun `should throw EmptyActionInAuditEntityException when add audit with blank action`(){
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = " ",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // when & Then
-        assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditEntity)}
+        assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditLogEntity)}
 
     }
 }
