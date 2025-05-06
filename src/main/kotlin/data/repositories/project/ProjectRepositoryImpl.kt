@@ -12,7 +12,7 @@ class ProjectRepositoryImpl(
         dataSource.createProject(project)
     }
 
-    override fun getProjectById(id: UUID): ProjectEntity? {
+    override fun getProjectById(id: UUID): ProjectEntity {
         return dataSource.getProjectById(id)
     }
 
