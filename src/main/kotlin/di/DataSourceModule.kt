@@ -34,7 +34,7 @@ inline fun <reified T : Any> Module.registerCsvDataSource(
 
 val dataSourceModule = module {
 
-    registerCsvDataSource<AuditEntity>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
+    registerCsvDataSource<AuditLogEntity>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
     registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
     registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
     registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
