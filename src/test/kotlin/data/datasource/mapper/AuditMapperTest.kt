@@ -6,7 +6,7 @@ import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -54,7 +54,7 @@ class AuditMapperTest {
         every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
 
         val timestamp = LocalDateTime.now()
-        val auditEntityType = Entities.Task
+        val auditEntityType = Entities.Task.name
         val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
 
         // When
@@ -62,7 +62,7 @@ class AuditMapperTest {
 
         // Then
         assertThat(result.id).isEqualTo(uuid)
-        assertThat(result.entityType).isEqualTo(auditEntityType)
+        assertThat(result.entityUnderAudit).isEqualTo(auditEntityType)
         assertThat(result.entityId).isEqualTo(typeId)
         assertThat(result.action).isEqualTo("CREATE")
         assertThat(result.user).isEqualTo(user)
@@ -100,9 +100,9 @@ class AuditMapperTest {
         )
         every { anyConstructed<UserMapper>().serializer(user) } returns "Pixel,Youssef Mohamed"
 
-        val entity = AuditEntity(
+        val entity = AuditLogEntity(
             id = uuid,
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
             entityId = entityId,
             action = "UPDATE",
             user = user,
@@ -112,7 +112,7 @@ class AuditMapperTest {
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityType.name},$entityId,UPDATE,[Pixel,Youssef Mohamed],${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,UPDATE,[Pixel,Youssef Mohamed],${entity.timestamp}")
     }
 
     @Test
@@ -129,9 +129,9 @@ class AuditMapperTest {
         // simulate a user serializer with multiple commas
         every { anyConstructed<UserMapper>().serializer(user) } returns "Bodi,ASDASD,Extra"
 
-        val entity = AuditEntity(
+        val entity = AuditLogEntity(
             id = uuid,
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
             entityId = entityId,
             action = "DELETE",
             user = user,
@@ -143,7 +143,7 @@ class AuditMapperTest {
 
         // Then
         // The user part should be wrapped in a single pair of brackets
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityType.name},$entityId,DELETE,[Bodi,ASDASD,Extra],${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,DELETE,[Bodi,ASDASD,Extra],${entity.timestamp}")
     }
 
 
@@ -165,7 +165,7 @@ class AuditMapperTest {
         val timestamp = "2020-01-02" +
                 "" +
                 ""
-        val auditEntityType = Entities.Task
+        val auditEntityType = Entities.Task.name
         val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
 
         // When
