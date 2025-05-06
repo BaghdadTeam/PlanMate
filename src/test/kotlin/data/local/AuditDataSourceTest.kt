@@ -4,16 +4,12 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.datasource.csv.CsvReader
-import org.baghdad.data.datasource.csv.CsvWriter
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.exceptions.audit.EmptyInputProjectIdException
-import org.baghdad.logic.model.exceptions.audit.EmptyInputTaskIdException
-import org.baghdad.logic.model.exceptions.audit.NoProjectFoundException
-import org.baghdad.logic.model.exceptions.audit.NoTaskFoundException
-import org.baghdad.logic.model.exceptions.audit.NullInputProjectIdException
-import org.baghdad.logic.model.exceptions.audit.NullInputTaskIdException
+import org.baghdad.logic.model.exceptions.NoProjectFoundException
+import org.baghdad.logic.model.exceptions.NoTaskFoundException
+
+
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
@@ -21,7 +17,7 @@ import kotlin.test.Test
 
 class AuditDataSourceTest {
     private lateinit var auditDataSource: AuditDataSource
-    private lateinit var dataSource: DataSource<AuditEntity>
+    private lateinit var dataSource: DataSource<AuditLogEntity>
 
     @BeforeEach
 
@@ -35,30 +31,30 @@ class AuditDataSourceTest {
     fun `should not throw any exception when add`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // When & Then
-        val result = auditDataSource.createAudit(auditEntity)
+        val result = auditDataSource.createAudit(auditLogEntity)
     }
 
     @Test
     fun `should return true when getAuditByTaskId successful retrieved`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         val result = auditDataSource.getAuditByTaskId(randomUUID)
 
         // Then
@@ -69,29 +65,30 @@ class AuditDataSourceTest {
     fun `should return true when getAuditByProjectId successful retrieved`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Project,
+            entityUnderAudit = Entities.Project.name,
         )
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         val result = auditDataSource.getAuditByProjectId(randomUUID)
 
         // Then
         assertThat(result[0].entityId.toString() == randomUUID.toString()).isTrue()
     }
+
     @Test
     fun `should throw a NoTaskFoundException when getAuditByTaskId return empty list`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // When & Then
@@ -104,15 +101,15 @@ class AuditDataSourceTest {
     fun `should throw a NoProjectFoundException when getAuditByProjectId return empty list`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // When & Then
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(randomUUID) }
 
     }
@@ -121,11 +118,11 @@ class AuditDataSourceTest {
     fun `should throw exception when entity type is not task in getAuditByTaskId`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.State,
+            entityUnderAudit = Entities.State.name,
         )
 
         // When & Then
@@ -137,15 +134,15 @@ class AuditDataSourceTest {
     fun `should throw exception when entity type is not project in getAuditByProjectId`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
 
         // When & Then
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(randomUUID) }
     }
 
@@ -153,16 +150,16 @@ class AuditDataSourceTest {
     fun `should throw exception when UUID not as input match in getAuditByTaskId`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Task,
+            entityUnderAudit = Entities.Task.name,
         )
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
 
     }
@@ -171,16 +168,16 @@ class AuditDataSourceTest {
     fun `should throw exception when UUID not as input match in getAuditByProjectId`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.Project,
+            entityUnderAudit = Entities.Project.name,
         )
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(inputRandomUUID) }
     }
 
@@ -189,16 +186,16 @@ class AuditDataSourceTest {
 
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.State,
+            entityUnderAudit = Entities.State.name,
         )
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
 
 
@@ -208,16 +205,16 @@ class AuditDataSourceTest {
     fun `should throw exception when entityId exception when not match uuid and entity type in getAuditByProjectId`() {
         // Given
         val randomUUID = UUID.randomUUID()
-        val auditEntity = AuditEntity(
+        val auditLogEntity = AuditLogEntity(
             entityId = randomUUID,
             action = "CREATE",
             user = mockk(),
-            entityType = Entities.State,
+            entityUnderAudit = Entities.State.name,
         )
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditEntity)
+        every { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(inputRandomUUID) }
     }
 }
