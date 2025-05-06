@@ -17,7 +17,7 @@ import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class CreateUserInterfaceTest {
+class CreateUserUITest {
 
     private lateinit var reader: Reader
     private lateinit var viewer: Viewer
@@ -25,25 +25,25 @@ class CreateUserInterfaceTest {
     private lateinit var createUserInterface: CreateUserUI
 
     private val administrator = UserEntity(
-        id             = UUID.randomUUID(),
-        name           = "Administrator",
-        username       = "admin",
+        id = UUID.randomUUID(),
+        name = "Administrator",
+        username = "admin",
         hashedPassword = "hashed",
-        type           = UserType.Admin
+        type = UserType.Admin
     )
     private val regularMate = UserEntity(
-        id             = UUID.randomUUID(),
-        name           = "Regular Mate",
-        username       = "mate",
+        id = UUID.randomUUID(),
+        name = "Regular Mate",
+        username = "mate",
         hashedPassword = "hashed",
-        type           = UserType.Mate
+        type = UserType.Mate
     )
 
     @BeforeTest
     fun setup() {
-        reader             = mockk()
-        viewer             = mockk(relaxed = true)
-        createUserUseCase  = mockk(relaxed = true)
+        reader = mockk()
+        viewer = mockk(relaxed = true)
+        createUserUseCase = mockk(relaxed = true)
         createUserInterface = CreateUserUI(reader, viewer, createUserUseCase)
     }
 

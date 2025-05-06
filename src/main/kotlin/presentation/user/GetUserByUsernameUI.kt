@@ -22,7 +22,8 @@ class GetUserByUsernameUI(
         } catch (exception: InvalidUsernameException) {
             viewer.logError("Invalid username: ${exception.message}")
         } catch (exception: UserNotFoundException) {
-            viewer.logError(exception.message ?: "User not found.")
+            val massage = exception.message
+            viewer.logError(if (massage.isNullOrBlank()) "User not found." else massage)
         }
     }
 }
