@@ -12,7 +12,7 @@ class EditProjectUseCase(
     operator fun invoke(id: UUID, newName: String, user: UserEntity): Result<Unit> {
         val access = AccessPolicy.requireAdmin(user)
         if (access is Result.Failure) return access
-        val existing = projectRepository.getProjectById(id.toString())
+        val existing = projectRepository.getProjectById(id)
             ?: return Result.Failure("Project not found.")
         val updated = existing.copy(name = newName)
         projectRepository.editProject(updated)

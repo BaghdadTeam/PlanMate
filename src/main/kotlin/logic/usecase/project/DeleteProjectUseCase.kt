@@ -16,7 +16,7 @@ class DeleteProjectUseCase(
         if (access is Result.Failure) return access
         if (taskRepository.getTasksByProjectId(id).isNotEmpty())
             return Result.Failure("Cannot delete project with active tasks.")
-        projectRepository.deleteProject(id.toString())
+        projectRepository.deleteProject(id)
         return Result.Success()
     }
 }

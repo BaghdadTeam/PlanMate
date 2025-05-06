@@ -12,8 +12,7 @@ class CreateProjectUseCase(
 ) {
     operator fun invoke(projectName: String, user: UserEntity): Result<Unit> {
         requireAdmin(user = user)
-        val projectId = UUID.randomUUID()
-        val project = ProjectEntity(id = projectId, name = projectName, creatorId = user.id.toString())
+        val project = ProjectEntity(name = projectName, creatorId = user.id)
         projectRepository.createProject(project)
         return Result.Success()
     }
