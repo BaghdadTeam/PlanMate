@@ -2,54 +2,66 @@ package org.baghdad.logic.usecase.user
 
 import io.mockk.every
 import io.mockk.mockk
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class GetUserByUsernameUseCaseTest {
-    private lateinit var repo: UserRepository
-    private lateinit var uc: GetUserByUsernameUseCase
-    private val sample =
-        UserEntity(name = "Alice", username = "alice", hashedPassword = "", type = UserType.Mate)
 
-    @BeforeTest
+    private lateinit var userRepository: UserRepository
+    private lateinit var getUserByUsernameUseCase: GetUserByUsernameUseCase
+
+    private val sampleUser = createSampleUser()
+
+    @BeforeEach
     fun setup() {
-        repo = mockk()
-        uc = GetUserByUsernameUseCase(repo)
+        userRepository = mockk()
+        getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository)
     }
 
     @Test
-    fun `success when user exists`() {
+    fun `should return user when user exists`() {
         // Given
-        every { repo.findByUsername("alice") } returns sample
+        every { userRepository.findByUsername("alice") } returns sampleUser
+
         // When
-        val user = uc("alice")
+        val result = getUserByUsernameUseCase("alice")
+
         // Then
-        assertEquals(sample, user)
+        assertEquals(sampleUser, result)
     }
 
     @Test
-    fun `throws for blank username`() {
+    fun `should throw InvalidUsernameException when username is blank`() {
+        // When & Then
         assertFailsWith<InvalidUsernameException> {
-            uc("")
+            getUserByUsernameUseCase("")
         }
     }
-
 
     @Test
-    fun `throws when user not found`() {
+    fun `should throw UserNotFoundException when user does not exist`() {
         // Given
-        every { repo.findByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
-        // Then
+        every { userRepository.findByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
+
+        // When & Then
         assertFailsWith<UserNotFoundException> {
-            uc("bob")
+            getUserByUsernameUseCase("bob")
         }
     }
 
+    private fun createSampleUser(): UserEntity {
+        return UserEntity(
+            name = "Alice",
+            username = "alice",
+            hashedPassword = "",
+            type = UserType.Mate
+        )
+    }
 }
