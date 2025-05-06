@@ -24,9 +24,9 @@ class EditProjectUseCaseTest {
         val useCase = EditProjectUseCase(projectRepo)
         val admin = UserEntity(UUID.randomUUID(), "admin", "pass", "", UserType.Admin)
         val projectId = UUID.randomUUID()
-        val existingProject = ProjectEntity(projectId, "Initial", admin.id.toString())
+        val existingProject = ProjectEntity(projectId, "Initial", admin.id)
 
-        every { projectRepo.getProjectById(projectId.toString()) } returns existingProject
+        every { projectRepo.getProjectById(projectId) } returns existingProject
         every { projectRepo.editProject(any()) } just Runs
 
         // Act
@@ -36,7 +36,7 @@ class EditProjectUseCaseTest {
         assertTrue(result is Result.Success)
 
         val expected = existingProject.copy(name = "Updated Name")
-        verify(exactly = 1) { projectRepo.getProjectById(projectId.toString()) }
+        verify(exactly = 1) { projectRepo.getProjectById(projectId) }
         verify(exactly = 1) { projectRepo.editProject(expected) }
 
         confirmVerified(projectRepo)

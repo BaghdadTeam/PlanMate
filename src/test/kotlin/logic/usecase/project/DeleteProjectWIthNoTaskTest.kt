@@ -31,10 +31,10 @@ class DeleteProjectWithNoTaskTest {
 
         val projectId = UUID.randomUUID()
         val admin = UserEntity(UUID.randomUUID(), "admin", "pass", "", UserType.Admin)
-        val project = ProjectEntity(projectId, "Project", admin.id.toString())
+        val project = ProjectEntity(projectId, "Project", admin.id)
 
         every { taskRepo.getTasksByProjectId(projectId) } returns emptyList()
-        every { projectRepo.deleteProject(projectId.toString()) } returns true
+        every { projectRepo.deleteProject(projectId) } just runs
 
         // Act
         val result = useCase(projectId, admin)
@@ -43,7 +43,7 @@ class DeleteProjectWithNoTaskTest {
         assertTrue(result is Result.Success)
 
         verify(exactly = 1) { taskRepo.getTasksByProjectId(projectId) }
-        verify(exactly = 1) { projectRepo.deleteProject(projectId.toString()) }
+        verify(exactly = 1) { projectRepo.deleteProject(projectId) }
 
         confirmVerified(projectRepo, taskRepo)
     }

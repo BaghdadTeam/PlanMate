@@ -33,7 +33,7 @@ class CreateProjectUseCaseTest {
         verify(exactly = 1) {
             repo.createProject(withArg {
                 assertEquals("My Project", it.name)
-                assertEquals(admin.id.toString(), it.creatorId)
+                assertEquals(admin.id, it.creatorId)
             })
         }
 
