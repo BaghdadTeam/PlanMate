@@ -33,10 +33,7 @@ dependencies {
     // junit params
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-
-    implementation("io.github.microutils:kotlin-logging:2.1.23")
-    implementation("com.typesafe:config:1.4.2")
-
+    
 }
 
 tasks.test {
