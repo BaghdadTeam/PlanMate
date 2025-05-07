@@ -7,7 +7,7 @@ import org.baghdad.logic.repositories.SessionRepository
 class SessionRepositoryImpl(
     private val sessionDataSource: SessionDataSource
 ): SessionRepository {
-    override fun loadSession(): SessionEntity?{
+    override fun loadSession(): SessionEntity{
             return sessionDataSource.loadSession()
     }
 

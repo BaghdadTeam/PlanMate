@@ -7,7 +7,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.exceptions.SessionEndedException
-import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.logic.repositories.SessionRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,16 +22,17 @@ class SessionManagerTest {
         sessionRepository = mockk(relaxed = true)
         sessionManager = SessionManager(sessionRepository)
     }
+
     @Test
-    fun `getActiveSession() throw SessionNotFoundException if there is no active session`() {
+    fun `getActiveSession() throws SessionEndedException if session is expired`() {
         // Given
-        every { sessionRepository.loadSession() }.returns(null)
-        // When
-        // Then
-        assertThrows<SessionNotFoundException> { sessionManager.getActiveSession() }
+        every { sessionRepository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
+        // When & Then
+        assertThrows<SessionEndedException> { sessionManager.getActiveSession() }
     }
+
     @Test
-    fun `getActiveSession() returns SessionEntity if session exists`() {
+    fun `getActiveSession() returns SessionEntity if session is active and not expired`() {
         // Given
         every { sessionRepository.loadSession() } returns SessionTestData.baseSession
         // When
@@ -43,27 +43,24 @@ class SessionManagerTest {
 
     @Test
     fun `clearExpiredSession() clears expired session`() {
-        every { sessionRepository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
-        sessionManager.clearExpiredSession()
-        verify { sessionRepository.deleteSession() }
-    }
-    @Test
-    fun `getActiveSession() throws SessionEndedException if there is no active session`() {
         // Given
         every { sessionRepository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
-        // When & Then
-        assertThrows<SessionEndedException> { sessionManager.getActiveSession() }
+        // When
+        sessionManager.clearExpiredSession()
+        // Then
+        verify { sessionRepository.deleteSession() }
     }
+
     @Test
-    fun `clearExpiredSession() should not do anything if there is no expired session`() {
+    fun `clearExpiredSession() should not do anything if session is not expired`() {
         // Given
         every { sessionRepository.loadSession() } returns SessionTestData.baseSession
         // When
-sessionManager.clearExpiredSession()
+        sessionManager.clearExpiredSession()
         // Then
         verify(exactly = 0) { sessionRepository.deleteSession() }
-
     }
+
     @Test
     fun `setSession correctly sets the currentSession`() {
         // Given
@@ -75,12 +72,12 @@ sessionManager.clearExpiredSession()
     }
 
     @Test
-    fun `clearSession() should check if there is no session`() {
+    fun `clearExpiredSession() should not delete session if session is not expired`() {
         // Given
-        every { sessionRepository.loadSession() }.returns(null)
+        every { sessionRepository.loadSession() } returns SessionTestData.baseSession
         // When
         sessionManager.clearExpiredSession()
         // Then
-        verify (exactly = 0){ sessionRepository.deleteSession() }
+        verify(exactly = 0) { sessionRepository.deleteSession() }
     }
 }
