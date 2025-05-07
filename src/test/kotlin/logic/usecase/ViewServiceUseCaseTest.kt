@@ -89,4 +89,30 @@ class ViewServiceUseCaseTest {
         result.exceptionOrNull()
             ?.message shouldBe "Failed to fetch states or tasks for project $projectId: Database error"
     }
+
+    @Test
+    fun `should return states with empty task lists when no tasks exist for project`() {
+        // give
+        val projectId = UUID.randomUUID()
+        val state1Id = UUID.randomUUID()
+        val state2Id = UUID.randomUUID()
+
+        val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
+        val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
+        val states = listOf(state1, state2)
+
+        every { stateRepository.getAllStatesPerProject(projectId) } returns states
+        every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+
+        // when
+        val result = useCase.swimlane(projectId)
+
+        // then
+        result shouldBe Result.success(
+            mapOf(
+                state1 to emptyList(),
+                state2 to emptyList()
+            )
+        )
+    }
 }
