@@ -4,7 +4,7 @@ import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.ProjectEntity
 import java.util.UUID
 
-class ProjectMapper: CsvMapper<ProjectEntity> {
+class ProjectMapper : CsvMapper<ProjectEntity> {
     override fun header(): String {
         return "id,name,creatorId"
     }
@@ -14,7 +14,7 @@ class ProjectMapper: CsvMapper<ProjectEntity> {
         return ProjectEntity(
             id = UUID.fromString(project[ProjectColumns.ID]),
             name = project[ProjectColumns.NAME],
-            creatorId = project[ProjectColumns.CREATOR_ID]
+            creatorId = UUID.fromString(project[ProjectColumns.CREATOR_ID])
         )
     }
 
