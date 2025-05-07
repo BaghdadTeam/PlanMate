@@ -1,6 +1,6 @@
 package org.baghdad.logic.usecase.task
 
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
@@ -54,12 +54,11 @@ class UpdateTaskUseCase(
         // join them with “and” for readability
         val action = "Task “${oldTask.title}” was updated: ${changes.joinToString(" and ")}"
 
-        val audit = AuditEntity(
-            entityType = Entities.Task.name,
+        val audit = AuditLogEntity(
+            entityUnderAudit = Entities.Task.name,
             entityId = newTask.id,
             action = action,
             user = user,
-            timestamp = timestamp
         )
         auditRepository.addAuditEntry(audit)
     }

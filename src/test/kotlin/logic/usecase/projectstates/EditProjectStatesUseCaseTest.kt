@@ -5,7 +5,7 @@ import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.AuditRepository
@@ -14,6 +14,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 import java.util.UUID
 
 class EditProjectStatesUseCaseTest {
@@ -58,12 +59,13 @@ class EditProjectStatesUseCaseTest {
         // then
         verify { statesRepository.editState(id, newState) }
 
-        val auditSlot = slot<AuditEntity>()
+        val auditSlot = slot<AuditLogEntity>()
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
         Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
-        Truth.assertThat(audit.timestamp).isNotEmpty()
+        Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
+
     }
 
 

@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
@@ -55,11 +55,11 @@ class UpdateTaskUseCaseTest {
 
         updateTaskUseCase.invoke(task, user.id)
 
-        val auditSlot = slot<AuditEntity>()
+        val auditSlot = slot<AuditLogEntity>()
         verify { taskRepository.updateTask(task) }
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
-        assertThat(auditSlot.captured.entityType).isEqualTo("Task")
+        assertThat(auditSlot.captured.entityUnderAudit).isEqualTo("Task")
         assertThat(auditSlot.captured.entityId).isEqualTo(task.id)
         assertThat(auditSlot.captured.action).isEqualTo(
             "Task “${oldTask.title}” was updated: title changed from “${oldTask.title}” to “${task.title}”"

@@ -48,5 +48,5 @@ build
 .gradle
 .idea
 session.csv
-
+audit.csv
 /local.properties

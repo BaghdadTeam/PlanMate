@@ -3,7 +3,8 @@ package org.baghdad.logic.usecase
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
+import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
@@ -47,17 +48,14 @@ class StateTransitionUseCase(
     private fun logStateChange(
         taskId: UUID, oldStateId: UUID, newStateId: UUID, user: UserEntity
     ) {
-        val timestamp =
-            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toString()
         val action = "${user.username} changed task $taskId from state $oldStateId to $newStateId"
         println("Task $taskId moved from $oldStateId to $newStateId by ${user.username}")
 
-        val auditEntry = AuditEntity(
-            entityType = "Task",
+        val auditEntry = AuditLogEntity(
+            entityUnderAudit = Entities.Task.name,
             entityId = taskId,
             action = action,
             user = user,
-            timestamp = timestamp
         )
         auditRepository.addAuditEntry(auditEntry)
     }
