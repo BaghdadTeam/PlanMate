@@ -4,6 +4,7 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.MongoException
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import io.github.cdimascio.dotenv.dotenv
 import org.bson.BsonInt64
 import org.bson.Document
 import org.bson.UuidRepresentation
@@ -12,11 +13,13 @@ object MongoSetup {
 
     suspend fun setupConnection(
         databaseName: String = "PlanMate",
-        connectString: String = "mongodb+srv://youssefmusaber:Pixelise2001@planmate-cluster.z97gz0e.mongodb.net/?retryWrites=true&w=majority&appName=PlanMate-Cluster"
     ): MongoDatabase {
+        val dotenv = dotenv() // Loads from .env by default
+        val connectionString = dotenv["MONGO_CONNECTION_STRING"]
+            ?: throw IllegalStateException("MONGO_CONNECTION_STRING not found in .env")
 
         val settings = MongoClientSettings.builder()
-            .applyConnectionString(com.mongodb.ConnectionString(connectString))
+            .applyConnectionString(com.mongodb.ConnectionString(connectionString))
             .uuidRepresentation(UuidRepresentation.STANDARD)
             .build()
 

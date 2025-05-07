@@ -17,36 +17,28 @@ object ProjectStatesEntityTestData {
 
     fun todoState() = createProjectStateHelper(
         name = "TODO",
-
-
     )
 
     fun inProgressState() = createProjectStateHelper(
         name = "In Progress",
-
     )
 
     fun doingState() = createProjectStateHelper(
         name = "Doing",
-
     )
 
     fun inReviewState() = createProjectStateHelper(
         name = "Ready For Review",
-
     )
 
     fun readyState() = createProjectStateHelper(
         name = "Ready For Merge",
-
     )
 
 
     fun doneState() = createProjectStateHelper(
         name = "Done",
-
     )
-
 
 
     private fun createProjectStateHelper(
