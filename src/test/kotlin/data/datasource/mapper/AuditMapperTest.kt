@@ -6,13 +6,16 @@ import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
+import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.*
+import java.time.LocalDateTime
+import java.util.UUID
 import kotlin.test.Test
 
 class AuditMapperTest {
@@ -39,6 +42,7 @@ class AuditMapperTest {
     fun `deserializer parses line into AuditEntity`() {
         // Given
         val uuid = UUID.randomUUID()
+        val typeId = UUID.randomUUID()
         val user = UserEntity(
             name = "Youssef",
             username = "Pixel",
@@ -49,17 +53,17 @@ class AuditMapperTest {
         // → match the trailing ']' that your parser leaves in the argument
         every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
 
-        val timestamp = "2025-04-29T12:34:56Z"
-        val entityId = UUID.randomUUID()
-        val line = "$uuid,Order,$entityId,CREATE,[Pixel,Youssef],$timestamp"
+        val timestamp = LocalDateTime.now()
+        val auditEntityType = Entities.Task.name
+        val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
 
         // When
         val result = parser.deserializer(line)
 
         // Then
         assertThat(result.id).isEqualTo(uuid)
-        assertThat(result.entityType).isEqualTo("Order")
-        assertThat(result.entityId).isEqualTo(entityId)
+        assertThat(result.entityUnderAudit).isEqualTo(auditEntityType)
+        assertThat(result.entityId).isEqualTo(typeId)
         assertThat(result.action).isEqualTo("CREATE")
         assertThat(result.user).isEqualTo(user)
         assertThat(result.timestamp).isEqualTo(timestamp)
@@ -87,6 +91,7 @@ class AuditMapperTest {
     fun `serializer produces correct CSV line`() {
         // Given
         val uuid = UUID.randomUUID()
+        val entityId = UUID.randomUUID()
         val user = UserEntity(
             name = "Youssef Mohamed",
             username = "Pixel",
@@ -94,28 +99,27 @@ class AuditMapperTest {
             type = UserType.Mate
         )
         every { anyConstructed<UserMapper>().serializer(user) } returns "Pixel,Youssef Mohamed"
-        val timestamp = "2025-04-29T12:34:56Z"
-        val entityId = UUID.randomUUID()
-        val entity = AuditEntity(
+
+        val entity = AuditLogEntity(
             id = uuid,
-            entityType = "Product",
+            entityUnderAudit = Entities.Task.name,
             entityId = entityId,
             action = "UPDATE",
             user = user,
-            timestamp = timestamp
         )
 
         // When
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,Product,$entityId,UPDATE,[Pixel,Youssef Mohamed],$timestamp")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,UPDATE,[Pixel,Youssef Mohamed],${entity.timestamp}")
     }
 
     @Test
     fun `serializer wraps user CSV in square brackets`() {
         // Given
         val uuid = UUID.randomUUID()
+        val entityId = UUID.randomUUID()
         val user = UserEntity(
             name = "ASDASD",
             username = "Bodi",
@@ -124,22 +128,47 @@ class AuditMapperTest {
         )
         // simulate a user serializer with multiple commas
         every { anyConstructed<UserMapper>().serializer(user) } returns "Bodi,ASDASD,Extra"
-        val timestamp = "2025-05-01T00:00:00Z"
-        val entityId = UUID.randomUUID()
-        val entity = AuditEntity(
+
+        val entity = AuditLogEntity(
             id = uuid,
-            entityType = "Invoice",
+            entityUnderAudit = Entities.Task.name,
             entityId = entityId,
             action = "DELETE",
             user = user,
-            timestamp = timestamp
-        )
+
+            )
 
         // When
         val csvLine = parser.serializer(entity)
 
         // Then
         // The user part should be wrapped in a single pair of brackets
-        assertThat(csvLine).isEqualTo("$uuid,Invoice,$entityId,DELETE,[Bodi,ASDASD,Extra],$timestamp")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,DELETE,[Bodi,ASDASD,Extra],${entity.timestamp}")
+    }
+
+
+    @Test
+    fun `throw UnSupportedTimeStampFormatException when deserializer parses line with wrong format for datetime`() {
+        // Given
+        val uuid = UUID.randomUUID()
+        val typeId = UUID.randomUUID()
+        val user = UserEntity(
+            name = "Youssef",
+            username = "Pixel",
+            hashedPassword = "someHashedPassword",
+            type = UserType.Mate
+        )
+
+        // → match the trailing ']' that your parser leaves in the argument
+        every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
+
+        val timestamp = "2020-01-02" +
+                "" +
+                ""
+        val auditEntityType = Entities.Task.name
+        val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
+
+        // When
+        assertThrows<UnSupportedTimeStampFormatException> { parser.deserializer(line) }
     }
 }

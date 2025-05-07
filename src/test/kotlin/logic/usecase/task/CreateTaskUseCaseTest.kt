@@ -6,7 +6,7 @@ import io.mockk.Called
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
@@ -50,14 +50,13 @@ class CreateTaskUseCaseTest {
 
         verify { taskRepository.createTask(task) }
 
-        val auditSlot = slot<AuditEntity>()
+        val auditSlot = slot<AuditLogEntity>()
         verify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        assertThat(audit.entityType).isEqualTo("Task")
+        assertThat(audit.entityUnderAudit).isEqualTo("Task")
         assertThat(audit.entityId).isInstanceOf(UUID::class.java) // assuming ID is auto-generated or assigned
         assertThat(audit.action).isEqualTo("created task ${task.title}")
-        assertThat(audit.timestamp).isNotEmpty()
     }
 
     @Test

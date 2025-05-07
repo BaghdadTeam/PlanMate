@@ -21,14 +21,13 @@ class EditProjectStatesUseCase (
         auditRepository.addAuditEntry(audit)
     }
 
-    private fun createAudit(state: StateEntity, user: UserEntity):AuditEntity {
+    private fun createAudit(state: StateEntity, user: UserEntity):AuditLogEntity {
         val action = "create ${state.name} state is updated successfully"
-        val audit = AuditEntity(
-            entityType = Entities.Task.name,
+        val audit = AuditLogEntity(
+            entityUnderAudit = Entities.Task.name,
             entityId = state.id,
             action = action,
             user = user,
-            timestamp = getFormattedTimestamp(),
         )
         return audit
     }
