@@ -17,9 +17,9 @@ val useCaseModule = module {
     single { UpdateTaskUseCase(get(), get(), get()) }
 
     single { GetTasksByStateIdUseCase(get()) }
-    single { GetTaskByIdUseCase(get()) }
     single { GetAllTasksUseCase(get()) }
     single { GetTasksByProjectIdUseCase(get()) }
+
     // endregion
 
     // region  ::  Project States Use Cases  ::
