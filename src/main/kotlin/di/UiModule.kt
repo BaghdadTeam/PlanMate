@@ -1,8 +1,13 @@
 package org.baghdad.di
 
+import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
 import org.baghdad.presentation.project.CreateProjectUi
 import org.baghdad.presentation.project.DeleteProjectUi
 import org.baghdad.presentation.project.ListProjectUi
+import org.baghdad.presentation.projectStates.AddStateToProjectUI
+import org.baghdad.presentation.projectStates.EditProjectStateUI
+import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
+import org.baghdad.presentation.projectStates.GetStateByIdUI
 import org.baghdad.presentation.task.*
 import org.koin.dsl.module
 

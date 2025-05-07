@@ -5,10 +5,14 @@ import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
 import org.baghdad.logic.usecase.project.EditProjectUseCase
 import org.baghdad.logic.usecase.project.GetAllProjectsUseCase
+import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
+import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
+import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
+import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
+import org.baghdad.logic.usecase.projectstates.GetStateByIdUseCase
 import org.baghdad.logic.usecase.task.CreateTaskUseCase
 import org.baghdad.logic.usecase.task.DeleteTaskUseCase
 import org.baghdad.logic.usecase.task.GetAllTasksUseCase
-import org.baghdad.logic.usecase.task.GetTaskByIdUseCase
 import org.baghdad.logic.usecase.task.GetTasksByProjectIdUseCase
 import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
