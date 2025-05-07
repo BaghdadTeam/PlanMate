@@ -1,6 +1,6 @@
 package org.baghdad.logic.usecase.task
 
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
@@ -30,14 +30,13 @@ class CreateTaskUseCase(
     private fun logTaskCreation(
         task: TaskEntity,
         user: UserEntity
-    ): AuditEntity {
+    ): AuditLogEntity {
         val action = "created task ${task.title}"
-        val audit = AuditEntity(
-            entityType = Entities.Task.name,
+        val audit = AuditLogEntity(
+            entityUnderAudit = Entities.Task.name,
             entityId = task.id,
             action = action,
             user = user,
-            timestamp = getFormattedTimestamp(),
         )
         return audit
     }

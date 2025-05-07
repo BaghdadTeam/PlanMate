@@ -1,7 +1,9 @@
 package logic.usecase
 
 
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
@@ -64,7 +66,7 @@ class StateTransitionUseCaseTest {
         every { projectStatesRepository.getStateById(task.stateId) } returns oldState
         every { projectStatesRepository.getStateById(newState.id) } returns newState
         every { taskRepository.updateTask(any()) } returns true
-        every { auditRepository.addAuditEntry(any()) } returns true
+        every { auditRepository.addAuditEntry(any()) } just Runs
 
         service.changeTaskState(task.id, newState.id, user)
 
@@ -141,7 +143,7 @@ class StateTransitionUseCaseTest {
         every { projectStatesRepository.getStateById(task.stateId) } returns oldState
         every { projectStatesRepository.getStateById(newStateId) } returns newState
         every { taskRepository.updateTask(any()) } returns false // Simulate failure
-        every { auditRepository.addAuditEntry(any()) } returns true
+        every { auditRepository.addAuditEntry(any()) }
 
         val exception = assertThrows<Exception> {
             service.changeTaskState(taskId, newStateId, user)
