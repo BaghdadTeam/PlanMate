@@ -1,21 +1,27 @@
 package org.baghdad.logic.usecase.project
 
 import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.AccessDeniedException
+import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.ProjectRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.common.AccessPolicy
 import org.baghdad.logic.usecase.common.Result
 import java.util.UUID
 
 class EditProjectUseCase(
-    private val projectRepository: ProjectRepository
+    private val projectRepository: ProjectRepository,
+    private val userRepository: UserRepository
+
 ) {
-    operator fun invoke(id: UUID, newName: String, user: UserEntity): Result<Unit> {
-        val access = AccessPolicy.requireAdmin(user)
-        if (access is Result.Failure) return access
-        val existing = projectRepository.getProjectById(id)
-            ?: return Result.Failure("Project not found.")
-        val updated = existing.copy(name = newName)
+    operator fun invoke(projectId: UUID, projectNewName: String, userId: UUID) {
+        val user = userRepository.getUserById(userId)
+        if (user.type.name != UserType.Admin.name) throw AccessDeniedException("Not authorized")
+        if (projectNewName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
+
+        val existing = projectRepository.getProjectById(projectId)
+        val updated = existing.copy(name = projectNewName)
         projectRepository.editProject(updated)
-        return Result.Success()
     }
 }
