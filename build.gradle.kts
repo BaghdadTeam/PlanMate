@@ -131,7 +131,7 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
             exclude("**/di/**")
             exclude("**/model/**")
             exclude("**/main.kt") // Exclude main.kt file
-            exclude("**/MongoSetup.kt") // Exclude MongoSetup class
+            exclude("**/mongosetup.kt") // Exclude MongoSetup class
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
