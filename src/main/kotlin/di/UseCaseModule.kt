@@ -4,8 +4,14 @@ import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
 import org.baghdad.logic.usecase.project.EditProjectUseCase
-import org.baghdad.logic.usecase.project.ListProjectsUseCase
-import org.baghdad.logic.usecase.task.*
+import org.baghdad.logic.usecase.project.GetAllProjectsUseCase
+import org.baghdad.logic.usecase.task.CreateTaskUseCase
+import org.baghdad.logic.usecase.task.DeleteTaskUseCase
+import org.baghdad.logic.usecase.task.GetAllTasksUseCase
+import org.baghdad.logic.usecase.task.GetTaskByIdUseCase
+import org.baghdad.logic.usecase.task.GetTasksByProjectIdUseCase
+import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
+import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -24,9 +30,9 @@ val useCaseModule = module {
 
     // region  ::  Project Use Cases  ::
 
-    single { CreateProjectUseCase(get()) }
+    single { CreateProjectUseCase(get(), get()) }
     single { DeleteProjectUseCase(get(), get()) }
-    single { EditProjectUseCase(get()) }
-    single { ListProjectsUseCase(get()) }
+    single { EditProjectUseCase(get(), get()) }
+    single { GetAllProjectsUseCase(get()) }
     // endregion
 }
