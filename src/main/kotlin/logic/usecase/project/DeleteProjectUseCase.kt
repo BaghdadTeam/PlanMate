@@ -1,6 +1,5 @@
 package org.baghdad.logic.usecase.project
 
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.repositories.ProjectRepository
@@ -13,7 +12,7 @@ class DeleteProjectUseCase(
 ) {
     operator fun invoke(projectId: UUID,userId : UUID){
         val user = userRepository.getUserById(userId)
-        if (user.type.name != UserType.Admin.name) throw AccessDeniedException("Not authorized")
+        if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
         projectRepository.deleteProject(projectId)
     }
 }
