@@ -5,7 +5,7 @@ import java.util.UUID
 
 data class ProjectEntity(
     @BsonId
-    val id: UUID = UUID.randomUUID(),
+    override val id: UUID = UUID.randomUUID(),
     val name: String,
     val creatorId: String
-)
+): Identifiable

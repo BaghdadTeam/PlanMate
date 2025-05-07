@@ -18,6 +18,10 @@ class ProjectMapper: CsvMapper<ProjectEntity> {
         )
     }
 
+    override fun getId(item: ProjectEntity): String {
+        return item.id.toString()
+    }
+
     override fun serializer(item: ProjectEntity): String {
         return "${item.id},${item.name},${item.creatorId}"
     }

@@ -31,6 +31,10 @@ class AuditMapper : CsvMapper<AuditEntity> {
         )
     }
 
+    override fun getId(item: AuditEntity): String {
+        return item.id.toString()
+    }
+
     override fun serializer(item: AuditEntity): String {
         val serializedUser = UserMapper().serializer(item.user)
         return "${item.id},${item.entityType},${item.entityId},${item.action},[${serializedUser}],${item.timestamp}"

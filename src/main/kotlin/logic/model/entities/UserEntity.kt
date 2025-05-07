@@ -6,10 +6,10 @@ import java.util.UUID
 
 data class UserEntity(
     @BsonId
-    val id: UUID = UUID.randomUUID(),
+    override val id: UUID = UUID.randomUUID(),
     val name: String,
     val username: String,
     @BsonProperty("hashed_password")
     val hashedPassword: String,
     val type: UserType
-)
+): Identifiable

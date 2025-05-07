@@ -21,6 +21,10 @@ class UserMapper : CsvMapper<UserEntity> {
         )
     }
 
+    override fun getId(item: UserEntity): String {
+        return item.id.toString()
+    }
+
     override fun serializer(item: UserEntity): String {
         return "${item.id},${item.name},${item.username},${item.hashedPassword},${item.type.name}"
     }
