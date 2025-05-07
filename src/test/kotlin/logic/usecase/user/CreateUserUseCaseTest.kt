@@ -9,8 +9,8 @@ import org.baghdad.logic.model.exceptions.user.*
 import org.baghdad.logic.repositories.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import org.junit.jupiter.api.assertThrows
+import com.google.common.truth.Truth.assertThat
 
 class CreateUserUseCaseTest {
 
@@ -39,62 +39,58 @@ class CreateUserUseCaseTest {
 
     @Test
     fun `should create user when invoked by admin with valid data`() {
-        // Given
         every { userRepository.findByUsername("newUser") } throws UserNotFoundException("not found")
 
-        // When
         val created = createUserUseCase("newUser", "strongPassword", "New User", adminUser)
 
-        // Then
-        assertEquals("newUser", created.username)
-        assertEquals("New User", created.name)
-        assertEquals(UserType.Mate, created.type)
+        assertThat(created.username).isEqualTo("newUser")
+        assertThat(created.name).isEqualTo("New User")
+        assertThat(created.type).isEqualTo(UserType.Mate)
         verify(exactly = 1) { userRepository.createUser(created) }
     }
 
     @Test
     fun `should throw UnauthorizedException when creator is not admin`() {
-        // When & Then
-        assertFailsWith<UnauthorizedException> {
+        val exception = assertThrows<UnauthorizedException> {
             createUserUseCase("u", "password", "Name", regularUser)
         }
+        assertThat(exception).isInstanceOf(UnauthorizedException::class.java)
     }
 
     @Test
     fun `should throw InvalidUsernameException when username is blank`() {
-        // When & Then
-        assertFailsWith<InvalidUsernameException> {
+        val exception = assertThrows<InvalidUsernameException> {
             createUserUseCase("", "password", "Name", adminUser)
         }
+        assertThat(exception).isInstanceOf(InvalidUsernameException::class.java)
     }
 
     @Test
     fun `should throw InvalidUsernameException when username pattern is invalid`() {
-        // When & Then
-        assertFailsWith<InvalidUsernameException> {
+        val exception = assertThrows<InvalidUsernameException> {
             createUserUseCase("no spaces!", "password", "Name", adminUser)
         }
+        assertThat(exception).isInstanceOf(InvalidUsernameException::class.java)
     }
 
     @Test
     fun `should throw InvalidNameException when name is blank`() {
-        // When & Then
-        assertFailsWith<InvalidNameException> {
+        val exception = assertThrows<InvalidNameException> {
             createUserUseCase("validUser", "password", "", adminUser)
         }
+        assertThat(exception).isInstanceOf(InvalidNameException::class.java)
     }
 
     @Test
     fun `should throw InvalidPasswordException when password is too short`() {
-        // When & Then
-        assertFailsWith<InvalidPasswordException> {
+        val exception = assertThrows<InvalidPasswordException> {
             createUserUseCase("validUser", "123", "Name", adminUser)
         }
+        assertThat(exception).isInstanceOf(InvalidPasswordException::class.java)
     }
 
     @Test
     fun `should throw UserAlreadyExistsException when username already exists`() {
-        // Given
         every { userRepository.findByUsername("existingUser") } returns UserEntity(
             name = "Exists",
             username = "existingUser",
@@ -102,9 +98,9 @@ class CreateUserUseCaseTest {
             type = UserType.Mate
         )
 
-        // When & Then
-        assertFailsWith<UserAlreadyExistsException> {
+        val exception = assertThrows<UserAlreadyExistsException> {
             createUserUseCase("existingUser", "password", "Name", adminUser)
         }
+        assertThat(exception).isInstanceOf(UserAlreadyExistsException::class.java)
     }
 }
