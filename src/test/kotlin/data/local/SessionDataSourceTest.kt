@@ -40,7 +40,7 @@ class SessionDataSourceTest {
         // When
         sessionDataSource.deleteSession()
         // Then
-        coVerify { dataSource.update(any()) }
+        coVerify { dataSource.delete(any()) }
     }
     @Test
     fun `should execute  dataSource append when saveSession is called`() {

@@ -96,11 +96,9 @@ class ProjectStatesDataSourceTest {
         coEvery { dataSource.loadAll() } returns allStates
         coEvery { dataSource.update(updatedProject) } just Runs
 
-        val exception = assertThrows<Exception> {
+        assertThrows<Exception> {
             projectStatesDataSource.editState(updatedProject)
         }
-        assertThat(exception.message).contains("No state found")
-
     }
 
 

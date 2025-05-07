@@ -141,7 +141,7 @@ class TaskDataSourceTest {
         )
 
         coEvery { dataSource.loadAll() } returns existingTasks
-        coEvery { dataSource.update(any()) } just Runs
+        coEvery { dataSource.update(updatedTask) } just Runs
 
         taskDataSource.updateTask(updatedTask)
 

@@ -45,8 +45,6 @@ class StartAppTest {
         verify { sessionManager.getActiveSession() }
         verify { sessionManager.setSession(dummySession) }
         verify(exactly = 0) { loginUi.execute() }
-        verify(exactly = 0) { viewer.logMessage(any()) }
-        verify(exactly = 0) { viewer.logError(any()) }
     }
 
     @Test

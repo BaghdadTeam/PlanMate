@@ -45,10 +45,10 @@ class TaskDataSource(
 
     fun updateTask(task: TaskEntity) {
         return runBlocking {
-            val foundTask = loadTasks().find { it.id == task.id }
+            loadTasks().find { it.id == task.id }
                 ?: throw TasksNotFoundException("Task with id ${task.id} not found")
 
-            dataSource.update(foundTask)
+            dataSource.update(task)
         }
     }
 
