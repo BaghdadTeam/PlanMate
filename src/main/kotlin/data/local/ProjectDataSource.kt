@@ -31,7 +31,6 @@ class ProjectDataSource(
         val projectIndex = allData.indexOfFirst { it.id == project.id }
         if (projectIndex == -1) throw ProjectNotFoundException("No project found")
         allData[projectIndex] = project
-        println(allData)
         projectDataSource.update(allData)
     }
 
