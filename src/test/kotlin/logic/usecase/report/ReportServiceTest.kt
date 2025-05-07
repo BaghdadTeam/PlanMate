@@ -31,7 +31,7 @@ class ReportServiceTest {
 
         reportService = ReportService(projectRepo, taskRepo, stateRepo)
 
-        val project = ProjectEntity(id = projectId, name = "Test Project", creatorId = user1Id.toString())
+        val project = ProjectEntity(id = projectId, name = "Test Project", creatorId = user1Id)
 
         val states = listOf(
             StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = user1Id),
