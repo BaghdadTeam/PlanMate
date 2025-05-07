@@ -1,7 +1,6 @@
 package org.baghdad.logic.usecase.project
 
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException

@@ -1,13 +1,10 @@
 package org.baghdad.logic.usecase.project
 
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.common.AccessPolicy
-import org.baghdad.logic.usecase.common.Result
 import java.util.UUID
 
 class EditProjectUseCase(
