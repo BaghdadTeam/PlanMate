@@ -1,5 +1,6 @@
 package org.baghdad.data.local
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
@@ -10,11 +11,15 @@ class TaskDataSource(
 ) {
 
     fun loadTasks(): List<TaskEntity> {
-        return dataSource.loadAll()
+        return runBlocking {
+            dataSource.loadAll()
+        }
     }
 
     fun addTask(task: TaskEntity) {
-        dataSource.append(task)
+        return runBlocking {
+            dataSource.append(task)
+        }
     }
 
     fun getTasksByProjectId(projectId: UUID): List<TaskEntity> {
@@ -39,23 +44,20 @@ class TaskDataSource(
     }
 
     fun updateTask(task: TaskEntity) {
-        val allTasks = loadTasks().toMutableList()
-        val taskIndex = loadTasks().indexOfFirst { it.id == task.id }
+        return runBlocking {
+            val foundTask = loadTasks().find { it.id == task.id }
+                ?: throw TasksNotFoundException("Task with id ${task.id} not found")
 
-        if (taskIndex != -1) {
-            allTasks[taskIndex] = task
-            dataSource.update(allTasks)
-        } else {
-            throw TasksNotFoundException("Task with id ${task.id} not found")
+            dataSource.update(foundTask)
         }
     }
 
     fun deleteTask(taskId: UUID) {
-        val allTasks = loadTasks().toMutableList()
-        val removed = allTasks.removeIf { it.id == taskId }
+        return runBlocking {
+            val foundTask = loadTasks().find { it.id == taskId }
+                ?: throw TasksNotFoundException("Task with id $taskId not found")
 
-        if (!removed) throw TasksNotFoundException("Task with id $taskId not found")
-
-        dataSource.update(allTasks)
+            dataSource.delete(foundTask)
+        }
     }
 }
