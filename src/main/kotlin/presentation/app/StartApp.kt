@@ -14,8 +14,10 @@ class StartApp(
         try {
             sessionManager.clearExpiredSession()
             val session = try {
-                sessionManager.getActiveSession()
-            } catch (e: SessionNotFoundException) {
+                val activeSession = sessionManager.getActiveSession()
+                viewer.logMessage("Your session is still active, welcome back!")
+                activeSession
+            } catch (_: SessionNotFoundException) {
                 viewer.logMessage("No active session found, starting login...")
                 loginUi.execute()
             }
