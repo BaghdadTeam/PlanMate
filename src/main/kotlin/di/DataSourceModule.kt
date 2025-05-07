@@ -54,6 +54,10 @@ val dataSourceModule = module {
 //    registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
 //    registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
 //    registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
+    registerCsvDataSource<AuditLogEntity>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
+    registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
+    registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
+    registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
     registerCsvDataSource<SessionEntity>(Entities.Session, StorageFileNames.sessionFile, SessionMapper())
 //    registerCsvDataSource<TaskEntity>(Entities.Task, StorageFileNames.taskFile, TaskMapper())
 

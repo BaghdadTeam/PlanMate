@@ -1,14 +1,15 @@
 package org.baghdad.logic.model.entities
 
+import java.time.LocalDateTime
 import org.bson.codecs.pojo.annotations.BsonId
 import java.util.UUID
 
-data class AuditEntity(
+data class AuditLogEntity(
     @BsonId
     override val id: UUID = UUID.randomUUID(),
-    val entityType: String,  // => Project | State | Task
+    val entityUnderAudit: String,  // => Project | State | Task
     val entityId: UUID,   // => Project | State | Task
     val action: String,
     val user: UserEntity,
-    val timestamp: String
+    val timestamp: LocalDateTime = LocalDateTime.now()
 ): Identifiable
