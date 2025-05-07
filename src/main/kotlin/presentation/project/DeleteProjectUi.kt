@@ -18,9 +18,9 @@ class DeleteProjectUi(
             return
         }
 
-        when (val result = deleteProjectUseCase(projectId, user)) {
-            is org.baghdad.logic.usecase.common.Result.Success -> println("Project deleted successfully.")
-            is Result.Failure -> println(result.message)
-        }
+//        when (val result = deleteProjectUseCase(projectId, user)) {
+//            is org.baghdad.logic.usecase.common.Result.Success -> println("Project deleted successfully.")
+//            is Result.Failure -> println(result.message)
+//        }
     }
 }

@@ -24,9 +24,9 @@ class EditProjectUi(
             return
         }
 
-        when (val result = editProjectUseCase(projectId, newName, user)) {
-            is Result.Success -> println("Project updated successfully.")
-            is Result.Failure -> println(result.message)
-        }
+//        when (val result = editProjectUseCase(projectId, newName, user)) {
+//            is Result.Success -> println("Project updated successfully.")
+//            is Result.Failure -> println(result.message)
+//        }
     }
 }
