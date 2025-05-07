@@ -1,7 +1,6 @@
 package org.baghdad.presentation.project
 
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.usecase.common.Result
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
 
 class DeleteProjectUi(
