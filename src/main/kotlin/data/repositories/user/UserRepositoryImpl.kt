@@ -14,7 +14,7 @@ class UserRepositoryImpl(
         dataSource.addUser(user)
     }
 
-    override fun findByUsername(username: String): UserEntity {
+    override fun getUserByUsername(username: String): UserEntity {
         return dataSource.findUserByUsername(username)
     }
 

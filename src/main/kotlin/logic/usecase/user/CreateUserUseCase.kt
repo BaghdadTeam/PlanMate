@@ -62,7 +62,7 @@ class CreateUserUseCase(
 
     private fun ensureUsernameUnique(username: String) {
         try {
-            userRepository.findByUsername(username)
+            userRepository.getUserByUsername(username)
             throw UserAlreadyExistsException("Username '$username' already exists.")
         } catch (exception: UserNotFoundException) { }
     }
@@ -76,4 +76,3 @@ class CreateUserUseCase(
         )
     }
 }
-//

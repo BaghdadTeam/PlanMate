@@ -28,7 +28,7 @@ class GetUserByUsernameUseCaseTest {
     @Test
     fun `should return user when user exists`() {
         // Given
-        every { userRepository.findByUsername("alice") } returns sampleUser
+        every { userRepository.getUserByUsername("alice") } returns sampleUser
 
         // When
         val result = getUserByUsernameUseCase("alice")
@@ -48,7 +48,7 @@ class GetUserByUsernameUseCaseTest {
     @Test
     fun `should throw UserNotFoundException when user does not exist`() {
         // Given
-        every { userRepository.findByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
+        every { userRepository.getUserByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
 
         // When & Then
         assertFailsWith<UserNotFoundException> {

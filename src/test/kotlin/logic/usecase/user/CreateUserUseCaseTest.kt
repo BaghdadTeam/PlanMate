@@ -39,7 +39,7 @@ class CreateUserUseCaseTest {
 
     @Test
     fun `should create user when invoked by admin with valid data`() {
-        every { userRepository.findByUsername("newUser") } throws UserNotFoundException("not found")
+        every { userRepository.getUserByUsername("newUser") } throws UserNotFoundException("not found")
 
         val created = createUserUseCase("newUser", "strongPassword", "New User", adminUser)
 
@@ -91,7 +91,7 @@ class CreateUserUseCaseTest {
 
     @Test
     fun `should throw UserAlreadyExistsException when username already exists`() {
-        every { userRepository.findByUsername("existingUser") } returns UserEntity(
+        every { userRepository.getUserByUsername("existingUser") } returns UserEntity(
             name = "Exists",
             username = "existingUser",
             hashedPassword = "",

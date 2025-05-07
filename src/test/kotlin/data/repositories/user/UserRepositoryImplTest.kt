@@ -49,7 +49,7 @@ class UserRepositoryImplTest {
         // Given
         every { dataSource.findUserByUsername("sample") } returns sampleUser
         // When
-        val result = repository.findByUsername("sample")
+        val result = repository.getUserByUsername("sample")
         // Then
         assertThat(result).isEqualTo(sampleUser)
         verify { dataSource.findUserByUsername("sample") }
