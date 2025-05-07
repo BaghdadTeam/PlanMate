@@ -1,6 +1,6 @@
 package org.baghdad.logic.usecase.task
 
-import org.baghdad.logic.model.entities.AuditEntity
+import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
@@ -26,12 +26,11 @@ class DeleteTaskUseCase(
         auditRepository.addAuditEntry(audit)
     }
 
-    private fun logTaskDeletion(task: TaskEntity, user: UserEntity): AuditEntity {
+    private fun logTaskDeletion(task: TaskEntity, user: UserEntity): AuditLogEntity {
 
         val action = "has been deleted task ${task.title}"
-        return AuditEntity(
-            entityType = Entities.Task.name,
-            timestamp = getFormattedTimestamp(),
+        return AuditLogEntity(
+            entityUnderAudit = Entities.Task.name,
             entityId = task.id,
             action = action,
             user = user,

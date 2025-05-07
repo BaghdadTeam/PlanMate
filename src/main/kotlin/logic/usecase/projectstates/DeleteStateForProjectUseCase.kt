@@ -22,14 +22,13 @@ class DeleteStateForProjectUseCase (
 
     }
 
-    private fun createAudit(stateId: UUID, user: UserEntity):AuditEntity {
+    private fun createAudit(stateId: UUID, user: UserEntity):AuditLogEntity {
         val action = "delete  state is deleted successfully"
-        val audit = AuditEntity(
-            entityType = Entities.Task.name,
+        val audit = AuditLogEntity(
+            entityUnderAudit = Entities.Task.name,
             entityId = stateId,
             action = action,
             user = user,
-            timestamp = getFormattedTimestamp(),
         )
         return audit
 
