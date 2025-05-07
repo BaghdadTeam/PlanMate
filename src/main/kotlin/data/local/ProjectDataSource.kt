@@ -26,17 +26,19 @@ class ProjectDataSource(
         }
     }
 
-    fun getProjectById(id: String): ProjectEntity? {
-        return runBlocking {
-            projectDataSource.loadAll().find { it.id.toString() == id }
-        }
     fun getProjectById(id: UUID): ProjectEntity {
-        return projectDataSource.loadAll().find { it.id == id }
-            .takeIf { it != null }?: throw ProjectNotFoundException("No project found")
+        return runBlocking {
+            projectDataSource.loadAll().find { it.id == id }
+                ?: throw ProjectNotFoundException("Project with id $id not found")
+        }
     }
 
     fun updateProject(project: ProjectEntity) {
         runBlocking {
+            val projects = projectDataSource.loadAll()
+            if (projects.none { it.id == project.id }) {
+                throw ProjectNotFoundException("Project with id ${project.id} not found")
+            }
             projectDataSource.update(project)
         }
     }
@@ -44,10 +46,8 @@ class ProjectDataSource(
     fun deleteProject(projectId: UUID) {
         runBlocking {
             val projects = projectDataSource.loadAll().toMutableList()
-            val project = projects.find { it.id == projectId } ?: throw Exception("No project found")
-        val projects = projectDataSource.loadAll().toMutableList()
-        val project = projects.indexOfFirst { it.id == projectId }
-        if (project == -1) throw ProjectNotFoundException("No project found")
+            val project = projects.find { it.id == projectId }
+                ?: throw ProjectNotFoundException("Project with id $projectId not found")
 
             val projectStates = projectStatesDataSource.loadAll().toMutableList()
             val tasks = taskDataSource.loadAll().toMutableList()
