@@ -54,10 +54,6 @@ val dataSourceModule = module {
 //    registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
 //    registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
 //    registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
-    registerCsvDataSource<AuditLogEntity>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
-    registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
-    registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
-    registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
     registerCsvDataSource<SessionEntity>(Entities.Session, StorageFileNames.sessionFile, SessionMapper())
 //    registerCsvDataSource<TaskEntity>(Entities.Task, StorageFileNames.taskFile, TaskMapper())
 
@@ -75,7 +71,7 @@ val dataSourceModule = module {
     registerMongoDataSource<ProjectEntity>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
     registerMongoDataSource<StateEntity>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
     registerMongoDataSource<TaskEntity>(Entities.Task, CollectionNames.TASKS_COLLECTION)
-    registerMongoDataSource<AuditEntity>(Entities.Audit, CollectionNames.AUDIT_COLLECTION)
+    registerMongoDataSource<AuditLogEntity>(Entities.Audit, CollectionNames.AUDIT_COLLECTION)
 
     // endregion  ::  Mongo Data Sources  ::
 
