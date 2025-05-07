@@ -40,6 +40,9 @@ dependencies {
 
     // MongoDB Driver
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.10.1")
+
+    // Github dotenv
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
 }
 
 tasks.test {
@@ -65,6 +68,7 @@ tasks.jacocoTestReport {
             exclude("**/model/**") // Exclude entities package
             exclude("**/generated/**") // Exclude generated code if any
             exclude("**/main.kt") // Exclude main.kt file
+            exclude("**/MongoSetup.kt") // Exclude MongoSetup class
         }
     )
 
@@ -82,6 +86,7 @@ tasks.jacocoTestCoverageVerification {
             exclude("**/di/**")
             exclude("**/model/**")
             exclude("**/main.kt") // Exclude main.kt file
+            exclude("**/MongoSetup.kt") // Exclude MongoSetup class
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
@@ -126,6 +131,7 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
             exclude("**/di/**")
             exclude("**/model/**")
             exclude("**/main.kt") // Exclude main.kt file
+            exclude("**/MongoSetup.kt") // Exclude MongoSetup class
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
