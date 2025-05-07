@@ -12,12 +12,14 @@ import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 class UserDataSourceTest {
 
     private lateinit var dataSource: DataSource<UserEntity>
     private lateinit var userDataSource: UserDataSource
+
     private val sampleUser = UserEntity(
         id             = UUID.randomUUID(),
         name           = "Test User",
@@ -37,8 +39,10 @@ class UserDataSourceTest {
         // Given
         val list = listOf(sampleUser)
         every { dataSource.loadAll() } returns list
+
         // When
         val result = userDataSource.loadUsers()
+
         // Then
         assertThat(result).isEqualTo(list)
         verify { dataSource.loadAll() }
@@ -48,8 +52,10 @@ class UserDataSourceTest {
     fun `addUser delegates to data source append`() {
         // Given
         every { dataSource.append(sampleUser) } just runs
+
         // When
         userDataSource.addUser(sampleUser)
+
         // Then
         verify { dataSource.append(sampleUser) }
     }
@@ -58,8 +64,10 @@ class UserDataSourceTest {
     fun `findUserByUsername returns existing user`() {
         // Given
         every { dataSource.loadAll() } returns listOf(sampleUser)
+
         // When
         val user = userDataSource.findUserByUsername("testuser")
+
         // Then
         assertThat(user).isEqualTo(sampleUser)
     }
@@ -68,8 +76,9 @@ class UserDataSourceTest {
     fun `findUserByUsername throws when not found`() {
         // Given
         every { dataSource.loadAll() } returns emptyList()
+
         // When & Then
-        val error = kotlin.test.assertFailsWith<UserNotFoundException> {
+        val error = assertThrows<UserNotFoundException> {
             userDataSource.findUserByUsername("missing")
         }
         assertThat(error.message).isEqualTo("User not found with username: missing")
@@ -79,8 +88,10 @@ class UserDataSourceTest {
     fun `findUserById returns existing user`() {
         // Given
         every { dataSource.loadAll() } returns listOf(sampleUser)
+
         // When
         val user = userDataSource.findUserById(sampleUser.id)
+
         // Then
         assertThat(user).isEqualTo(sampleUser)
     }
@@ -89,8 +100,10 @@ class UserDataSourceTest {
     fun `findUserById returns null when not found`() {
         // Given
         every { dataSource.loadAll() } returns listOf(sampleUser)
+
         // When
         val user = userDataSource.findUserById(UUID.randomUUID())
+
         // Then
         assertThat(user).isNull()
     }
