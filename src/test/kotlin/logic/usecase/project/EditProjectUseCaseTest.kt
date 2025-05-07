@@ -1,44 +1,86 @@
 package logic.usecase.project
 
+import helpers.authentication.createUserHelper
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
+import io.mockk.verify
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.AccessDeniedException
+import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.ProjectRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.project.EditProjectUseCase
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import io.mockk.*
-import org.baghdad.logic.usecase.common.Result
-import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class EditProjectUseCaseTest {
+    lateinit var projectRepository: ProjectRepository
+    lateinit var userRepository: UserRepository
+    lateinit var editProjectUseCase: EditProjectUseCase
+
+    @BeforeEach
+    fun setUp() {
+        projectRepository = mockk(relaxed = true)
+        userRepository = mockk(relaxed = true)
+        editProjectUseCase = EditProjectUseCase(projectRepository, userRepository)
+    }
 
     @Test
-    fun `should return success when project exists and is edited successfully`() {
-        // Arrange
-        val projectRepo = mockk<ProjectRepository>()
-        val useCase = EditProjectUseCase(projectRepo)
-        val admin = UserEntity(UUID.randomUUID(), "admin", "pass", "", UserType.Admin)
-        val projectId = UUID.randomUUID()
-        val existingProject = ProjectEntity(projectId, "Initial", admin.id)
+    fun `should edit project when call EditProjectUseCase`() {
+        // Given
+        val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
+        val user = createUserHelper().copy(type = UserType.Admin)
 
-        every { projectRepo.getProjectById(projectId) } returns existingProject
-        every { projectRepo.editProject(any()) } just Runs
+        every { userRepository.getUserById(user.id) } returns user
+        every { projectRepository.getProjectById(project.id) } returns project
 
-        // Act
-        val result = useCase(projectId, "Updated Name", admin)
+        every { projectRepository.editProject(project) } just runs
 
-        // Assert
-        assertTrue(result is Result.Success)
+        // When
+        editProjectUseCase.invoke(project.id, project.name, user.id)
 
-        val expected = existingProject.copy(name = "Updated Name")
-        verify(exactly = 1) { projectRepo.getProjectById(projectId) }
-        verify(exactly = 1) { projectRepo.editProject(expected) }
+        // Then
+        verify { projectRepository.editProject(project) }
+    }
 
-        confirmVerified(projectRepo)
+    @Test
+    fun `should throw AccessDeniedException when user is not admin`() {
+        // Given
+        val projectName = "Test Project"
+        val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
+        val user = createUserHelper().copy(type = UserType.Mate)
+        every { userRepository.getUserById(user.id) } returns user
+
+        // When & Then
+        assertThrows<AccessDeniedException> {
+            editProjectUseCase.invoke(
+                projectId = project.id,
+                projectName,
+                user.id
+            )
+        }
+    }
+
+    @Test
+    fun `should throw EmptyProjectNameException when project name is empty`() {
+        // Given
+        val projectName = ""
+        val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
+        val user = createUserHelper()
+        every { userRepository.getUserById(user.id) } returns user
+
+        // When & Then
+        assertThrows<EmptyProjectNameException> {
+            editProjectUseCase.invoke(
+                projectId = project.id,
+                projectName,
+                user.id
+            )
+        }
     }
 }

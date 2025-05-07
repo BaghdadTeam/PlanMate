@@ -15,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 import kotlin.test.Test
 
-class CreateProjectUseCaseTest {
+class DeleteProjectUseCaseTest {
     lateinit var projectRepository: ProjectRepository
     lateinit var userRepository: UserRepository
     lateinit var deleteProjectUseCase: DeleteProjectUseCase
@@ -32,8 +32,14 @@ class CreateProjectUseCaseTest {
         // Given
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper()
+        every { userRepository.getUserById(user.id) } returns user
 
-        verify { deleteProjectUseCase.invoke(project.id, user.id) }
+
+        // When
+        deleteProjectUseCase.invoke(project.id, user.id)
+
+        // Then
+        verify { projectRepository.deleteProject(project.id) }
     }
 
     @Test
