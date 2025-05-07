@@ -1,18 +1,17 @@
 package data.local
 
+
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.NoProjectFoundException
 import org.baghdad.logic.model.exceptions.NoTaskFoundException
-
-
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class AuditDataSourceTest {
@@ -54,7 +53,7 @@ class AuditDataSourceTest {
         )
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         val result = auditDataSource.getAuditByTaskId(randomUUID)
 
         // Then
@@ -73,7 +72,7 @@ class AuditDataSourceTest {
         )
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         val result = auditDataSource.getAuditByProjectId(randomUUID)
 
         // Then
@@ -92,7 +91,7 @@ class AuditDataSourceTest {
         )
 
         // When & Then
-        every { dataSource.loadAll() } returns emptyList()
+        coEvery { dataSource.loadAll() } returns emptyList()
         assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(randomUUID) }
 
     }
@@ -109,7 +108,7 @@ class AuditDataSourceTest {
         )
 
         // When & Then
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(randomUUID) }
 
     }
@@ -126,7 +125,7 @@ class AuditDataSourceTest {
         )
 
         // When & Then
-        every { dataSource.loadAll() } returns emptyList()
+        coEvery { dataSource.loadAll() } returns emptyList()
         assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(randomUUID) }
     }
 
@@ -142,7 +141,7 @@ class AuditDataSourceTest {
         )
 
         // When & Then
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(randomUUID) }
     }
 
@@ -159,7 +158,7 @@ class AuditDataSourceTest {
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
 
     }
@@ -177,7 +176,7 @@ class AuditDataSourceTest {
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(inputRandomUUID) }
     }
 
@@ -195,7 +194,7 @@ class AuditDataSourceTest {
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
 
 
@@ -214,7 +213,7 @@ class AuditDataSourceTest {
         val inputRandomUUID = UUID.randomUUID()
 
         // When
-        every { dataSource.loadAll() } returns listOf(auditLogEntity)
+        coEvery { dataSource.loadAll() } returns listOf(auditLogEntity)
         assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(inputRandomUUID) }
     }
 }
