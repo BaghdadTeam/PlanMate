@@ -7,5 +7,5 @@ data class ProjectEntity(
     @BsonId
     override val id: UUID = UUID.randomUUID(),
     val name: String,
-    val creatorId: String
+    val creatorId: UUID
 ): Identifiable
