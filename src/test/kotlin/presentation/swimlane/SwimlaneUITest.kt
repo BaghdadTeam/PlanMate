@@ -1,4 +1,4 @@
-package ui
+package presentation.swimlane
 
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
