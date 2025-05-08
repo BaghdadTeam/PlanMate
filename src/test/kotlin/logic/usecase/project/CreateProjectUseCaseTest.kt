@@ -31,7 +31,7 @@ class CreateProjectUseCaseTest {
         val projectName = "Test Project"
         val user = createUserHelper()
 
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { projectRepository.createProject(any()) } just runs
 
         // When
@@ -46,7 +46,7 @@ class CreateProjectUseCaseTest {
         // Given
         val projectName = ""
         val user = createUserHelper()
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<EmptyProjectNameException> { createProjectUseCase(projectName, user.id) }
@@ -57,7 +57,7 @@ class CreateProjectUseCaseTest {
         // Given
         val projectName = "Test Project"
         val user = createUserHelper().copy(type = UserType.Mate)
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<AccessDeniedException> { createProjectUseCase(projectName, user.id) }
