@@ -2,7 +2,6 @@ package presentation.app
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
@@ -47,20 +46,20 @@ class StartAppTest {
         coVerify { sessionManager.clearExpiredSession() }
         coVerify { sessionManager.getActiveSession() }
         coVerify { sessionManager.setSession(dummySession) }
-        verify(exactly = 0) { loginUi.execute() }
+        coVerify(exactly = 0) { loginUi.execute() }
     }
 
     @Test
     fun `should fallback to loginUi when getActiveSession fails`() {
         val newSession = dummySession.copy(id = UUID.randomUUID())
         coEvery { sessionManager.getActiveSession() } throws SessionNotFoundException("Session not found")
-        every { loginUi.execute() } returns newSession
+        coEvery { loginUi.execute() } returns newSession
 
         startApp.run()
 
         coVerify { sessionManager.clearExpiredSession() }
         coVerify { sessionManager.getActiveSession() }
-        verify { loginUi.execute() }
+        coVerify { loginUi.execute() }
         verify { sessionManager.setSession(newSession) }
     }
 }
