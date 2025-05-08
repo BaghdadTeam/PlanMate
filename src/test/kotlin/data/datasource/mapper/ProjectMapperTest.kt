@@ -26,7 +26,7 @@ class ProjectMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val name = "New Project"
-        val creatorId = "creator123"
+        val creatorId = UUID.randomUUID()
         val line = "$uuid,$name,$creatorId"
 
         // When
@@ -60,7 +60,7 @@ class ProjectMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val name = "Project X"
-        val creatorId = "user42"
+        val creatorId = UUID.randomUUID()
         val entity = ProjectEntity(
             id = uuid,
             name = name,

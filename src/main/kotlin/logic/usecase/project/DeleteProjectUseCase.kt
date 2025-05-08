@@ -1,22 +1,18 @@
 package org.baghdad.logic.usecase.project
 
-import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.repositories.ProjectRepository
-import org.baghdad.logic.repositories.TaskRepository
-import org.baghdad.logic.usecase.common.AccessPolicy
-import org.baghdad.logic.usecase.common.Result
+import org.baghdad.logic.repositories.UserRepository
 import java.util.UUID
 
 class DeleteProjectUseCase(
     private val projectRepository: ProjectRepository,
-    private val taskRepository: TaskRepository
+    private val userRepository: UserRepository
 ) {
-    operator fun invoke(id: UUID, user: UserEntity): Result<Unit> {
-        val access = AccessPolicy.requireAdmin(user)
-        if (access is Result.Failure) return access
-        if (taskRepository.getTasksByProjectId(id).isNotEmpty())
-            return Result.Failure("Cannot delete project with active tasks.")
-        projectRepository.deleteProject(id.toString())
-        return Result.Success()
+    operator fun invoke(projectId: UUID,userId : UUID){
+        val user = userRepository.getUserById(userId)
+        if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
+        projectRepository.deleteProject(projectId)
     }
 }
