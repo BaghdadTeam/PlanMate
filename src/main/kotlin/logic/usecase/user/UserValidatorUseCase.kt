@@ -14,7 +14,7 @@ import java.util.UUID
 class UserValidatorUseCase(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         username: String,
         passwordPlain: String,
         name: String,
@@ -42,7 +42,7 @@ class UserValidatorUseCase(
         }
     }
 
-    private fun checkAdmin(userId: UUID) {
+    suspend private fun checkAdmin(userId: UUID) {
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) {
             throw UnauthorizedException("Only admins can create users.")
@@ -58,7 +58,7 @@ class UserValidatorUseCase(
         if (password.length < 6) throw InvalidPasswordException("Password must be at least 6 characters.")
     }
 
-    private fun ensureUsernameUnique(username: String) {
+    suspend private fun ensureUsernameUnique(username: String) {
         try {
             userRepository.getUserByUsername(username)
             throw UserAlreadyExistsException("Username '$username' already exists.")

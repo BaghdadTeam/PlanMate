@@ -7,7 +7,7 @@ import org.baghdad.logic.repositories.UserRepository
 class GetUserByUsernameUseCase(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(username: String): UserEntity {
+    suspend operator fun invoke(username: String): UserEntity {
         if (username.isBlank()) {
             throw InvalidUsernameException("Username must not be empty.")
         }

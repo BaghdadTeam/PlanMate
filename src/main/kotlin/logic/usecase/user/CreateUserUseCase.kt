@@ -11,7 +11,7 @@ class CreateUserUseCase(
     private val userRepository: UserRepository,
     private val validatorUseCase: UserValidatorUseCase
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         username: String,
         passwordPlain: String,
         name: String,
