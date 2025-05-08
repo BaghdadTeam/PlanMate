@@ -1,6 +1,6 @@
 package org.baghdad.data.repositories.audit
 
-import data.local.AuditDataSource
+import org.baghdad.data.local.AuditDataSource
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.repositories.AuditRepository
 import java.util.UUID
