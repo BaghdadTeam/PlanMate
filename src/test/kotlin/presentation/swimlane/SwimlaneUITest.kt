@@ -6,7 +6,7 @@ import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.ui.SwimlaneUI
+import org.baghdad.presentation.swimlane.SwimlaneUI
 import org.junit.jupiter.api.Test
 import java.util.*
 

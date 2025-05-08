@@ -1,8 +1,10 @@
-package org.baghdad.presentation.user
+package presentation.user
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidNameException
@@ -13,6 +15,7 @@ import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
 import org.baghdad.logic.usecase.user.CreateUserUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.user.CreateUserUI
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -52,19 +55,19 @@ class CreateUserUITest {
     }
 
     private fun configureUseCaseSuccess() {
-        every {
+        coEvery {
             createUserUseCase.invoke(any(), any(), any(), any())
         } returns administrator
     }
 
     private fun configureUseCaseToThrow(exception: Exception) {
-        every {
+        coEvery {
             createUserUseCase.invoke(any(), any(), any(), any())
         } throws exception
     }
 
     @Test
-    fun `non administrator is rejected`() {
+    fun `non administrator is rejected`() = runTest {
         // Given nothing
         // When
         createUserInterface.run(regularMate)
@@ -73,7 +76,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `null current user is rejected`() {
+    fun `null current user is rejected`() = runTest {
         // Given nothing
         // When
         createUserInterface.run(null)
@@ -82,7 +85,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `prompt treats null input as empty`() {
+    fun `prompt treats null input as empty`() = runTest{
         // Given
         setReaderInputs(null, null, null)
         configureUseCaseSuccess()
@@ -95,7 +98,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `successful creation prints confirmation`() {
+    fun `successful creation prints confirmation`() = runTest {
         // Given
         setReaderInputs("user123", "Full Name", "securePass")
         configureUseCaseSuccess()
@@ -106,7 +109,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `invalid username error is shown`() {
+    fun `invalid username error is shown`() = runTest {
         // Given
         setReaderInputs("bad user", "Name", "password")
         configureUseCaseToThrow(InvalidUsernameException("must match pattern"))
@@ -117,7 +120,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `invalid name error is shown`() {
+    fun `invalid name error is shown`() = runTest {
         // Given
         setReaderInputs("user123", "", "password")
         configureUseCaseToThrow(InvalidNameException("cannot be blank"))
@@ -128,7 +131,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `invalid password error is shown`() {
+    fun `invalid password error is shown`() = runTest {
         // Given
         setReaderInputs("user123", "Name", "short")
         configureUseCaseToThrow(InvalidPasswordException("too short"))
@@ -139,7 +142,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `duplicate username error is shown`() {
+    fun `duplicate username error is shown`() = runTest {
         // Given
         setReaderInputs("user123", "Name", "password")
         configureUseCaseToThrow(UserAlreadyExistsException("username exists"))
@@ -150,7 +153,7 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `unauthorized exception during creation is shown`() {
+    fun `unauthorized exception during creation is shown`() = runTest {
         // Given
         setReaderInputs("user123", "Name", "password")
         configureUseCaseToThrow(UnauthorizedException("not allowed"))

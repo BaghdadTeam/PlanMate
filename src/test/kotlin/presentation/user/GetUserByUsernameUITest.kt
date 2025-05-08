@@ -1,8 +1,10 @@
-package org.baghdad.presentation.user
+package presentation.user
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
@@ -10,6 +12,7 @@ import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.user.GetUserByUsernameUI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -36,10 +39,10 @@ class GetUserByUsernameUITest {
     }
 
     @Test
-    fun `success path prints user details`() {
+    fun `success path prints user details`() = runTest {
         // Given
         every { reader.readInput() } returns "alice"
-        every { getUserByUsernameUseCase.invoke("alice") } returns sampleUser
+        coEvery { getUserByUsernameUseCase.invoke("alice") } returns sampleUser
         // When
         getUserInterface.run()
         // Then
@@ -49,10 +52,10 @@ class GetUserByUsernameUITest {
     }
 
     @Test
-    fun `blank input throws invalid username error`() {
+    fun `blank input throws invalid username error`() = runTest {
         // Given
         every { reader.readInput() } returns ""
-        every { getUserByUsernameUseCase.invoke("") } throws InvalidUsernameException("must not be empty")
+        coEvery { getUserByUsernameUseCase.invoke("") } throws InvalidUsernameException("must not be empty")
         // When
         getUserInterface.run()
         // Then
@@ -60,10 +63,10 @@ class GetUserByUsernameUITest {
     }
 
     @Test
-    fun `input with spaces is trimmed`() {
+    fun `input with spaces is trimmed`() = runTest {
         // Given
         every { reader.readInput() } returns "  alice  "
-        every { getUserByUsernameUseCase.invoke("alice") } returns sampleUser
+        coEvery { getUserByUsernameUseCase.invoke("alice") } returns sampleUser
         // When
         getUserInterface.run()
         // Then
@@ -71,10 +74,10 @@ class GetUserByUsernameUITest {
     }
 
     @Test
-    fun `user not found error with message`() {
+    fun `user not found error with message`() = runTest {
         // Given
         every { reader.readInput() } returns "bob"
-        every { getUserByUsernameUseCase.invoke("bob") } throws UserNotFoundException("bob not found")
+        coEvery { getUserByUsernameUseCase.invoke("bob") } throws UserNotFoundException("bob not found")
         // When
         getUserInterface.run()
         // Then
@@ -82,10 +85,10 @@ class GetUserByUsernameUITest {
     }
 
     @Test
-    fun `user not found with empty message uses default`() {
+    fun `user not found with empty message uses default`() = runTest {
         // Given
         every { reader.readInput() } returns null
-        every { getUserByUsernameUseCase.invoke("") } throws UserNotFoundException("")
+        coEvery { getUserByUsernameUseCase.invoke("") } throws UserNotFoundException("")
         // When
         getUserInterface.run()
         // Then
