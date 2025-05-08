@@ -30,15 +30,13 @@ class ProjectStatesDataSource(
     }
 
     suspend fun deleteState(stateId: UUID) {
-        val allData = projectStateDataSource.loadAll().toMutableList()
-        val state = allData.find { it.id == stateId } ?: throw Exception("No state found")
-
-        val tasks = taskDataSource.loadAll().toMutableList()
-        val filteredTasks = tasks.filterNot { it.stateId == stateId }
+        val state = projectStateDataSource.loadAll()
+            .firstOrNull { it.id == stateId }
+            ?: throw Exception("No state found")
 
         projectStateDataSource.delete(state)
-        filteredTasks.forEach {
-            taskDataSource.delete(it)
-        }
+        taskDataSource.loadAll()
+            .filter { it.stateId == stateId }
+            .forEach { taskDataSource.delete(it) }
     }
 }
