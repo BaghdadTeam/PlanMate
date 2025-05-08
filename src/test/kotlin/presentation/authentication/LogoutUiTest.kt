@@ -1,6 +1,9 @@
 package presentation.authentication
 
-import io.mockk.*
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.baghdad.logic.usecase.authentication.LogoutUseCase
 import org.baghdad.presentation.authentication.LogoutUi
 import org.baghdad.presentation.input.Reader
@@ -32,7 +35,7 @@ class LogoutUiTest {
         // When
         logoutUi.execute()
         // Then
-        verify { useCase.invoke() }
+        coVerify { useCase.invoke() }
         verify { viewer.logMessage("Are you sure you want to logout (y)") }
     }
 
@@ -49,7 +52,7 @@ class LogoutUiTest {
         // When
         logoutUi.execute()
         // Then
-        verify(exactly = 0) { useCase.invoke() }
+        coVerify(exactly = 0) { useCase.invoke() }
     }
 
     @Test
@@ -60,6 +63,6 @@ class LogoutUiTest {
         logoutUi.execute()
 
         // Then
-        verify(exactly = 0) { useCase.invoke() }
+        coVerify(exactly = 0) { useCase.invoke() }
     }
 }

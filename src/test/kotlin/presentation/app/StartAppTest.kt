@@ -1,8 +1,11 @@
 package presentation.app
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.exceptions.SessionNotFoundException
@@ -36,27 +39,27 @@ class StartAppTest {
     }
 
     @Test
-    fun `should set session when getActiveSession succeeds`() {
-        every { sessionManager.getActiveSession() } returns dummySession
+    fun `should set session when getActiveSession succeeds`() = runTest {
+        coEvery { sessionManager.getActiveSession() } returns dummySession
 
         startApp.run()
 
-        verify { sessionManager.clearExpiredSession() }
-        verify { sessionManager.getActiveSession() }
-        verify { sessionManager.setSession(dummySession) }
+        coVerify { sessionManager.clearExpiredSession() }
+        coVerify { sessionManager.getActiveSession() }
+        coVerify { sessionManager.setSession(dummySession) }
         verify(exactly = 0) { loginUi.execute() }
     }
 
     @Test
     fun `should fallback to loginUi when getActiveSession fails`() {
         val newSession = dummySession.copy(id = UUID.randomUUID())
-        every { sessionManager.getActiveSession() } throws SessionNotFoundException("Session not found")
+        coEvery { sessionManager.getActiveSession() } throws SessionNotFoundException("Session not found")
         every { loginUi.execute() } returns newSession
 
         startApp.run()
 
-        verify { sessionManager.clearExpiredSession() }
-        verify { sessionManager.getActiveSession() }
+        coVerify { sessionManager.clearExpiredSession() }
+        coVerify { sessionManager.getActiveSession() }
         verify { loginUi.execute() }
         verify { sessionManager.setSession(newSession) }
     }

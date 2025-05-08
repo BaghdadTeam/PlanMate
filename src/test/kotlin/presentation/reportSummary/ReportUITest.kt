@@ -1,12 +1,14 @@
 package presentation.reportSummary
 import io.mockk.*
 import org.baghdad.logic.model.entities.ProjectSummaryReport
-import kotlin.test.*
 import org.baghdad.logic.usecase.report.ReportUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.reportSummary.ReportUI
-import java.util.UUID
+import java.util.*
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ReportUITest {
 
@@ -36,7 +38,7 @@ class ReportUITest {
         reportUseCase = mockk()
         reader = mockk()
         viewer = mockk(relaxed = true) // relaxed allows ignoring unverified logMessage calls
-        every { reportUseCase.generateProjectSummary() } returns fakeReports
+        coEvery { reportUseCase.generateProjectSummary() } returns fakeReports
         every { reader.readInput() } returns "1"
 
         reportUI = ReportUI(reportUseCase, viewer, reader)
@@ -74,7 +76,7 @@ class ReportUITest {
 
     @Test
     fun `when task per state is empty`() {
-        every { reportUseCase.generateProjectSummary() } returns emptyList()
+        coEvery { reportUseCase.generateProjectSummary() } returns emptyList()
         reportUI.viewReportCommand()
 
         verify { viewer.logError("⚠️ No projects found.") }
@@ -89,7 +91,7 @@ class ReportUITest {
             tasksPerUser = emptyMap()
         )
 
-        every {  reportUseCase.generateProjectSummary() } returns listOf(fakeReport)
+        coEvery {  reportUseCase.generateProjectSummary() } returns listOf(fakeReport)
         every { reader.readInput() } returns "1"
 
         reportUI.viewReportCommand()
@@ -102,7 +104,7 @@ class ReportUITest {
 
     @Test
     fun `when generate project summary throw exception`() {
-        every { reportUseCase.generateProjectSummary() } throws Exception()
+        coEvery { reportUseCase.generateProjectSummary() } throws Exception()
         reportUI.viewReportCommand()
 
         verify { viewer.logError("something went wrong") }
