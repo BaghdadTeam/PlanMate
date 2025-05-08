@@ -1,5 +1,6 @@
 package org.baghdad.presentation.app
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.presentation.authentication.LoginUi
@@ -11,17 +12,21 @@ class StartApp(
     private val viewer: Viewer
 ) {
     fun run() {
-        try {
-            sessionManager.clearExpiredSession()
-            val session = try {
-                sessionManager.getActiveSession()
-            } catch (e: SessionNotFoundException) {
-                viewer.logMessage("No active session found, starting login...")
-                loginUi.execute()
+        runBlocking {
+            try {
+                sessionManager.clearExpiredSession()
+                val session = try {
+                    val activeSession = sessionManager.getActiveSession()
+                    viewer.logMessage("Your session is still active, welcome back!")
+                    activeSession
+                } catch (_: SessionNotFoundException) {
+                    viewer.logMessage("No active session found, starting login...")
+                    loginUi.execute()
+                }
+                sessionManager.setSession(session)
+            } catch (e: Exception) {
+                viewer.logError("Something went wrong: ${e.message}")
             }
-            sessionManager.setSession(session)
-        } catch (e: Exception) {
-            viewer.logError("Something went wrong: ${e.message}")
         }
     }
 }

@@ -2,13 +2,14 @@ package logic.usecase.task
 
 import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.task.GetTasksByProjectIdUseCase
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class GetTasksByProjectIdUseCaseTest {
@@ -23,26 +24,26 @@ class GetTasksByProjectIdUseCaseTest {
     }
 
     @Test
-    fun `should return tasks for given project id`() {
+    fun `should return tasks for given project id`() = runTest {
 
         val expectedTasks = TaskEntityTestData.tasksInSameProject
         val projectId = expectedTasks[0].projectId
-        every { taskRepository.getTasksByProjectId(projectId) } returns expectedTasks
+        coEvery { taskRepository.getTasksByProjectId(projectId) } returns expectedTasks
 
         val result = getTasksByProjectIdUseCase(projectId)
 
         assertThat(result).isEqualTo(expectedTasks)
-        verify { taskRepository.getTasksByProjectId(projectId) }
+        coVerify { taskRepository.getTasksByProjectId(projectId) }
     }
 
     @Test
-    fun `should return empty list when no tasks found for project id`() {
+    fun `should return empty list when no tasks found for project id`() = runTest {
         val projectId = UUID.randomUUID()
-        every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
 
         val result = getTasksByProjectIdUseCase(projectId)
 
         assertThat(result).isEmpty()
-        verify { taskRepository.getTasksByProjectId(projectId) }
+        coVerify { taskRepository.getTasksByProjectId(projectId) }
     }
 }

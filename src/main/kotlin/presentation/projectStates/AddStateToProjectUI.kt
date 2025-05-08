@@ -1,5 +1,6 @@
 package org.baghdad.presentation.projectStates
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
@@ -55,8 +56,10 @@ class AddStateToProjectUI(
 
     private fun tryAddState(state: StateEntity, userId: UUID) {
         try {
-            useCase.invoke(state, userId)
-            viewer.logMessage("State '${state.name}' added to project successfully.")
+            runBlocking {
+                useCase.invoke(state, userId)
+                viewer.logMessage("State '${state.name}' added to project successfully.")
+            }
         } catch (e: Exception) {
             viewer.logError("Failed to add state: ${e.message}")
         }

@@ -4,12 +4,12 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class SessionEntity(
-    val id: UUID = UUID.randomUUID(),
+    override val id: UUID = UUID.randomUUID(),
     val userId: UUID,
     val token: String,
     val loginTime: LocalDateTime,
 
-) {
+): Identifiable {
     fun isExpired(): Boolean {
 
         val expireAfter = Duration.ofMinutes(EXPIRE_AFTER_IN_MINUTES.toLong())

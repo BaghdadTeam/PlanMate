@@ -1,9 +1,7 @@
 package presentation.projectStates
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.StateEntity
@@ -49,7 +47,7 @@ class EditProjectStateUITest {
 
         ui.execute(projectId)
 
-        verify {
+        coVerify {
             useCase.invoke(any(), any(), any())
             viewer.logMessage("State updated successfully.")
         }
@@ -77,7 +75,7 @@ class EditProjectStateUITest {
         method.isAccessible = true
 
         val state = StateEntity(name = "To Do", projectId = UUID.randomUUID(), creatorId = userId)
-        every { useCase.invoke(any(), any(), any()) } throws Exception("state not found")
+        coEvery { useCase.invoke(any(), any(), any()) } throws Exception("state not found")
 
         method.invoke(ui, UUID.randomUUID() , state, userId)
 

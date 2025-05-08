@@ -1,11 +1,13 @@
-package presentation
+package presentation.task
 
 import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.StateExceptions
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.input.Reader
@@ -33,7 +35,7 @@ class StateTransitionUITest {
     @Test
     fun `should log success message on successful state change`() {
         every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-        every { useCase.changeTaskState(any(), any(), any()) } just Runs
+        coEvery { useCase.changeTaskState(any(), any(), any()) } just Runs
 
         ui.execute()
 
@@ -43,13 +45,13 @@ class StateTransitionUITest {
     @Test
     fun `should log NotFoundException message if State not found in this project`() {
         every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-        every {
+        coEvery {
             useCase.changeTaskState(
                 any(),
                 any(),
                 any()
             )
-        } throws NotFoundException("State not found")
+        } throws StateExceptions.NotFoundException("State not found")
 
         ui.execute()
 
@@ -59,7 +61,7 @@ class StateTransitionUITest {
     @Test
     fun `should log IllegalStateException message if invalid operation`() {
         every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-        every {
+        coEvery {
             useCase.changeTaskState(
                 any(),
                 any(),
@@ -76,7 +78,7 @@ class StateTransitionUITest {
     fun `should log unexpected error`() {
         // Given
         every { reader.readInput() } returnsMany listOf(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-        every {
+        coEvery {
             useCase.changeTaskState(
                 any(),
                 any(),
@@ -97,13 +99,13 @@ class StateTransitionUITest {
         val taskId = UUID.randomUUID()
         val newStateId = UUID.randomUUID()
         every { reader.readInput() } returnsMany listOf(taskId.toString(), newStateId.toString())
-        every { useCase.changeTaskState(any(), any(), any()) } just Runs
+        coEvery { useCase.changeTaskState(any(), any(), any()) } just Runs
 
         // when
         ui.execute()
 
         // then
-        verify { useCase.changeTaskState(taskId, newStateId, any()) }
+        coVerify { useCase.changeTaskState(taskId, newStateId, any()) }
     }
 
     @Test

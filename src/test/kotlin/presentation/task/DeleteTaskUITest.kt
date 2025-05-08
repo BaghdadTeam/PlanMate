@@ -1,8 +1,6 @@
 package presentation.task
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.TaskEntity
@@ -47,7 +45,7 @@ class DeleteTaskUITest {
 
         deleteTaskUI.execute(tasks)
 
-        verify { useCase(task1.id, dummySession.userId) }
+        coVerify { useCase(task1.id, dummySession.userId) }
 
         verify { viewer.logMessage("Task deleted successfully.") }
     }
@@ -59,14 +57,14 @@ class DeleteTaskUITest {
         deleteTaskUI.execute(tasks)
 
         verify { viewer.logMessage("Invalid task number.") }
-        verify(exactly = 0) { useCase(any(), any()) }
+        coVerify(exactly = 0) { useCase(any(), any()) }
     }
 
     @Test
     fun `test task not found exception`() {
         every { reader.readInput() } returns "1" // User selects task 1
         every { sessionManager.currentSession } returns dummySession
-        every { useCase(any(), any()) } throws TasksNotFoundException("Task not found")
+        coEvery { useCase(any(), any()) } throws TasksNotFoundException("Task not found")
 
         deleteTaskUI.execute(tasks)
 
@@ -77,7 +75,7 @@ class DeleteTaskUITest {
     fun `test other exceptions during task deletion`() {
         every { reader.readInput() } returns "1" // User selects task 1
         every { sessionManager.currentSession } returns dummySession
-        every { useCase(any(), any()) } throws Exception("Unexpected error")
+        coEvery { useCase(any(), any()) } throws Exception("Unexpected error")
 
         deleteTaskUI.execute(tasks)
 
@@ -91,6 +89,6 @@ class DeleteTaskUITest {
         deleteTaskUI.execute(tasks)
 
         verify { viewer.logMessage("Invalid task number.") }
-        verify(exactly = 0) { useCase(any(), any()) }
+        coVerify(exactly = 0) { useCase(any(), any()) }
     }
 }

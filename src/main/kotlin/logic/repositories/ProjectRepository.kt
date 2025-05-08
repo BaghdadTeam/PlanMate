@@ -5,9 +5,9 @@ import java.util.UUID
 
 interface ProjectRepository {
 
-    fun createProject(project: ProjectEntity)
-    fun getProjectById(id: UUID): ProjectEntity
-    fun getAllProjects(): List<ProjectEntity>
-    fun deleteProject(id: UUID)
-    fun editProject(project: ProjectEntity)
+    suspend fun createProject(project: ProjectEntity)
+    suspend fun getProjectById(id: UUID): ProjectEntity
+    suspend fun getAllProjects(): List<ProjectEntity>
+    suspend fun deleteProject(id: UUID)
+    suspend fun editProject(project: ProjectEntity)
 }

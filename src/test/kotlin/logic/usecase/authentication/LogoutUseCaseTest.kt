@@ -1,8 +1,9 @@
 package logic.usecase.authentication
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.usecase.authentication.LogoutUseCase
@@ -21,20 +22,20 @@ class LogoutUseCaseTest {
     }
 
     @Test
-    fun `Should invoke authRep logout function as the invoke called `(){
+    fun `Should invoke authRep logout function as the invoke called `() = runTest {
         // Given
 
         // When
         useCase.invoke()
         // Then
-        verify { authRepo.logout() }
+        coVerify { authRepo.logout() }
 
     }
 
     @Test
-    fun `Should re throw exceptions from auth repo `(){
+    fun `Should re throw exceptions from auth repo `() = runTest {
         // Given
-        every {authRepo.logout()} throws LogoutFailedException("logout failed")
+        coEvery { authRepo.logout() } throws LogoutFailedException("logout failed")
         // When & Then
         assertThrows<LogoutFailedException> { useCase.invoke() }
     }

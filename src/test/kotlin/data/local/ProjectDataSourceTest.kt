@@ -1,10 +1,8 @@
 package data.local
 
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.verify
+import com.google.common.truth.Truth.assertThat
+import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectDataSource
 import org.baghdad.logic.model.entities.ProjectEntity
@@ -13,7 +11,7 @@ import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class ProjectDataSourceTest {
@@ -32,10 +30,10 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should return data when there is a projects`() {
+    fun `should return data when there is a projects`() = runTest{
         // Given
         val projects = listOf(ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()))
-        every { dataSource.loadAll() } returns projects
+        coEvery { dataSource.loadAll() } returns projects
 
         // When
         val result = projectDataSource.getAllProjects()
@@ -46,45 +44,43 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when updateProject and there is no projects`() {
+    fun `should throw ProjectNotFoundException when updateProject and there is no projects`() = runTest{
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        every { dataSource.loadAll() } returns emptyList()
+        coEvery { dataSource.loadAll() } returns emptyList()
 
         // When & Then
         assertThrows<ProjectNotFoundException> { projectDataSource.updateProject(project) }
-
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when deleteProject and there is no projects`() {
+    fun `should throw ProjectNotFoundException when deleteProject and there is no projects`()= runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        every { dataSource.loadAll() } returns emptyList()
+        coEvery { dataSource.loadAll() } returns emptyList()
 
         // When & Then
         assertThrows<ProjectNotFoundException> { projectDataSource.deleteProject(project.id) }
-
     }
 
     @Test
-    fun `createProject should call append on data source`() {
+    fun `createProject should call append on data source`()= runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        every { dataSource.append(project) } just Runs
+        coEvery { dataSource.append(project) } just Runs
 
         // When
         projectDataSource.createProject(project)
 
         // Then
-        verify { dataSource.append(project) }
+        coVerify { dataSource.append(project) }
     }
 
     @Test
-    fun `should return project when there is a project with same id`() {
+    fun `should return project when there is a project with same id`()= runTest {
         // Given
         val projects = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        every { dataSource.loadAll() } returns listOf(projects)
+        coEvery { dataSource.loadAll() } returns listOf(projects)
 
         // When
         val result = projectDataSource.getProjectById(projects.id)
@@ -94,17 +90,17 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when there is no project with same id`() {
+    fun `should throw ProjectNotFoundException when there is no project with same id`()= runTest {
         // Given
         val projects = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        every { dataSource.loadAll() } returns listOf(projects)
+        coEvery { dataSource.loadAll() } returns listOf(projects)
 
         // When & Then
         assertThrows<ProjectNotFoundException> { projectDataSource.getProjectById(UUID.randomUUID()) }
     }
 
     @Test
-    fun `should return updated project when can update it successfully`() {
+    fun `should return updated project when can update it successfully`()= runTest {
         // Given
         val allProjects = listOf(
             ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()),
@@ -115,62 +111,56 @@ class ProjectDataSourceTest {
             creatorId = UUID.randomUUID()
         ).copy(id = allProjects[1].id)
 
-        every { dataSource.loadAll() } returns allProjects
-        every { dataSource.update(listOf(updatedProject)) } just Runs
+        coEvery { dataSource.loadAll() } returns allProjects
+        coEvery { dataSource.update(updatedProject) } just Runs
 
         // When
         projectDataSource.updateProject(updatedProject)
 
         // Then
-        verify {
-            dataSource.update(match {
-                it.any { project -> project.id == updatedProject.id && updatedProject.name == "Project 3" }
+        coVerify {
+            dataSource.update(withArg {
+                assertThat(updatedProject.id).isEqualTo(it.id)
+                assertThat("Project 3").isEqualTo(it.name)
             })
         }
     }
 
     @Test
-    fun `should delete project with its states and tasks when delete it successfully`() {
+    fun `should delete project with its states and tasks when delete it successfully`() = runTest {
         // Given
-        val allProjects = listOf(
-            ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()),
-        )
-        val projectIdToDelete = allProjects[0].id
-        val projectStates = listOf(
-            StateEntity(
-                name = "State 1",
-                projectId = projectIdToDelete,
-                creatorId = UUID.randomUUID()
-            )
-        )
-        val staetIdtoDelete = projectStates[0].id
-        val tasks = listOf(
-            TaskEntity(
-                title = "Task 1",
-                description = "Description 1",
-                stateId = UUID.randomUUID(),
-                creatorId = UUID.randomUUID(),
-                projectId = projectStates[0].id
-            )
-        )
-        val taskToRemove = tasks[0].id
-        every { dataSource.loadAll() } returns allProjects
-        every { projectStatesDataSource.loadAll() } returns projectStates
-        every { taskDataSource.loadAll() } returns tasks
+        val projectIdToDelete = UUID.randomUUID()
 
-        every { dataSource.update(any()) } just Runs
-        every { projectStatesDataSource.update(any()) } just Runs
-        every { taskDataSource.update(any()) } just Runs
+        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).copy(id = projectIdToDelete)
+        val projectState = StateEntity(name = "State 1", projectId = projectIdToDelete, creatorId = UUID.randomUUID())
+        val task = TaskEntity(
+            title = "Task 1",
+            description = "Description 1",
+            stateId = UUID.randomUUID(),
+            creatorId = UUID.randomUUID(),
+            projectId = projectIdToDelete
+        )
 
-        // when
+        val allProjects = listOf(project)
+        val allStates = listOf(projectState)
+        val allTasks = listOf(task)
+
+        coEvery { dataSource.loadAll() } returns allProjects
+        coEvery { projectStatesDataSource.loadAll() } returns allStates
+        coEvery { taskDataSource.loadAll() } returns allTasks
+
+        coEvery { dataSource.delete(project) } just Runs
+        coEvery { projectStatesDataSource.delete(projectState) } just Runs
+        coEvery { taskDataSource.delete(task) } just Runs
+
+        val projectDataSource = ProjectDataSource(dataSource, projectStatesDataSource, taskDataSource)
+
+        // When
         projectDataSource.deleteProject(projectIdToDelete)
 
         // Then
-        verify {
-            dataSource.update(match { list -> list.none { it.id == projectIdToDelete } })
-            dataSource.update(match { list -> list.none { it.id == staetIdtoDelete } })
-            dataSource.update(match { list -> list.none { it.id == taskToRemove } })
-        }
+        coVerify { dataSource.delete(project) }
+        coVerify { projectStatesDataSource.delete(projectState) }
+        coVerify { taskDataSource.delete(task) }
     }
-
 }

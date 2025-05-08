@@ -4,7 +4,6 @@ import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.data.utils.parseTimestamp
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
 import java.util.*
 
 class AuditMapper : CsvMapper<AuditLogEntity> {
@@ -35,6 +34,9 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
 
     }
 
+    override fun getId(item: AuditLogEntity): String {
+        return item.id.toString()
+    }
 
     override fun serializer(item: AuditLogEntity): String {
         val serializedUser = UserMapper().serializer(item.user)

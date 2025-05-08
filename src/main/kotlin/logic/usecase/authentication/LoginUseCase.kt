@@ -14,7 +14,7 @@ class LoginUseCase (
     private val sessionRepository: SessionRepository,
     private val tokenProvider: TokenProvider
 ) {
-    operator fun invoke(username: String, password: String): SessionEntity {
+    suspend operator fun invoke(username: String, password: String): SessionEntity {
 
         if (username.isBlank())
            throw InvalidCredentialsException("username must not be blank")
@@ -24,7 +24,7 @@ class LoginUseCase (
         return createAndSaveSession(userInfo)
     }
 
-    private fun createAndSaveSession(user: UserEntity): SessionEntity {
+    suspend private fun createAndSaveSession(user: UserEntity): SessionEntity {
         return SessionEntity(
             userId = user.id,
             token = tokenProvider.generateToken(),

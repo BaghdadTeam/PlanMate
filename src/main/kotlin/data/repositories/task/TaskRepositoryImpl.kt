@@ -5,30 +5,30 @@ import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.TaskRepository
 import java.util.UUID
 
-class   TaskRepositoryImpl(
+class TaskRepositoryImpl(
     private val dataSource: TaskDataSource
 ) : TaskRepository {
-    override fun getAllTasks(): List<TaskEntity> {
+    override suspend fun getAllTasks(): List<TaskEntity> {
         return dataSource.loadTasks()
     }
 
-    override fun createTask(task: TaskEntity) {
+    override suspend fun createTask(task: TaskEntity) {
         dataSource.addTask(task)
     }
 
-    override fun getTaskById(id: UUID): TaskEntity {
+    override suspend fun getTaskById(id: UUID): TaskEntity {
         return dataSource.getTaskById(id)
     }
 
-    override fun getTasksByProjectId(id: UUID): List<TaskEntity> {
+    override suspend fun getTasksByProjectId(id: UUID): List<TaskEntity> {
         return dataSource.getTasksByProjectId(id)
     }
 
-    override fun getTasksByStateId(stateId: UUID): List<TaskEntity> {
+    override suspend fun getTasksByStateId(stateId: UUID): List<TaskEntity> {
         return dataSource.getTasksByStateId(stateId)
     }
 
-    override fun updateTask(task: TaskEntity): Boolean {
+    override suspend fun updateTask(task: TaskEntity): Boolean {
         try {
             dataSource.updateTask(task)
             return true
@@ -37,7 +37,7 @@ class   TaskRepositoryImpl(
         }
     }
 
-    override fun deleteTask(id: UUID) {
+    override suspend fun deleteTask(id: UUID) {
         dataSource.deleteTask(id)
     }
 }

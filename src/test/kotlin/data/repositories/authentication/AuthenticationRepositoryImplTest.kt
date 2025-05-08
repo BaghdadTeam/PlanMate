@@ -2,17 +2,19 @@ package data.repositories.authentication
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.createUserHelper
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
-import org.baghdad.logic.model.exceptions.InvalidCredentialsException
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.repositories.SessionRepository
-import org.baghdad.logic.utils.md5WithSalt
-import org.junit.jupiter.api.*
+import org.baghdad.utils.md5WithSalt
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class AuthenticationRepositoryImplTest {
     private lateinit var sessionRepository: SessionRepository
@@ -30,39 +32,39 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun ` should  return user entity if credentials are valid  when login`() {
+    fun ` should  return user entity if credentials are valid  when login`() = runTest {
         // Given
         val user = createUserHelper(userName, password.md5WithSalt())
-        every { userStorage.findUserByUsername(userName) } returns user
+        coEvery { userStorage.findUserByUsername(userName) } returns user
         // When & Then
         assertThat(authRepository.login(userName, password.md5WithSalt()).id).isEqualTo(user.id)
     }
 
     @Test
-    fun `Should throw InvalidPasswordException  if credentials are valid  when login`() {
+    fun `Should throw InvalidPasswordException  if credentials are valid  when login`() = runTest {
         // Given
         val user = createUserHelper(userName, "invalidPassword".md5WithSalt())
-        every { userStorage.findUserByUsername(userName) } returns user
+        coEvery { userStorage.findUserByUsername(userName) } returns user
         // When & Then
-        assertThrows<InvalidPasswordException>{authRepository.login(userName, password)}
+        assertThrows<InvalidPasswordException> { authRepository.login(userName, password) }
 
     }
 
 
     @Test
-    fun `Should invoke delete session function  when logout`() {
+    fun `Should invoke delete session function  when logout`() = runTest {
         // Given
-        every { sessionRepository.deleteSession() } returns true
+        coEvery { sessionRepository.deleteSession() } returns true
         // When
         authRepository.logout()
         // Then
-        verify { sessionRepository.deleteSession() }
+        coVerify { sessionRepository.deleteSession() }
     }
 
     @Test
-    fun `Should throw LogoutFailedException when logout fails`() {
+    fun `Should throw LogoutFailedException when logout fails`() = runTest {
         // Given
-        every { sessionRepository.deleteSession() } returns false
+        coEvery { sessionRepository.deleteSession() } returns false
         // When & Then
         assertThrows<LogoutFailedException> { authRepository.logout() }
     }

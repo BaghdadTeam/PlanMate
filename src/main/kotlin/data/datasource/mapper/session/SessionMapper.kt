@@ -23,4 +23,8 @@ class SessionMapper : CsvMapper<SessionEntity>{
             loginTime = LocalDateTime.parse(session[SessionColumns.LOGIN_TIME])
         )
     }
+
+    override fun getId(item: SessionEntity): String {
+        return item.id.toString()
+    }
 }

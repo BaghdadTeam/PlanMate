@@ -2,9 +2,10 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -15,7 +16,7 @@ import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class EditProjectStatesUseCaseTest {
 
@@ -47,7 +48,7 @@ class EditProjectStatesUseCaseTest {
     }
 
     @Test
-    fun `should delete state and add audit when state is valid`() {
+    fun `should delete state and add audit when state is valid`() = runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState()
         val id = state.id
@@ -57,10 +58,10 @@ class EditProjectStatesUseCaseTest {
         editStateUseCase.invoke(id, newState, adminUser.id)
 
         // then
-        verify { statesRepository.editState(id, newState) }
+        coVerify { statesRepository.editState(id, newState) }
 
         val auditSlot = slot<AuditLogEntity>()
-        verify { auditRepository.addAuditEntry(capture(auditSlot)) }
+        coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
         Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)

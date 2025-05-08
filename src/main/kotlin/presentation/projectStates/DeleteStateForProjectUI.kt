@@ -1,5 +1,6 @@
 package org.baghdad.presentation.projectStates
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
 import org.baghdad.presentation.input.Reader
@@ -33,8 +34,10 @@ class DeleteStateForProjectUI(
 
     private fun tryDeleteState(stateId: UUID, userId: UUID) {
         try {
-            useCase.invoke(stateId, userId)
-            viewer.logMessage("State deleted successfully.")
+            runBlocking {
+                useCase.invoke(stateId, userId)
+                viewer.logMessage("State deleted successfully.")
+            }
         } catch (e: Exception) {
             viewer.logError("Failed to delete state: ${e.message}")
         }
