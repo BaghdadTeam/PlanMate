@@ -1,8 +1,9 @@
 package logic.usecase
 
 import io.kotest.matchers.shouldBe
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -17,7 +18,7 @@ class ViewServiceUseCaseTest {
     private val useCase = ViewServiceUseCase(taskRepository, stateRepository)
 
     @Test
-    fun `should group tasks by state for given project`() {
+    fun `should group tasks by state for given project`() = runTest {
         // give
         val projectId = UUID.randomUUID()
         val state1Id = UUID.randomUUID()
@@ -45,8 +46,8 @@ class ViewServiceUseCaseTest {
         )
         val tasks = listOf(task1, task2)
 
-        every { stateRepository.getAllStatesPerProject(projectId) } returns states
-        every { taskRepository.getTasksByProjectId(projectId) } returns tasks
+        coEvery { stateRepository.getAllStatesPerProject(projectId) } returns states
+        coEvery { taskRepository.getTasksByProjectId(projectId) } returns tasks
 
         // when
         val result = useCase.swimlane(projectId)
@@ -61,11 +62,11 @@ class ViewServiceUseCaseTest {
     }
 
     @Test
-    fun `should return empty map when no states exist for project`() {
+    fun `should return empty map when no states exist for project`() = runTest {
         // give
         val projectId = UUID.randomUUID()
-        every { stateRepository.getAllStatesPerProject(projectId) } returns emptyList()
-        every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+        coEvery { stateRepository.getAllStatesPerProject(projectId) } returns emptyList()
+        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
 
         // when
         val result = useCase.swimlane(projectId)
@@ -75,10 +76,10 @@ class ViewServiceUseCaseTest {
     }
 
     @Test
-    fun `should handle repository exception gracefully`() {
+    fun `should handle repository exception gracefully`() = runTest {
         // give
         val projectId = UUID.randomUUID()
-        every { stateRepository.getAllStatesPerProject(projectId)
+        coEvery { stateRepository.getAllStatesPerProject(projectId)
         } throws RuntimeException("Database error")
 
         // when
@@ -91,7 +92,7 @@ class ViewServiceUseCaseTest {
     }
 
     @Test
-    fun `should return states with empty task lists when no tasks exist for project`() {
+    fun `should return states with empty task lists when no tasks exist for project`() = runTest {
         // give
         val projectId = UUID.randomUUID()
         val state1Id = UUID.randomUUID()
@@ -101,8 +102,8 @@ class ViewServiceUseCaseTest {
         val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
         val states = listOf(state1, state2)
 
-        every { stateRepository.getAllStatesPerProject(projectId) } returns states
-        every { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+        coEvery { stateRepository.getAllStatesPerProject(projectId) } returns states
+        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
 
         // when
         val result = useCase.swimlane(projectId)
