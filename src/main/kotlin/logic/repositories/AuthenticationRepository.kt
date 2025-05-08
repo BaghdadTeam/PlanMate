@@ -3,7 +3,7 @@ import org.baghdad.logic.model.entities.UserEntity
 
 interface AuthenticationRepository {
 
-    fun login(username: String, inputHashedPassword: String): UserEntity
-    fun logout()
+    suspend fun login(username: String, inputHashedPassword: String): UserEntity
+    suspend fun logout()
 
 }

@@ -12,7 +12,7 @@ class CreateProjectUseCase(
     private val projectRepository: ProjectRepository,
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(projectName: String, userId : UUID){
+    suspend operator fun invoke(projectName: String, userId : UUID){
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
         if (projectName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")

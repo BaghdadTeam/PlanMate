@@ -7,7 +7,7 @@ class GetAllTasksUseCase(
     private val taskRepository: TaskRepository
 ) {
 
-    operator fun invoke(): List<TaskEntity> {
+    suspend operator fun invoke(): List<TaskEntity> {
         return taskRepository.getAllTasks()
     }
 }

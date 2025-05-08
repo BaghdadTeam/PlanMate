@@ -2,13 +2,14 @@ package data.repositories.task
 
 import com.google.common.truth.Truth
 import helpers.task.TaskEntityTestData
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.TaskDataSource
 import org.baghdad.data.repositories.task.TaskRepositoryImpl
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class TaskRepositoryImplTest {
@@ -23,90 +24,90 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `getAllTasks should return list from dataSource`() {
+    fun `getAllTasks should return list from dataSource`()= runTest {
         val mockTasks = listOf(
             TaskEntityTestData.normalTask,
             TaskEntityTestData.normalTask.copy(id = UUID.randomUUID(), title = "Task 2"),
         )
-        every { dataSource.loadTasks() } returns mockTasks
+        coEvery { dataSource.loadTasks() } returns mockTasks
 
         val result = taskRepository.getAllTasks()
 
         Truth.assertThat(result).isEqualTo(mockTasks)
-        verify { dataSource.loadTasks() }
+        coVerify { dataSource.loadTasks() }
     }
 
     @Test
-    fun `createTask should call dataSource addTask`() {
+    fun `createTask should call dataSource addTask`()= runTest {
         val task = TaskEntityTestData.normalTask
 
         taskRepository.createTask(task)
 
-        verify { dataSource.addTask(task) }
+        coVerify { dataSource.addTask(task) }
     }
 
     @Test
-    fun `getTaskById should return correct task`() {
+    fun `getTaskById should return correct task`() = runTest {
         val task = TaskEntityTestData.normalTask
         val id = task.id
-        every { dataSource.getTaskById(id) } returns task
+        coEvery { dataSource.getTaskById(id) } returns task
 
         val result = taskRepository.getTaskById(id)
 
         Truth.assertThat(result).isEqualTo(task)
-        verify { dataSource.getTaskById(id) }
+        coVerify { dataSource.getTaskById(id) }
     }
 
     @Test
-    fun `getTasksByProjectId should return filtered tasks`() {
+    fun `getTasksByProjectId should return filtered tasks`() = runTest {
         val tasks = TaskEntityTestData.tasksInSameProject
         val projectID = UUID.randomUUID()
-        every { dataSource.getTasksByProjectId(projectID) } returns tasks
+        coEvery { dataSource.getTasksByProjectId(projectID) } returns tasks
 
         val result = taskRepository.getTasksByProjectId(projectID)
 
         Truth.assertThat(result).isEqualTo(tasks)
-        verify { dataSource.getTasksByProjectId(projectID) }
+        coVerify { dataSource.getTasksByProjectId(projectID) }
     }
 
     @Test
-    fun `getTasksByStateId should return filtered tasks`() {
+    fun `getTasksByStateId should return filtered tasks`() = runTest {
         val tasks = TaskEntityTestData.tasksInSameState
         val stateID = UUID.randomUUID()
-        every { dataSource.getTasksByStateId(stateID) } returns tasks
+        coEvery { dataSource.getTasksByStateId(stateID) } returns tasks
 
         val result = taskRepository.getTasksByStateId(stateID)
 
         Truth.assertThat(result).isEqualTo(tasks)
-        verify { dataSource.getTasksByStateId(stateID) }
+        coVerify { dataSource.getTasksByStateId(stateID) }
     }
 
     @Test
-    fun `updateTask should call dataSource updateTask`() {
+    fun `updateTask should call dataSource updateTask`() = runTest {
         val task = TaskEntityTestData.normalTask
 
         taskRepository.updateTask(task)
 
-        verify { dataSource.updateTask(task) }
+        coVerify { dataSource.updateTask(task) }
     }
 
     @Test
-    fun `deleteTask should call dataSource deleteTask`() {
+    fun `deleteTask should call dataSource deleteTask`() = runTest {
         val taskId = UUID.randomUUID()
 
         taskRepository.deleteTask(taskId)
 
-        verify { dataSource.deleteTask(taskId) }
+        coVerify { dataSource.deleteTask(taskId) }
     }
 
     @Test
-    fun `updateTask should return false when dataSource throws exception`() {
+    fun `updateTask should return false when dataSource throws exception`() = runTest {
         val task = TaskEntityTestData.normalTask
-        every { dataSource.updateTask(task) } throws RuntimeException("Update failed")
+        coEvery { dataSource.updateTask(task) } throws RuntimeException("Update failed")
 
         val result = taskRepository.updateTask(task)
 
         Truth.assertThat(result).isFalse()
-        verify { dataSource.updateTask(task) }
+        coVerify { dataSource.updateTask(task) }
     }
 }

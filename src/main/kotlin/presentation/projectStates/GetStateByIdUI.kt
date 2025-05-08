@@ -1,5 +1,6 @@
 package org.baghdad.presentation.projectStates
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.usecase.projectstates.GetStateByIdUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -15,8 +16,10 @@ class GetStateByIdUI(
         val stateId = promptForStateId() ?: return
 
         try {
-            val state = useCase.invoke(UUID.fromString(stateId))
-            viewer.logMessage("State: ${state?.name}")
+            runBlocking {
+                val state = useCase.invoke(UUID.fromString(stateId))
+                viewer.logMessage("State: ${state.name}")
+            }
         } catch (e: Exception) {
             viewer.logError("Failed to retrieve state: ${e.message}")
         }

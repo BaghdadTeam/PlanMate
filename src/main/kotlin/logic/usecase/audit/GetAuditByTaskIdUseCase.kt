@@ -7,7 +7,7 @@ import java.util.UUID
 class GetAuditByTaskIdUseCase(
     val auditRepository: AuditRepository
 ) {
-    operator fun invoke(taskId : UUID): List<AuditLogEntity> {
+    suspend operator fun invoke(taskId : UUID): List<AuditLogEntity> {
         return auditRepository.getAuditByTaskId(taskId)
     }
 }

@@ -7,7 +7,7 @@ class ListProjectUi(
 ) {
 
 
-    fun listProjects() {
+    suspend fun listProjects() {
         println("=== List of Projects ===")
         val projects = listProjectsUseCase()
         if (projects.isEmpty()) {

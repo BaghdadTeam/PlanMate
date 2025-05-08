@@ -1,5 +1,6 @@
 package org.baghdad.presentation.projectStates
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -15,13 +16,15 @@ class GetAllStatesPerProjectUI(
         val projectId = promptForProjectId() ?: return
 
         try {
-            val states = useCase.invoke(UUID.fromString(projectId))
-            if (states.isEmpty()) {
-                viewer.logMessage("No states found for project ID: $projectId")
-            } else {
-                viewer.logMessage("States for project ID: $projectId")
-                states.forEachIndexed { index, state ->
-                    viewer.logMessage("${index + 1}. ${state.name}")
+            runBlocking {
+                val states = useCase.invoke(UUID.fromString(projectId))
+                if (states.isEmpty()) {
+                    viewer.logMessage("No states found for project ID: $projectId")
+                } else {
+                    viewer.logMessage("States for project ID: $projectId")
+                    states.forEachIndexed { index, state ->
+                        viewer.logMessage("${index + 1}. ${state.name}")
+                    }
                 }
             }
         } catch (e: Exception) {

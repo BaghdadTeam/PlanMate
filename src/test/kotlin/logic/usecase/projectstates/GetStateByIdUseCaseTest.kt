@@ -2,9 +2,10 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -30,36 +31,37 @@ class GetStateByIdUseCaseTest {
     }
 
     @Test
-    fun `should return sate when there is a state by this id`() {
+    fun `should return sate when there is a state by this id`() = runTest {
 
         val projectState = ProjectStatesEntityTestData.todoState()
         val id = projectState.id
 
-        every { statesRepository.getStateById(id) } returns projectState
+        coEvery { statesRepository.getStateById(id) } returns projectState
 
         val result = getStateByIdUseCase.invoke(id)
 
         Truth.assertThat(result).isEqualTo(projectState)
-        verify { statesRepository.getStateById(id) }
+        coVerify { statesRepository.getStateById(id) }
     }
 
     @Test
-    fun `should throw exception when there is no states with this id`() {
+    fun `should throw exception when there is no states with this id`() = runTest {
         val id = UUID.randomUUID()
-        every { statesRepository.getStateById(id) } throws Exception("No State found")
+        coEvery { statesRepository.getStateById(id) } throws Exception("No State found")
 
-        org.junit.jupiter.api.assertThrows<Exception> {
+        assertThrows<Exception> {
             getStateByIdUseCase.invoke(id)
         }
-        verify { statesRepository.getStateById(id) }
+        coVerify { statesRepository.getStateById(id) }
 
     }
+
     @Test
-    fun `should throw exception when there is no states for project`() {
+    fun `should throw exception when there is no states for project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val stateId = projectStates[0].projectId
-        every { statesRepository.getStateById(stateId) } returns null
+        coEvery { statesRepository.getStateById(stateId) } returns null
 
         // when
         val exception = assertThrows<Exception> {

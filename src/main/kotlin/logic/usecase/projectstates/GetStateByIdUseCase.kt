@@ -8,7 +8,7 @@ class GetStateByIdUseCase (
     private val repository: ProjectStatesRepository
 ) {
 
-    fun invoke(stateId: UUID): StateEntity {
+    suspend fun invoke(stateId: UUID): StateEntity {
         return repository.getStateById(stateId) ?: throw Exception("No state found")
     }
 }
