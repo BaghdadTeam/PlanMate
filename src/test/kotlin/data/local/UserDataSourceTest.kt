@@ -1,4 +1,4 @@
-package org.baghdad.data.local
+package data.local
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.createUserHelper
@@ -8,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
+import org.baghdad.data.local.UserDataSource
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
@@ -100,5 +101,30 @@ class UserDataSourceTest {
 
         // Then
         assertThat(user).isNull()
+    }
+
+
+    @Test
+    fun `should return true when username is taken`() = runTest {
+        // Given
+        coEvery { dataSource.loadAll() } returns listOf(sampleUser)
+
+        // When
+        val user = userDataSource.isUsernameTaken(sampleUser.username)
+
+        // Then
+        assertThat(user).isTrue()
+    }
+
+    @Test
+    fun `should return false when username is not taken`() = runTest {
+        // Given
+        coEvery { dataSource.loadAll() } returns listOf()
+
+        // When
+        val user = userDataSource.isUsernameTaken("Aboud")
+
+        // Then
+        assertThat(user).isFalse()
     }
 }
