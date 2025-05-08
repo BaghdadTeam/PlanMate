@@ -2,17 +2,17 @@ package data.repositories.projectstate
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class ProjectStatesRepositoryImpTest{
+class ProjectStatesRepositoryImpTest {
 
     private lateinit var dataSource: ProjectStatesDataSource
     private lateinit var projectStatesDataSource: ProjectStatesRepositoryImp
@@ -25,11 +25,11 @@ class ProjectStatesRepositoryImpTest{
 
 
     @Test
-    fun `should return data when there is a states for project`() {
+    fun `should return data when there is a states for project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = projectStates[0].projectId
-        every { dataSource.getAllStatesForProject() } returns projectStates
+        coEvery { dataSource.getAllStatesForProject() } returns projectStates
 
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
@@ -39,11 +39,11 @@ class ProjectStatesRepositoryImpTest{
     }
 
     @Test
-    fun `should not return data when there is no project id match`() {
+    fun `should not return data when there is no project id match`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = UUID.randomUUID()
-        every { dataSource.getAllStatesForProject() } returns projectStates
+        coEvery { dataSource.getAllStatesForProject() } returns projectStates
 
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
@@ -54,29 +54,26 @@ class ProjectStatesRepositoryImpTest{
 
 
     @Test
-    fun `should return state when there is a state with same id`() {
+    fun `should return state when there is a state with same id`() = runTest {
         val projectStates = ProjectStatesEntityTestData.todoState()
         val id = projectStates.id
-        every { dataSource.getStateById(id) } returns projectStates
+        coEvery { dataSource.getStateById(id) } returns projectStates
 
         // When
         val result = projectStatesDataSource.getStateById(id)
 
         // Then
         Truth.assertThat(result).isEqualTo(projectStates)
-        verify { dataSource.getStateById(id) }
+        coVerify { dataSource.getStateById(id) }
     }
 
 
     @Test
-    fun `should return state when can add state successfully`() {
+    fun `should return state when can add state successfully`() = runTest {
         val state = ProjectStatesEntityTestData.inProgressState()
 
         projectStatesDataSource.createState(state)
 
-        verify { dataSource.createState(state) }
-
+        coVerify { dataSource.createState(state) }
     }
-
-
 }

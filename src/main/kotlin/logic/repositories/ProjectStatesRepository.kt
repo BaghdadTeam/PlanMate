@@ -5,9 +5,9 @@ import java.util.UUID
 
 interface ProjectStatesRepository {
 
-    fun createState(state: StateEntity)
-    fun getAllStatesPerProject(projectId: UUID): List<StateEntity>
-    fun getStateById(stateId: UUID): StateEntity?
-    fun editState(stateId: UUID, newState: StateEntity)
-    fun deleteState(stateId: UUID)
+    suspend fun createState(state: StateEntity)
+    suspend fun getAllStatesPerProject(projectId: UUID): List<StateEntity>
+    suspend fun getStateById(stateId: UUID): StateEntity?
+    suspend fun editState(stateId: UUID, newState: StateEntity)
+    suspend fun deleteState(stateId: UUID)
 }

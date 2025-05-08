@@ -1,5 +1,6 @@
 package org.baghdad.presentation.task
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.GetTasksByProjectIdUseCase
 import org.baghdad.presentation.input.Reader
@@ -31,13 +32,15 @@ class GetTasksByProjectIdUI(
 
     private fun tryGetTasks(projectId: UUID) {
         try {
-            val tasks = getTasksByProjectIdUseCase(projectId)
-            if (tasks.isEmpty()) {
-                viewer.logMessage("No tasks found for the given project.")
-            } else {
-                viewer.logMessage("Tasks for project $projectId:")
-                tasks.forEachIndexed { index, task ->
-                    viewer.logMessage("${index + 1}. ${task.title} - ${task.description}")
+            runBlocking {
+                val tasks = getTasksByProjectIdUseCase(projectId)
+                if (tasks.isEmpty()) {
+                    viewer.logMessage("No tasks found for the given project.")
+                } else {
+                    viewer.logMessage("Tasks for project $projectId:")
+                    tasks.forEachIndexed { index, task ->
+                        viewer.logMessage("${index + 1}. ${task.title} - ${task.description}")
+                    }
                 }
             }
         } catch (_: TasksNotFoundException) {

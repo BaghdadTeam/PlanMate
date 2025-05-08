@@ -64,11 +64,11 @@ tasks.jacocoTestReport {
     // Set up exclusions for certain packages
     classDirectories.setFrom(
         fileTree("build/classes/kotlin/main") {
-            exclude("**/di/**") // Exclude DI package
-            exclude("**/model/**") // Exclude entities package
-            exclude("**/generated/**") // Exclude generated code if any
-            exclude("**/main.kt") // Exclude main.kt file
-            exclude("**/MongoSetup.kt") // Exclude MongoSetup class
+            exclude("**/generated/**")
+            exclude("**/di/**")
+            exclude("**/mongodb/**")
+            exclude("**/model/**")
+            exclude("**/main.kt")
         }
     )
 
@@ -84,9 +84,9 @@ tasks.jacocoTestCoverageVerification {
         fileTree("build/classes/kotlin/main") {
             exclude("**/generated/**")
             exclude("**/di/**")
+            exclude("**/mongodb/**")
             exclude("**/model/**")
-            exclude("**/main.kt") // Exclude main.kt file
-            exclude("**/MongoSetup.kt") // Exclude MongoSetup class
+            exclude("**/main.kt")
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
@@ -95,7 +95,7 @@ tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = "0.90".toBigDecimal() // 100% coverage requirement
+                minimum = "0.90".toBigDecimal()
             }
         }
         rule {
@@ -129,9 +129,9 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
         fileTree("build/classes/kotlin/main") {
             exclude("**/generated/**")
             exclude("**/di/**")
+            exclude("**/mongodb/**")
             exclude("**/model/**")
-            exclude("**/main.kt") // Exclude main.kt file
-            exclude("**/mongosetup.kt") // Exclude MongoSetup class
+            exclude("**/main.kt")
         }
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))

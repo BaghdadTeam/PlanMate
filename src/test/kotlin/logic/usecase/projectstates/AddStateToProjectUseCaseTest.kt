@@ -2,10 +2,11 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -17,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class AddStateToProjectUseCaseTest {
 
@@ -50,7 +51,7 @@ class AddStateToProjectUseCaseTest {
 
 
     @Test
-    fun `should create state and add audit when state is valid`() {
+    fun `should create state and add audit when state is valid`()= runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState()
         every { userRepository.getUserById(adminUser.id) } returns adminUser
@@ -59,10 +60,10 @@ class AddStateToProjectUseCaseTest {
         createStateUseCase.invoke(state, adminUser.id)
 
         // then
-        verify { statesRepository.createState(state) }
+        coVerify { statesRepository.createState(state) }
 
         val auditSlot = slot<AuditLogEntity>()
-        verify { auditRepository.addAuditEntry(capture(auditSlot)) }
+        coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
         Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
@@ -70,7 +71,7 @@ class AddStateToProjectUseCaseTest {
     }
 
     @Test
-    fun `should throw exception when user type is not admin`() {
+    fun `should throw exception when user type is not admin`() = runTest{
         // given
         val state = ProjectStatesEntityTestData.todoState()
 
@@ -82,7 +83,7 @@ class AddStateToProjectUseCaseTest {
     }
 
     @Test
-    fun `should throw exception when state name is empty`() {
+    fun `should throw exception when state name is empty`()= runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
         every { userRepository.getUserById(adminUser.id) } returns adminUser

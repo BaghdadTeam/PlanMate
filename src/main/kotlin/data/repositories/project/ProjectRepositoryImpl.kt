@@ -1,4 +1,4 @@
-package org.baghdad.data.repository.project
+package org.baghdad.data.repositories.project
 
 import org.baghdad.data.local.ProjectDataSource
 import org.baghdad.logic.model.entities.ProjectEntity
@@ -8,23 +8,23 @@ import java.util.UUID
 class ProjectRepositoryImpl(
     private val dataSource: ProjectDataSource
 ) : ProjectRepository {
-    override fun createProject(project: ProjectEntity) {
+    override suspend fun createProject(project: ProjectEntity) {
         dataSource.createProject(project)
     }
 
-    override fun getProjectById(id: UUID): ProjectEntity {
+    override suspend fun getProjectById(id: UUID): ProjectEntity {
         return dataSource.getProjectById(id)
     }
 
-    override fun getAllProjects(): List<ProjectEntity> {
+    override suspend fun getAllProjects(): List<ProjectEntity> {
         return dataSource.getAllProjects()
     }
 
-    override fun deleteProject(id: UUID) {
+    override suspend fun deleteProject(id: UUID) {
         dataSource.deleteProject(id)
     }
 
-    override fun editProject(project: ProjectEntity) {
+    override suspend fun editProject(project: ProjectEntity) {
         dataSource.updateProject(project)
     }
 }

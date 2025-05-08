@@ -7,27 +7,25 @@ import java.util.UUID
 
 class ProjectStatesRepositoryImp(
     private val dataSource: ProjectStatesDataSource
-): ProjectStatesRepository {
+) : ProjectStatesRepository {
 
-    override fun getAllStatesPerProject(projectId: UUID): List<StateEntity> {
+    override suspend fun getAllStatesPerProject(projectId: UUID): List<StateEntity> {
         return dataSource.getAllStatesForProject().filter { it.projectId == projectId }
     }
 
-    override fun createState(state: StateEntity) {
+    override suspend fun createState(state: StateEntity) {
         return dataSource.createState(state)
     }
 
-    override fun getStateById(stateId: UUID): StateEntity? {
+    override suspend fun getStateById(stateId: UUID): StateEntity? {
         return dataSource.getStateById(stateId)
     }
 
-    override fun editState(stateId: UUID, newState: StateEntity) {
-        dataSource.editState(newState )
+    override suspend fun editState(stateId: UUID, newState: StateEntity) {
+        dataSource.editState(newState)
     }
 
-    override fun deleteState(stateId: UUID) {
+    override suspend fun deleteState(stateId: UUID) {
         return dataSource.deleteState(stateId)
     }
-
-
 }

@@ -7,6 +7,7 @@ import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.just
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.logic.model.entities.StateEntity
@@ -32,7 +33,7 @@ class ProjectStatesDataSourceTest {
     }
 
     @Test
-    fun `should return data when there is a states for project`() {
+    fun `should return data when there is a states for project`()= runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         coEvery { dataSource.loadAll() } returns projectStates
@@ -44,7 +45,7 @@ class ProjectStatesDataSourceTest {
 
 
     @Test
-    fun `should return state when there is a state with same id`() {
+    fun `should return state when there is a state with same id`()= runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.todoState()
         coEvery { dataSource.loadAll() } returns listOf(projectStates)
@@ -55,7 +56,7 @@ class ProjectStatesDataSourceTest {
     }
 
     @Test
-    fun `should return state when can add state successfully`() {
+    fun `should return state when can add state successfully`()= runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.inProgressState()
         coEvery { dataSource.loadAll() } returns listOf(projectStates)
@@ -69,7 +70,7 @@ class ProjectStatesDataSourceTest {
 
 
     @Test
-    fun `should return updated state when can update it successfully`() {
+    fun `should return updated state when can update it successfully`()= runTest {
         // Given
         val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
         val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(id = allStates[1].id, name = "doing")
@@ -87,7 +88,7 @@ class ProjectStatesDataSourceTest {
 
 
     @Test
-    fun `should trow exception when no state found while trying to update`() {
+    fun `should trow exception when no state found while trying to update`()= runTest {
 
         // Given
         val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()

@@ -1,5 +1,6 @@
 package org.baghdad.presentation.task
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
@@ -36,10 +37,12 @@ class DeleteTaskUI(
 
     private fun tryDeleteTask(task: TaskEntity) {
         try {
-            val session = sessionManager.currentSession
-            useCase(task.id, session.userId)
+            runBlocking {
+                val session = sessionManager.currentSession
+                useCase(task.id, session.userId)
 
-            viewer.logMessage("Task deleted successfully.")
+                viewer.logMessage("Task deleted successfully.")
+            }
         } catch (_: TasksNotFoundException) {
             viewer.logMessage("Task not found.")
         } catch (e: Exception) {

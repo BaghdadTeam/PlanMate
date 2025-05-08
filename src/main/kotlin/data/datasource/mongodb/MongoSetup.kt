@@ -26,10 +26,8 @@ object MongoSetup {
         val client = MongoClient.create(settings)
         val database = client.getDatabase(databaseName = databaseName)
         return try {
-            // Send a ping to confirm a successful connection
             val command = Document("ping", BsonInt64(1))
             database.runCommand(command)
-            println("Pinged your deployment. You successfully connected to MongoDB!")
             database
         } catch (me: MongoException) {
             System.err.println(me)

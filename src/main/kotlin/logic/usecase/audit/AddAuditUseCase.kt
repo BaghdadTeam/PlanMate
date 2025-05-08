@@ -7,7 +7,7 @@ import org.baghdad.logic.repositories.AuditRepository
 class AddAuditUseCase(
     private val auditRepository: AuditRepository
 ) {
-    operator fun invoke(auditLogEntity: AuditLogEntity) {
+    suspend operator fun invoke(auditLogEntity: AuditLogEntity) {
         validateAuditEntity(auditLogEntity)
         auditRepository.addAuditEntry(auditLogEntity)
     }

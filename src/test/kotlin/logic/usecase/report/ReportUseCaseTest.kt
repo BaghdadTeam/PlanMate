@@ -1,12 +1,13 @@
 package logic.usecase.report
-import org.junit.jupiter.api.BeforeEach
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.ProjectSummaryReport
 import org.baghdad.logic.usecase.report.ReportService
 import org.baghdad.logic.usecase.report.ReportUseCase
-import org.junit.jupiter.api.Assertions.*
-import java.util.UUID
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import java.util.*
 import kotlin.test.Test
 
 class ReportUseCaseTest{
@@ -20,7 +21,7 @@ class ReportUseCaseTest{
     }
 
     @Test
-    fun `generateProjectSummary should call reportService summary`() {
+    fun `generateProjectSummary should call reportService summary`() = runTest {
         val fakeReports = listOf(
             ProjectSummaryReport(
                 projectName = "Test Project",
@@ -29,7 +30,7 @@ class ReportUseCaseTest{
                 tasksPerUser = mapOf(UUID.randomUUID() to 5)
             )
         )
-        every { reportService.summary() } returns fakeReports
+        coEvery { reportService.summary() } returns fakeReports
         
         val result = reportUseCase.generateProjectSummary()
 

@@ -12,14 +12,14 @@ class SessionManager(private val sessionRepository: SessionRepository) {
         this.currentSession = session
     }
 
-    fun getActiveSession(): SessionEntity {
+    suspend fun getActiveSession(): SessionEntity {
         val session = sessionRepository.loadSession()
         if (session.isExpired())
            throw SessionEndedException("Session is expired")
         return session
     }
 
-    fun clearExpiredSession() {
+    suspend fun clearExpiredSession() {
         val session = sessionRepository.loadSession()
         if (session.isExpired())
             sessionRepository.deleteSession()

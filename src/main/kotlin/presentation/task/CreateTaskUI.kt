@@ -1,5 +1,6 @@
 package org.baghdad.presentation.task
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
@@ -65,8 +66,10 @@ class CreateTaskUI(
 
     private fun tryCreateTask(task: TaskEntity, userId: UUID) {
         try {
-            createTaskUseCase(task, userId)
-            viewer.logMessage("Task created successfully.")
+            runBlocking {
+                createTaskUseCase(task, userId)
+                viewer.logMessage("Task created successfully.")
+            }
         } catch (e: TaskWithMissingTitleException) {
             viewer.logError("Task title is missing.")
             val updatedTask = promptForTitle()?.let { task.copy(title = it) } ?: task
@@ -75,7 +78,7 @@ class CreateTaskUI(
             viewer.logError("Task description is missing.")
             val updatedTask = promptForDescription()?.let { task.copy(description = it) } ?: task
             tryCreateTask(updatedTask, userId)
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
             viewer.logError("Failed to create task: ${e.message}")
         }
     }

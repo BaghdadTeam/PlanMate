@@ -5,6 +5,7 @@ import helpers.authentication.SessionTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.SessionDataSource
 import org.baghdad.logic.model.entities.SessionEntity
@@ -24,7 +25,7 @@ class SessionDataSourceTest {
     }
 
     @Test
-    fun `should load session data successfully from the database when loadSession is called`() {
+    fun `should load session data successfully from the database when loadSession is called`()= runTest {
         // Given
         coEvery { dataSource.loadAll() } returns listOf(SessionTestData.baseSession)
         // When
@@ -34,7 +35,7 @@ class SessionDataSourceTest {
 
     }
     @Test
-    fun `should execute dataSource update when deleteSession function is invoked`() {
+    fun `should execute dataSource update when deleteSession function is invoked`()= runTest {
         // Given
         coEvery { dataSource.loadAll() } returns listOf(SessionTestData.baseSession)
         // When
@@ -43,7 +44,7 @@ class SessionDataSourceTest {
         coVerify { dataSource.delete(any()) }
     }
     @Test
-    fun `should execute  dataSource append when saveSession is called`() {
+    fun `should execute  dataSource append when saveSession is called`()= runTest {
         // Given
         coEvery { dataSource.loadAll() } returns emptyList()
         // When
@@ -53,7 +54,7 @@ class SessionDataSourceTest {
 
     }
     @Test
-    fun `Should return null if there i no session data found`() {
+    fun `Should return null if there i no session data found`()= runTest {
         // Given
         coEvery { dataSource.loadAll() } returns listOf()
        // When & Then

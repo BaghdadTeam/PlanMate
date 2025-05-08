@@ -30,7 +30,7 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should return data when there is a projects`() {
+    fun `should return data when there is a projects`() = runTest{
         // Given
         val projects = listOf(ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()))
         coEvery { dataSource.loadAll() } returns projects
@@ -44,7 +44,7 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when updateProject and there is no projects`() {
+    fun `should throw ProjectNotFoundException when updateProject and there is no projects`() = runTest{
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
         coEvery { dataSource.loadAll() } returns emptyList()
@@ -54,7 +54,7 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when deleteProject and there is no projects`() {
+    fun `should throw ProjectNotFoundException when deleteProject and there is no projects`()= runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
         coEvery { dataSource.loadAll() } returns emptyList()
@@ -64,7 +64,7 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `createProject should call append on data source`() {
+    fun `createProject should call append on data source`()= runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
         coEvery { dataSource.append(project) } just Runs
@@ -77,7 +77,7 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should return project when there is a project with same id`() {
+    fun `should return project when there is a project with same id`()= runTest {
         // Given
         val projects = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
         coEvery { dataSource.loadAll() } returns listOf(projects)
@@ -90,7 +90,7 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when there is no project with same id`() {
+    fun `should throw ProjectNotFoundException when there is no project with same id`()= runTest {
         // Given
         val projects = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
         coEvery { dataSource.loadAll() } returns listOf(projects)
@@ -100,7 +100,7 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should return updated project when can update it successfully`() {
+    fun `should return updated project when can update it successfully`()= runTest {
         // Given
         val allProjects = listOf(
             ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()),

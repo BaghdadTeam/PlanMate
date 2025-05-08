@@ -1,28 +1,24 @@
 package org.baghdad.data.local
 
-import kotlinx.coroutines.runBlocking
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
-import java.util.UUID
+import java.util.*
 
 class TaskDataSource(
     private val dataSource: DataSource<TaskEntity>
 ) {
 
-    fun loadTasks(): List<TaskEntity> {
-        return runBlocking {
-            dataSource.loadAll()
-        }
+    suspend fun loadTasks(): List<TaskEntity> {
+        return dataSource.loadAll()
     }
 
-    fun addTask(task: TaskEntity) {
-        return runBlocking {
-            dataSource.append(task)
-        }
+    suspend fun addTask(task: TaskEntity) {
+        return dataSource.append(task)
+
     }
 
-    fun getTasksByProjectId(projectId: UUID): List<TaskEntity> {
+    suspend fun getTasksByProjectId(projectId: UUID): List<TaskEntity> {
         val tasks = loadTasks().filter { it.projectId == projectId }
         if (tasks.isEmpty()) {
             throw TasksNotFoundException("No tasks found for project ID: $projectId")
@@ -30,12 +26,12 @@ class TaskDataSource(
         return tasks
     }
 
-    fun getTaskById(taskId: UUID): TaskEntity {
+    suspend fun getTaskById(taskId: UUID): TaskEntity {
         return loadTasks().firstOrNull { it.id == taskId }
             ?: throw TasksNotFoundException("Task with id $taskId not found")
     }
 
-    fun getTasksByStateId(stateId: UUID): List<TaskEntity> {
+    suspend fun getTasksByStateId(stateId: UUID): List<TaskEntity> {
         val tasks = loadTasks().filter { it.stateId == stateId }
         if (tasks.isEmpty()) {
             throw TasksNotFoundException("No tasks found for state ID: $stateId")
@@ -43,21 +39,15 @@ class TaskDataSource(
         return tasks
     }
 
-    fun updateTask(task: TaskEntity) {
-        return runBlocking {
-            loadTasks().find { it.id == task.id }
-                ?: throw TasksNotFoundException("Task with id ${task.id} not found")
-
-            dataSource.update(task)
-        }
+    suspend fun updateTask(task: TaskEntity) {
+        loadTasks().find { it.id == task.id }
+            ?: throw TasksNotFoundException("Task with id ${task.id} not found")
+        return dataSource.update(task)
     }
 
-    fun deleteTask(taskId: UUID) {
-        return runBlocking {
-            val foundTask = loadTasks().find { it.id == taskId }
-                ?: throw TasksNotFoundException("Task with id $taskId not found")
-
-            dataSource.delete(foundTask)
-        }
+    suspend fun deleteTask(taskId: UUID) {
+        val foundTask = loadTasks().find { it.id == taskId }
+            ?: throw TasksNotFoundException("Task with id $taskId not found")
+        return dataSource.delete(foundTask)
     }
 }

@@ -1,15 +1,15 @@
 package data.repositories.project
 
 import com.google.common.truth.Truth.assertThat
-import helpers.task.TaskEntityTestData
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.ProjectDataSource
-import org.baghdad.data.repository.project.ProjectRepositoryImpl
+import org.baghdad.data.repositories.project.ProjectRepositoryImpl
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class ProjectRepositoryImplTest {
@@ -23,12 +23,12 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `should return all projects from dataSource`() {
+    fun `should return all projects from dataSource`() = runTest {
         // Given
         val projects = listOf(
             ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()),
         )
-        every { dataSource.getAllProjects() } returns projects
+        coEvery { dataSource.getAllProjects() } returns projects
 
         // When
         val result = projectRepository.getAllProjects()
@@ -39,12 +39,12 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `should return true when project is found by id`() {
+    fun `should return true when project is found by id`() = runTest {
         // Given
 
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
 
-        every { dataSource.getProjectById(project.id) } returns project
+        coEvery { dataSource.getProjectById(project.id) } returns project
 
         // When
         val result = projectRepository.getProjectById(project.id)
@@ -55,7 +55,7 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `editProject should call dataSource editProject`() {
+    fun `editProject should call dataSource editProject`() = runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
 
@@ -63,11 +63,11 @@ class ProjectRepositoryImplTest {
         projectRepository.editProject(project)
 
         // When
-        verify { projectRepository.editProject(project) }
+        coVerify { projectRepository.editProject(project) }
     }
 
     @Test
-    fun `deleteProject should call dataSource deleteProject`() {
+    fun `deleteProject should call dataSource deleteProject`() = runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
 
@@ -75,11 +75,11 @@ class ProjectRepositoryImplTest {
         projectRepository.deleteProject(project.id)
 
         // When
-        verify { projectRepository.deleteProject(project.id) }
+        coVerify { projectRepository.deleteProject(project.id) }
     }
 
     @Test
-    fun `createProject should call dataSource createProject`() {
+    fun `createProject should call dataSource createProject`() = runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
 
@@ -87,6 +87,6 @@ class ProjectRepositoryImplTest {
         projectRepository.createProject(project)
 
         // When
-        verify { projectRepository.createProject(project) }
+        coVerify { projectRepository.createProject(project) }
     }
 }

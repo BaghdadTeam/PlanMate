@@ -1,6 +1,7 @@
 package org.baghdad.di
 
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
+import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.project.CreateProjectUi
 import org.baghdad.presentation.project.DeleteProjectUi
 import org.baghdad.presentation.project.ListProjectUi
@@ -34,4 +35,7 @@ val uiModule = module {
     single { CreateProjectUi(get()) }
     single { DeleteProjectUi(get()) }
     single { ListProjectUi(get()) }
+
+    // region :: Auth ::
+    single { LoginUi(get(), get(), get()) }
 }

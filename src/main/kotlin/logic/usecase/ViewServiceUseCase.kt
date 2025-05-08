@@ -12,7 +12,7 @@ class ViewServiceUseCase(
     private val stateRepository: ProjectStatesRepository
 ) {
 
-    fun swimlane(projectId: UUID): Result<Map<StateEntity, List<TaskEntity>>> {
+    suspend fun swimlane(projectId: UUID): Result<Map<StateEntity, List<TaskEntity>>> {
         return try {
             val stateEntities = stateRepository.getAllStatesPerProject(projectId)
             val states = stateEntities.map { stateEntity ->

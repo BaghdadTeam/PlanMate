@@ -1,6 +1,7 @@
 package org.baghdad.di
 
 import org.baghdad.logic.usecase.StateTransitionUseCase
+import org.baghdad.logic.usecase.authentication.LoginUseCase
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
 import org.baghdad.logic.usecase.project.EditProjectUseCase
@@ -50,4 +51,7 @@ val useCaseModule = module {
     single { EditProjectUseCase(get(), get()) }
     single { GetAllProjectsUseCase(get()) }
     // endregion
+
+    // region  ::  Auth Use Cases  ::
+    single { LoginUseCase(get(), get(), get()) }
 }

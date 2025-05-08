@@ -10,7 +10,7 @@ class DeleteProjectUseCase(
     private val projectRepository: ProjectRepository,
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(projectId: UUID,userId : UUID){
+    suspend operator fun invoke(projectId: UUID,userId : UUID){
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
         projectRepository.deleteProject(projectId)
