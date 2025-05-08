@@ -1,4 +1,4 @@
-package utils
+package logic.utils
 
 import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.Assertions.*
