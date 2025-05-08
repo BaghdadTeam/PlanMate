@@ -29,7 +29,7 @@ class CreateUserUI(
         val password = prompt("Password: ")
 
         try {
-            val newUser = createUser(username, password, name, currentUser)
+            val newUser = createUser(username, password, name, currentUser.id)
             viewer.logMessage("User '${newUser.username}' created successfully.")
         } catch (e: InvalidUsernameException) {
             viewer.logError("Invalid username: ${e.message}")
