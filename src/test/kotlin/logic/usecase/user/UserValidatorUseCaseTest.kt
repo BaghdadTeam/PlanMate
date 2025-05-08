@@ -1,8 +1,9 @@
 package logic.usecase.user
 
 import helpers.authentication.createUserHelper
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidNameException
 import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
@@ -27,11 +28,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should not throw any exception when validate user data`() {
+    fun `should not throw any exception when validate user data`()= runTest {
         // Given
         val user = createUserHelper()
-        every { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         userValidatorUseCase.invoke("aboud", user.hashedPassword, user.name, user.id)
@@ -39,11 +40,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw exception when username is blank`() {
+    fun `should throw exception when username is blank`()= runTest {
         // Given
         val user = createUserHelper()
-        every { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<InvalidUsernameException> {
@@ -57,11 +58,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw UserAlreadyExistsException when username is not unique`() {
+    fun `should throw UserAlreadyExistsException when username is not unique`()= runTest {
         // Given
         val user = createUserHelper().copy(username = "aboud")
-        every { userRepository.getUserById(user.id) } returns user
-        every { userRepository.getUserByUsername("aboud") } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } returns user
 
         // When & Then
         assertThrows<UserAlreadyExistsException> {
@@ -76,11 +77,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw UnauthorizedException when user is not admin`() {
+    fun `should throw UnauthorizedException when user is not admin`()= runTest {
         // Given
         val user = createUserHelper().copy(type = UserType.Mate)
-        every { userRepository.getUserById(user.id) } returns user
-        every { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
         // When & Then
         assertThrows<UnauthorizedException> {
             userValidatorUseCase.invoke(
@@ -93,11 +94,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidNameException when name is blank`() {
+    fun `should throw InvalidNameException when name is blank`()= runTest {
         // Given
         val user = createUserHelper()
-        every { userRepository.getUserById(user.id) } returns user
-        every { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
         // When & Then
         assertThrows<InvalidNameException> {
             userValidatorUseCase.invoke(
@@ -111,11 +112,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidPasswordException when password is blank`() {
+    fun `should throw InvalidPasswordException when password is blank`()= runTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "")
-        every { userRepository.getUserById(user.id) } returns user
-        every { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
         // When & Then
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
@@ -128,11 +129,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidPasswordException when password is too short`() {
+    fun `should throw InvalidPasswordException when password is too short`()= runTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "12")
-        every { userRepository.getUserById(user.id) } returns user
-        every { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
 
         // when & then
         assertThrows<InvalidPasswordException> {
@@ -146,11 +147,11 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidNameException when username is too short`() {
+    fun `should throw InvalidNameException when username is too short`()= runTest {
         // Given
         val user = createUserHelper().copy(name = "a")
-        every { userRepository.getUserById(user.id) } returns user
-        every { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
         // When & Then
         assertThrows<InvalidUsernameException> {
             userValidatorUseCase.invoke(

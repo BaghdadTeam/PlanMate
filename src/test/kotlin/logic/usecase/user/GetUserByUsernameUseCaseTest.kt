@@ -1,12 +1,14 @@
-package org.baghdad.logic.usecase.user
+package logic.usecase.user
 
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -26,9 +28,9 @@ class GetUserByUsernameUseCaseTest {
     }
 
     @Test
-    fun `should return user when user exists`() {
+    fun `should return user when user exists`() = runTest {
         // Given
-        every { userRepository.getUserByUsername("alice") } returns sampleUser
+        coEvery { userRepository.getUserByUsername("alice") } returns sampleUser
 
         // When
         val result = getUserByUsernameUseCase("alice")
@@ -38,7 +40,7 @@ class GetUserByUsernameUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidUsernameException when username is blank`() {
+    fun `should throw InvalidUsernameException when username is blank`() = runTest {
         // When & Then
         assertFailsWith<InvalidUsernameException> {
             getUserByUsernameUseCase("")
@@ -46,9 +48,9 @@ class GetUserByUsernameUseCaseTest {
     }
 
     @Test
-    fun `should throw UserNotFoundException when user does not exist`() {
+    fun `should throw UserNotFoundException when user does not exist`() = runTest {
         // Given
-        every { userRepository.getUserByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
+        coEvery { userRepository.getUserByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
 
         // When & Then
         assertFailsWith<UserNotFoundException> {
