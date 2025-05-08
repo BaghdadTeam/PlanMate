@@ -1,12 +1,15 @@
-package org.baghdad.data.repositories.user
+package data.repositories.user
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import helpers.authentication.createUserHelper
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.repositories.user.UserRepositoryImpl
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
@@ -25,69 +28,63 @@ class UserRepositoryImplTest {
     fun setup() {
         dataSource = mockk()
         repository = UserRepositoryImpl(dataSource)
-        sampleUser = UserEntity(
-            id             = UUID.randomUUID(),
-            name           = "Sample User",
-            username       = "sample",
-            hashedPassword = "hash",
-            type           = UserType.Mate
-        )
+        sampleUser = createUserHelper()
     }
 
     @Test
-    fun `createUser delegates to dataSource`() {
+    fun `createUser delegates to dataSource`() = runTest {
         // Given
-        every { dataSource.addUser(sampleUser) } just runs
+        coEvery { dataSource.addUser(sampleUser) } just runs
         // When
         repository.createUser(sampleUser)
         // Then
-        verify { dataSource.addUser(sampleUser) }
+        coVerify { dataSource.addUser(sampleUser) }
     }
 
     @Test
-    fun `findByUsername returns data source result`() {
+    fun `findByUsername returns data source result`() = runTest {
         // Given
-        every { dataSource.findUserByUsername("sample") } returns sampleUser
+        coEvery { dataSource.findUserByUsername("sample") } returns sampleUser
         // When
         val result = repository.getUserByUsername("sample")
         // Then
         assertThat(result).isEqualTo(sampleUser)
-        verify { dataSource.findUserByUsername("sample") }
+        coVerify { dataSource.findUserByUsername("sample") }
     }
 
     @Test
-    fun `getUserById returns existing user`() {
+    fun `getUserById returns existing user`() = runTest {
         // Given
-        every { dataSource.findUserById(sampleUser.id) } returns sampleUser
+        coEvery { dataSource.findUserById(sampleUser.id) } returns sampleUser
         // When
         val result = repository.getUserById(sampleUser.id)
         // Then
         assertThat(result).isEqualTo(sampleUser)
-        verify { dataSource.findUserById(sampleUser.id) }
+        coVerify { dataSource.findUserById(sampleUser.id) }
     }
 
     @Test
-    fun `getUserById throws when user not found`() {
+    fun `getUserById throws when user not found`() = runTest {
         // Given
         val missingId = UUID.randomUUID()
-        every { dataSource.findUserById(missingId) } returns null
+        coEvery { dataSource.findUserById(missingId) } returns null
         // When & Then
         val error = assertThrows<UserNotFoundException> {
             repository.getUserById(missingId)
         }
         assertThat(error.message).isEqualTo("User not found with id: $missingId")
-        verify { dataSource.findUserById(missingId) }
+        coVerify { dataSource.findUserById(missingId) }
     }
 
     @Test
-    fun `getAllUsers returns data source list`() {
+    fun `getAllUsers returns data source list`() = runTest {
         // Given
         val list = listOf(sampleUser)
-        every { dataSource.loadUsers() } returns list
+        coEvery { dataSource.loadUsers() } returns list
         // When
         val result = repository.getAllUsers()
         // Then
         assertThat(result).isEqualTo(list)
-        verify { dataSource.loadUsers() }
+        coVerify { dataSource.loadUsers() }
     }
 }

@@ -1,14 +1,14 @@
 package org.baghdad.data.local
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import helpers.authentication.createUserHelper
+import io.mockk.coEvery
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,13 +20,7 @@ class UserDataSourceTest {
     private lateinit var dataSource: DataSource<UserEntity>
     private lateinit var userDataSource: UserDataSource
 
-    private val sampleUser = UserEntity(
-        id             = UUID.randomUUID(),
-        name           = "Test User",
-        username       = "testuser",
-        hashedPassword = "hash",
-        type           = UserType.Admin
-    )
+    private val sampleUser = createUserHelper()
 
     @BeforeEach
     fun setup() {
@@ -35,35 +29,35 @@ class UserDataSourceTest {
     }
 
     @Test
-    fun `loadUsers delegates to data source`() {
+    fun `loadUsers delegates to data source`() = runTest {
         // Given
         val list = listOf(sampleUser)
-        every { dataSource.loadAll() } returns list
+        coEvery { dataSource.loadAll() } returns list
 
         // When
         val result = userDataSource.loadUsers()
 
         // Then
         assertThat(result).isEqualTo(list)
-        verify { dataSource.loadAll() }
+        coEvery { dataSource.loadAll() }
     }
 
     @Test
-    fun `addUser delegates to data source append`() {
+    fun `addUser delegates to data source append`() = runTest {
         // Given
-        every { dataSource.append(sampleUser) } just runs
+        coEvery { dataSource.append(sampleUser) } just runs
 
         // When
         userDataSource.addUser(sampleUser)
 
         // Then
-        verify { dataSource.append(sampleUser) }
+        coEvery { dataSource.append(sampleUser) }
     }
 
     @Test
-    fun `findUserByUsername returns existing user`() {
+    fun `findUserByUsername returns existing user`() = runTest {
         // Given
-        every { dataSource.loadAll() } returns listOf(sampleUser)
+        coEvery { dataSource.loadAll() } returns listOf(sampleUser)
 
         // When
         val user = userDataSource.findUserByUsername("testuser")
@@ -73,9 +67,9 @@ class UserDataSourceTest {
     }
 
     @Test
-    fun `findUserByUsername throws when not found`() {
+    fun `findUserByUsername throws when not found`() = runTest {
         // Given
-        every { dataSource.loadAll() } returns emptyList()
+        coEvery { dataSource.loadAll() } returns emptyList()
 
         // When & Then
         val error = assertThrows<UserNotFoundException> {
@@ -85,9 +79,9 @@ class UserDataSourceTest {
     }
 
     @Test
-    fun `findUserById returns existing user`() {
+    fun `findUserById returns existing user`() = runTest {
         // Given
-        every { dataSource.loadAll() } returns listOf(sampleUser)
+        coEvery { dataSource.loadAll() } returns listOf(sampleUser)
 
         // When
         val user = userDataSource.findUserById(sampleUser.id)
@@ -97,9 +91,9 @@ class UserDataSourceTest {
     }
 
     @Test
-    fun `findUserById returns null when not found`() {
+    fun `findUserById returns null when not found`() = runTest {
         // Given
-        every { dataSource.loadAll() } returns listOf(sampleUser)
+        coEvery { dataSource.loadAll() } returns listOf(sampleUser)
 
         // When
         val user = userDataSource.findUserById(UUID.randomUUID())
