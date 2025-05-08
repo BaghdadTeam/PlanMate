@@ -7,11 +7,11 @@ import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repositories.user.UserRepositoryImpl
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -87,4 +87,16 @@ class UserRepositoryImplTest {
         assertThat(result).isEqualTo(list)
         coVerify { dataSource.loadUsers() }
     }
+
+    @Test
+    fun `should return true when username is taken`() {
+        // Given
+        coEvery { dataSource.isUsernameTaken(sampleUser.username) } returns true
+        // When
+        val result = runBlocking { repository.isUsernameTaken(sampleUser.username) }
+        // Then
+        assertThat(result).isTrue()
+        coVerify { dataSource.isUsernameTaken(sampleUser.username) }
+    }
+
 }
