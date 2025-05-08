@@ -1,4 +1,13 @@
 package org.baghdad.presentation.swimlane
 
-class SwimlaneUI {
+import org.baghdad.presentation.projectStates.ProjectStatesUI
+import java.util.UUID
+
+class SwimlaneUI(
+    private val renderSwimlaneUI: RenderSwimlaneUI
+) {
+    fun invoke(projectId : UUID){
+        renderSwimlaneUI(projectId)
+
+    }
 }
