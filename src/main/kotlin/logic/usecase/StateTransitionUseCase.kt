@@ -7,14 +7,16 @@ import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import java.util.*
 
 class StateTransitionUseCase(
     private val taskRepository: TaskRepository,
     private val projectStatesRepository: ProjectStatesRepository,
+    private val userRepository: UserRepository,
     private val auditRepository: AuditRepository
 ) {
-    suspend fun changeTaskState(taskId: UUID, newStateId: UUID, user: UserEntity) {
+    suspend fun changeTaskState(taskId: UUID, newStateId: UUID, userId: UUID) {
         val task = taskRepository.getTaskById(taskId)
 
         val currentState = projectStatesRepository.getStateById(task.stateId)
@@ -28,6 +30,8 @@ class StateTransitionUseCase(
 
         val updateSuccessful = updateTaskState(taskId, newStateId)
         if (!updateSuccessful) throw Exception("Failed to update task state")
+
+        val user = userRepository.getUserById(userId)
 
         logStateChange(taskId, task.stateId, newStateId, user)
     }
