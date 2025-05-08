@@ -1,14 +1,20 @@
-package presentation
+package presentation.task
 
-import io.mockk.*
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
+import org.baghdad.logic.model.exceptions.StateExceptions
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.*
+import java.util.UUID
 import kotlin.test.Test
 
 class StateTransitionUITest {
@@ -45,7 +51,7 @@ class StateTransitionUITest {
                 any(),
                 any()
             )
-        } throws NotFoundException("State not found")
+        } throws StateExceptions.NotFoundException("State not found")
 
         ui.execute()
 
