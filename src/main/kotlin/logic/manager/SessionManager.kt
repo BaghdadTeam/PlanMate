@@ -22,7 +22,7 @@ class SessionManager(private val sessionRepository: SessionRepository) {
         return session
     }
 
-    suspend fun clearExpiredSession() {
+    private suspend fun clearExpiredSession() {
             sessionRepository.deleteSession()
     }
 }
