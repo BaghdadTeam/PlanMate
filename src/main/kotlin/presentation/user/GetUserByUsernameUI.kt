@@ -11,7 +11,7 @@ class GetUserByUsernameUI(
     private val viewer: Viewer,
     private val getByUsername: GetUserByUsernameUseCase
 ) {
-    fun run() {
+    suspend fun run() {
         viewer.logMessage("=== Find User ===")
         viewer.logMessage("Please enter the username:")
         val username = reader.readInput()?.trim().orEmpty()

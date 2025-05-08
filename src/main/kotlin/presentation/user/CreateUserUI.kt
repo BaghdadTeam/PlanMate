@@ -16,7 +16,7 @@ class CreateUserUI(
     private val viewer: Viewer,
     private val createUser: CreateUserUseCase
 ) {
-    fun run(currentUser: UserEntity?) {
+    suspend fun run(currentUser: UserEntity?) {
         if (currentUser?.type != UserType.Admin) {
             viewer.logError("Only administrators can create new users.")
             return
