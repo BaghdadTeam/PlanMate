@@ -10,18 +10,18 @@ class UserRepositoryImpl(
     private val dataSource: UserDataSource
 ) : UserRepository {
 
-    override fun createUser(user: UserEntity) {
+    override suspend fun createUser(user: UserEntity) {
         dataSource.addUser(user)
     }
 
-    override fun getUserByUsername(username: String): UserEntity {
+    override suspend fun getUserByUsername(username: String): UserEntity {
         return dataSource.findUserByUsername(username)
     }
 
-    override fun getUserById(id: UUID): UserEntity {
+    override suspend fun getUserById(id: UUID): UserEntity {
         return dataSource.findUserById(id)
             ?: throw UserNotFoundException("User not found with id: $id")
     }
 
-    override fun getAllUsers(): List<UserEntity> = dataSource.loadUsers()
+    override suspend fun getAllUsers(): List<UserEntity> = dataSource.loadUsers()
 }
