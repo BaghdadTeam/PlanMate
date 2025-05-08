@@ -1,14 +1,7 @@
 package presentation.task
 
-import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.verify
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import io.mockk.*
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.exceptions.StateExceptions
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.StateTransitionUI
@@ -16,7 +9,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class StateTransitionUITest {
@@ -24,22 +17,22 @@ class StateTransitionUITest {
     private lateinit var useCase: StateTransitionUseCase
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
+    private lateinit var session: SessionManager
     private lateinit var ui: StateTransitionUI
 
-    private val testUser = UserEntity(
-        username = "test_user",
-        name = "Test User",
-        hashedPassword = "hashed_pw",
-        type = UserType.Mate
-    )
-
+    private val testUserId = UUID.randomUUID()
 
     @BeforeEach
     fun setUp() {
         useCase = mockk()
         viewer = mockk(relaxed = true)
         reader = mockk()
-        ui = StateTransitionUI(useCase, viewer, reader)
+        session = mockk(relaxed = true)
+
+        // Mock the session to return the test user ID
+        every { session.currentSession.userId } returns testUserId
+
+        ui = StateTransitionUI(useCase, session, viewer, reader)
     }
 
     @Test
@@ -48,9 +41,9 @@ class StateTransitionUITest {
             UUID.randomUUID().toString(),
             UUID.randomUUID().toString()
         )
-        coEvery { useCase.changeTaskState(any(), any(), any()) } just Runs
+        coEvery { useCase.changeTaskState(any(), any(), testUserId) } just Runs
 
-        ui.execute(testUser)
+        ui.execute()
 
         verify { viewer.logMessage("Task state changed successfully.") }
     }
@@ -62,14 +55,10 @@ class StateTransitionUITest {
             UUID.randomUUID().toString()
         )
         coEvery {
-            useCase.changeTaskState(
-                any(),
-                any(),
-                any()
-            )
+            useCase.changeTaskState(any(), any(), testUserId)
         } throws StateExceptions.NotFoundException("State not found")
 
-        ui.execute(testUser)
+        ui.execute()
 
         verify { viewer.logError("State not found in this project: State not found") }
     }
@@ -81,14 +70,10 @@ class StateTransitionUITest {
             UUID.randomUUID().toString()
         )
         coEvery {
-            useCase.changeTaskState(
-                any(),
-                any(),
-                any()
-            )
+            useCase.changeTaskState(any(), any(), testUserId)
         } throws IllegalStateException("Not allowed")
 
-        ui.execute(testUser)
+        ui.execute()
 
         verify { viewer.logError("Invalid operation: Not allowed") }
     }
@@ -100,14 +85,10 @@ class StateTransitionUITest {
             UUID.randomUUID().toString()
         )
         coEvery {
-            useCase.changeTaskState(
-                any(),
-                any(),
-                any()
-            )
+            useCase.changeTaskState(any(), any(), testUserId)
         } throws RuntimeException("Something went wrong")
 
-        ui.execute(testUser)
+        ui.execute()
 
         verify { viewer.logError("Unexpected error: Something went wrong") }
     }
@@ -117,39 +98,39 @@ class StateTransitionUITest {
         val taskId = UUID.randomUUID()
         val newStateId = UUID.randomUUID()
         every { reader.readInput() } returnsMany listOf(taskId.toString(), newStateId.toString())
-        coEvery { useCase.changeTaskState(any(), any(), any()) } just Runs
+        coEvery { useCase.changeTaskState(any(), any(), testUserId) } just Runs
 
-        ui.execute(testUser)
+        ui.execute()
 
-        coVerify { useCase.changeTaskState(taskId, newStateId, any()) }
+        coVerify { useCase.changeTaskState(taskId, newStateId, testUserId) }
     }
 
     @Test
     fun `should throw exception if task ID is null`() {
         every { reader.readInput() } returnsMany listOf(null)
 
-        assertThrows<Exception> { ui.execute(testUser) }
+        assertThrows<Exception> { ui.execute() }
     }
 
     @Test
     fun `should throw exception if task ID is blank`() {
         every { reader.readInput() } returnsMany listOf("   ")
 
-        assertThrows<Exception> { ui.execute(testUser) }
+        assertThrows<Exception> { ui.execute() }
     }
 
     @Test
     fun `should throw exception if state ID is null`() {
         every { reader.readInput() } returnsMany listOf("task123", null)
 
-        assertThrows<Exception> { ui.execute(testUser) }
+        assertThrows<Exception> { ui.execute() }
     }
 
     @Test
     fun `should throw exception if state ID is blank`() {
         every { reader.readInput() } returnsMany listOf("task123", "   ")
 
-        assertThrows<Exception> { ui.execute(testUser) }
+        assertThrows<Exception> { ui.execute() }
     }
 
     @Test
@@ -158,12 +139,12 @@ class StateTransitionUITest {
         val newStateId = UUID.randomUUID().toString()
 
         every { reader.readInput() } returnsMany listOf(taskId, newStateId)
-        coEvery { useCase.changeTaskState(any(), any(), any()) } throws Exception("Generic error")
+        coEvery {
+            useCase.changeTaskState(any(), any(), testUserId)
+        } throws Exception("Generic error")
 
-        ui.execute(testUser)
+        ui.execute()
 
         verify { viewer.logError("Something went wrong while trying to change task state: Generic error") }
     }
-
-
 }

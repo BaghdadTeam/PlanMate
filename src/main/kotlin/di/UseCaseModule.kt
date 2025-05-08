@@ -23,7 +23,7 @@ val useCaseModule = module {
 
     // region  ::  Task Use Cases  ::
 
-    single { StateTransitionUseCase(get(), get(), get()) }
+    single { StateTransitionUseCase(get(), get(), get(), get()) }
     single { CreateTaskUseCase(get(), get(), get()) }
     single { DeleteTaskUseCase(get(), get(), get()) }
     single { UpdateTaskUseCase(get(), get(), get()) }
