@@ -9,4 +9,5 @@ interface UserRepository {
     suspend fun getAllUsers(): List<UserEntity>
     suspend fun getUserByUsername(username: String): UserEntity
     suspend fun getUserById(id: UUID): UserEntity
+    suspend fun isUsernameTaken(username: String): Boolean
 }

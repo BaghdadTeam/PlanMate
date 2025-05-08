@@ -23,5 +23,9 @@ class UserRepositoryImpl(
             ?: throw UserNotFoundException("User not found with id: $id")
     }
 
+    override suspend fun isUsernameTaken(username: String): Boolean {
+        return dataSource.isUsernameTaken(username)
+    }
+
     override suspend fun getAllUsers(): List<UserEntity> = dataSource.loadUsers()
 }

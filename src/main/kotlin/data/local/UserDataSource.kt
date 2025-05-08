@@ -14,10 +14,13 @@ class UserDataSource(
         dataSource.append(user)
     }
 
-
     suspend fun findUserByUsername(username: String): UserEntity {
-        return loadUsers().firstOrNull { it.username == username }
+        return loadUsers().firstOrNull() { it.username == username }
             ?: throw UserNotFoundException("User not found with username: $username")
+    }
+
+    suspend fun isUsernameTaken(username: String): Boolean {
+        return loadUsers().any { it.username == username }
     }
 
     suspend fun findUserById(id: UUID): UserEntity? {
