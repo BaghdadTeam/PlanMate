@@ -1,19 +1,20 @@
 package org.baghdad.presentation
 
 import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import java.util.UUID
+import java.util.*
 
 class StateTransitionUI(
     private val useCase: StateTransitionUseCase,
+    private val session: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
 ) {
-    fun execute(user: UserEntity) {
+    fun execute() {
         viewer.logMessage("Enter Task ID:")
         val taskId = reader.readInput()?.trim()
 
@@ -23,10 +24,11 @@ class StateTransitionUI(
         val newStateId = reader.readInput()?.trim()
 
         if (newStateId.isNullOrBlank()) throw Exception("New State ID cannot be null or blank.")
+        val userId = session.currentSession.userId
 
         try {
             runBlocking {
-                useCase.changeTaskState(UUID.fromString(taskId), UUID.fromString(newStateId), user)
+                useCase.changeTaskState(UUID.fromString(taskId), UUID.fromString(newStateId), userId)
                 viewer.logMessage("Task state changed successfully.")
             }
         } catch (e: NotFoundException) {
