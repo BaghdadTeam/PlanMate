@@ -2,7 +2,6 @@ package org.baghdad.presentation
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.input.Reader
@@ -14,29 +13,18 @@ class StateTransitionUI(
     private val viewer: Viewer,
     private val reader: Reader
 ) {
-    fun execute() {
-
+    fun execute(user: UserEntity) {
         viewer.logMessage("Enter Task ID:")
         val taskId = reader.readInput()?.trim()
 
         if (taskId.isNullOrBlank()) throw Exception("Task ID cannot be null or blank.")
-
 
         viewer.logMessage("Enter New State ID:")
         val newStateId = reader.readInput()?.trim()
 
         if (newStateId.isNullOrBlank()) throw Exception("New State ID cannot be null or blank.")
 
-        // todo: replace with actual logged-in user
-        val user = UserEntity(
-            username = "nadeen",
-            name = "nadeen",
-            hashedPassword = "123456789eef",
-            type = UserType.Mate
-        )
-
         try {
-            //todo
             runBlocking {
                 useCase.changeTaskState(UUID.fromString(taskId), UUID.fromString(newStateId), user)
                 viewer.logMessage("Task state changed successfully.")
@@ -48,7 +36,8 @@ class StateTransitionUI(
         } catch (e: RuntimeException) {
             viewer.logError("Unexpected error: ${e.message}")
         } catch (e: Exception) {
-            viewer.logError(" something went wrong while trying to change task state.")
+            viewer.logError("Something went wrong while trying to change task state: ${e.message}")
+
         }
     }
 }
