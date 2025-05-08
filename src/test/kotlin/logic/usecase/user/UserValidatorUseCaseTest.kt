@@ -31,7 +31,7 @@ class UserValidatorUseCaseTest {
     fun `should not throw any exception when validate user data`()= runTest {
         // Given
         val user = createUserHelper()
-        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
@@ -43,7 +43,7 @@ class UserValidatorUseCaseTest {
     fun `should throw exception when username is blank`()= runTest {
         // Given
         val user = createUserHelper()
-        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
@@ -62,7 +62,7 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(username = "aboud")
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.getUserByUsername("aboud") } returns user
+        coEvery { userRepository.isUsernameTaken("aboud") } returns true
 
         // When & Then
         assertThrows<UserAlreadyExistsException> {
@@ -81,7 +81,7 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(type = UserType.Mate)
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
         // When & Then
         assertThrows<UnauthorizedException> {
             userValidatorUseCase.invoke(
@@ -98,7 +98,7 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper()
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
         // When & Then
         assertThrows<InvalidNameException> {
             userValidatorUseCase.invoke(
@@ -116,7 +116,7 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "")
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
         // When & Then
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
@@ -133,7 +133,7 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "12")
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
 
         // when & then
         assertThrows<InvalidPasswordException> {
@@ -151,7 +151,7 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(name = "a")
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.getUserByUsername("aboud") } throws UserNotFoundException("not found")
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
         // When & Then
         assertThrows<InvalidUsernameException> {
             userValidatorUseCase.invoke(
