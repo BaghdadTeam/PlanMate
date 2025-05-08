@@ -60,7 +60,7 @@ class UserDataSourceTest {
         coEvery { dataSource.loadAll() } returns listOf(sampleUser)
 
         // When
-        val user = userDataSource.findUserByUsername("testuser")
+        val user = userDataSource.findUserByUsername(sampleUser.username)
 
         // Then
         assertThat(user).isEqualTo(sampleUser)
