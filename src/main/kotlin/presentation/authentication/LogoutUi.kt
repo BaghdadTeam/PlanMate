@@ -13,12 +13,12 @@ class LogoutUi(
 ) {
     fun execute() {
         runBlocking {
-            viewer.logMessage("Are you sure you want to logout (yes/no)?")
+            viewer.logMessage("Are you sure you want to logout (y/n)?")
             try {
 
                 val userChoice = reader.readInput()?.lowercase()
                 if (userChoice != null) {
-                    if (userChoice.contains("y")) {
+                    if (userChoice == "y") {
                         useCase.invoke()
                     }
                 }

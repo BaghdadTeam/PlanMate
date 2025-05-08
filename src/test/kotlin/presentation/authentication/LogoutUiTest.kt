@@ -36,7 +36,7 @@ class LogoutUiTest {
         logoutUi.execute()
         // Then
         coVerify { useCase.invoke() }
-        verify { viewer.logMessage("Are you sure you want to logout (y)") }
+        verify { viewer.logMessage("Are you sure you want to logout (y/n)?") }
     }
 
     @ParameterizedTest
@@ -44,9 +44,8 @@ class LogoutUiTest {
         "n",
         "no",
         "yes",
-        "YEAH",
     )
-    fun `execute() should not call logout use case when user input is not exactly y`(input: String) {
+    fun `execute() should not call logout use case when user input is not contain y`(input: String) {
         // Given
         every { reader.readInput() } returns input
         // When
