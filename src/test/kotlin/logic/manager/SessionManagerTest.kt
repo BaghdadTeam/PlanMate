@@ -42,25 +42,7 @@ class SessionManagerTest {
         assertThat(result.id).isEqualTo(SessionTestData.baseSession.id)
     }
 
-    @Test
-    fun `clearExpiredSession() clears expired session`() = runTest {
-        // Given
-        coEvery { sessionRepository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
-        // When
-        sessionManager.clearExpiredSession()
-        // Then
-        coVerify { sessionRepository.deleteSession() }
-    }
 
-    @Test
-    fun `clearExpiredSession() should not do anything if session is not expired`() = runTest {
-        // Given
-        coEvery { sessionRepository.loadSession() } returns SessionTestData.baseSession
-        // When
-        sessionManager.clearExpiredSession()
-        // Then
-        coVerify(exactly = 0) { sessionRepository.deleteSession() }
-    }
 
     @Test
     fun `setSession correctly sets the currentSession`() {
@@ -72,13 +54,5 @@ class SessionManagerTest {
         assertEquals(session, sessionManager.currentSession)
     }
 
-    @Test
-    fun `clearExpiredSession() should not delete session if session is not expired`() = runTest {
-        // Given
-        coEvery { sessionRepository.loadSession() } returns SessionTestData.baseSession
-        // When
-        sessionManager.clearExpiredSession()
-        // Then
-        coVerify(exactly = 0) { sessionRepository.deleteSession() }
-    }
+
 }

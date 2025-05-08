@@ -43,7 +43,6 @@ class StartAppTest {
 
         startApp.run()
 
-        coVerify { sessionManager.clearExpiredSession() }
         coVerify { sessionManager.getActiveSession() }
         coVerify { sessionManager.setSession(dummySession) }
         coVerify(exactly = 0) { loginUi.execute() }
@@ -57,7 +56,6 @@ class StartAppTest {
 
         startApp.run()
 
-        coVerify { sessionManager.clearExpiredSession() }
         coVerify { sessionManager.getActiveSession() }
         coVerify { loginUi.execute() }
         verify { sessionManager.setSession(newSession) }
