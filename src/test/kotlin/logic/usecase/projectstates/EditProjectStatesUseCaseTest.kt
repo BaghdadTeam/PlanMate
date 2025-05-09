@@ -2,6 +2,7 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
@@ -9,12 +10,14 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.*
 
@@ -69,5 +72,19 @@ class EditProjectStatesUseCaseTest {
 
     }
 
+    @Test
+    fun `should throw exception when user type is mate`() = runTest {
+        // given
+        val state = ProjectStatesEntityTestData.todoState()
+        val newState = state.copy(name = "Done")
+        coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
+
+        // when
+        val exception = assertThrows<NotAccessException> {
+            editStateUseCase.invoke(state.id, newState, mateUser.id)
+        }
+        // then
+        Truth.assertThat(exception.message).contains("Only Admin can edit states")
+    }
 
 }
