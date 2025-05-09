@@ -9,6 +9,7 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.presentation.app.StartApp
+import org.baghdad.presentation.app.ViewMainManu
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
@@ -22,6 +23,7 @@ class StartAppTest {
     private lateinit var loginUi: LoginUi
     private lateinit var sessionManager: SessionManager
     private lateinit var startApp: StartApp
+    private lateinit var viewMainManu: ViewMainManu
 
     private val dummySession = SessionEntity(
         userId = UUID.randomUUID(),
@@ -32,9 +34,10 @@ class StartAppTest {
     @BeforeEach
     fun setUp() {
         loginUi = mockk()
+        viewMainManu = mockk(relaxed = true)
         sessionManager = mockk(relaxed = true)
         viewer = mockk(relaxed = true)
-        startApp = StartApp(loginUi, sessionManager, viewer)
+        startApp = StartApp(loginUi, sessionManager, viewer ,viewMainManu)
     }
 
     @Test
