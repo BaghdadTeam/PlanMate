@@ -17,7 +17,7 @@ class ProjectStatesRepositoryImp(
         return dataSource.createState(state)
     }
 
-    override suspend fun getStateById(stateId: UUID): StateEntity? {
+    override suspend fun getStateById(stateId: UUID): StateEntity {
         return dataSource.getStateById(stateId)
     }
 
