@@ -6,6 +6,7 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
+import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
@@ -17,12 +18,13 @@ class CreateProjectUseCaseTest {
     lateinit var projectRepository: ProjectRepository
     lateinit var userRepository: UserRepository
     lateinit var createProjectUseCase: CreateProjectUseCase
+    lateinit var auditRepository: AuditRepository
 
     @BeforeEach
     fun setUp() {
         projectRepository = mockk()
         userRepository = mockk()
-        createProjectUseCase = CreateProjectUseCase(projectRepository, userRepository)
+        createProjectUseCase = CreateProjectUseCase(projectRepository, userRepository , auditRepository)
     }
 
     @Test
