@@ -7,7 +7,7 @@ import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
@@ -108,14 +108,13 @@ class StateTransitionUseCaseTest {
     }
 
     @Test
-    fun `should not fail if transitioning to the same state`() = runTest {
+    fun `should fail if transitioning to the same state`() = runTest {
         coEvery { taskRepository.getTaskById(task.id) } returns task
         coEvery { projectStatesRepository.getStateById(oldState.id) } returns oldState
 
-        service.changeTaskState(task.id, oldState.id, user.id)
-
-        coVerify(exactly = 0) { taskRepository.updateTask(any()) }
-        coVerify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+        assertThrows<Exception> {
+            service.changeTaskState(task.id, oldState.id, user.id)
+        }
     }
 
     @Test

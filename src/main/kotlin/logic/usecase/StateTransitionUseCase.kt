@@ -3,7 +3,7 @@ package org.baghdad.logic.usecase
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
