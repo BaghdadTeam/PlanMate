@@ -9,7 +9,7 @@ class GetAllProjectsUi(
     private val viewer: Viewer,
 ) {
 
-    operator fun invoke(): List<UUID> {
+    suspend operator fun invoke(): List<UUID> {
         viewer.logMessage("=== List of Projects ===")
         val projects = listProjectsUseCase()
         val projectsUUIDs = mutableListOf<UUID>()

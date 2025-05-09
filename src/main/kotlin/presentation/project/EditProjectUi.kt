@@ -14,7 +14,7 @@ class EditProjectUi(
     private val reader: Reader
 
 ) {
-    fun editProject() {
+    suspend fun editProject() {
         val session = sessionManager.currentSession
         val userId = session.userId
 

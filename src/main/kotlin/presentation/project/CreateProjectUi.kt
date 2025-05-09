@@ -11,7 +11,7 @@ class CreateProjectUi(
     private val viewer: Viewer,
     private val reader: Reader
 ) {
-    fun createProject() {
+    suspend fun createProject() {
         val session = sessionManager.currentSession
         val userId = session.userId
 

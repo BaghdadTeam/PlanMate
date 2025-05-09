@@ -11,13 +11,10 @@ class ProjectUi(
     private val getAllProjectsUi: GetAllProjectsUi,
     private val viewer: Viewer,
     private val reader: Reader
-
 ) {
-    operator fun invoke(): UUID? {
+    suspend operator fun invoke(): UUID? {
         while (true) {
             viewer.logMessage("=== Project UI ===")
-            val ids = getAllProjectsUi()
-
             viewer.logMessage("1. Create Project")
             viewer.logMessage("2. Delete Project")
             viewer.logMessage("3. Edit Project")
@@ -31,7 +28,8 @@ class ProjectUi(
                 2 -> deleteProjectUi.deleteProject()
                 3 -> editProjectUi.editProject()
                 4 -> {
-                    viewer.logMessage("=== View Project ===")
+                    viewer.logMessage("=== View Projects ===")
+                    val ids = getAllProjectsUi()
                     val projectsId = reader.readInput()?.toIntOrNull()
                     if (projectsId != null) {
                         return ids[projectsId]

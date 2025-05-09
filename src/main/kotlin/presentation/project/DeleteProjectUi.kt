@@ -12,7 +12,7 @@ class DeleteProjectUi(
     private val viewer: Viewer,
     private val reader: Reader
 ) {
-    fun deleteProject() {
+    suspend fun deleteProject() {
 
         val session = sessionManager.currentSession
         val userId = session.userId
