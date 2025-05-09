@@ -12,8 +12,7 @@ class CreateProjectUi(
     private val reader: Reader
 ) {
     suspend fun createProject() {
-        val session = sessionManager.currentSession
-        val userId = session.userId
+        val userId = sessionManager.currentSession.userId
 
         viewer.logMessage("=== Create Project ===")
         viewer.logMessage("Enter project name: ")

@@ -9,7 +9,8 @@ import org.baghdad.presentation.output.Viewer
 class StartApp(
     private val loginUi: LoginUi,
     private val sessionManager: SessionManager,
-    private val viewer: Viewer
+    private val viewer: Viewer,
+    private val viewMainManu: ViewMainManu
 ) {
     fun run() {
         runBlocking {
@@ -23,6 +24,7 @@ class StartApp(
                     loginUi.execute()
                 }
                 sessionManager.setSession(session)
+                viewMainManu()
             } catch (e: Exception) {
                 viewer.logError("Something went wrong: ${e.message}")
             }

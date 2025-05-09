@@ -14,19 +14,17 @@ class GetAllProjectsUi(
         val projects = listProjectsUseCase()
         val projectsUUIDs = mutableListOf<UUID>()
 
-        viewer.logMessage("+----------------------+----------------------+----------------------+")
-        viewer.logMessage("| Project ID           | Name                 | Created By           |")
-        viewer.logMessage("+----------------------+----------------------+----------------------+")
+        viewer.logMessage("+----------------------+----------------------+")
+        viewer.logMessage("| Project Number       | Name                 |")
+        viewer.logMessage("+----------------------+----------------------+")
 
         projects.forEachIndexed { index, project ->
             viewer.logMessage(
-                "| $index | ${project.name.padEnd(20)} | ${
-                    project.creatorId.toString().padEnd(20)
-                } |"
+                "| ${(index + 1).toString().padEnd(20)} | ${project.name.padEnd(20)} |"
             )
             projectsUUIDs.add(project.id)
         }
-        viewer.logMessage("+----------------------+----------------------+----------------------+")
+        viewer.logMessage("+----------------------+----------------------+")
 
         return projectsUUIDs
     }
