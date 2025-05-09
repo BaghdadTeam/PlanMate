@@ -3,31 +3,34 @@ package org.baghdad.logic.usecase
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import java.util.*
 
 class StateTransitionUseCase(
     private val taskRepository: TaskRepository,
     private val projectStatesRepository: ProjectStatesRepository,
+    private val userRepository: UserRepository,
     private val auditRepository: AuditRepository
 ) {
-    suspend fun changeTaskState(taskId: UUID, newStateId: UUID, user: UserEntity) {
+    suspend fun changeTaskState(taskId: UUID, newStateId: UUID, userId: UUID) {
         val task = taskRepository.getTaskById(taskId)
 
         val currentState = projectStatesRepository.getStateById(task.stateId)
             ?: throw Exception("Current state not found")
 
         if (currentState.id == newStateId) {
-            println("Task is already in the requested state. No changes made.")
-            return
+            throw Exception("Task is already in the requested state. No changes made.")
         }
         validateNewState(task.projectId, newStateId)
 
         val updateSuccessful = updateTaskState(taskId, newStateId)
         if (!updateSuccessful) throw Exception("Failed to update task state")
+
+        val user = userRepository.getUserById(userId)
 
         logStateChange(taskId, task.stateId, newStateId, user)
     }
@@ -46,7 +49,6 @@ class StateTransitionUseCase(
         taskId: UUID, oldStateId: UUID, newStateId: UUID, user: UserEntity
     ) {
         val action = "${user.username} changed task $taskId from state $oldStateId to $newStateId"
-        println("Task $taskId moved from $oldStateId to $newStateId by ${user.username}")
 
         val auditEntry = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,

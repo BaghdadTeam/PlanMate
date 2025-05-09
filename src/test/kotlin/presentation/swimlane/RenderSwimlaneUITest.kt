@@ -1,4 +1,4 @@
-package ui
+package presentation.swimlane
 
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -6,13 +6,13 @@ import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.ui.SwimlaneUI
+import org.baghdad.presentation.swimlane.RenderSwimlaneUI
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class SwimlaneUITest {
+class RenderSwimlaneUITest {
     private val viewServiceUseCase: ViewServiceUseCase = mockk()
-    private val ui = SwimlaneUI(viewServiceUseCase)
+    private val ui = RenderSwimlaneUI(viewServiceUseCase)
 
 
     @Test
@@ -24,7 +24,7 @@ class SwimlaneUITest {
         } returns Result.failure(Exception("Failed to fetch data"))
 
         // when
-        val result = ui.renderAsciiSwimlane(projectId)
+        val result = ui.invoke(projectId)
 
         // then
         result shouldBe "Error: Failed to fetch data"
@@ -49,7 +49,7 @@ class SwimlaneUITest {
         } returns Result.success(mapOf(state to listOf(task)))
 
         // when
-        val result = ui.renderAsciiSwimlane(projectId)
+        val result = ui.invoke(projectId)
 
         // then
         result.contains("To Do") shouldBe true
