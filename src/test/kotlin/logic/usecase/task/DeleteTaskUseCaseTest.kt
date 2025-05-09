@@ -3,7 +3,6 @@ package logic.usecase.task
 import helpers.task.TaskEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.Entities
@@ -54,7 +53,7 @@ class DeleteTaskUseCaseTest {
             userRepository.getUserById(user.id)
             auditRepository.addAuditEntry(match {
                 it.entityUnderAudit == Entities.Task.name &&
-                        it.entityId == taskId &&
+                        it.projectId == taskId &&
                         it.user == user &&
                         it.action == "has been deleted task ${task.title}"
             })

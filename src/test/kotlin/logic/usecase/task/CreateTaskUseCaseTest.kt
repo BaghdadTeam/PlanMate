@@ -57,7 +57,7 @@ class CreateTaskUseCaseTest {
 
         val audit = auditSlot.captured
         assertThat(audit.entityUnderAudit).isEqualTo("Task")
-        assertThat(audit.entityId).isInstanceOf(UUID::class.java) // assuming ID is auto-generated or assigned
+        assertThat(audit.projectId).isInstanceOf(UUID::class.java) // assuming ID is auto-generated or assigned
         assertThat(audit.action).isEqualTo("created task ${task.title}")
     }
 
