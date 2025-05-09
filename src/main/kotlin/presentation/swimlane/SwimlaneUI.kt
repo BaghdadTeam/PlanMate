@@ -17,15 +17,15 @@ class SwimlaneUI(
     private val reader: Reader,
     private val viewer: Viewer
 
-    ) {
-    suspend fun invoke(projectId: UUID) {
+) {
+    fun invoke(projectId: UUID) {
         try {
-            renderSwimlaneUI(projectId)
+//            renderSwimlaneUI(projectId)
 
 
-        while (true) {
-            println(
-                """
+            while (true) {
+                println(
+                    """
                    == Plan Mate ==
 
                 Choose an action:
@@ -34,40 +34,40 @@ class SwimlaneUI(
                 3- View Audit Log
                 0- Back to Previous Screen
             """.trimIndent()
-            )
+                )
 
-            print("Enter your choice: ")
-            when (reader.readInput()?.toIntOrNull()) {
-                1 -> {
-                    println("Navigating to Project States Screen...")
-                    projectStatesUI.invoke(projectId)
-                }
+                print("Enter your choice: ")
+                when (reader.readInput()?.toIntOrNull()) {
+                    1 -> {
+                        println("Navigating to Project States Screen...")
+                        projectStatesUI.invoke(projectId)
+                    }
 
-                2 -> {
-                    println("Navigating to Tasks Screen...")
-                    taskUI.execute(projectId)
-                }
+                    2 -> {
+                        println("Navigating to Tasks Screen...")
+                        taskUI.execute(projectId)
+                    }
 
-                3 -> {
-                    println("Navigating to Audit Log Screen...")
-                    auditByProjectIdUI.execute(projectId)
-                }
+                    3 -> {
+                        println("Navigating to Audit Log Screen...")
+                        auditByProjectIdUI.execute(projectId)
+                    }
 
-                0 -> {
-                    println("Returning to the previous screen...")
-                    return
-                }
+                    0 -> {
+                        println("Returning to the previous screen...")
+                        return
+                    }
 
-                null -> {
-                    println("Invalid input. Please enter a number.")
-                }
+                    null -> {
+                        println("Invalid input. Please enter a number.")
+                    }
 
-                else -> {
-                    println("Invalid choice. Please try again.")
+                    else -> {
+                        println("Invalid choice. Please try again.")
+                    }
                 }
+                println()
             }
-            println()
-        }
         } catch (exception: Exception) {
 
         }

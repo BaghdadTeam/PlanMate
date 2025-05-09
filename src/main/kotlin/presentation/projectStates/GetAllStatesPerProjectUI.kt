@@ -18,9 +18,8 @@ class GetAllStatesPerProjectUI(
             runBlocking {
                 val states = useCase.invoke(projectId)
                 if (states.isEmpty()) {
-                    viewer.logMessage("No states found for project ID: $projectId")
+                    viewer.logMessage("No states found for this project")
                 } else {
-                    viewer.logMessage("States for project ID: $projectId")
                     states.forEachIndexed { index, state ->
                         viewer.logMessage("${index + 1}. ${state.name}")
                         statesUUIDs.add(state.id)

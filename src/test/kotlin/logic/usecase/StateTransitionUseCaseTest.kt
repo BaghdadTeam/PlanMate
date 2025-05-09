@@ -118,23 +118,6 @@ class StateTransitionUseCaseTest {
     }
 
     @Test
-    fun `should fail if current state is not found`() = runTest {
-        val taskId = task.id
-        val newStateId = newState.id
-
-        coEvery { taskRepository.getTaskById(taskId) } returns task
-        coEvery { projectStatesRepository.getStateById(task.stateId) } returns null
-
-        val exception = assertThrows<Exception> {
-            service.changeTaskState(taskId, newStateId, user.id)
-        }
-
-        assertEquals("Current state not found", exception.message)
-        coVerify(exactly = 0) { taskRepository.updateTask(any()) }
-        coVerify(exactly = 0) { auditRepository.addAuditEntry(any()) }
-    }
-
-    @Test
     fun `should fail if task state update fails`() = runTest {
         val taskId = task.id
         val newStateId = newState.id

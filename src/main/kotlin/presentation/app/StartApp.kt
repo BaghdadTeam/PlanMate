@@ -2,6 +2,7 @@ package org.baghdad.presentation.app
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.exceptions.SessionEndedException
 import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.output.Viewer

@@ -13,20 +13,7 @@ class GetAuditByProjectIdUseCase(
 ) {
     suspend operator fun invoke(projectId: UUID): List<AuditLogEntity> {
         val projectAudit = auditRepository.getAuditByProjectId(projectId)
-        val tasksIds = taskRepository.getTasksByProjectId(projectId).map { it.id }
-        val statesIds = projectStatesRepository.getAllStatesPerProject(projectId).map { it.id }
-
-        val tasksStateAudit = statesIds.map { stateId ->
-            auditRepository.getAuditByProjectId(stateId)
-        }.flatten()
-
-        val tasksAudit = tasksIds.map { taskId ->
-            auditRepository.getAuditByProjectId(taskId)
-        }.flatten()
-
-        val auditLog = projectAudit + tasksStateAudit + tasksAudit
-
-        return auditLog.sortedByDescending { it.timestamp }
+        return projectAudit.sortedByDescending { it.timestamp }
     }
 
 }

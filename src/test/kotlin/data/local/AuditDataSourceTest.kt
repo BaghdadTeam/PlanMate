@@ -78,7 +78,7 @@ class AuditDataSourceTest {
         val result = auditDataSource.getAuditByProjectId(randomUUID)
 
         // Then
-        assertThat(result[0].entityId.toString() == randomUUID.toString()).isTrue()
+        assertThat(result[0].projectId.toString() == randomUUID.toString()).isTrue()
     }
 
     @Test
@@ -183,7 +183,7 @@ class AuditDataSourceTest {
     }
 
     @Test
-    fun `should throw exception when entityId exception when not match uuid and entity type in getAuditByTaskId`()= runTest {
+    fun `should throw exception when projectId exception when not match uuid and entity type in getAuditByTaskId`()= runTest {
 
         // Given
         val randomUUID = UUID.randomUUID()
@@ -203,7 +203,7 @@ class AuditDataSourceTest {
     }
 
     @Test
-    fun `should throw exception when entityId exception when not match uuid and entity type in getAuditByProjectId`() = runTest{
+    fun `should throw exception when projectId exception when not match uuid and entity type in getAuditByProjectId`() = runTest{
         // Given
         val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(

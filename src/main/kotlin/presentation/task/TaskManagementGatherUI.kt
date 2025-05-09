@@ -25,7 +25,11 @@ class TaskManagementGatherUI(
 
 
     private fun showOptions(projectId: UUID) {
-        val project =runBlocking {viewServiceUseCase.swimlane(projectId) }
+        val project =try {
+            runBlocking {viewServiceUseCase.swimlane(projectId) }
+        }catch (_:Exception){
+            emptyMap()
+        }
         viewer.logMessage("")
         viewer.logMessage("1. Create Task")
         viewer.logMessage("2. Edit Task")

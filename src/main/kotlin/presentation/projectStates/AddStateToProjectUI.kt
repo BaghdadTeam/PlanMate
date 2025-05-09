@@ -25,7 +25,7 @@ class AddStateToProjectUI(
     }
 
     private fun promptForStateDetails(userId: UUID , projectId:UUID): StateEntity? {
-        val name = promptForStateName() ?: return null
+        val name = promptForStateName()
 
         return StateEntity(
             name = name,
@@ -34,7 +34,7 @@ class AddStateToProjectUI(
         )
     }
 
-    private fun promptForStateName(): String? {
+    private fun promptForStateName(): String {
         while (true) {
             viewer.logMessage("Enter the name of the new state:")
             val name = reader.readInput()
