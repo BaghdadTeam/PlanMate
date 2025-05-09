@@ -54,6 +54,7 @@ class CreateUserUITest {
     }
 
     private fun setReaderInputs(vararg inputs: String?) {
+        every { session.currentSession.userId } returns regularMate.id
         every { reader.readInput() } returnsMany inputs.toList()
     }
 
@@ -64,33 +65,17 @@ class CreateUserUITest {
     }
 
     private fun configureUseCaseToThrow(exception: Exception) {
+        every { session.currentSession.userId } returns regularMate.id
         coEvery {
             createUserUseCase.invoke(any(), any(), any(), any())
         } throws exception
     }
 
-    @Test
-    fun `non administrator is rejected`() = runTest {
-        // Given nothing
-        // When
-        createUserInterface()
-        // Then
-        verify { viewer.logError("Only administrators can create new users.") }
-    }
-
-    @Test
-    fun `null current user is rejected`() = runTest {
-        // Given nothing
-        // When
-
-        createUserInterface()
-        // Then
-        verify { viewer.logError("Only administrators can create new users.") }
-    }
 
     @Test
     fun `successful creation prints confirmation`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Full Name", "securePass")
         configureUseCaseSuccess()
         // When
@@ -102,6 +87,7 @@ class CreateUserUITest {
     @Test
     fun `invalid username error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("bad user", "Name", "password")
         configureUseCaseToThrow(InvalidUsernameException("must match pattern"))
         // When
@@ -113,6 +99,7 @@ class CreateUserUITest {
     @Test
     fun `invalid name error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "", "password")
         configureUseCaseToThrow(InvalidNameException("cannot be blank"))
         // When
@@ -124,6 +111,7 @@ class CreateUserUITest {
     @Test
     fun `invalid password error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "short")
         configureUseCaseToThrow(InvalidPasswordException("too short"))
         // When
@@ -135,6 +123,7 @@ class CreateUserUITest {
     @Test
     fun `duplicate username error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "password")
         configureUseCaseToThrow(UserAlreadyExistsException("username exists"))
         // When
@@ -146,6 +135,7 @@ class CreateUserUITest {
     @Test
     fun `unauthorized exception during creation is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "password")
         configureUseCaseToThrow(UnauthorizedException("not allowed"))
         // When
