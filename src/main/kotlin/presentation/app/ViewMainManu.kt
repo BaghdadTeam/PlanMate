@@ -5,6 +5,7 @@ import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.project.ProjectUi
 import org.baghdad.presentation.swimlane.SwimlaneUI
 import org.baghdad.presentation.user.CreateUserUI
+import kotlin.system.exitProcess
 
 class ViewMainManu(
     private val projectUi: ProjectUi,
@@ -25,12 +26,15 @@ class ViewMainManu(
                     if (projectId == null) {
                         continue
                     } else {
-                        swimlaneUI(projectId)
+                        swimlaneUI.invoke(projectId)
                     }
                 }
 
                 2 -> createUserUI.invoke()
-                3 -> break
+                0 -> {
+                    viewer.logMessage("Goodbye!")
+                    exitProcess(0)
+                }
             }
 
         }
