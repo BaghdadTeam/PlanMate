@@ -25,7 +25,7 @@ class TaskManagementGatherUI(
 
 
     private fun showOptions(projectId: UUID) {
-//        val project =runBlocking {viewServiceUseCase.swimlane(projectId) }
+        val project =runBlocking {viewServiceUseCase.swimlane(projectId) }
         viewer.logMessage("")
         viewer.logMessage("1. Create Task")
         viewer.logMessage("2. Edit Task")
@@ -35,9 +35,9 @@ class TaskManagementGatherUI(
 
         when (reader.readInput()?.trim()) {
             "1" -> createTaskUI.execute(projectId)
-//            "2" -> promptEdit(project.values.flatten())
-//            "3" -> promptDelete(project.values.flatten())
-//            "4" -> changeTaskStateUI.execute(project.keys.toList(),project.values.flatten())
+            "2" -> promptEdit(project.values.flatten())
+            "3" -> promptDelete(project.values.flatten())
+            "4" -> changeTaskStateUI.execute(project.keys.toList(),project.values.flatten())
             else -> {
                 viewer.logError("Invalid choice. Please try again.")
 //                showOptions(projectId, tasksStatesIds, tasks)

@@ -42,7 +42,7 @@ class RenderSwimlaneUI(
             """.trimIndent()
 
         } else {
-            throw Exception("Error fetching swimlane data")
+            throw Exception("Error")
         }
     }
 }

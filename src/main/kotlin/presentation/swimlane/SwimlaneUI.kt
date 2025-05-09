@@ -1,6 +1,10 @@
+package org.baghdad.presentation.swimlane
+
 import org.baghdad.logic.usecase.ViewServiceUseCase
+import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.ProjectStatesUI
-import org.baghdad.presentation.swimlane.RenderSwimlaneUI
 import org.baghdad.presentation.task.TaskManagementGatherUI
 import java.util.UUID
 
@@ -8,13 +12,17 @@ class SwimlaneUI(
     private val renderSwimlaneUI: RenderSwimlaneUI,
     private val projectStatesUI: ProjectStatesUI,
     private val taskUI: TaskManagementGatherUI,
-//    private val auditUI: AuditUI,
-    private val inputProvider: () -> String? = { readLine() },
-    private val viewServiceUseCase: ViewServiceUseCase
-) {
+    private val auditByProjectIdUI: ShowAuditByProjectIdUI,
+    private val viewServiceUseCase: ViewServiceUseCase,
+    private val reader: Reader,
+    private val viewer: Viewer
+
+    ) {
     suspend fun invoke(projectId: UUID) {
-        renderSwimlaneUI.invoke(projectId)
-        val project = viewServiceUseCase.swimlane(projectId)
+        try {
+            renderSwimlaneUI(projectId)
+
+
         while (true) {
             println(
                 """
@@ -29,7 +37,7 @@ class SwimlaneUI(
             )
 
             print("Enter your choice: ")
-            when (inputProvider()?.toIntOrNull()) {
+            when (reader.readInput()?.toIntOrNull()) {
                 1 -> {
                     println("Navigating to Project States Screen...")
                     projectStatesUI.invoke(projectId)
@@ -37,13 +45,13 @@ class SwimlaneUI(
 
                 2 -> {
                     println("Navigating to Tasks Screen...")
-                    taskUI.execute(projectId, project.keys.toList(), project.values.flatten())
+                    taskUI.execute(projectId)
                 }
 
-//                3 -> {
-//                    println("Navigating to Audit Log Screen...")
-//                    auditUI.invoke(projectId)
-//                }
+                3 -> {
+                    println("Navigating to Audit Log Screen...")
+                    auditByProjectIdUI.execute(projectId)
+                }
 
                 0 -> {
                     println("Returning to the previous screen...")
@@ -59,6 +67,9 @@ class SwimlaneUI(
                 }
             }
             println()
+        }
+        } catch (exception: Exception) {
+
         }
     }
 }
