@@ -9,9 +9,8 @@ class RenderSwimlaneUI(
 ) {
 
     operator fun invoke(projectId: UUID): String {
-        val result = runBlocking { viewServiceUseCase.swimlane(projectId) }
-        return if (result.isSuccess) {
-            val swimlaneData = result.getOrNull() ?: emptyMap()
+        val swimlaneData = runBlocking { viewServiceUseCase.swimlane(projectId) }
+         if(swimlaneData.isNotEmpty()) {
 
             val states = swimlaneData.keys.toList()
 
@@ -43,7 +42,7 @@ class RenderSwimlaneUI(
             """.trimIndent()
 
         } else {
-            "Error: ${result.exceptionOrNull()?.message}"
+            throw Exception("Error fetching swimlane data")
         }
     }
 }
