@@ -9,6 +9,6 @@ class GetStateByIdUseCase (
 ) {
 
     suspend fun invoke(stateId: UUID): StateEntity {
-        return repository.getStateById(stateId) ?: throw Exception("No state found")
+        return repository.getStateById(stateId)
     }
 }

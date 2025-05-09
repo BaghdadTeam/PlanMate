@@ -17,7 +17,6 @@ class EditProjectStatesUseCase (
 
     suspend fun invoke(stateId: UUID, newState: StateEntity , userId: UUID){
         val user = userRepository.getUserById(userId)
-      //  if (user.type.name != UserType.Admin.name) throw Exception("Only Admin can add tasks")
         repository.editState(stateId, newState)
         val audit = createAudit(newState, user)
         auditRepository.addAuditEntry(audit)
@@ -27,7 +26,7 @@ class EditProjectStatesUseCase (
         val action = "create ${state.name} state is updated successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            entityId = state.id,
+            projectId = state.projectId,
             action = action,
             user = user,
         )
