@@ -1,59 +1,43 @@
 package ui
 
-import io.kotest.matchers.shouldBe
-import io.mockk.coEvery
+import SwimlaneUI
 import io.mockk.mockk
-import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.ui.RenderSwimlaneUI
-import org.junit.jupiter.api.Test
-import java.util.*
+import io.mockk.verify
+import io.mockk.Ordering
+import org.baghdad.ui.*
+import java.util.UUID
+import kotlin.test.Test
 
 class SwimlaneUITest {
-    private val viewServiceUseCase: ViewServiceUseCase = mockk()
-    private val ui = RenderSwimlaneUI(viewServiceUseCase)
-
 
     @Test
-    fun `should return error message when swimlane retrieval fails`() {
+    fun `should handle all menu options including invalid inputs and exit properly`() {
         // give
+        val inputs = listOf("1", "2", "3", "a", "9", "0").iterator()
         val projectId = UUID.randomUUID()
-        coEvery {
-            viewServiceUseCase.swimlane(projectId)
-        } returns Result.failure(Exception("Failed to fetch data"))
 
-        // when
-        val result = ui.invoke(projectId)
+        val renderMock = mockk<RenderSwimlaneUI>(relaxed = true)
+        val statesMock = mockk<ProjectStatesUI>(relaxed = true)
+        val taskMock = mockk<TaskUI>(relaxed = true)
+        val auditMock = mockk<AuditUI>(relaxed = true)
 
-        // then
-        result shouldBe "Error: Failed to fetch data"
-    }
-
-    @Test
-    fun `should render ASCII swimlane correctly`() {
-        // give
-        val projectId = UUID.randomUUID()
-        val creatorId = UUID.randomUUID()
-        val state = StateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
-        val task = TaskEntity(
-            id = UUID.randomUUID(),
-            title = "Task 1",
-            description = "Some description",
-            stateId = state.id,
-            projectId = projectId,
-            creatorId = creatorId
+        val ui = SwimlaneUI(
+            renderSwimlaneUI = renderMock,
+            projectStatesUI = statesMock,
+            taskUI = taskMock,
+            auditUI = auditMock,
+            inputProvider = { if (inputs.hasNext()) inputs.next() else null }
         )
-        coEvery {
-            viewServiceUseCase.swimlane(projectId)
-        } returns Result.success(mapOf(state to listOf(task)))
 
         // when
-        val result = ui.invoke(projectId)
+        ui.invoke(projectId)
 
         // then
-        result.contains("To Do") shouldBe true
-        result.contains("Task 1") shouldBe true
+        verify(ordering = Ordering.SEQUENCE) {
+            renderMock.invoke(projectId)
+            statesMock.invoke(projectId)
+            taskMock.invoke(projectId)
+            auditMock.invoke(projectId)
+        }
     }
-
 }

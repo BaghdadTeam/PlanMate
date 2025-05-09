@@ -1,24 +1,22 @@
-package org.baghdad.ui
-
-import java.util.Scanner
+import org.baghdad.ui.RenderSwimlaneUI
 import java.util.UUID
 
 class SwimlaneUI(
     private val renderSwimlaneUI: RenderSwimlaneUI,
     private val projectStatesUI: ProjectStatesUI,
     private val taskUI: TaskUI,
-    private val auditUI: AuditUI
+    private val auditUI: AuditUI,
+    private val inputProvider: () -> String? = { readLine() }
 ) {
     fun invoke(projectId: UUID) {
         var shouldContinue = true
-        val scanner = Scanner(System.`in`)
-        renderSwimlaneUI.invoke(projectId) // Call to render the Swimlane with dynamic data
+        renderSwimlaneUI.invoke(projectId)
 
         while (shouldContinue) {
             println(
                 """
-                                   == Plan Mate ==
-                                   
+                   == Plan Mate ==
+
                 Choose an action:
                 1- Manage States (Admin Only)
                 2- Manage Tasks
@@ -28,7 +26,7 @@ class SwimlaneUI(
             )
 
             print("Enter your choice: ")
-            when (scanner.nextLine().toIntOrNull()) {
+            when (inputProvider()?.toIntOrNull()) {
                 1 -> {
                     println("Navigating to Project States Screen...")
                     projectStatesUI.invoke(projectId)
@@ -47,7 +45,6 @@ class SwimlaneUI(
                 0 -> {
                     println("Returning to the previous screen...")
                     shouldContinue = false
-                    return
                 }
 
                 null -> {
@@ -60,6 +57,5 @@ class SwimlaneUI(
             }
             println()
         }
-        scanner.close()
     }
 }
