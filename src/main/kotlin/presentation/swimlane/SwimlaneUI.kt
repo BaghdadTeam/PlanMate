@@ -1,18 +1,21 @@
-import org.baghdad.ui.RenderSwimlaneUI
+import org.baghdad.logic.usecase.ViewServiceUseCase
+import org.baghdad.presentation.projectStates.ProjectStatesUI
+import org.baghdad.presentation.swimlane.RenderSwimlaneUI
+import org.baghdad.presentation.task.TaskManagementGatherUI
 import java.util.UUID
 
 class SwimlaneUI(
     private val renderSwimlaneUI: RenderSwimlaneUI,
     private val projectStatesUI: ProjectStatesUI,
-    private val taskUI: TaskUI,
-    private val auditUI: AuditUI,
-    private val inputProvider: () -> String? = { readLine() }
+    private val taskUI: TaskManagementGatherUI,
+//    private val auditUI: AuditUI,
+    private val inputProvider: () -> String? = { readLine() },
+    private val viewServiceUseCase: ViewServiceUseCase
 ) {
-    fun invoke(projectId: UUID) {
-        var shouldContinue = true
+    suspend fun invoke(projectId: UUID) {
         renderSwimlaneUI.invoke(projectId)
-
-        while (shouldContinue) {
+        val project = viewServiceUseCase.swimlane(projectId)
+        while (true) {
             println(
                 """
                    == Plan Mate ==
@@ -34,17 +37,17 @@ class SwimlaneUI(
 
                 2 -> {
                     println("Navigating to Tasks Screen...")
-                    taskUI.invoke(projectId)
+                    taskUI.execute(projectId, project.keys.toList(), project.values.flatten())
                 }
 
-                3 -> {
-                    println("Navigating to Audit Log Screen...")
-                    auditUI.invoke(projectId)
-                }
+//                3 -> {
+//                    println("Navigating to Audit Log Screen...")
+//                    auditUI.invoke(projectId)
+//                }
 
                 0 -> {
                     println("Returning to the previous screen...")
-                    shouldContinue = false
+                    return
                 }
 
                 null -> {
