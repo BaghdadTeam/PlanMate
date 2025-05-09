@@ -15,23 +15,21 @@ class AddStateToProjectUI(
     private val reader: Reader
 ) {
 
-    fun execute() {
-        val session = sessionManager.currentSession
+    fun execute(projectId: UUID) {
+        val userId = sessionManager.currentSession.userId
 
-        val userId = session.userId
 
-        val state = promptForStateDetails(userId) ?: return
+        val state = promptForStateDetails(userId , projectId) ?: return
 
         tryAddState(state, userId)
     }
 
-    private fun promptForStateDetails(userId: UUID): StateEntity? {
+    private fun promptForStateDetails(userId: UUID , projectId:UUID): StateEntity? {
         val name = promptForStateName() ?: return null
-        val projectId = promptForProjectId() ?: return null
 
         return StateEntity(
             name = name,
-            projectId = UUID.fromString(projectId),
+            projectId = projectId,
             creatorId = userId
         )
     }
@@ -45,14 +43,6 @@ class AddStateToProjectUI(
         }
     }
 
-    private fun promptForProjectId(): String? {
-        while (true) {
-            viewer.logMessage("Enter the project ID for the state:")
-            val projectId = reader.readInput()
-            if (!projectId.isNullOrBlank()) return projectId
-            viewer.logError("Project ID cannot be blank. Please try again.")
-        }
-    }
 
     private fun tryAddState(state: StateEntity, userId: UUID) {
         try {
