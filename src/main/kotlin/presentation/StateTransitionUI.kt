@@ -4,8 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -16,7 +15,6 @@ class StateTransitionUI(
     private val session: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader,
-    private val session: SessionManager,
 ) {
     fun execute(tasksStates: List<StateEntity>, tasks: List<TaskEntity>) {
 
