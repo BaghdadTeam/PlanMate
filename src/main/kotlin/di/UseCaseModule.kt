@@ -6,6 +6,7 @@ import org.baghdad.logic.usecase.audit.AddAuditUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.baghdad.logic.usecase.authentication.LoginUseCase
+import org.baghdad.logic.usecase.authentication.LogoutUseCase
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
 import org.baghdad.logic.usecase.project.EditProjectUseCase
@@ -33,7 +34,6 @@ val useCaseModule = module {
     single { CreateTaskUseCase(get(), get(), get()) }
     single { DeleteTaskUseCase(get(), get(), get()) }
     single { UpdateTaskUseCase(get(), get(), get()) }
-
     single { GetTasksByStateIdUseCase(get()) }
     single { GetAllTasksUseCase(get()) }
     single { GetTasksByProjectIdUseCase(get()) }
@@ -60,7 +60,7 @@ val useCaseModule = module {
 
     // region  ::  Auth Use Cases  ::
     single { LoginUseCase(get(), get(), get()) }
-
+    single{ LogoutUseCase(get())}
     // endregion
 
     // region :: User ::
@@ -71,7 +71,7 @@ val useCaseModule = module {
     // region :: Audit ::
     single { AddAuditUseCase(get()) }
     single { GetAuditByTaskIdUseCase(get()) }
-    single { GetAuditByProjectIdUseCase(get()) }
+    single { GetAuditByProjectIdUseCase(get() , get() , get()) }
     // endregion
 
     // region :: Swimlane ::

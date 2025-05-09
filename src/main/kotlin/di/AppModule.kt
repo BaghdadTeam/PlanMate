@@ -16,7 +16,7 @@ val appModule = module {
     single<TokenProvider> { TokenProviderImpl() }
     single<Viewer> { ViewerImpl() }
     single<Reader> { ReaderImpl() }
-    single { StartApp(get(), get(), get() , get()) }
-    single{ ViewMainManu(get(), get(), get(), get(), get()) }
+    single { StartApp(get(), get(), get(), get()) }
+    single { ViewMainManu(get(), get(), get(), get(), get()) }
     single { SessionManager(get()) }
 }
