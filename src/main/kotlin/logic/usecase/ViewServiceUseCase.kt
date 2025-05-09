@@ -15,16 +15,14 @@ class ViewServiceUseCase(
     suspend fun swimlane(projectId: UUID): Map<StateEntity, List<TaskEntity>> {
          try {
             val stateEntities = stateRepository.getAllStatesPerProject(projectId)
-            val states = stateEntities.map { stateEntity ->
-                StateEntity(
-                    id = stateEntity.id,
-                    name = stateEntity.name,
-                    projectId = stateEntity.projectId,
-                    creatorId = stateEntity.creatorId
-                )
-            }
+             if(stateEntities.isEmpty()){
+                 return emptyMap()
+             }
 
             val taskEntities = taskRepository.getTasksByProjectId(projectId)
+             if(taskEntities.isEmpty()){
+                 throw Exception("No tasks found for project $projectId")
+             }
             val tasks = taskEntities.map { taskEntity ->
                 TaskEntity(
                     id = taskEntity.id,
@@ -36,6 +34,14 @@ class ViewServiceUseCase(
 
                 )
             }
+             val states = stateEntities.map { stateEntity ->
+                 StateEntity(
+                     id = stateEntity.id,
+                     name = stateEntity.name,
+                     projectId = stateEntity.projectId,
+                     creatorId = stateEntity.creatorId
+                 )
+             }
 
             val tasksByStateId: Map<String, List<TaskEntity>> = tasks.groupBy { it.stateId.toString() }
             val groupedTasks = states.associateWith { state ->
@@ -44,7 +50,7 @@ class ViewServiceUseCase(
 
             return groupedTasks
         } catch (e: Exception) {
-                Exception(
+                throw Exception(
                     "Failed to fetch states or tasks for project $projectId: ${e.message}",
                     e
 

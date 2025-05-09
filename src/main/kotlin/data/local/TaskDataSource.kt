@@ -20,9 +20,6 @@ class TaskDataSource(
 
     suspend fun getTasksByProjectId(projectId: UUID): List<TaskEntity> {
         val tasks = loadTasks().filter { it.projectId == projectId }
-        if (tasks.isEmpty()) {
-            throw TasksNotFoundException("No tasks found for project ID: $projectId")
-        }
         return tasks
     }
 

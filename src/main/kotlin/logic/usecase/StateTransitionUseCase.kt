@@ -52,7 +52,7 @@ class StateTransitionUseCase(
 
         val auditEntry = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            entityId = taskId,
+            projectId = taskId,
             action = action,
             user = user,
         )
