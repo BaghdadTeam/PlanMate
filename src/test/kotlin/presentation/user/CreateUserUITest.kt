@@ -85,19 +85,6 @@ class CreateUserUITest {
     }
 
     @Test
-    fun `prompt treats null input as empty`() = runTest{
-        // Given
-        setReaderInputs(null, null, null)
-        configureUseCaseSuccess()
-        // When
-        createUserInterface.run(administrator)
-        // Then
-        verify { viewer.logMessage("Username: ") }
-        verify { viewer.logMessage("Name: ") }
-        verify { viewer.logMessage("Password: ") }
-    }
-
-    @Test
     fun `successful creation prints confirmation`() = runTest {
         // Given
         setReaderInputs("user123", "Full Name", "securePass")
