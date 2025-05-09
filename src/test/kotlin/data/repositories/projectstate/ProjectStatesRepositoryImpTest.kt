@@ -2,9 +2,7 @@ package data.repositories.projectstate
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
@@ -12,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class ProjectStatesRepositoryImpTest {
+class ProjectStatesRepositoryImpTest{
 
     private lateinit var dataSource: ProjectStatesDataSource
     private lateinit var projectStatesDataSource: ProjectStatesRepositoryImp
@@ -29,7 +27,7 @@ class ProjectStatesRepositoryImpTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = projectStates[0].projectId
-        coEvery { dataSource.getAllStatesForProject() } returns projectStates
+        coEvery { dataSource.getAllStatesForProject(projectId) } returns projectStates
 
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
@@ -43,7 +41,7 @@ class ProjectStatesRepositoryImpTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = UUID.randomUUID()
-        coEvery { dataSource.getAllStatesForProject() } returns projectStates
+        coEvery { dataSource.getAllStatesForProject(projectId) } returns projectStates
 
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
@@ -76,4 +74,31 @@ class ProjectStatesRepositoryImpTest {
 
         coVerify { dataSource.createState(state) }
     }
+
+    @Test
+    fun `should update state when can edit state successfully`() = runTest {
+        val state = ProjectStatesEntityTestData.inProgressState()
+        val newState = state.copy(name = "Doing")
+
+        coEvery { projectStatesDataSource.createState(state)} just Runs
+        coEvery { projectStatesDataSource.editState(state.id, newState) } just Runs
+
+        val result = projectStatesDataSource.getAllStatesPerProject(state.projectId)
+
+        assert(result.contains(newState))
+    }
+
+    @Test
+    fun `should delete state when can delete it successfully`() = runTest {
+        val state = ProjectStatesEntityTestData.inProgressState()
+
+        coEvery { projectStatesDataSource.createState(state)} just Runs
+        coEvery { projectStatesDataSource.deleteState(state.id) } just Runs
+
+        val result = projectStatesDataSource.getAllStatesPerProject(state.projectId)
+
+        val finalResult = result.find { it.id == state.id }
+        Truth.assertThat(finalResult).isNull()
+    }
+
 }
