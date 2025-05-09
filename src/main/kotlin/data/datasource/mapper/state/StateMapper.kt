@@ -19,6 +19,10 @@ class StateMapper : CsvMapper<StateEntity> {
         )
     }
 
+    override fun getId(item: StateEntity): String {
+        return item.id.toString()
+    }
+
     override fun serializer(item: StateEntity): String {
         return "${item.id},${item.name},${item.projectId},${item.creatorId}"
     }

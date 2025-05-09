@@ -1,7 +1,8 @@
 package org.baghdad.data.datasource
 
 interface DataSource<T> {
-    fun loadAll(): List<T>
-    fun update(items: List<T>)
-    fun append(item: T)
+    suspend fun loadAll(): List<T>
+    suspend fun update(item: T)
+    suspend fun append(item: T)
+    suspend fun delete(item: T)
 }

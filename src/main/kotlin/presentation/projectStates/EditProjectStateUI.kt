@@ -1,5 +1,6 @@
 package org.baghdad.presentation.projectStates
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
@@ -55,8 +56,10 @@ class EditProjectStateUI(
 
     private fun tryEditState(stateId: UUID, newState: StateEntity, userId: UUID) {
         try {
-            useCase.invoke(stateId, newState, userId)
-            viewer.logMessage("State updated successfully.")
+            runBlocking {
+                useCase.invoke(stateId, newState, userId)
+                viewer.logMessage("State updated successfully.")
+            }
         } catch (e: Exception) {
             viewer.logError("Failed to update state: ${e.message}")
         }

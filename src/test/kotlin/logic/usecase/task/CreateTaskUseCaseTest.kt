@@ -3,9 +3,11 @@ package logic.usecase.task
 import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
 import io.mockk.Called
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -43,15 +45,15 @@ class CreateTaskUseCaseTest {
     }
 
     @Test
-    fun `should create task and log audit when task is valid`() {
+    fun `should create task and log audit when task is valid`() = runTest {
         val task = TaskEntityTestData.normalTask
 
         createTaskUseCase(task, user.id)
 
-        verify { taskRepository.createTask(task) }
+        coVerify { taskRepository.createTask(task) }
 
         val auditSlot = slot<AuditLogEntity>()
-        verify { auditRepository.addAuditEntry(capture(auditSlot)) }
+        coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
         assertThat(audit.entityUnderAudit).isEqualTo("Task")
@@ -60,7 +62,7 @@ class CreateTaskUseCaseTest {
     }
 
     @Test
-    fun `should throw TaskWithMissingTitleException when title is blank`() {
+    fun `should throw TaskWithMissingTitleException when title is blank`() = runTest {
         val task = TaskEntityTestData.taskWithBlankTitle()
 
         val exception = assertThrows<TaskWithMissingTitleException> {
@@ -73,7 +75,7 @@ class CreateTaskUseCaseTest {
     }
 
     @Test
-    fun `should throw TaskWithMissingDescriptionException when description is blank`() {
+    fun `should throw TaskWithMissingDescriptionException when description is blank`() = runTest {
         val task = TaskEntityTestData.taskWithBlankDescription()
 
         val exception = assertThrows<TaskWithMissingDescriptionException> {

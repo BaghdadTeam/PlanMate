@@ -3,6 +3,7 @@ package data.local
 import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
 import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.TaskDataSource
 import org.baghdad.logic.model.entities.TaskEntity
@@ -24,10 +25,10 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `should return all tasks that is found in the data source`() {
+    fun `should return all tasks that is found in the data source`() = runTest{
         // Given
         val tasks = TaskEntityTestData.tasks
-        every { dataSource.loadAll() } returns tasks
+        coEvery { dataSource.loadAll() } returns tasks
 
         // When
         val result = taskDataSource.loadTasks()
@@ -37,23 +38,23 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `addTask should call append on data source`() {
+    fun `addTask should call append on data source`()= runTest {
         // Given
         val task = TaskEntityTestData.normalTask
-        every { dataSource.append(task) } just Runs
+        coEvery { dataSource.append(task) } just Runs
 
         // When
         taskDataSource.addTask(task)
 
         // Then
-        verify { dataSource.append(task) }
+        coVerify { dataSource.append(task) }
     }
 
     @Test
-    fun `should return task with the same id when calling getTaskById`() {
+    fun `should return task with the same id when calling getTaskById`()= runTest {
         // Given
         val tasks = TaskEntityTestData.tasks
-        every { dataSource.loadAll() } returns tasks
+        coEvery { dataSource.loadAll() } returns tasks
 
         // When
         val result = taskDataSource.getTaskById(tasks[0].id)
@@ -63,10 +64,10 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `should throw TasksNotFoundException if task not found`() {
+    fun `should throw TasksNotFoundException if task not found`()= runTest {
         // Given
         val randomTask = TaskEntityTestData.randomTask
-        every { dataSource.loadAll() } returns listOf(randomTask)
+        coEvery { dataSource.loadAll() } returns listOf(randomTask)
         val taskId = UUID.randomUUID()
 
         // When & Then
@@ -77,11 +78,11 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `should return matching tasks with the same projectId when calling getTasksByProjectId`() {
+    fun `should return matching tasks with the same projectId when calling getTasksByProjectId`() = runTest{
         // Given
         val tasksInSameProject = TaskEntityTestData.tasksInSameProject
         val tasks = TaskEntityTestData.tasks
-        every { dataSource.loadAll() } returns tasks
+        coEvery { dataSource.loadAll() } returns tasks
 
         // When
         val result = taskDataSource.getTasksByProjectId(tasksInSameProject[0].projectId)
@@ -91,10 +92,10 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `should throws TasksNotFoundException if there is no tasks available for the project`() {
+    fun `should throws TasksNotFoundException if there is no tasks available for the project`() = runTest{
         // Given
         val randomTask = TaskEntityTestData.randomTask
-        every { dataSource.loadAll() } returns listOf(randomTask)
+        coEvery { dataSource.loadAll() } returns listOf(randomTask)
         val projectId = UUID.randomUUID()
 
         // When & Then
@@ -105,10 +106,10 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `should return matching tasks with the same stateId when calling getTasksByStateId`() {
+    fun `should return matching tasks with the same stateId when calling getTasksByStateId`()= runTest {
         // Given
         val tasksInSameState = TaskEntityTestData.tasksInSameState
-        every { dataSource.loadAll() } returns tasksInSameState
+        coEvery { dataSource.loadAll() } returns tasksInSameState
 
         // When
         val result = taskDataSource.getTasksByStateId(tasksInSameState[0].stateId)
@@ -118,10 +119,10 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `should throws TasksNotFoundException if there is no tasks available for the stateId`() {
+    fun `should throws TasksNotFoundException if there is no tasks available for the stateId`() = runTest{
         // Given
         val randomTask = TaskEntityTestData.randomTask
-        every { dataSource.loadAll() } returns listOf(randomTask)
+        coEvery { dataSource.loadAll() } returns listOf(randomTask)
         val stateId = UUID.randomUUID()
 
         // When & Then
@@ -132,33 +133,33 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `updateTask should replace existing task with same ID`() {
+    fun `updateTask should replace existing task with same ID`() = runTest {
         val existingTasks = TaskEntityTestData.tasks
         val updatedTask = TaskEntityTestData.normalTask.copy(
             title = "Updated Title",
             description = "Updated description"
         )
 
-        every { dataSource.loadAll() } returns existingTasks
-        every { dataSource.update(any()) } just Runs
+        coEvery { dataSource.loadAll() } returns existingTasks
+        coEvery { dataSource.update(updatedTask) } just Runs
 
         taskDataSource.updateTask(updatedTask)
 
-        verify {
+        coVerify {
             dataSource.update(match {
-                it.any { task -> task.id == updatedTask.id && task.title == "Updated Title" }
+                it.id == updatedTask.id && it.title == "Updated Title" && it.description == "Updated description"
             })
         }
     }
 
     @Test
-    fun `updateTask should throw when task not found`() {
+    fun `updateTask should throw when task not found`() = runTest{
         val existingTasks = TaskEntityTestData.tasks
         val randomId = UUID.randomUUID()
         val unknownTask =
             TaskEntityTestData.randomTask.copy(id = randomId)
 
-        every { dataSource.loadAll() } returns existingTasks
+        coEvery { dataSource.loadAll() } returns existingTasks
 
         val exception = assertThrows<TasksNotFoundException> {
             taskDataSource.updateTask(unknownTask)
@@ -168,25 +169,25 @@ class TaskDataSourceTest {
     }
 
     @Test
-    fun `deleteTask should remove task if it exists`() {
+    fun `deleteTask should remove task if it exists`() = runTest{
         val existingTasks = TaskEntityTestData.tasks
         val taskToRemove = TaskEntityTestData.normalTask
 
-        every { dataSource.loadAll() } returns existingTasks
-        every { dataSource.update(any()) } just Runs
+        coEvery { dataSource.loadAll() } returns existingTasks
+        coEvery { dataSource.update(any()) } just Runs
 
         taskDataSource.deleteTask(taskToRemove.id)
 
-        verify {
-            dataSource.update(match { list -> list.none { it.id == taskToRemove.id } })
+        coVerify {
+            dataSource.delete(match { it.id == taskToRemove.id })
         }
     }
 
     @Test
-    fun `deleteTask should throw when task not found`() {
+    fun `deleteTask should throw when task not found`() = runTest{
         val existingTasks = TaskEntityTestData.tasks
         val unknownId = UUID.randomUUID()
-        every { dataSource.loadAll() } returns existingTasks
+        coEvery { dataSource.loadAll() } returns existingTasks
 
         val exception = assertThrows<TasksNotFoundException> {
             taskDataSource.deleteTask(unknownId)

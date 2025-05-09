@@ -7,15 +7,15 @@ import org.baghdad.logic.repositories.SessionRepository
 class SessionRepositoryImpl(
     private val sessionDataSource: SessionDataSource
 ): SessionRepository {
-    override fun loadSession(): SessionEntity?{
+    override suspend fun loadSession(): SessionEntity{
             return sessionDataSource.loadSession()
     }
 
-    override fun saveSession(session: SessionEntity): Boolean {
+    override suspend fun saveSession(session: SessionEntity): Boolean {
         return sessionDataSource.saveSession(session)
     }
 
-    override fun deleteSession(): Boolean {
+    override suspend fun deleteSession(): Boolean {
         return sessionDataSource.deleteSession()
     }
 }

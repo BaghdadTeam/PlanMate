@@ -1,9 +1,7 @@
 package presentation.task
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
@@ -50,7 +48,7 @@ class CreateTaskUITest {
 
         createTaskUI.execute(projectId, stateId)
 
-        verify { createTaskUseCase(any(), any()) }
+        coVerify { createTaskUseCase(any(), any()) }
         verify { viewer.logMessage("Task created successfully.") }
     }
 
@@ -68,7 +66,7 @@ class CreateTaskUITest {
     fun `test task title is missing exception`() {
         every { reader.readInput() } returnsMany listOf("", "New Task Title", "New Task Description")
 
-        every {
+        coEvery {
             createTaskUseCase(any(), any())
         } throws TaskWithMissingTitleException("Title is missing") andThen Unit
 
@@ -82,7 +80,7 @@ class CreateTaskUITest {
     fun `test task description is missing exception`() {
         every { reader.readInput() } returnsMany listOf("New Task Title", "", "New Task Description")
 
-        every {
+        coEvery {
             createTaskUseCase(any(), any())
         } throws TaskWithMissingDescriptionException("Description is missing") andThen Unit
 
@@ -97,7 +95,7 @@ class CreateTaskUITest {
     fun `test task creation failure`() {
         every { reader.readInput() } returnsMany listOf("New Task Title", "New Task Description")
 
-        every {
+        coEvery {
             createTaskUseCase(any(), any())
         } throws RuntimeException("Unexpected error")
 

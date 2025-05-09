@@ -1,4 +1,4 @@
-package org.baghdad.utils
+package org.baghdad.logic.utils
 
 import java.security.MessageDigest
 

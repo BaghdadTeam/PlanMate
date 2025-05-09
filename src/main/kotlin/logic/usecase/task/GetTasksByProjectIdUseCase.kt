@@ -8,7 +8,7 @@ class GetTasksByProjectIdUseCase(
     private val taskRepository: TaskRepository,
 ) {
 
-    operator fun invoke(projectId: UUID): List<TaskEntity> {
+    suspend operator fun invoke(projectId: UUID): List<TaskEntity> {
         return taskRepository.getTasksByProjectId(projectId)
     }
 }

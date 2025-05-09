@@ -5,7 +5,7 @@ import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
-import java.util.UUID
+import java.util.*
 
 class ProjectDataSource(
     private val projectDataSource: DataSource<ProjectEntity>,
@@ -13,42 +13,44 @@ class ProjectDataSource(
     private val taskDataSource: DataSource<TaskEntity>
 ) {
 
-    fun createProject(project: ProjectEntity) {
+    suspend fun createProject(project: ProjectEntity) {
         projectDataSource.append(project)
     }
 
-    fun getAllProjects(): List<ProjectEntity> {
+    suspend fun getAllProjects(): List<ProjectEntity> {
         return projectDataSource.loadAll()
     }
 
-    fun getProjectById(id: UUID): ProjectEntity {
+    suspend fun getProjectById(id: UUID): ProjectEntity {
         return projectDataSource.loadAll().find { it.id == id }
-            .takeIf { it != null }?: throw ProjectNotFoundException("No project found")
+            ?: throw ProjectNotFoundException("Project with id $id not found")
     }
 
-    fun updateProject(project: ProjectEntity) {
-        val allData = projectDataSource.loadAll().toMutableList()
-        val projectIndex = allData.indexOfFirst { it.id == project.id }
-        if (projectIndex == -1) throw ProjectNotFoundException("No project found")
-        allData[projectIndex] = project
-        projectDataSource.update(allData)
+    suspend fun updateProject(project: ProjectEntity) {
+        val projects = projectDataSource.loadAll()
+        if (projects.none { it.id == project.id }) {
+            throw ProjectNotFoundException("Project with id ${project.id} not found")
+        }
+        projectDataSource.update(project)
     }
 
-    fun deleteProject(projectId: UUID) {
+    suspend fun deleteProject(projectId: UUID) {
         val projects = projectDataSource.loadAll().toMutableList()
-        val project = projects.indexOfFirst { it.id == projectId }
-        if (project == -1) throw ProjectNotFoundException("No project found")
+        val project = projects.find { it.id == projectId }
+            ?: throw ProjectNotFoundException("Project with id $projectId not found")
 
         val projectStates = projectStatesDataSource.loadAll().toMutableList()
         val tasks = taskDataSource.loadAll().toMutableList()
 
-        val filteredProjectStates = projectStates.filterNot { it.projectId == projectId }
-        val filteredTasks = tasks.filterNot { it.projectId == projectId }
+        val filteredProjectStates = projectStates.filter { it.projectId == projectId }
+        val filteredTasks = tasks.filter { it.projectId == projectId }
 
-        projects.removeAt(project)
-
-        projectDataSource.update(projects)
-        projectStatesDataSource.update(filteredProjectStates)
-        taskDataSource.update(filteredTasks)
+        projectDataSource.delete(project)
+        filteredProjectStates.forEach {
+            projectStatesDataSource.delete(it)
+        }
+        filteredTasks.forEach {
+            taskDataSource.delete(it)
+        }
     }
 }

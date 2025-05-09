@@ -1,6 +1,7 @@
 package logic.usecase.report
 
 import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import kotlin.test.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -62,13 +63,13 @@ class ReportServiceTest {
             )
         )
 
-        every { projectRepo.getAllProjects() } returns listOf(project)
-        every { taskRepo.getTasksByProjectId(projectId) } returns tasks
-        every { stateRepo.getAllStatesPerProject(projectId) } returns states
+        coEvery { projectRepo.getAllProjects() } returns listOf(project)
+        coEvery { taskRepo.getTasksByProjectId(projectId) } returns tasks
+        coEvery { stateRepo.getAllStatesPerProject(projectId) } returns states
     }
 
     @Test
-    fun `test summary returns correct totalTask`() {
+    fun `test summary returns correct totalTask`() = runTest {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 
@@ -76,7 +77,7 @@ class ReportServiceTest {
     }
 
     @Test
-    fun `test summary returns correct projectName`() {
+    fun `test summary returns correct projectName`() = runTest {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 
@@ -84,7 +85,7 @@ class ReportServiceTest {
     }
 
     @Test
-    fun `test summary returns correct tasks per state`() {
+    fun `test summary returns correct tasks per state`() = runTest {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 
@@ -93,7 +94,7 @@ class ReportServiceTest {
     }
 
     @Test
-    fun `test summary returns correct tasks per user`() {
+    fun `test summary returns correct tasks per user`() = runTest {
         val summaryList = reportService.summary()
         val report = summaryList.first()
 

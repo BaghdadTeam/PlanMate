@@ -1,11 +1,14 @@
 package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
+import helpers.authentication.createUserHelper
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -17,7 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class AddStateToProjectUseCaseTest {
 
@@ -26,19 +29,9 @@ class AddStateToProjectUseCaseTest {
     private lateinit var createStateUseCase: AddStateToProjectUseCase
     private lateinit var userRepository: UserRepository
 
-    private val adminUser = UserEntity(
-        name = "Narges Nagy",
-        username = "nargesnagy",
-        hashedPassword = "jkjhjkljlk",
-        type = UserType.Admin
-    )
+    private val adminUser = createUserHelper()
 
-    private val mateUser = UserEntity(
-        name = "Narges Nagy",
-        username = "narges21",
-        hashedPassword = "tryhghjg",
-        type = UserType.Mate
-    )
+    private val mateUser = createUserHelper(userType = UserType.Mate)
 
     @BeforeEach
     fun setup() {
@@ -50,19 +43,19 @@ class AddStateToProjectUseCaseTest {
 
 
     @Test
-    fun `should create state and add audit when state is valid`() {
+    fun `should create state and add audit when state is valid`()= runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState()
-        every { userRepository.getUserById(adminUser.id) } returns adminUser
+        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
 
         // when
         createStateUseCase.invoke(state, adminUser.id)
 
         // then
-        verify { statesRepository.createState(state) }
+        coVerify { statesRepository.createState(state) }
 
         val auditSlot = slot<AuditLogEntity>()
-        verify { auditRepository.addAuditEntry(capture(auditSlot)) }
+        coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
         Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
@@ -70,7 +63,7 @@ class AddStateToProjectUseCaseTest {
     }
 
     @Test
-    fun `should throw exception when user type is not admin`() {
+    fun `should throw exception when user type is not admin`() = runTest{
         // given
         val state = ProjectStatesEntityTestData.todoState()
 
@@ -82,10 +75,10 @@ class AddStateToProjectUseCaseTest {
     }
 
     @Test
-    fun `should throw exception when state name is empty`() {
+    fun `should throw exception when state name is empty`()= runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
-        every { userRepository.getUserById(adminUser.id) } returns adminUser
+        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
         // Then
         val exception = assertThrows<Exception> {
             createStateUseCase.invoke(state, adminUser.id)

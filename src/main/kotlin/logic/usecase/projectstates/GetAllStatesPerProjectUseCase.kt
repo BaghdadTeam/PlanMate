@@ -8,7 +8,7 @@ class GetAllStatesPerProjectUseCase(
     private val repository: ProjectStatesRepository
 ) {
 
-    fun invoke(projectId: UUID): List<StateEntity> {
+    suspend fun invoke(projectId: UUID): List<StateEntity> {
         return repository.getAllStatesPerProject(projectId)
     }
 }

@@ -2,16 +2,17 @@ package logic.usecase.authentication
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.createUserHelper
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.exceptions.InvalidCredentialsException
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.logic.repositories.TokenProvider
 import org.baghdad.logic.usecase.authentication.LoginUseCase
-import org.baghdad.utils.md5WithSalt
+import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,26 +34,26 @@ class LoginUseCaseTest {
     }
 
     @Test
-    fun `should return session entity and save session when login is successful`() {
+    fun `should return session entity and save session when login is successful`() = runTest {
         // Given
         val user = createUserHelper()
         val hashed = "password".md5WithSalt()
 
-        every { authRepository.login("itshaider", hashed) } returns user
+        coEvery { authRepository.login("itshaider", hashed) } returns user
 
         // When
         val result = useCase.invoke("itshaider", "password")
 
         // Then
         assertThat(result).isNotNull()
-        verify { sessionRepository.saveSession(any()) }
+        coVerify { sessionRepository.saveSession(any()) }
     }
 
     @Test
-    fun `should throws InvalidCredentialsException when login fails due to invalid credentials`() {
+    fun `should throws InvalidCredentialsException when login fails due to invalid credentials`() = runTest {
         // Given
         val hashed = "password".md5WithSalt()
-        every {
+        coEvery {
             authRepository.login(
                 "itshaider",
                 hashed
@@ -64,43 +65,43 @@ class LoginUseCaseTest {
 
 
     @Test
-    fun `should throws InvalidPasswordException due to invalid password`() {
+    fun `should throws InvalidPasswordException due to invalid password`() = runTest {
         // Given
         val hashed = "password".md5WithSalt()
-        every { authRepository.login("itshaider", hashed) } throws InvalidPasswordException("Invalid password")
+        coEvery { authRepository.login("itshaider", hashed) } throws InvalidPasswordException("Invalid password")
         // When & Then
         assertThrows<InvalidPasswordException> { useCase.invoke("itshaider", "password") }
 
     }
 
     @Test
-    fun `should call saveSession when login is successful`() {
+    fun `should call saveSession when login is successful`() = runTest {
         // Given
         val user = createUserHelper()
         val hashed = "password".md5WithSalt()
-        every { authRepository.login("itshaider", hashed) } returns user
+        coEvery { authRepository.login("itshaider", hashed) } returns user
 
         // When
         useCase.invoke("itshaider", "password")
 
         // Then
-        verify { sessionRepository.saveSession(any()) }
+        coVerify { sessionRepository.saveSession(any()) }
     }
 
     @Test
-    fun `should throws InvalidCredentialsException when login fails due blank username `() {
+    fun `should throws InvalidCredentialsException when login fails due blank username `() = runTest {
         val hashed = "password".md5WithSalt()
         val username = "itshaider"
-        every { authRepository.login(username, hashed) } returns createUserHelper()
+        coEvery { authRepository.login(username, hashed) } returns createUserHelper()
         // When & Then
         assertThrows<InvalidCredentialsException> { useCase.invoke("", "") }
     }
 
     @Test
-    fun `should throws InvalidCredentialsException when login fails due blank password `() {
+    fun `should throws InvalidCredentialsException when login fails due blank password `() = runTest {
         val hashed = "password".md5WithSalt()
         val username = "itshaider"
-        every { authRepository.login(username, hashed) } returns createUserHelper()
+        coEvery { authRepository.login(username, hashed) } returns createUserHelper()
         // When & Then
         assertThrows<InvalidCredentialsException> { useCase.invoke("itshaider", "") }
     }

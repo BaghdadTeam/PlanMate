@@ -2,10 +2,12 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -17,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class DeleteStateForProjectUseCaseTest {
 
@@ -49,7 +51,7 @@ class DeleteStateForProjectUseCaseTest {
     }
 
     @Test
-    fun `should delete state and add audit when state is valid`() {
+    fun `should delete state and add audit when state is valid`() = runTest{
         // given
         val state = ProjectStatesEntityTestData.todoState()
         val id = state.id
@@ -57,10 +59,10 @@ class DeleteStateForProjectUseCaseTest {
         deleteStateUseCase.invoke(id, adminUser.id)
 
         // then
-        verify { statesRepository.deleteState(id) }
+        coVerify { statesRepository.deleteState(id) }
 
         val auditSlot = slot<AuditLogEntity>()
-        verify { auditRepository.addAuditEntry(capture(auditSlot)) }
+        coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
         Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
@@ -69,10 +71,10 @@ class DeleteStateForProjectUseCaseTest {
 
 
     @Test
-    fun `should throw exception when user type is mate`() {
+    fun `should throw exception when user type is mate`() = runTest {
         // given
         val stateId = UUID.randomUUID()
-        every { userRepository.getUserById(mateUser.id) } returns mateUser
+        coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
 
         // when
         val exception = assertThrows<Exception> {

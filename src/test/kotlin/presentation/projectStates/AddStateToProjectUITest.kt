@@ -1,9 +1,7 @@
 package presentation.projectStates
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.StateEntity
@@ -12,7 +10,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.AddStateToProjectUI
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 
@@ -48,7 +46,7 @@ class AddStateToProjectUITest {
 
         ui.execute()
 
-        verify {
+        coVerify {
             useCase.invoke(
                 match {
                     it.name == stateName &&
@@ -86,7 +84,7 @@ class AddStateToProjectUITest {
         // given
         val state = StateEntity(name = "Done", projectId = UUID.randomUUID(), creatorId = userId)
         val uuid = userId
-        every { useCase.invoke(any(), any()) } throws RuntimeException("Something went wrong")
+        coEvery { useCase.invoke(any(), any()) } throws RuntimeException("Something went wrong")
 
         //when
         val method = ui.javaClass.getDeclaredMethod("tryAddState", StateEntity::class.java, UUID::class.java)

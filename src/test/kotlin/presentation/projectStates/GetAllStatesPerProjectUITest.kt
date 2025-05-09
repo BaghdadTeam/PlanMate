@@ -1,6 +1,6 @@
 package presentation.projectStates
 
-import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,7 +10,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class GetAllStatesPerProjectUITest {
@@ -40,7 +40,7 @@ class GetAllStatesPerProjectUITest {
         )
 
         every { reader.readInput() } returns projectId.toString()
-        every { useCase.invoke(projectId) } returns states
+        coEvery { useCase.invoke(projectId) } returns states
 
         getAllStatesPerProjectUI.execute()
 
@@ -54,7 +54,7 @@ class GetAllStatesPerProjectUITest {
     fun `test valid project ID with no states`() {
         val projectId = UUID.randomUUID()
         every { reader.readInput() } returns projectId.toString()
-        every { useCase.invoke(projectId) } returns emptyList()
+        coEvery { useCase.invoke(projectId) } returns emptyList()
 
         getAllStatesPerProjectUI.execute()
 
@@ -66,7 +66,7 @@ class GetAllStatesPerProjectUITest {
         val projectId = UUID.randomUUID()
 
         every { reader.readInput() } returnsMany listOf("", "  ", projectId.toString())
-        every { useCase.invoke(projectId) } returns emptyList()
+        coEvery { useCase.invoke(projectId) } returns emptyList()
         getAllStatesPerProjectUI.execute()
 
         verify(exactly = 2) { viewer.logError("Project ID cannot be blank. Please try again.") }
@@ -77,7 +77,7 @@ class GetAllStatesPerProjectUITest {
     fun `test exception is handled during use case invocation`() {
         val projectId = UUID.randomUUID()
         every { reader.readInput() } returns projectId.toString()
-        every { useCase.invoke(projectId) } throws RuntimeException("Something went wrong")
+        coEvery { useCase.invoke(projectId) } throws RuntimeException("Something went wrong")
 
         getAllStatesPerProjectUI.execute()
 

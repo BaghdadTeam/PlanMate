@@ -1,9 +1,7 @@
 package presentation.projectStates
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
@@ -11,7 +9,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.DeleteStateForProjectUI
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class DeleteStateForProjectUITest {
@@ -44,7 +42,7 @@ class DeleteStateForProjectUITest {
 
         ui.execute()
 
-        verify {
+        coVerify {
             useCase.invoke(stateId, userId)
         }
         verify { viewer.logMessage("State deleted successfully.") }
@@ -67,7 +65,7 @@ class DeleteStateForProjectUITest {
         val method = ui.javaClass.getDeclaredMethod("tryDeleteState", UUID::class.java, UUID::class.java)
         method.isAccessible = true
 
-        every { useCase.invoke(any(), any()) } throws Exception("State not found")
+        coEvery { useCase.invoke(any(), any()) } throws Exception("State not found")
 
         method.invoke(ui, UUID.randomUUID(), userId)
 

@@ -49,4 +49,8 @@ build
 .idea
 session.csv
 audit.csv
+user.csv
+project.csv
 /local.properties
+
+.env

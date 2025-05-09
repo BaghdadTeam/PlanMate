@@ -1,5 +1,7 @@
 package presentation.task
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -56,7 +58,7 @@ class GetTasksByStateIdUITest {
     @Test
     fun `test valid state ID input with tasks found`() {
         every { reader.readInput() } returns stateId.toString() // User enters valid state ID
-        every { getTasksByStateIdUseCase(stateId) } returns tasks
+        coEvery { getTasksByStateIdUseCase(stateId) } returns tasks
 
         getTasksByStateIdUI.execute()
 
@@ -69,7 +71,7 @@ class GetTasksByStateIdUITest {
     @Test
     fun `test valid state ID input with no tasks found`() {
         every { reader.readInput() } returns stateId.toString() // User enters valid state ID
-        every { getTasksByStateIdUseCase(stateId) } returns emptyList()
+        coEvery { getTasksByStateIdUseCase(stateId) } returns emptyList()
 
         getTasksByStateIdUI.execute()
 
@@ -83,13 +85,13 @@ class GetTasksByStateIdUITest {
         getTasksByStateIdUI.execute()
 
         verify { viewer.logMessage("State ID cannot be empty.") }
-        verify(exactly = 0) { getTasksByStateIdUseCase(any()) } // Ensure use case is not called
+        coVerify(exactly = 0) { getTasksByStateIdUseCase(any()) } // Ensure use case is not called
     }
 
     @Test
     fun `test exception handling when tasks not found`() {
         every { reader.readInput() } returns stateId.toString() // User enters valid state ID
-        every { getTasksByStateIdUseCase(stateId) } throws TasksNotFoundException("No tasks found")
+        coEvery { getTasksByStateIdUseCase(stateId) } throws TasksNotFoundException("No tasks found")
 
         getTasksByStateIdUI.execute()
 
@@ -99,7 +101,7 @@ class GetTasksByStateIdUITest {
     @Test
     fun `test exception handling for other errors`() {
         every { reader.readInput() } returns stateId.toString() // User enters valid state ID
-        every { getTasksByStateIdUseCase(stateId) } throws Exception("Unexpected error")
+        coEvery { getTasksByStateIdUseCase(stateId) } throws Exception("Unexpected error")
 
         getTasksByStateIdUI.execute()
 

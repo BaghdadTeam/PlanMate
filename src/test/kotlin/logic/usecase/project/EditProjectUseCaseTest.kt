@@ -1,11 +1,8 @@
 package logic.usecase.project
 
 import helpers.authentication.createUserHelper
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.runs
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
@@ -15,7 +12,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.project.EditProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class EditProjectUseCaseTest {
@@ -31,30 +28,30 @@ class EditProjectUseCaseTest {
     }
 
     @Test
-    fun `should edit project when call EditProjectUseCase`() {
+    fun `should edit project when call EditProjectUseCase`() = runTest {
         // Given
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Admin)
 
-        every { userRepository.getUserById(user.id) } returns user
-        every { projectRepository.getProjectById(project.id) } returns project
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { projectRepository.getProjectById(project.id) } returns project
 
-        every { projectRepository.editProject(project) } just runs
+        coEvery { projectRepository.editProject(project) } just runs
 
         // When
         editProjectUseCase.invoke(project.id, project.name, user.id)
 
         // Then
-        verify { projectRepository.editProject(project) }
+        coVerify { projectRepository.editProject(project) }
     }
 
     @Test
-    fun `should throw AccessDeniedException when user is not admin`() {
+    fun `should throw AccessDeniedException when user is not admin`() = runTest {
         // Given
         val projectName = "Test Project"
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Mate)
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<AccessDeniedException> {
@@ -67,12 +64,12 @@ class EditProjectUseCaseTest {
     }
 
     @Test
-    fun `should throw EmptyProjectNameException when project name is empty`() {
+    fun `should throw EmptyProjectNameException when project name is empty`() = runTest {
         // Given
         val projectName = ""
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper()
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<EmptyProjectNameException> {

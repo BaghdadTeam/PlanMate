@@ -1,7 +1,7 @@
 package presentation.audit
 
 import helpers.authentication.createUserHelper
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.model.entities.AuditLogEntity
@@ -12,7 +12,7 @@ import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class ShowAuditByProjectIdUITest {
@@ -33,7 +33,7 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        every { getAuditByProjectIdUseCase.invoke(projectID) } throws Exception()
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws Exception()
 
         // then
         showAuditByProjectIdUI.execute(projectID)
@@ -46,7 +46,7 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        every { getAuditByProjectIdUseCase.invoke(projectID) } throws NoProjectFoundException("No audit found for project with ID: $projectID")
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws NoProjectFoundException("No audit found for project with ID: $projectID")
 
         // then
         showAuditByProjectIdUI.execute(projectID)
@@ -60,7 +60,7 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        every { getAuditByProjectIdUseCase.invoke(projectID) } throws UnSupportedTimeStampFormatException("Invalid timestamp format")
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws UnSupportedTimeStampFormatException("Invalid timestamp format")
 
         // then
         showAuditByProjectIdUI.execute(projectID)
@@ -80,7 +80,7 @@ class ShowAuditByProjectIdUITest {
             user = haider ,
         ))
         // When
-        every { getAuditByProjectIdUseCase.invoke(taskID) } returns auditEntities
+        coEvery { getAuditByProjectIdUseCase.invoke(taskID) } returns auditEntities
 
         // Then
         showAuditByProjectIdUI.execute(taskID)

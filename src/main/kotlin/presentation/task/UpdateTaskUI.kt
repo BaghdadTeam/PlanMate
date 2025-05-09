@@ -1,5 +1,6 @@
 package org.baghdad.presentation.task
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.CsvWriteException
@@ -9,7 +10,6 @@ import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import java.util.UUID
 
 class UpdateTaskUI(
     private val useCase: UpdateTaskUseCase,
@@ -68,9 +68,11 @@ class UpdateTaskUI(
 
     private fun tryUpdateTask(task: TaskEntity) {
         try {
-            val session = sessionManager.currentSession
-            useCase(task, session.userId)
-            viewer.logMessage("Task updated successfully.")
+            runBlocking {
+                val session = sessionManager.currentSession
+                useCase(task, session.userId)
+                viewer.logMessage("Task updated successfully.")
+            }
         } catch (_: TaskWithMissingTitleException) {
             viewer.logMessage("Task title is missing.")
             tryUpdateTask(promptForTitle(task))

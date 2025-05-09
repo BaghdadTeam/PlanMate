@@ -7,7 +7,7 @@ import java.util.UUID
 class GetAuditByProjectIdUseCase(
     val auditRepository: AuditRepository
 ){
-    operator fun invoke(projectId: UUID): List<AuditLogEntity> {
+    suspend operator fun invoke(projectId: UUID): List<AuditLogEntity> {
         return auditRepository.getAuditByProjectId(projectId)
     }
 

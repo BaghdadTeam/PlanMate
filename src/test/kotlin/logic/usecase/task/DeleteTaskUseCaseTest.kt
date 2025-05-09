@@ -1,9 +1,11 @@
 package logic.usecase.task
 
 import helpers.task.TaskEntityTestData
+import io.mockk.coEvery
+import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verifySequence
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -37,16 +39,16 @@ class DeleteTaskUseCaseTest {
     }
 
     @Test
-    fun `should delete task and log audit`() {
+    fun `should delete task and log audit`() = runTest {
         val task = TaskEntityTestData.normalTask
         val taskId = task.id
 
-        every { taskRepository.getTaskById(taskId) } returns task
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { taskRepository.getTaskById(taskId) } returns task
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         deleteTaskUseCase(taskId, user.id)
 
-        verifySequence {
+        coVerifySequence {
             taskRepository.getTaskById(taskId)
             taskRepository.deleteTask(taskId)
             userRepository.getUserById(user.id)
