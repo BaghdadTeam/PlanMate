@@ -24,6 +24,7 @@ class CreateProjectUseCaseTest {
     fun setUp() {
         projectRepository = mockk()
         userRepository = mockk()
+        auditRepository = mockk()
         createProjectUseCase = CreateProjectUseCase(projectRepository, userRepository , auditRepository)
     }
 
@@ -35,7 +36,7 @@ class CreateProjectUseCaseTest {
 
         coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { projectRepository.createProject(any()) } just runs
-
+        coEvery { auditRepository.addAuditEntry(any()) } just runs
         // When
         createProjectUseCase(projectName, user.id)
 
