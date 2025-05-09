@@ -1,31 +1,36 @@
 package org.baghdad.presentation.project
 
-import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.project.EditProjectUseCase
-import java.util.*
-
-fun String.toUUIDOrNull(): UUID? =
-    runCatching { UUID.fromString(this) }.getOrNull()
+import org.baghdad.presentation.input.Reader
+import org.baghdad.presentation.output.Viewer
+import java.util.UUID
 
 class EditProjectUi(
-    private val editProjectUseCase: EditProjectUseCase
-) {
-    fun editProject(user: UserEntity) {
-        println("=== Edit Project ===")
-        print("Enter project ID: ")
-        val idInput = readln()
-        print("Enter new project name: ")
-        val newName = readln()
+    private val editProjectUseCase: EditProjectUseCase,
+    private val sessionManager: SessionManager,
+    private val viewer: Viewer,
+    private val getAllProjectsUi: GetAllProjectsUi,
+    private val reader: Reader
 
-        val projectId = idInput.toUUIDOrNull()
-        if (projectId == null) {
-            println("Invalid UUID format.")
-            return
+) {
+    suspend fun editProject() {
+        val session = sessionManager.currentSession
+        val userId = session.userId
+
+        viewer.logMessage("=== Edit Project ===")
+        viewer.logMessage("=== View Project ===")
+        val ids = getAllProjectsUi()
+
+        viewer.logMessage("Enter new project name: ")
+
+        val projectId = reader.readInput()?.toIntOrNull()
+        val newName = reader.readInput()
+        if (projectId != null && newName != null) {
+            editProjectUseCase(ids[projectId], newName, userId)
+        } else {
+            viewer.logError("Project Id should be a number")
         }
 
-//        when (val result = editProjectUseCase(projectId, newName, user)) {
-//            is Result.Success -> println("Project updated successfully.")
-//            is Result.Failure -> println(result.message)
-//        }
     }
 }

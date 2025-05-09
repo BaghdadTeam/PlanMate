@@ -7,6 +7,7 @@ import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
+import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.project.EditProjectUseCase
@@ -19,12 +20,14 @@ class EditProjectUseCaseTest {
     lateinit var projectRepository: ProjectRepository
     lateinit var userRepository: UserRepository
     lateinit var editProjectUseCase: EditProjectUseCase
+    lateinit var auditRepository: AuditRepository
 
     @BeforeEach
     fun setUp() {
         projectRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        editProjectUseCase = EditProjectUseCase(projectRepository, userRepository)
+        auditRepository = mockk(relaxed = true)
+        editProjectUseCase = EditProjectUseCase(projectRepository, userRepository , auditRepository)
     }
 
     @Test

@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidNameException
@@ -26,6 +27,7 @@ class CreateUserUITest {
     private lateinit var viewer: Viewer
     private lateinit var createUserUseCase: CreateUserUseCase
     private lateinit var createUserInterface: CreateUserUI
+    private lateinit var session: SessionManager
 
     private val administrator = UserEntity(
         id = UUID.randomUUID(),
@@ -46,11 +48,13 @@ class CreateUserUITest {
     fun setup() {
         reader = mockk()
         viewer = mockk(relaxed = true)
+        session = mockk()
         createUserUseCase = mockk(relaxed = true)
-        createUserInterface = CreateUserUI(reader, viewer, createUserUseCase)
+        createUserInterface = CreateUserUI(reader, viewer, createUserUseCase , session)
     }
 
     private fun setReaderInputs(vararg inputs: String?) {
+        every { session.currentSession.userId } returns regularMate.id
         every { reader.readInput() } returnsMany inputs.toList()
     }
 
@@ -61,36 +65,21 @@ class CreateUserUITest {
     }
 
     private fun configureUseCaseToThrow(exception: Exception) {
+        every { session.currentSession.userId } returns regularMate.id
         coEvery {
             createUserUseCase.invoke(any(), any(), any(), any())
         } throws exception
     }
 
-    @Test
-    fun `non administrator is rejected`() = runTest {
-        // Given nothing
-        // When
-        createUserInterface.run(regularMate)
-        // Then
-        verify { viewer.logError("Only administrators can create new users.") }
-    }
-
-    @Test
-    fun `null current user is rejected`() = runTest {
-        // Given nothing
-        // When
-        createUserInterface.run(null)
-        // Then
-        verify { viewer.logError("Only administrators can create new users.") }
-    }
 
     @Test
     fun `successful creation prints confirmation`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Full Name", "securePass")
         configureUseCaseSuccess()
         // When
-        createUserInterface.run(administrator)
+        createUserInterface()
         // Then
         verify { viewer.logMessage("User 'admin' created successfully.") }
     }
@@ -98,10 +87,11 @@ class CreateUserUITest {
     @Test
     fun `invalid username error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("bad user", "Name", "password")
         configureUseCaseToThrow(InvalidUsernameException("must match pattern"))
         // When
-        createUserInterface.run(administrator)
+        createUserInterface()
         // Then
         verify { viewer.logError("Invalid username: must match pattern") }
     }
@@ -109,10 +99,11 @@ class CreateUserUITest {
     @Test
     fun `invalid name error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "", "password")
         configureUseCaseToThrow(InvalidNameException("cannot be blank"))
         // When
-        createUserInterface.run(administrator)
+        createUserInterface()
         // Then
         verify { viewer.logError("Invalid name: cannot be blank") }
     }
@@ -120,10 +111,11 @@ class CreateUserUITest {
     @Test
     fun `invalid password error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "short")
         configureUseCaseToThrow(InvalidPasswordException("too short"))
         // When
-        createUserInterface.run(administrator)
+        createUserInterface()
         // Then
         verify { viewer.logError("Invalid password: too short") }
     }
@@ -131,10 +123,11 @@ class CreateUserUITest {
     @Test
     fun `duplicate username error is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "password")
         configureUseCaseToThrow(UserAlreadyExistsException("username exists"))
         // When
-        createUserInterface.run(administrator)
+        createUserInterface()
         // Then
         verify { viewer.logError("username exists") }
     }
@@ -142,10 +135,11 @@ class CreateUserUITest {
     @Test
     fun `unauthorized exception during creation is shown`() = runTest {
         // Given
+        every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "password")
         configureUseCaseToThrow(UnauthorizedException("not allowed"))
         // When
-        createUserInterface.run(administrator)
+        createUserInterface()
         // Then
         verify { viewer.logError("not allowed") }
     }
