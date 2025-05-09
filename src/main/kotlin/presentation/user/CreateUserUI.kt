@@ -23,14 +23,21 @@ class CreateUserUI(
         }
 
         viewer.logMessage("=== Create New Mate ===")
+        viewer.logAuth("Username: ")
+        val username = reader.readInput()
+        viewer.logAuth("Name: ")
+        val name = reader.readInput()
+        viewer.logAuth("Password: ")
+        val password = reader.readInput()
 
-        val username = prompt("Username: ")
-        val name = prompt("Name: ")
-        val password = prompt("Password: ")
 
         try {
-            val newUser = createUser(username, password, name, currentUser.id)
-            viewer.logMessage("User '${newUser.username}' created successfully.")
+            if (username != null && name != null && password != null) {
+                val newUser = createUser(username, password, name, currentUser.id)
+                viewer.logMessage("User '${newUser.username}' created successfully.")
+            } else {
+                viewer.logError("Invalid input. Please try again.")
+            }
         } catch (e: InvalidUsernameException) {
             viewer.logError("Invalid username: ${e.message}")
         } catch (e: InvalidNameException) {
