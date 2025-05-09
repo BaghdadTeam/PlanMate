@@ -1,14 +1,14 @@
-package org.baghdad.ui
+package org.baghdad.presentation.swimlane
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import java.util.*
 
-class SwimlaneUI(
+class RenderSwimlaneUI(
     private val viewServiceUseCase: ViewServiceUseCase
 ) {
 
-    fun renderAsciiSwimlane(projectId: UUID): String {
+    operator fun invoke(projectId: UUID): String {
         val result = runBlocking { viewServiceUseCase.swimlane(projectId) }
         return if (result.isSuccess) {
             val swimlaneData = result.getOrNull() ?: emptyMap()

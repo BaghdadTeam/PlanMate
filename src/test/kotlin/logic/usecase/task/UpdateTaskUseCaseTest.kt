@@ -49,7 +49,7 @@ class UpdateTaskUseCaseTest {
 
         coEvery { taskRepository.getTaskById(task.id) } returns oldTask
         coEvery { taskRepository.updateTask(task) } returns true
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         updateTaskUseCase.invoke(task, user.id)
 

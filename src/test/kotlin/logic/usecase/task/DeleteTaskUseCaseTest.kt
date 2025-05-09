@@ -44,7 +44,7 @@ class DeleteTaskUseCaseTest {
         val taskId = task.id
 
         coEvery { taskRepository.getTaskById(taskId) } returns task
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         deleteTaskUseCase(taskId, user.id)
 

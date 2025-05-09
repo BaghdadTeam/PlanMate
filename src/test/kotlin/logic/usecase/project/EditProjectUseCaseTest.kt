@@ -33,7 +33,7 @@ class EditProjectUseCaseTest {
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Admin)
 
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { projectRepository.getProjectById(project.id) } returns project
 
         coEvery { projectRepository.editProject(project) } just runs
@@ -51,7 +51,7 @@ class EditProjectUseCaseTest {
         val projectName = "Test Project"
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Mate)
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<AccessDeniedException> {
@@ -69,7 +69,7 @@ class EditProjectUseCaseTest {
         val projectName = ""
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper()
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<EmptyProjectNameException> {

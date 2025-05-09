@@ -11,7 +11,7 @@ import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.repositories.SessionRepository
-import org.baghdad.utils.md5WithSalt
+import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

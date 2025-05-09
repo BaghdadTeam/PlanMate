@@ -2,6 +2,7 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -73,7 +74,7 @@ class DeleteStateForProjectUseCaseTest {
     fun `should throw exception when user type is mate`() = runTest {
         // given
         val stateId = UUID.randomUUID()
-        every { userRepository.getUserById(mateUser.id) } returns mateUser
+        coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
 
         // when
         val exception = assertThrows<Exception> {

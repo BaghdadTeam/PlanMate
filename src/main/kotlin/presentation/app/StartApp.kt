@@ -14,7 +14,6 @@ class StartApp(
     fun run() {
         runBlocking {
             try {
-                sessionManager.clearExpiredSession()
                 val session = try {
                     val activeSession = sessionManager.getActiveSession()
                     viewer.logMessage("Your session is still active, welcome back!")
