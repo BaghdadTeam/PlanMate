@@ -81,7 +81,7 @@ class ShowAuditByTaskIdUITest {
         val auditEntities = listOf(
             AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            entityId = taskID,
+            projectId = taskID,
             action = "Create Task Aboud",
             user = haider ,
         )

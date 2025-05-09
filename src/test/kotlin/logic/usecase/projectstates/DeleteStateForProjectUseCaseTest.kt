@@ -4,7 +4,6 @@ import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
@@ -65,7 +64,7 @@ class DeleteStateForProjectUseCaseTest {
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
+        Truth.assertThat(audit.projectId).isInstanceOf(UUID::class.java)
         Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
     }
 
