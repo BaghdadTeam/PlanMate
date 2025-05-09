@@ -1,5 +1,6 @@
 package org.baghdad.presentation.user
 
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidNameException
@@ -14,14 +15,11 @@ import org.baghdad.presentation.output.Viewer
 class CreateUserUI(
     private val reader: Reader,
     private val viewer: Viewer,
-    private val createUser: CreateUserUseCase
+    private val createUser: CreateUserUseCase,
+    private val session : SessionManager
 ) {
-    suspend fun run(currentUser: UserEntity?) {
-        if (currentUser?.type != UserType.Admin) {
-            viewer.logError("Only administrators can create new users.")
-            return
-        }
-
+    suspend fun invoke() {
+        val userId = session.currentSession.userId
         viewer.logMessage("=== Create New Mate ===")
         viewer.logAuth("Username: ")
         val username = reader.readInput()
@@ -33,7 +31,7 @@ class CreateUserUI(
 
         try {
             if (username != null && name != null && password != null) {
-                val newUser = createUser(username, password, name, currentUser.id)
+                val newUser = createUser(username, password, name, userId)
                 viewer.logMessage("User '${newUser.username}' created successfully.")
             } else {
                 viewer.logError("Invalid input. Please try again.")
