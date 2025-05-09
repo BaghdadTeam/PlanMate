@@ -1,6 +1,7 @@
 package logic.usecase.project
 
 import helpers.authentication.createUserHelper
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -33,7 +34,7 @@ class DeleteProjectUseCaseTest {
         // Given
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper()
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
 
         // When
@@ -48,7 +49,7 @@ class DeleteProjectUseCaseTest {
         // Given
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Mate)
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<AccessDeniedException> { deleteProjectUseCase.invoke(project.id, user.id) }

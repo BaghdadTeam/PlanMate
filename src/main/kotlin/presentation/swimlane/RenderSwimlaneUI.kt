@@ -1,4 +1,4 @@
-package org.baghdad.ui
+package org.baghdad.presentation.swimlane
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.usecase.ViewServiceUseCase
@@ -47,5 +47,3 @@ class RenderSwimlaneUI(
         }
     }
 }
-
-

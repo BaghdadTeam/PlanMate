@@ -1,4 +1,4 @@
-package ui
+package presentation.swimlane
 
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
@@ -6,11 +6,11 @@ import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.ui.RenderSwimlaneUI
+import org.baghdad.presentation.swimlane.RenderSwimlaneUI
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class RenderSwimlaneUI {
+class RenderSwimlaneUITest {
     private val viewServiceUseCase: ViewServiceUseCase = mockk()
     private val ui = RenderSwimlaneUI(viewServiceUseCase)
 

@@ -1,7 +1,9 @@
 package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
+import helpers.authentication.createUserHelper
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -27,19 +29,9 @@ class AddStateToProjectUseCaseTest {
     private lateinit var createStateUseCase: AddStateToProjectUseCase
     private lateinit var userRepository: UserRepository
 
-    private val adminUser = UserEntity(
-        name = "Narges Nagy",
-        username = "nargesnagy",
-        hashedPassword = "jkjhjkljlk",
-        type = UserType.Admin
-    )
+    private val adminUser = createUserHelper()
 
-    private val mateUser = UserEntity(
-        name = "Narges Nagy",
-        username = "narges21",
-        hashedPassword = "tryhghjg",
-        type = UserType.Mate
-    )
+    private val mateUser = createUserHelper(userType = UserType.Mate)
 
     @BeforeEach
     fun setup() {
@@ -54,7 +46,7 @@ class AddStateToProjectUseCaseTest {
     fun `should create state and add audit when state is valid`()= runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState()
-        every { userRepository.getUserById(adminUser.id) } returns adminUser
+        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
 
         // when
         createStateUseCase.invoke(state, adminUser.id)
@@ -86,7 +78,7 @@ class AddStateToProjectUseCaseTest {
     fun `should throw exception when state name is empty`()= runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
-        every { userRepository.getUserById(adminUser.id) } returns adminUser
+        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
         // Then
         val exception = assertThrows<Exception> {
             createStateUseCase.invoke(state, adminUser.id)
