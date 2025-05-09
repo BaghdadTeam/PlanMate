@@ -12,42 +12,40 @@ class SwimlaneUI(
     fun invoke(projectId: UUID) {
         var shouldContinue = true
         val scanner = Scanner(System.`in`)
-        renderSwimlaneUI(projectId)
+        renderSwimlaneUI.invoke(projectId) // Call to render the Swimlane with dynamic data
+
         while (shouldContinue) {
             println(
                 """
                                    == Plan Mate ==
                                    
-                [1- To Do]         [2- In Progress]         [3- Done]
-
-                1- create ui         3- creating logic         2- creating data source
-
-                                    1- to modify or create a state (Only for Admins)
-                                    2- to modify or create a task
-                                    3- view audit
-                                    0- back to previous screen
+                Choose an action:
+                1- Manage States (Admin Only)
+                2- Manage Tasks
+                3- View Audit Log
+                0- Back to Previous Screen
             """.trimIndent()
             )
 
             print("Enter your choice: ")
             when (scanner.nextLine().toIntOrNull()) {
                 1 -> {
-                    println("Navigating to ProjectStatesUI...")
+                    println("Navigating to Project States Screen...")
                     projectStatesUI.invoke(projectId)
                 }
 
                 2 -> {
-                    println("Navigating to TaskUI...")
+                    println("Navigating to Tasks Screen...")
                     taskUI.invoke(projectId)
                 }
 
                 3 -> {
-                    println("Navigating to AuditUI...")
+                    println("Navigating to Audit Log Screen...")
                     auditUI.invoke(projectId)
                 }
 
                 0 -> {
-                    println("Returning to previous screen...")
+                    println("Returning to the previous screen...")
                     shouldContinue = false
                     return
                 }
