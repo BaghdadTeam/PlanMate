@@ -9,7 +9,6 @@ import java.util.UUID
 class GetAllStatesPerProjectUI(
     private val useCase: GetAllStatesPerProjectUseCase,
     private val viewer: Viewer,
-    private val reader: Reader
 ) {
 
     fun execute(projectId : UUID) : List<UUID> {
@@ -33,6 +32,7 @@ class GetAllStatesPerProjectUI(
             return statesUUIDs
         } catch (e: Exception) {
             viewer.logError("Failed to retrieve states: ${e.message}")
+            return emptyList()
         }
     }
 
