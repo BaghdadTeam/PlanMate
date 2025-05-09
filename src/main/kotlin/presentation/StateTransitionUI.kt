@@ -2,7 +2,9 @@ package org.baghdad.presentation
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -12,15 +14,26 @@ class StateTransitionUI(
     private val useCase: StateTransitionUseCase,
     private val session: SessionManager,
     private val viewer: Viewer,
-    private val reader: Reader
+    private val reader: Reader,
 ) {
-    fun execute() {
-        viewer.logMessage("Enter Task ID:")
+    fun execute(tasksStates: List<StateEntity>, tasks: List<TaskEntity>) {
+
+        viewer.logMessage("== All Tasks == ")
+        tasks.forEachIndexed { index, task ->
+            viewer.logMessage("${index + 1}. ${task.title} - ${task.description}")
+        }
+
+        viewer.logMessage("Enter Task Number:")
         val taskId = reader.readInput()?.trim()
 
         if (taskId.isNullOrBlank()) throw Exception("Task ID cannot be null or blank.")
 
-        viewer.logMessage("Enter New State ID:")
+        viewer.logMessage("== All States == ")
+
+        tasksStates.forEachIndexed { index, state ->
+            viewer.logMessage("${index + 1}. ${state.name}")
+        }
+        viewer.logMessage("Enter New State Number: ")
         val newStateId = reader.readInput()?.trim()
 
         if (newStateId.isNullOrBlank()) throw Exception("New State ID cannot be null or blank.")
@@ -37,9 +50,8 @@ class StateTransitionUI(
             viewer.logError("Invalid operation: ${e.message}")
         } catch (e: RuntimeException) {
             viewer.logError("Unexpected error: ${e.message}")
-        } catch (e: Exception) {
-            viewer.logError("Something went wrong while trying to change task state: ${e.message}")
-
+        } catch (_: Exception) {
+            viewer.logError(" something went wrong while trying to change task state.")
         }
     }
 }

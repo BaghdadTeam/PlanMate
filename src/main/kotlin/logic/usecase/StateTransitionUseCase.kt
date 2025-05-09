@@ -3,7 +3,7 @@ package org.baghdad.logic.usecase
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.StateExceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
@@ -23,8 +23,7 @@ class StateTransitionUseCase(
             ?: throw Exception("Current state not found")
 
         if (currentState.id == newStateId) {
-            println("Task is already in the requested state. No changes made.")
-            return
+            throw Exception("Task is already in the requested state. No changes made.")
         }
         validateNewState(task.projectId, newStateId)
 
@@ -50,7 +49,6 @@ class StateTransitionUseCase(
         taskId: UUID, oldStateId: UUID, newStateId: UUID, user: UserEntity
     ) {
         val action = "${user.username} changed task $taskId from state $oldStateId to $newStateId"
-        println("Task $taskId moved from $oldStateId to $newStateId by ${user.username}")
 
         val auditEntry = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
