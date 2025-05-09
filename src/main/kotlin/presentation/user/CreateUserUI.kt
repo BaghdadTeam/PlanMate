@@ -18,7 +18,7 @@ class CreateUserUI(
     private val createUser: CreateUserUseCase,
     private val session : SessionManager
 ) {
-    suspend fun invoke() {
+    suspend operator fun invoke() {
         val userId = session.currentSession.userId
         viewer.logMessage("=== Create New Mate ===")
         viewer.logAuth("Username: ")
