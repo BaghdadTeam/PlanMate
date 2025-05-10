@@ -33,11 +33,11 @@ class GetAllStatesPerProjectUseCaseTest {
     fun `should return list of sates when there is a states for project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        val stateId = projectStates[0].projectId
-        coEvery { statesRepository.getAllStatesPerProject(stateId) } returns projectStates
+        val projectId = projectStates[0].projectId
+        coEvery { statesRepository.getAllStatesPerProject(projectId) } returns projectStates
 
         // When
-        val result = getStatesUseCase.invoke(stateId)
+        val result = getStatesUseCase.invoke(projectId)
 
         // Then
         Truth.assertThat(result).isEqualTo(projectStates)

@@ -5,6 +5,7 @@ import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -18,7 +19,7 @@ class DeleteStateForProjectUseCase (
 
     suspend fun invoke(stateId: UUID, userId: UUID){
         val user = userRepository.getUserById(userId)
-        if (user.type.name == UserType.Mate.name) throw Exception("Only Admin can add tasks")
+        if (user.type.name == UserType.Mate.name) throw NotAccessException("Only Admin can delete states")
         val state = repository.getStateById(stateId)
         repository.deleteState(stateId)
         val audit = createAudit(state, user)

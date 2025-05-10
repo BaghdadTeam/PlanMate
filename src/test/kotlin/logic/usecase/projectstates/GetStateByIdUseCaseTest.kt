@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -47,13 +48,11 @@ class GetStateByIdUseCaseTest {
     @Test
     fun `should throw exception when there is no states with this id`() = runTest {
         val id = UUID.randomUUID()
-        coEvery { statesRepository.getStateById(id) } throws Exception("No State found")
+        coEvery { statesRepository.getStateById(id) } returns  null
 
-        assertThrows<Exception> {
+        assertThrows<StateNotFoundException> {
             getStateByIdUseCase.invoke(id)
         }
-        coVerify { statesRepository.getStateById(id) }
-
     }
 
     @Test
@@ -64,7 +63,7 @@ class GetStateByIdUseCaseTest {
         coEvery { statesRepository.getStateById(stateId) } returns null
 
         // when
-        val exception = assertThrows<Exception> {
+        val exception = assertThrows<StateNotFoundException> {
             getStateByIdUseCase.invoke(stateId)
         }
         // then

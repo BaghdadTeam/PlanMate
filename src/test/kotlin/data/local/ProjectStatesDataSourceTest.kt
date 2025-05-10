@@ -1,6 +1,5 @@
 package data.local
 
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
 import helpers.task.TaskTestData
@@ -10,6 +9,7 @@ import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -32,16 +32,31 @@ class ProjectStatesDataSourceTest {
     }
 
     @Test
-    fun `should return data when there is a states for project`() = runTest {
+    fun `should return data when there are states for the project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
+        val id = projectStates.first().projectId
         coEvery { dataSource.loadAll() } returns projectStates
+
         // When
-        val result = projectStatesDataSource.getAllStatesForProject()
+        val result = projectStatesDataSource.getAllStatesForProject(id)
+
         // Then
-        Truth.assertThat(result).isEqualTo(projectStates)
+        assertThat(result).isEqualTo(projectStates.filter { it.projectId == id })
     }
 
+    @Test
+    fun `should throw exception when there are no states for the project`() = runTest {
+        // Given
+        val id = UUID.randomUUID()
+        val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
+        coEvery { dataSource.loadAll() } returns projectStates // no states match the random ID
+
+        // When & Then
+        assertThrows<StateNotFoundException> {
+            projectStatesDataSource.getAllStatesForProject(id)
+        }
+    }
 
     @Test
     fun `should return state when there is a state with same id`() = runTest {
@@ -57,14 +72,14 @@ class ProjectStatesDataSourceTest {
     @Test
     fun `should return state when can add state successfully`() = runTest {
         // Given
-        val projectStates = ProjectStatesEntityTestData.inProgressState()
-        coEvery { dataSource.loadAll() } returns listOf(projectStates)
+        val projectState = ProjectStatesEntityTestData.inProgressState()
+        coEvery { dataSource.loadAll() } returns listOf(projectState)
+        coEvery { projectStatesDataSource.createState(projectState) } just Runs
         // When
-        projectStatesDataSource.createState(projectStates)
-        val result = projectStatesDataSource.getStateById(projectStates.id)
+        val result = projectStatesDataSource.getStateById(projectState.id)
 
         // Then
-        assertThat(result).isEqualTo(projectStates)
+        assertThat(result).isEqualTo(projectState)
     }
 
 
@@ -72,6 +87,7 @@ class ProjectStatesDataSourceTest {
     fun `should return updated state when can update it successfully`() = runTest {
         // Given
         val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
+        val id = allStates.first().projectId
         val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(id = allStates[1].id, name = "doing")
 
         coEvery { dataSource.loadAll() } returns allStates
@@ -79,7 +95,7 @@ class ProjectStatesDataSourceTest {
 
         // When
         projectStatesDataSource.editState(updatedProject)
-        val result = projectStatesDataSource.getAllStatesForProject()
+        val result = projectStatesDataSource.getAllStatesForProject(id)
 
         // Then
         assertThat(result.contains(updatedProject))

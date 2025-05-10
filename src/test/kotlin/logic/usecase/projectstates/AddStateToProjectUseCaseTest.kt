@@ -10,6 +10,8 @@ import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
+import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -66,10 +68,10 @@ class AddStateToProjectUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState()
 
         // Then
-        val exception = assertThrows<Exception> {
+        val exception = assertThrows<NotAccessException> {
             createStateUseCase.invoke(state, mateUser.id)
         }
-        Truth.assertThat(exception.message).contains("Only Admin can add tasks")
+        Truth.assertThat(exception.message).contains("Only Admin can add states")
     }
 
     @Test
@@ -78,9 +80,10 @@ class AddStateToProjectUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
         coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
         // Then
-        val exception = assertThrows<Exception> {
+        val exception = assertThrows<CantAddStateWithNoNameException> {
             createStateUseCase.invoke(state, adminUser.id)
         }
         Truth.assertThat(exception.message).contains("state name can't be empty")
     }
+
 }
