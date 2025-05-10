@@ -1,38 +1,37 @@
 package org.baghdad.presentation.swimlane
 
-import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.ProjectStatesUI
 import org.baghdad.presentation.task.TaskManagementGatherUI
-import java.util.UUID
+import java.util.*
 
 class SwimlaneUI(
     private val renderSwimlaneUI: RenderSwimlaneUI,
     private val projectStatesUI: ProjectStatesUI,
     private val taskUI: TaskManagementGatherUI,
     private val auditByProjectIdUI: ShowAuditByProjectIdUI,
-    private val viewServiceUseCase: ViewServiceUseCase,
     private val reader: Reader,
     private val viewer: Viewer
 
 ) {
     fun invoke(projectId: UUID) {
         try {
-//            renderSwimlaneUI(projectId)
+            val swimLane = renderSwimlaneUI.invoke(projectId)
 
 
             while (true) {
-                println(
+                viewer.logMessage(
                     """
-                   == Plan Mate ==
+== Plan Mate ==
+                $swimLane
+1- Manage States (Admin Only)
+2- Manage Tasks
+3- View Audit Log
+0- Back to Previous Screen
 
-                Choose an action:
-                1- Manage States (Admin Only)
-                2- Manage Tasks
-                3- View Audit Log
-                0- Back to Previous Screen
+Choose an action:
             """.trimIndent()
                 )
 
@@ -69,7 +68,7 @@ class SwimlaneUI(
                 println()
             }
         } catch (exception: Exception) {
-
+            viewer.logError("Error: ${exception.message}")
         }
     }
 }

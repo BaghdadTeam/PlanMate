@@ -48,12 +48,10 @@ class ProjectStatesUI(
         val statesIds = getAllStatesPerProjectUI.execute(projectId)
         viewer.logMessage("Enter the state number of the state to $action:")
         val choice = reader.readInput()?.toIntOrNull()
-        if (choice != null && choice in 1..statesIds.size && statesIds.isNotEmpty()) {
-            return statesIds[choice - 1]
-
+        return if (choice != null && choice in 1..statesIds.size) {
+            statesIds[choice - 1]
         }else{
-            return null
+            null
         }
-
     }
 }
