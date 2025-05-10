@@ -4,7 +4,6 @@ import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
@@ -73,16 +72,16 @@ class DeleteStateForProjectUseCaseTest {
 
     @Test
     fun `should throw exception when user type is mate`() = runTest {
-        // given
+        // Given
         val stateId = UUID.randomUUID()
         coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
 
-        // when
+        // When
         val exception = assertThrows<NotAccessException> {
             deleteStateUseCase.invoke(stateId, mateUser.id)
         }
-        Truth.assertThat(exception.message).contains("Only Admin can delete States")
+
+        // Then
+        Truth.assertThat(exception.message).contains("Only Admin can delete states")
     }
-
-
 }
