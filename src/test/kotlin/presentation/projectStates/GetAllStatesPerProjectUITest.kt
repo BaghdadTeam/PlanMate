@@ -20,13 +20,12 @@ class GetAllStatesPerProjectUITest {
     private lateinit var reader: Reader
     private lateinit var getAllStatesPerProjectUI: GetAllStatesPerProjectUI
 
-
     @BeforeEach
     fun setUp() {
         useCase = mockk()
         viewer = mockk(relaxed = true)
         reader = mockk()
-        getAllStatesPerProjectUI = GetAllStatesPerProjectUI(useCase, viewer, reader)
+        getAllStatesPerProjectUI = GetAllStatesPerProjectUI(useCase, viewer)
     }
 
     @Test
@@ -42,9 +41,8 @@ class GetAllStatesPerProjectUITest {
         every { reader.readInput() } returns projectId.toString()
         coEvery { useCase.invoke(projectId) } returns states
 
-        getAllStatesPerProjectUI.execute()
+        getAllStatesPerProjectUI.execute(projectId)
 
-        verify { viewer.logMessage("States for project ID: $projectId") }
         verify { viewer.logMessage("1. Backlog") }
         verify { viewer.logMessage("2. In Progress") }
         verify { viewer.logMessage("3. Done") }
@@ -56,9 +54,9 @@ class GetAllStatesPerProjectUITest {
         every { reader.readInput() } returns projectId.toString()
         coEvery { useCase.invoke(projectId) } returns emptyList()
 
-        getAllStatesPerProjectUI.execute()
+        getAllStatesPerProjectUI.execute(projectId)
 
-        verify { viewer.logMessage("No states found for project ID: $projectId") }
+        verify { viewer.logMessage("No states found for this project") }
     }
 
     @Test
@@ -67,10 +65,10 @@ class GetAllStatesPerProjectUITest {
 
         every { reader.readInput() } returnsMany listOf("", "  ", projectId.toString())
         coEvery { useCase.invoke(projectId) } returns emptyList()
-        getAllStatesPerProjectUI.execute()
 
-        verify(exactly = 2) { viewer.logError("Project ID cannot be blank. Please try again.") }
-        verify { viewer.logMessage("No states found for project ID: $projectId") }
+        getAllStatesPerProjectUI.execute(projectId)
+
+        verify { viewer.logMessage("No states found for this project") }
     }
 
     @Test
@@ -79,7 +77,7 @@ class GetAllStatesPerProjectUITest {
         every { reader.readInput() } returns projectId.toString()
         coEvery { useCase.invoke(projectId) } throws RuntimeException("Something went wrong")
 
-        getAllStatesPerProjectUI.execute()
+        getAllStatesPerProjectUI.execute(projectId)
 
         verify { viewer.logError("Failed to retrieve states: Something went wrong") }
     }
