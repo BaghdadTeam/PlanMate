@@ -117,4 +117,3 @@ class TaskManagementGatherUITest {
         verify { changeTaskStateUI.execute(any(), any()) }
     }
 }
-
