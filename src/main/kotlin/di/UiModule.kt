@@ -63,7 +63,7 @@ val uiModule = module {
 
     // region :: Swimlane ::
     single { RenderSwimlaneUI(get()) }
-    single { SwimlaneUI(get(), get(), get(), get(), get() , get() , get()) }
+    single { SwimlaneUI(get(), get(), get(), get(), get() , get()) }
     // endregion
 
     //region :: ProjectStates ::
