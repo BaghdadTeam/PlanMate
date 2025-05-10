@@ -1,6 +1,7 @@
 package logic.usecase
 
-import io.kotest.matchers.shouldBe
+import com.google.common.truth.Truth.assertThat
+import io.github.classgraph.AnnotationInfoList.emptyList
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -19,13 +20,14 @@ class ViewServiceUseCaseTest {
 
     @Test
     fun `should group tasks by state for given project`() = runTest {
-        // give
+        // given
         val projectId = UUID.randomUUID()
         val state1Id = UUID.randomUUID()
         val state2Id = UUID.randomUUID()
 
         val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
-        val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
+        val state2 =
+            StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
         val states = listOf(state1, state2)
 
         val task1 = TaskEntity(
@@ -53,7 +55,7 @@ class ViewServiceUseCaseTest {
         val result = useCase.swimlane(projectId)
 
         // then
-        result shouldBe Result.success(
+        assertThat(result).isEqualTo(
             mapOf(
                 state1 to listOf(task1),
                 state2 to listOf(task2)
@@ -63,53 +65,57 @@ class ViewServiceUseCaseTest {
 
     @Test
     fun `should return empty map when no states exist for project`() = runTest {
-        // give
+        // given
         val projectId = UUID.randomUUID()
-        coEvery { stateRepository.getAllStatesPerProject(projectId) } returns emptyList()
-        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+        coEvery { stateRepository.getAllStatesPerProject(projectId) } returns emptyList<StateEntity>()
+        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList<TaskEntity>()
 
         // when
         val result = useCase.swimlane(projectId)
 
         // then
-        result shouldBe Result.success(emptyMap())
+        assertThat(result).isEqualTo(emptyMap<StateEntity, List<TaskEntity>>())
     }
 
     @Test
     fun `should handle repository exception gracefully`() = runTest {
-        // give
+        // given
         val projectId = UUID.randomUUID()
-        coEvery { stateRepository.getAllStatesPerProject(projectId)
-        } throws RuntimeException("Database error")
+        coEvery { stateRepository.getAllStatesPerProject(projectId) } throws RuntimeException("Database error")
 
         // when
-        val result = useCase.swimlane(projectId)
+        val exception = try {
+            useCase.swimlane(projectId)
+            null // This should not be reached
+        } catch (e: Exception) {
+            e
+        }
 
         // then
-        result.isFailure shouldBe true
-        result.exceptionOrNull()
-            ?.message shouldBe "Failed to fetch states or tasks for project $projectId: Database error"
+        assertThat(exception).isNotNull()
+        assertThat(exception?.message).isEqualTo("Failed to fetch states or tasks for project $projectId: Database error")
     }
 
     @Test
     fun `should return states with empty task lists when no tasks exist for project`() = runTest {
-        // give
+        // given
         val projectId = UUID.randomUUID()
         val state1Id = UUID.randomUUID()
         val state2Id = UUID.randomUUID()
 
         val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
-        val state2 = StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
+        val state2 =
+            StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
         val states = listOf(state1, state2)
 
         coEvery { stateRepository.getAllStatesPerProject(projectId) } returns states
-        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList<TaskEntity>()
 
         // when
         val result = useCase.swimlane(projectId)
 
         // then
-        result shouldBe Result.success(
+        assertThat(result).isEqualTo(
             mapOf(
                 state1 to emptyList(),
                 state2 to emptyList()

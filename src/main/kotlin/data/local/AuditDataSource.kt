@@ -17,7 +17,7 @@ class AuditDataSource(
 
     suspend fun getAuditByTaskId(taskId: UUID): List<AuditLogEntity> {
         return dataSources.loadAll()
-            .filter { (it.entityUnderAudit == Entities.Task.name) && (it.entityId == taskId) }
+            .filter {(it.projectId == taskId) }
             .takeIf { it.isNotEmpty() }
             ?: throw NoTaskFoundException("No audit found for task with ID: $taskId")
 
@@ -25,7 +25,7 @@ class AuditDataSource(
 
     suspend fun getAuditByProjectId(projectId: UUID): List<AuditLogEntity> {
         return dataSources.loadAll()
-            .filter { (it.entityUnderAudit == Entities.Project.name) && (it.entityId == projectId) }
+            .filter { (it.projectId == projectId) }
             .takeIf { it.isNotEmpty() }
             ?: throw NoProjectFoundException("No audit found for task with ID: $projectId")
 

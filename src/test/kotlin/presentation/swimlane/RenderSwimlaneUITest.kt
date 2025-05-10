@@ -1,6 +1,6 @@
 package presentation.swimlane
 
-import io.kotest.matchers.shouldBe
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.baghdad.logic.model.entities.StateEntity
@@ -11,28 +11,30 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 class RenderSwimlaneUITest {
+
     private val viewServiceUseCase: ViewServiceUseCase = mockk()
     private val ui = RenderSwimlaneUI(viewServiceUseCase)
 
-
     @Test
     fun `should return error message when swimlane retrieval fails`() {
-        // give
+        // Given
         val projectId = UUID.randomUUID()
+
+        // Mocking failure result by throwing exception
         coEvery {
             viewServiceUseCase.swimlane(projectId)
-        } returns Result.failure(Exception("Failed to fetch data"))
+        } throws Exception("Failed to fetch data")
 
-        // when
+        // When
         val result = ui.invoke(projectId)
 
-        // then
-        result shouldBe "Error: Failed to fetch data"
+        // Then
+        assertThat(result).isEqualTo("Error: Failed to fetch data")
     }
 
     @Test
     fun `should render ASCII swimlane correctly`() {
-        // give
+        // Given
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
         val state = StateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
@@ -44,16 +46,34 @@ class RenderSwimlaneUITest {
             projectId = projectId,
             creatorId = creatorId
         )
+
+        // Mocking successful result with data
         coEvery {
             viewServiceUseCase.swimlane(projectId)
-        } returns Result.success(mapOf(state to listOf(task)))
+        } returns mapOf(state to listOf(task))
 
-        // when
+        // When
         val result = ui.invoke(projectId)
 
-        // then
-        result.contains("To Do") shouldBe true
-        result.contains("Task 1") shouldBe true
+        // Then
+        assertThat(result).contains("To Do")
+        assertThat(result).contains("Task 1")
     }
 
+    @Test
+    fun `should return error message when swimlane data is empty`() {
+        // Given
+        val projectId = UUID.randomUUID()
+
+        // Mocking empty data result (No states)
+        coEvery {
+            viewServiceUseCase.swimlane(projectId)
+        } returns emptyMap()
+
+        // When
+        val result = ui.invoke(projectId)
+
+        // Then
+        assertThat(result).isEqualTo("Error: Failed to fetch data")
+    }
 }

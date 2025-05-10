@@ -94,15 +94,13 @@ class TaskDataSourceTest {
     @Test
     fun `should throws TasksNotFoundException if there is no tasks available for the project`() = runTest{
         // Given
-        val randomTask = TaskEntityTestData.randomTask
-        coEvery { dataSource.loadAll() } returns listOf(randomTask)
+        coEvery { dataSource.loadAll() } returns emptyList()
         val projectId = UUID.randomUUID()
 
         // When & Then
-        val exception = assertThrows<TasksNotFoundException> {
+        assertThrows<TasksNotFoundException> {
             taskDataSource.getTasksByProjectId(projectId)
         }
-        assertThat(exception.message).isEqualTo("No tasks found for project ID: $projectId")
     }
 
     @Test

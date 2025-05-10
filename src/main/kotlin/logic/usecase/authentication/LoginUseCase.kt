@@ -9,7 +9,7 @@ import org.baghdad.logic.repositories.TokenProvider
 import org.baghdad.logic.utils.md5WithSalt
 import java.time.LocalDateTime
 
-class LoginUseCase (
+class LoginUseCase(
     private val authRepository: AuthenticationRepository,
     private val sessionRepository: SessionRepository,
     private val tokenProvider: TokenProvider
@@ -17,14 +17,14 @@ class LoginUseCase (
     suspend operator fun invoke(username: String, password: String): SessionEntity {
 
         if (username.isBlank())
-           throw InvalidCredentialsException("username must not be blank")
+            throw InvalidCredentialsException("username must not be blank")
         if (password.isBlank())
             throw InvalidCredentialsException("Password must not be empty")
         val userInfo = authRepository.login(username, password.md5WithSalt())
         return createAndSaveSession(userInfo)
     }
 
-    suspend private fun createAndSaveSession(user: UserEntity): SessionEntity {
+    private suspend fun createAndSaveSession(user: UserEntity): SessionEntity {
         return SessionEntity(
             userId = user.id,
             token = tokenProvider.generateToken(),

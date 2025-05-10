@@ -3,7 +3,6 @@ package org.baghdad.logic.usecase.project
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
@@ -36,7 +35,7 @@ class CreateProjectUseCase(
         val action = "created project ${project.name}"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
-            entityId = project.id,
+            projectId = project.id,
             action = action,
             user = user,
         )

@@ -65,7 +65,7 @@ class DeleteStateForProjectUseCaseTest {
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
+        Truth.assertThat(audit.projectId).isInstanceOf(UUID::class.java)
         Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
     }
 

@@ -63,7 +63,7 @@ class AuditMapperTest {
         // Then
         assertThat(result.id).isEqualTo(uuid)
         assertThat(result.entityUnderAudit).isEqualTo(auditEntityType)
-        assertThat(result.entityId).isEqualTo(typeId)
+        assertThat(result.projectId).isEqualTo(typeId)
         assertThat(result.action).isEqualTo("CREATE")
         assertThat(result.user).isEqualTo(user)
         assertThat(result.timestamp).isEqualTo(timestamp)
@@ -103,7 +103,7 @@ class AuditMapperTest {
         val entity = AuditLogEntity(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
-            entityId = entityId,
+            projectId = entityId,
             action = "UPDATE",
             user = user,
         )
@@ -132,7 +132,7 @@ class AuditMapperTest {
         val entity = AuditLogEntity(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
-            entityId = entityId,
+            projectId = entityId,
             action = "DELETE",
             user = user,
 

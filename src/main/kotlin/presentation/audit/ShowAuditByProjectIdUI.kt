@@ -29,6 +29,7 @@ class ShowAuditByProjectIdUI(
             } catch (_: NoProjectFoundException) {
                 viewer.logError("No audit found for project with ID: $projectId")
             } catch (e: Exception) {
+                println(e)
                 viewer.logError("Something went wrong")
             }
         }

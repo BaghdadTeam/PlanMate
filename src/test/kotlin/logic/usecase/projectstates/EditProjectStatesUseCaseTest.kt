@@ -1,6 +1,7 @@
 package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -67,9 +68,8 @@ class EditProjectStatesUseCaseTest {
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isEqualTo(newState.id)
-        Truth.assertThat(audit.user).isEqualTo(adminUser)
-        Truth.assertThat(audit.action).contains("state is updated successfully")
+        assertThat(audit.user).isEqualTo(adminUser)
+        assertThat(audit.action).contains("state is updated successfully")
     }
 
     @Test

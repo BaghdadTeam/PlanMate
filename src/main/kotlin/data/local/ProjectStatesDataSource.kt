@@ -18,7 +18,7 @@ class ProjectStatesDataSource(
         return states
     }
 
-    suspend fun getStateById(id: UUID): StateEntity? {
+    suspend fun getStateById(id: UUID): StateEntity {
         val allData = projectStateDataSource.loadAll()
         return allData.find { it.id == id } ?: throw StateNotFoundException("No state found")
     }

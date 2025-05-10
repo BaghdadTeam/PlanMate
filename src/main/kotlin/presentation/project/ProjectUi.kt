@@ -21,7 +21,7 @@ class ProjectUi(
             viewer.logMessage("4. View Project")
             viewer.logMessage("0. Back")
             viewer.logMessage("Enter your choice: ")
-            val choice = readln().toIntOrNull()
+            val choice = reader.readInput()?.toIntOrNull()
 
             when (choice) {
                 1 -> createProjectUi.createProject()
@@ -42,8 +42,6 @@ class ProjectUi(
                 0 -> return null
                 else -> viewer.logError("Invalid choice. Please try again.")
             }
-
         }
     }
-
 }

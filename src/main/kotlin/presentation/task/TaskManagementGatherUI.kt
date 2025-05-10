@@ -1,7 +1,9 @@
 package org.baghdad.presentation.task
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -14,13 +16,20 @@ class TaskManagementGatherUI(
     private val editTaskUI: UpdateTaskUI,
     private val deleteTaskUI: DeleteTaskUI,
     private val changeTaskStateUI: StateTransitionUI,
+    private val viewServiceUseCase: ViewServiceUseCase
 ) {
 
-    fun execute(projectId: UUID, tasksStatesIds: List<StateEntity>, tasks: List<TaskEntity>) {
-        showOptions(projectId, tasksStatesIds, tasks)
+    fun execute(projectId : UUID) {
+        showOptions(projectId)
     }
 
-    private fun showOptions(projectId: UUID, tasksStatesIds: List<StateEntity>, tasks: List<TaskEntity>) {
+
+    private fun showOptions(projectId: UUID) {
+        val project =try {
+            runBlocking {viewServiceUseCase.swimlane(projectId) }
+        }catch (_:Exception){
+            emptyMap()
+        }
         viewer.logMessage("")
         viewer.logMessage("1. Create Task")
         viewer.logMessage("2. Edit Task")
@@ -29,13 +38,13 @@ class TaskManagementGatherUI(
         viewer.logMessage("Enter your choice: ")
 
         when (reader.readInput()?.trim()) {
-            "1" -> createTaskUI.execute(projectId, tasksStatesIds.first().id)
-            "2" -> promptEdit(tasks)
-            "3" -> promptDelete(tasks)
-            "4" -> changeTaskStateUI.execute(tasksStatesIds, tasks)
+            "1" -> createTaskUI.execute(projectId)
+            "2" -> promptEdit(project.values.flatten())
+            "3" -> promptDelete(project.values.flatten())
+            "4" -> changeTaskStateUI.execute(project.keys.toList(),project.values.flatten())
             else -> {
                 viewer.logError("Invalid choice. Please try again.")
-                showOptions(projectId, tasksStatesIds, tasks)
+//                showOptions(projectId, tasksStatesIds, tasks)
             }
         }
     }

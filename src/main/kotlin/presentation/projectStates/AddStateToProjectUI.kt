@@ -15,28 +15,26 @@ class AddStateToProjectUI(
     private val reader: Reader
 ) {
 
-    fun execute() {
-        val session = sessionManager.currentSession
+    fun execute(projectId: UUID) {
+        val userId = sessionManager.currentSession.userId
 
-        val userId = session.userId
 
-        val state = promptForStateDetails(userId) ?: return
+        val state = promptForStateDetails(userId , projectId) ?: return
 
         tryAddState(state, userId)
     }
 
-    private fun promptForStateDetails(userId: UUID): StateEntity? {
-        val name = promptForStateName() ?: return null
-        val projectId = promptForProjectId() ?: return null
+    private fun promptForStateDetails(userId: UUID , projectId:UUID): StateEntity? {
+        val name = promptForStateName()
 
         return StateEntity(
             name = name,
-            projectId = UUID.fromString(projectId),
+            projectId = projectId,
             creatorId = userId
         )
     }
 
-    private fun promptForStateName(): String? {
+    private fun promptForStateName(): String {
         while (true) {
             viewer.logMessage("Enter the name of the new state:")
             val name = reader.readInput()
@@ -45,14 +43,6 @@ class AddStateToProjectUI(
         }
     }
 
-    private fun promptForProjectId(): String? {
-        while (true) {
-            viewer.logMessage("Enter the project ID for the state:")
-            val projectId = reader.readInput()
-            if (!projectId.isNullOrBlank()) return projectId
-            viewer.logError("Project ID cannot be blank. Please try again.")
-        }
-    }
 
     private fun tryAddState(state: StateEntity, userId: UUID) {
         try {
@@ -60,8 +50,8 @@ class AddStateToProjectUI(
                 useCase.invoke(state, userId)
                 viewer.logMessage("State '${state.name}' added to project successfully.")
             }
-        } catch (e: Exception) {
-            viewer.logError("Failed to add state: ${e.message}")
+        } catch (_: Exception) {
+            viewer.logError("Failed to add state")
         }
     }
 }

@@ -28,7 +28,7 @@ class AddAuditUseCaseTest {
         // Given
         val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(
-            entityId = randomUUID,
+            projectId = randomUUID,
             action = "CREATE",
             user = mockk(),
             entityUnderAudit = Entities.Task.name,
@@ -44,7 +44,7 @@ class AddAuditUseCaseTest {
         // Given
         val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(
-            entityId = randomUUID,
+            projectId = randomUUID,
             action = "",
             user = mockk(),
             entityUnderAudit = Entities.Task.name,
@@ -60,7 +60,7 @@ class AddAuditUseCaseTest {
         // Given
         val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(
-            entityId = randomUUID,
+            projectId = randomUUID,
             action = " ",
             user = mockk(),
             entityUnderAudit = Entities.Task.name,
