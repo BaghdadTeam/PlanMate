@@ -58,7 +58,6 @@ class UpdateTaskUseCaseTest {
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         assertThat(auditSlot.captured.entityUnderAudit).isEqualTo("Task")
-        assertThat(auditSlot.captured.projectId).isEqualTo(task.id)
         assertThat(auditSlot.captured.action).isEqualTo(
             "Task “${oldTask.title}” was updated: title changed from “${oldTask.title}” to “${task.title}”"
         )

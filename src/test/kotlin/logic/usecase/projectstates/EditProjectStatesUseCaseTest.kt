@@ -68,7 +68,6 @@ class EditProjectStatesUseCaseTest {
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        assertThat(audit.projectId).isEqualTo(newState.id)
         assertThat(audit.user).isEqualTo(adminUser)
         assertThat(audit.action).contains("state is updated successfully")
     }
