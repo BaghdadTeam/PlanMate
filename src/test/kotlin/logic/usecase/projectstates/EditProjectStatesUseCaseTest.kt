@@ -18,8 +18,6 @@ import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDateTime
-import java.util.*
 
 class EditProjectStatesUseCaseTest {
 
@@ -51,25 +49,27 @@ class EditProjectStatesUseCaseTest {
     }
 
     @Test
-    fun `should delete state and add audit when state is valid`() = runTest {
-        // given
+    fun `should edit state and add audit when user is admin`() = runTest {
+        // Given
         val state = ProjectStatesEntityTestData.todoState()
-        val id = state.id
-        val name = "to dooo"
-        val newState = state.copy(id = id, name = name)
-        // when
-        editStateUseCase.invoke(id, newState, adminUser.id)
+        val newName = "To Do Updated"
+        val newState = state.copy(name = newName)
 
-        // then
-        coVerify { statesRepository.editState(id, newState) }
+        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
+
+        // When
+        editStateUseCase.invoke(state.id, newState, adminUser.id)
+
+        // Then
+        coVerify { statesRepository.editState(state.id, newState) }
 
         val auditSlot = slot<AuditLogEntity>()
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
-        Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
-
+        Truth.assertThat(audit.entityId).isEqualTo(newState.id)
+        Truth.assertThat(audit.user).isEqualTo(adminUser)
+        Truth.assertThat(audit.action).contains("state is updated successfully")
     }
 
     @Test
