@@ -1,6 +1,5 @@
 package data.local
 
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
 import helpers.task.TaskTestData
@@ -33,25 +32,30 @@ class ProjectStatesDataSourceTest {
     }
 
     @Test
-    fun `should return data when there is a states for project`() = runTest {
+    fun `should return data when there are states for the project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val id = projectStates.first().projectId
         coEvery { dataSource.loadAll() } returns projectStates
+
         // When
         val result = projectStatesDataSource.getAllStatesForProject(id)
+
         // Then
-        assertThat(result).isEqualTo(projectStates)
+        assertThat(result).isEqualTo(projectStates.filter { it.projectId == id })
     }
 
     @Test
-    fun `should throw exception when there is no states for project`() = runTest {
+    fun `should throw exception when there are no states for the project`() = runTest {
         // Given
+        val id = UUID.randomUUID()
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        val id = projectStates.first().projectId
-        coEvery { dataSource.loadAll() } returns projectStates
+        coEvery { dataSource.loadAll() } returns projectStates // no states match the random ID
+
         // When & Then
-        assertThrows<StateNotFoundException> { projectStatesDataSource.getAllStatesForProject(id)}
+        assertThrows<StateNotFoundException> {
+            projectStatesDataSource.getAllStatesForProject(id)
+        }
     }
 
     @Test
