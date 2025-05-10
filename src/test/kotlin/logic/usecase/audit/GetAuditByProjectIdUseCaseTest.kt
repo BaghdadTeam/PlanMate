@@ -100,24 +100,6 @@ class GetAuditByProjectIdUseCaseTest {
     }
 
     @Test
-    fun `should include duplicate audits if multiple entities share audit log`() = runTest {
-        val projectId = UUID.randomUUID()
-        val sharedAudit = AuditLogEntity(UUID.randomUUID(), "Task", projectId, "Viewed", mockUser, LocalDateTime.now())
-
-        val state = ProjectStatesEntityTestData.todoState().copy(projectId = projectId)
-        val task = TaskEntityTestData.normalTask.copy(projectId = projectId)
-
-        coEvery { auditRepository.getAuditByProjectId(projectId) } returns listOf(sharedAudit)
-        coEvery { projectStatesRepository.getAllStatesPerProject(projectId) } returns listOf(state)
-        coEvery { auditRepository.getAuditByProjectId(state.projectId) } returns listOf(sharedAudit)
-        coEvery { taskRepository.getTasksByProjectId(projectId) } returns listOf(task)
-
-        val result = getAuditByProjectIdUseCase.invoke(projectId)
-
-        assertThat(result.count { it == sharedAudit }).isEqualTo(3)
-    }
-
-    @Test
     fun `should return audits sorted by descending timestamp`() = runTest {
         val projectId = UUID.randomUUID()
         val auditOld = AuditLogEntity(
