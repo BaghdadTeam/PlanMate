@@ -13,48 +13,26 @@ class ViewServiceUseCase(
 ) {
 
     suspend fun swimlane(projectId: UUID): Map<StateEntity, List<TaskEntity>> {
-         try {
+        try {
+            // Fetch states for the project
             val stateEntities = stateRepository.getAllStatesPerProject(projectId)
-             if(stateEntities.isEmpty()){
-                 return emptyMap()
-             }
+            if (stateEntities.isEmpty()) {
+                // If no states are found, return an empty map
+                return emptyMap()
+            }
 
+            // Fetch tasks for the project
             val taskEntities = taskRepository.getTasksByProjectId(projectId)
-             if(taskEntities.isEmpty()){
-                 throw Exception("No tasks found for project $projectId")
-             }
-            val tasks = taskEntities.map { taskEntity ->
-                TaskEntity(
-                    id = taskEntity.id,
-                    title = taskEntity.title,
-                    description = taskEntity.description,
-                    stateId = taskEntity.stateId,
-                    projectId = taskEntity.projectId,
-                    creatorId = taskEntity.creatorId
 
-                )
+            // Group tasks by their stateId, return empty lists for states without tasks
+            val tasksByStateId: Map<String, List<TaskEntity>> = taskEntities.groupBy { it.stateId.toString() }
+
+            // Map states to corresponding tasks, use empty list if no tasks for the state
+            return stateEntities.associateWith { state ->
+                tasksByStateId[state.id.toString()] ?: emptyList()
             }
-             val states = stateEntities.map { stateEntity ->
-                 StateEntity(
-                     id = stateEntity.id,
-                     name = stateEntity.name,
-                     projectId = stateEntity.projectId,
-                     creatorId = stateEntity.creatorId
-                 )
-             }
-
-            val tasksByStateId: Map<String, List<TaskEntity>> = tasks.groupBy { it.stateId.toString() }
-            val groupedTasks = states.associateWith { state ->
-                tasksByStateId[state.id.toString()] ?: emptyList<TaskEntity>()
-            }
-
-            return groupedTasks
         } catch (e: Exception) {
-                throw Exception(
-                    "Failed to fetch states or tasks for project $projectId: ${e.message}",
-                    e
-
-                )
+            throw Exception("Failed to fetch states or tasks for project $projectId: ${e.message}", e)
         }
     }
 }
