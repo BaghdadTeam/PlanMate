@@ -1,6 +1,5 @@
 package presentation.projectStates
 
-import com.google.common.truth.Truth.assertThat
 import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
@@ -43,61 +42,51 @@ class EditProjectStateUITest {
         val name = "In Review"
         val projectId = UUID.randomUUID()
 
-        every { reader.readInput() } returnsMany listOf(stateId.toString(), name, projectId.toString())
+        every { reader.readInput() } returns name
 
-        ui.execute(projectId)
+        ui.execute(projectId, stateId)
 
         coVerify {
-            useCase.invoke(any(), any(), any())
-            viewer.logMessage("State updated successfully.")
+            useCase.invoke(stateId, match {
+                it.name == name && it.projectId == projectId && it.creatorId == userId
+            }, userId)
         }
+        verify { viewer.logMessage("State updated successfully.") }
     }
 
     @Test
     fun `promptForStateId should retry until non-blank is given`() {
         every { reader.readInput() } returnsMany listOf("", " ", "valid-id")
 
-        val method = ui.javaClass.getDeclaredMethod("promptForStateId")
-        method.isAccessible = true
-        val result = method.invoke(ui) as String
+        ui.execute(UUID.randomUUID(), UUID.randomUUID())
 
-        assertThat(result).isEqualTo("valid-id")
         verify(exactly = 2) {
-            viewer.logError("State ID cannot be blank. Please try again.")
+            viewer.logError("State name cannot be blank. Please try again.")
         }
     }
 
     @Test
     fun `tryEditState should show error message on failure`() {
-        val method = ui.javaClass.getDeclaredMethod(
-            "tryEditState", UUID::class.java, StateEntity::class.java, UUID::class.java
-        )
-        method.isAccessible = true
-
+        val stateId = UUID.randomUUID()
         val state = StateEntity(name = "To Do", projectId = UUID.randomUUID(), creatorId = userId)
+
+        every { reader.readInput() } returns "Valid State Name"
         coEvery { useCase.invoke(any(), any(), any()) } throws Exception("state not found")
 
-        method.invoke(ui, UUID.randomUUID() , state, userId)
+        ui.execute(state.projectId, stateId)
 
         verify { viewer.logError("Failed to update state: state not found") }
     }
+
 
     @Test
     fun `promptForStateName should log error for blank input and succeed on valid input`() {
         every { reader.readInput() } returnsMany listOf("", "   ", "Valid Name")
 
-        val method = ui.javaClass.getDeclaredMethod("promptForStateName")
-        method.isAccessible = true
+        ui.execute(UUID.randomUUID(), UUID.randomUUID())
 
-        val result = method.invoke(ui) as String
-
-        // Verify that the correct error message was logged for the first two invalid inputs
         verify(exactly = 2) {
             viewer.logError("State name cannot be blank. Please try again.")
         }
-
-        // Verify the correct value was returned
-        assertThat(result).isEqualTo("Valid Name")
     }
-
 }

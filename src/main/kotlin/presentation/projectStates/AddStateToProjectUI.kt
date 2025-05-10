@@ -50,8 +50,8 @@ class AddStateToProjectUI(
                 useCase.invoke(state, userId)
                 viewer.logMessage("State '${state.name}' added to project successfully.")
             }
-        } catch (e: Exception) {
-            viewer.logError("Failed to add state: ${e.message}")
+        } catch (_: Exception) {
+            viewer.logError("Failed to add state")
         }
     }
 }
