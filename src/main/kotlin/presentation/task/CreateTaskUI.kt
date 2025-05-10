@@ -20,11 +20,15 @@ class CreateTaskUI(
 ) {
 
     fun execute(projectId: UUID) {
-
         val user = sessionManager.currentSession
         val states = getAllStatesPerProjectUI.execute(projectId)
-        val task = promptForTaskDetails(user.userId, projectId , states[0]) ?: return
 
+        if (states.isEmpty()) {
+            viewer.logError("No states found for project $projectId")
+            return
+        }
+
+        val task = promptForTaskDetails(user.userId, projectId, states[0]) ?: return
         tryCreateTask(task, user.userId)
     }
 
@@ -72,11 +76,11 @@ class CreateTaskUI(
                 createTaskUseCase(task, userId)
                 viewer.logMessage("Task created successfully.")
             }
-        } catch (e: TaskWithMissingTitleException) {
+        } catch (_: TaskWithMissingTitleException) {
             viewer.logError("Task title is missing.")
             val updatedTask = promptForTitle()?.let { task.copy(title = it) } ?: task
             tryCreateTask(updatedTask, userId)
-        } catch (e: TaskWithMissingDescriptionException) {
+        } catch (_: TaskWithMissingDescriptionException) {
             viewer.logError("Task description is missing.")
             val updatedTask = promptForDescription()?.let { task.copy(description = it) } ?: task
             tryCreateTask(updatedTask, userId)
