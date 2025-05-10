@@ -4,13 +4,13 @@ import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -72,17 +72,16 @@ class DeleteStateForProjectUseCaseTest {
 
     @Test
     fun `should throw exception when user type is mate`() = runTest {
-        // given
+        // Given
         val stateId = UUID.randomUUID()
         coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
 
-        // when
-        val exception = assertThrows<Exception> {
+        // When
+        val exception = assertThrows<NotAccessException> {
             deleteStateUseCase.invoke(stateId, mateUser.id)
         }
-        // then
-        Truth.assertThat(exception.message).contains("Only Admin can add tasks")
+
+        // Then
+        Truth.assertThat(exception.message).contains("Only Admin can delete states")
     }
-
-
 }
