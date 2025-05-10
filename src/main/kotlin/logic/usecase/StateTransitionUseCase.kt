@@ -20,7 +20,6 @@ class StateTransitionUseCase(
         val task = taskRepository.getTaskById(taskId)
 
         val currentState = projectStatesRepository.getStateById(task.stateId)
-            ?: throw Exception("Current state not found")
 
         if (currentState.id == newStateId) {
             throw Exception("Task is already in the requested state. No changes made.")
@@ -36,7 +35,7 @@ class StateTransitionUseCase(
     }
 
     private suspend fun validateNewState(projectId: UUID, newStateId: UUID) =
-        projectStatesRepository.getStateById(newStateId)?.takeIf { it.projectId == projectId }
+        projectStatesRepository.getStateById(newStateId).takeIf { it.projectId == projectId }
             ?: throw NotFoundException("State not found in this project")
 
     private suspend fun updateTaskState(taskId: UUID, newStateId: UUID): Boolean {
