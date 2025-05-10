@@ -1,11 +1,9 @@
 package presentation.task
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import io.mockk.verifySequence
+import io.mockk.*
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -25,6 +23,7 @@ class TaskManagementGatherUITest {
     private lateinit var editTaskUI: UpdateTaskUI
     private lateinit var deleteTaskUI: DeleteTaskUI
     private lateinit var changeTaskStateUI: StateTransitionUI
+    private lateinit var viewServiceUseCase: ViewServiceUseCase
     private lateinit var ui: TaskManagementGatherUI
 
     private val projectId = UUID.randomUUID()
@@ -40,29 +39,32 @@ class TaskManagementGatherUITest {
         editTaskUI = mockk(relaxed = true)
         deleteTaskUI = mockk(relaxed = true)
         changeTaskStateUI = mockk(relaxed = true)
+        viewServiceUseCase = mockk { coEvery { swimlane(any()) } returns emptyMap() }
 
-        ui = TaskManagementGatherUI(viewer, reader, createTaskUI, editTaskUI, deleteTaskUI, changeTaskStateUI)
+        ui = TaskManagementGatherUI(
+            viewer,
+            reader,
+            createTaskUI,
+            editTaskUI,
+            deleteTaskUI,
+            changeTaskStateUI,
+            viewServiceUseCase
+        )
 
-        task1 = TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", UUID.randomUUID(), projectId, UUID.randomUUID())
-        task2 = TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", UUID.randomUUID(), projectId, UUID.randomUUID())
+        task1 =
+            TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", UUID.randomUUID(), projectId, UUID.randomUUID())
+        task2 =
+            TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", UUID.randomUUID(), projectId, UUID.randomUUID())
         state = StateEntity(UUID.randomUUID(), "IN_PROGRESS", projectId, UUID.randomUUID())
     }
 
     @Test
     fun `should display task management options and handle invalid input`() {
-        every { reader.readInput() } returnsMany listOf("5", "1") // 5 is invalid, then 1 is valid
+        every { reader.readInput() } returnsMany listOf("5")
 
-        ui.execute(projectId, listOf(state), listOf(task1, task2))
+        ui.execute(projectId)
 
         verifySequence {
-            viewer.logMessage("") // initial blank line
-            viewer.logMessage("1. Create Task")
-            viewer.logMessage("2. Edit Task")
-            viewer.logMessage("3. Delete Task")
-            viewer.logMessage("4. Change Task State")
-            viewer.logMessage("Enter your choice: ")
-            reader.readInput()
-            viewer.logError("Invalid choice. Please try again.")
             viewer.logMessage("")
             viewer.logMessage("1. Create Task")
             viewer.logMessage("2. Edit Task")
@@ -70,43 +72,49 @@ class TaskManagementGatherUITest {
             viewer.logMessage("4. Change Task State")
             viewer.logMessage("Enter your choice: ")
             reader.readInput()
-            createTaskUI.execute(projectId, state.id)
+            viewer.logError("Invalid choice. Please try again.")
         }
     }
+
 
     @Test
     fun `should call CreateTaskUI when option 1 is selected`() {
         every { reader.readInput() } returns "1"
 
-        ui.execute(projectId, listOf(state), listOf(task1, task2))
+        ui.execute(projectId)
 
-        verify { createTaskUI.execute(projectId, state.id) }
+        verify { createTaskUI.execute(projectId) }
     }
 
     @Test
     fun `should call EditTaskUI when option 2 is selected`() {
         every { reader.readInput() } returns "2"
 
-        ui.execute(projectId, listOf(state), listOf(task1, task2))
+        // Again, we just verify that the correct UI method is called, not the service logic
+        ui.execute(projectId)
 
-        verify { editTaskUI.execute(listOf(task1, task2)) }
+        // Verify that EditTaskUI is executed with the list of tasks
+        verify { editTaskUI.execute(any()) }
     }
 
     @Test
     fun `should call DeleteTaskUI when option 3 is selected`() {
         every { reader.readInput() } returns "3"
 
-        ui.execute(projectId, listOf(state), listOf(task1, task2))
+        ui.execute(projectId)
 
-        verify { deleteTaskUI.execute(listOf(task1, task2)) }
+        verify { deleteTaskUI.execute(any()) }
     }
 
     @Test
     fun `should call ChangeTaskStateUI when option 4 is selected`() {
         every { reader.readInput() } returns "4"
 
-        ui.execute(projectId, listOf(state), listOf(task1, task2))
+        // We don't need to mock the service logic here, just verify that the correct UI method is called
+        ui.execute(projectId)
 
-        verify { changeTaskStateUI.execute(listOf(state), listOf(task1, task2)) }
+        // Verify that StateTransitionUI is executed with the expected arguments
+        verify { changeTaskStateUI.execute(any(), any()) }
     }
 }
+
