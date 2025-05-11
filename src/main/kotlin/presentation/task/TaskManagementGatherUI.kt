@@ -30,7 +30,7 @@ class TaskManagementGatherUI(
         }catch (_:Exception){
             emptyMap()
         }
-        viewer.logMessage("")
+        viewer.logMessage("=== Task Management ===")
         viewer.logMessage("1. Create Task")
         viewer.logMessage("2. Edit Task")
         viewer.logMessage("3. Delete Task")
