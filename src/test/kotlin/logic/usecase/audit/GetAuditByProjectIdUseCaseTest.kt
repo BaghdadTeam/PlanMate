@@ -2,22 +2,15 @@ package logic.usecase.audit
 
 import com.google.common.truth.Truth.assertThat
 import helpers.audit.AuditTestData
-import helpers.projectStates.ProjectStatesEntityTestData
-import helpers.task.TaskEntityTestData
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.AuditRepository
-import org.baghdad.logic.repositories.ProjectStatesRepository
-import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 class GetAuditByProjectIdUseCaseTest {
 
@@ -38,7 +31,11 @@ class GetAuditByProjectIdUseCaseTest {
         val audit2 = audit1.copy(projectId = audit1.projectId)
         val audit3 = audit1.copy(projectId = audit1.projectId)
 
-        coEvery { auditRepository.getAuditByProjectId(audit1.projectId) } returns listOf(audit1, audit2, audit3)
+        coEvery { auditRepository.getAuditByProjectId(audit1.projectId) } returns listOf(
+            audit1,
+            audit2,
+            audit3
+        )
 
         // when
         val auditLogs = getAuditByProjectIdUseCase.invoke(audit1.projectId)
@@ -72,7 +69,11 @@ class GetAuditByProjectIdUseCaseTest {
             projectId = auditOld.projectId
         )
 
-        coEvery { auditRepository.getAuditByProjectId(projectId = auditOld.projectId) } returns listOf(auditOld, auditMid, auditNew)
+        coEvery { auditRepository.getAuditByProjectId(projectId = auditOld.projectId) } returns listOf(
+            auditOld,
+            auditMid,
+            auditNew
+        )
 
         // when
         val result = getAuditByProjectIdUseCase.invoke(projectId = auditOld.projectId)

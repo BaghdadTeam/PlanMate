@@ -50,13 +50,13 @@ class StateTransitionUseCase(
     private suspend fun logStateChange(
         task: TaskEntity, oldState: StateEntity, newState: StateEntity, user: UserEntity
     ) {
-        val action = "${user.username} changed task ${task.title} from state ${oldState.name} to ${newState.name}"
+        val description = "${user.username} changed task ${task.title} from state ${oldState.name} to ${newState.name}"
 
         val auditEntry = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
             entityUnderAuditId = task.id,
             projectId = task.projectId,
-            action = action,
+            description = description,
             userId = user.id,
         )
         auditRepository.addAuditEntry(auditEntry)

@@ -56,7 +56,7 @@ class UpdateTaskUseCase(
             entityUnderAudit = Entities.Task.name,
             entityUnderAuditId = newTask.id,
             projectId = newTask.projectId,
-            action = action,
+            description = action,
             userId = user.id,
         )
         auditRepository.addAuditEntry(audit)

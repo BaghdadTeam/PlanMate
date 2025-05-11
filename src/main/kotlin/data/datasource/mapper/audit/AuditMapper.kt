@@ -22,7 +22,7 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
             entityUnderAudit = audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE],
             entityUnderAuditId = UUID.fromString(audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE_ID]),
             projectId = UUID.fromString(audit[AuditColumns.PROJECT_ID]),
-            action = audit[AuditColumns.ACTION],
+            description = audit[AuditColumns.ACTION],
             userId = UUID.fromString(audit[AuditColumns.USER_ID]),
             timestamp = parseTimestamp(audit[AuditColumns.TIMESTAMP]),
         )
@@ -39,7 +39,7 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
                 "${item.entityUnderAudit}," +
                 "${item.entityUnderAuditId}," +
                 "${item.projectId}," +
-                "${item.action}," +
+                "${item.description}," +
                 "${item.userId}," +
                 "${item.timestamp}"
     }

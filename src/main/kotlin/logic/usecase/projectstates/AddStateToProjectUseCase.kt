@@ -31,7 +31,7 @@ class AddStateToProjectUseCase(
             entityUnderAudit = Entities.Task.name,
             entityUnderAuditId = state.id,
             projectId = state.projectId,
-            action = action,
+            description = action,
             userId = user.id,
         )
         return audit

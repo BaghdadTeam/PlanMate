@@ -3,22 +3,19 @@ package logic.usecase.audit
 import helpers.audit.AuditTestData
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.EmptyActionInAuditEntityException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
 
 class AddAuditUseCaseTest {
-    private lateinit var  auditRepository : AuditRepository
-    private lateinit var  addAuditUseCase : AddAuditUseCase
+    private lateinit var auditRepository: AuditRepository
+    private lateinit var addAuditUseCase: AddAuditUseCase
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         auditRepository = mockk(relaxed = true)
         addAuditUseCase = AddAuditUseCase(auditRepository)
 
@@ -36,24 +33,26 @@ class AddAuditUseCaseTest {
     }
 
     @Test
-    fun `should throw EmptyActionInAuditEntityException when add audit with empty action`() = runTest {
-        // Given
-        val auditLogEntity = AuditTestData.createAuditHelper(action = "")
+    fun `should throw EmptyActionInAuditEntityException when add audit with empty action`() =
+        runTest {
+            // Given
+            val auditLogEntity = AuditTestData.createAuditHelper(action = "")
 
 
-        // when & Then
-        assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditLogEntity)}
+            // when & Then
+            assertThrows<EmptyActionInAuditEntityException> { addAuditUseCase.invoke(auditLogEntity) }
 
-    }
+        }
 
     @Test
-    fun `should throw EmptyActionInAuditEntityException when add audit with blank action`() = runTest {
-        // Given
-        val auditLogEntity = AuditTestData.createAuditHelper(action = " ")
+    fun `should throw EmptyActionInAuditEntityException when add audit with blank action`() =
+        runTest {
+            // Given
+            val auditLogEntity = AuditTestData.createAuditHelper(action = " ")
 
 
-        // when & Then
-        assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditLogEntity)}
+            // when & Then
+            assertThrows<EmptyActionInAuditEntityException> { addAuditUseCase.invoke(auditLogEntity) }
 
-    }
+        }
 }

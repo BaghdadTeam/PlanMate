@@ -1,15 +1,12 @@
 package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
 import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -61,7 +58,7 @@ class AuditMapperTest {
         assertThat(result.entityUnderAudit).isEqualTo(entityUnderAudit)
         assertThat(result.entityUnderAuditId).isEqualTo(entityUnderAuditId)
         assertThat(result.projectId).isEqualTo(projectId)
-        assertThat(result.action).isEqualTo("CREATE")
+        assertThat(result.description).isEqualTo("CREATE")
         assertThat(result.userId).isEqualTo(userId)
         assertThat(result.timestamp).isEqualTo(timestamp)
     }
@@ -98,7 +95,7 @@ class AuditMapperTest {
             entityUnderAudit = Entities.Task.name,
             entityUnderAuditId = entityUnderAuditId,
             projectId = projectId,
-            action = "UPDATE",
+            description = "UPDATE",
             userId = userId,
         )
 
@@ -123,7 +120,7 @@ class AuditMapperTest {
             entityUnderAudit = Entities.Task.name,
             entityUnderAuditId = entityUnderAuditId,
             projectId = projectId,
-            action = "DELETE",
+            description = "DELETE",
             userId = userId,
 
             )

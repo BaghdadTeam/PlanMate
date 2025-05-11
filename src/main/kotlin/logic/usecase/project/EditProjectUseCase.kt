@@ -43,7 +43,7 @@ class EditProjectUseCase(
             entityUnderAudit = Entities.Project.name,
             entityUnderAuditId = oldProject.id,
             projectId = oldProject.id,
-            action = action,
+            description = action,
             userId = user.id,
         )
     }

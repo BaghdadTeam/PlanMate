@@ -25,7 +25,7 @@ class ShowAuditByTaskIdUI(
                            "${index + 1} :" +
                                 " ${user.type} " +
                                 " ${user.name} " +
-                                " ${auditEntity.action} " +
+                                " ${auditEntity.description} " +
                                 "at ${auditEntity.timestamp}"
                     )
                 }

@@ -91,7 +91,7 @@ class ShowAuditByProjectIdUITest {
                 "1 :" +
                         " ${user.type} " +
                         " ${user.name} " +
-                        " ${auditEntities[0].action} " +
+                        " ${auditEntities[0].description} " +
                         "at ${auditEntities[0].timestamp}"
             )
         }

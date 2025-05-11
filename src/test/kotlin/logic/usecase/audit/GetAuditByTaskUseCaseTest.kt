@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class GetAuditByTaskUseCaseTest {
-    lateinit var  auditRepository : AuditRepository
-    lateinit var  getAuditByTaskUseCase: GetAuditByTaskIdUseCase
+    private lateinit var  auditRepository : AuditRepository
+    private lateinit var  getAuditByTaskUseCase: GetAuditByTaskIdUseCase
 
     @BeforeEach
     fun setup(){

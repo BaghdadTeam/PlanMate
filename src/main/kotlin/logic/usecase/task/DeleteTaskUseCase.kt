@@ -32,7 +32,7 @@ class DeleteTaskUseCase(
             entityUnderAudit = Entities.Task.name,
             entityUnderAuditId = task.id,
             projectId = task.projectId,
-            action = action,
+            description = action,
             userId = user.id,
         )
     }

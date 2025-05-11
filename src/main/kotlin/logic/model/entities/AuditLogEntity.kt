@@ -13,7 +13,7 @@ data class AuditLogEntity(
     val entityUnderAuditId : UUID,
     @BsonProperty("project_id")
     val projectId: UUID,
-    val action: String,
+    val description: String,
     @BsonProperty("user_id")
     val userId: UUID,
     val timestamp: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Baghdad"))

@@ -69,7 +69,7 @@ class EditProjectStatesUseCaseTest {
 
         val audit = auditSlot.captured
         assertThat(audit.userId).isEqualTo(adminUser.id)
-        assertThat(audit.action).contains("state is updated successfully")
+        assertThat(audit.description).contains("state is updated successfully")
     }
 
     @Test

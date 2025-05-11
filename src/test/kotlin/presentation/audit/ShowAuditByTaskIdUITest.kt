@@ -5,8 +5,6 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.NoTaskFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
@@ -93,7 +91,7 @@ class ShowAuditByTaskIdUITest {
         verify { viewer.logMessage("1 :" +
                 " ${user.type} " +
                 " ${user.name} " +
-                " ${auditEntities[0].action} " +
+                " ${auditEntities[0].description} " +
                 "at ${auditEntities[0].timestamp}") }
 
     }

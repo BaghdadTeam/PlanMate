@@ -18,7 +18,7 @@ object AuditTestData {
     ) = AuditLogEntity(
         projectId = projectId,
         entityUnderAuditId = entityUnderAuditId,
-        action = action,
+        description = action,
         userId = userId,
         entityUnderAudit = entityUnderAudit,
         timestamp = timestamp
