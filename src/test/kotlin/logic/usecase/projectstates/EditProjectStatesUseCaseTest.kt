@@ -1,7 +1,9 @@
 package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
@@ -9,14 +11,14 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
-import java.util.*
+import org.junit.jupiter.api.assertThrows
 
 class EditProjectStatesUseCaseTest {
 
@@ -48,26 +50,41 @@ class EditProjectStatesUseCaseTest {
     }
 
     @Test
-    fun `should delete state and add audit when state is valid`() = runTest {
-        // given
+    fun `should edit state and add audit when user is admin`() = runTest {
+        // Given
         val state = ProjectStatesEntityTestData.todoState()
-        val id = state.id
-        val name = "to dooo"
-        val newState = state.copy(id = id, name = name)
-        // when
-        editStateUseCase.invoke(id, newState, adminUser.id)
+        val newName = "To Do Updated"
+        val newState = state.copy(name = newName)
 
-        // then
-        coVerify { statesRepository.editState(id, newState) }
+        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
+
+        // When
+        editStateUseCase.invoke(state.id, newState, adminUser.id)
+
+        // Then
+        coVerify { statesRepository.editState(state.id, newState) }
 
         val auditSlot = slot<AuditLogEntity>()
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.entityId).isInstanceOf(UUID::class.java)
-        Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
-
+        assertThat(audit.user).isEqualTo(adminUser)
+        assertThat(audit.action).contains("state is updated successfully")
     }
 
+    @Test
+    fun `should throw exception when user type is mate`() = runTest {
+        // given
+        val state = ProjectStatesEntityTestData.todoState()
+        val newState = state.copy(name = "Done")
+        coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
+
+        // when
+        val exception = assertThrows<NotAccessException> {
+            editStateUseCase.invoke(state.id, newState, mateUser.id)
+        }
+        // then
+        Truth.assertThat(exception.message).contains("Only Admin can edit states")
+    }
 
 }

@@ -10,14 +10,14 @@ class ProjectStatesRepositoryImp(
 ) : ProjectStatesRepository {
 
     override suspend fun getAllStatesPerProject(projectId: UUID): List<StateEntity> {
-        return dataSource.getAllStatesForProject().filter { it.projectId == projectId }
+        return dataSource.getAllStatesForProject(projectId)
     }
 
     override suspend fun createState(state: StateEntity) {
         return dataSource.createState(state)
     }
 
-    override suspend fun getStateById(stateId: UUID): StateEntity? {
+    override suspend fun getStateById(stateId: UUID): StateEntity {
         return dataSource.getStateById(stateId)
     }
 
@@ -28,4 +28,5 @@ class ProjectStatesRepositoryImp(
     override suspend fun deleteState(stateId: UUID) {
         return dataSource.deleteState(stateId)
     }
+
 }

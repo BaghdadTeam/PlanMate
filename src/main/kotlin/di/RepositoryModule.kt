@@ -3,6 +3,7 @@ package org.baghdad.di
 import org.baghdad.data.repositories.audit.AuditRepositoryImpl
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
 import org.baghdad.data.repositories.authentication.SessionRepositoryImpl
+import org.baghdad.data.repositories.project.ProjectRepositoryImpl
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
 import org.baghdad.data.repositories.task.TaskRepositoryImpl
 import org.baghdad.data.repositories.user.UserRepositoryImpl
@@ -23,4 +24,5 @@ val repositoryModule = module {
     single<AuthenticationRepository> { AuthenticationRepositoryImpl(get(), get()) }
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<AuditRepository> { AuditRepositoryImpl(get()) }
+    single<ProjectRepository> { ProjectRepositoryImpl(get()) }
 }

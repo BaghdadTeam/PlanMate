@@ -15,24 +15,15 @@ class EditProjectStateUI(
     private val reader: Reader
 ) {
 
-    fun execute(projectId: UUID) {
+    fun execute(projectId: UUID , stateId : UUID) {
         val session = sessionManager.currentSession
         val userId = session.userId
 
-        val stateId = promptForStateId() ?: return
         val newState = promptForNewStateDetails(userId, projectId) ?: return
 
-        tryEditState(UUID.fromString(stateId), newState, userId)
+        tryEditState(stateId, newState, userId)
     }
 
-    private fun promptForStateId(): String? {
-        while (true) {
-            viewer.logMessage("Enter the ID of the state to edit:")
-            val input = reader.readInput()
-            if (!input.isNullOrBlank()) return input
-            viewer.logError("State ID cannot be blank. Please try again.")
-        }
-    }
 
     private fun promptForNewStateDetails(userId: UUID, projectId: UUID): StateEntity? {
         val name = promptForStateName() ?: return null

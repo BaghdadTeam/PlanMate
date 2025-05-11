@@ -25,7 +25,7 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
         return AuditLogEntity(
             id = UUID.fromString(audit[AuditColumns.ID]),
             entityUnderAudit =audit[AuditColumns.ENTITY_TYPE],
-            entityId = UUID.fromString(audit[AuditColumns.ENTITY_ID]),
+            projectId = UUID.fromString(audit[AuditColumns.ENTITY_ID]),
             action = audit[AuditColumns.ACTION],
             user = userData,
             timestamp = parseTimestamp(audit[AuditColumns.TIMESTAMP]),
@@ -40,6 +40,6 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
 
     override fun serializer(item: AuditLogEntity): String {
         val serializedUser = UserMapper().serializer(item.user)
-        return "${item.id},${item.entityUnderAudit},${item.entityId},${item.action},[${serializedUser}],${item.timestamp}"
+        return "${item.id},${item.entityUnderAudit},${item.projectId},${item.action},[${serializedUser}],${item.timestamp}"
     }
 }

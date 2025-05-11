@@ -93,4 +93,5 @@ val dataSourceModule = module {
         )
     }
     single { TaskDataSource(get(named(Entities.Task))) }
+    single{ AuditDataSource(get(named(Entities.Audit))) }
 }

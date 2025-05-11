@@ -1,14 +1,13 @@
 package logic.usecase.projectstates
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.repositories.AuditRepository
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.repositories.ProjectStatesRepository
-import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.GetStateByIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,21 +17,16 @@ import java.util.*
 class GetStateByIdUseCaseTest {
 
     private lateinit var statesRepository: ProjectStatesRepository
-    private lateinit var auditRepository: AuditRepository
     private lateinit var getStateByIdUseCase: GetStateByIdUseCase
-    private lateinit var userRepository: UserRepository
 
     @BeforeEach
     fun setup() {
         statesRepository = mockk(relaxed = true)
-        auditRepository = mockk(relaxed = true)
-        userRepository = mockk(relaxed = true)
         getStateByIdUseCase = GetStateByIdUseCase(statesRepository)
     }
 
     @Test
-    fun `should return sate when there is a state by this id`() = runTest {
-
+    fun `should return state when there is a state by this id`() = runTest {
         val projectState = ProjectStatesEntityTestData.todoState()
         val id = projectState.id
 
@@ -40,35 +34,31 @@ class GetStateByIdUseCaseTest {
 
         val result = getStateByIdUseCase.invoke(id)
 
-        Truth.assertThat(result).isEqualTo(projectState)
+        assertThat(result).isEqualTo(projectState)
         coVerify { statesRepository.getStateById(id) }
     }
 
     @Test
-    fun `should throw exception when there is no states with this id`() = runTest {
+    fun `should throw StateNotFoundException when there is no state with this id`() = runTest {
         val id = UUID.randomUUID()
-        coEvery { statesRepository.getStateById(id) } throws Exception("No State found")
+        coEvery { statesRepository.getStateById(id) } throws StateNotFoundException("No state found")
 
-        assertThrows<Exception> {
+        val exception = assertThrows<StateNotFoundException> {
             getStateByIdUseCase.invoke(id)
         }
-        coVerify { statesRepository.getStateById(id) }
 
+        assertThat(exception.message).contains("No state found")
     }
 
     @Test
-    fun `should throw exception when there is no states for project`() = runTest {
-        // Given
-        val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        val stateId = projectStates[0].projectId
-        coEvery { statesRepository.getStateById(stateId) } returns null
+    fun `should throw StateNotFoundException when state id matches but state is missing`() = runTest {
+        val missingStateId = UUID.randomUUID()
+        coEvery { statesRepository.getStateById(missingStateId) } throws StateNotFoundException("No state found")
 
-        // when
-        val exception = assertThrows<Exception> {
-            getStateByIdUseCase.invoke(stateId)
+        val exception = assertThrows<StateNotFoundException> {
+            getStateByIdUseCase.invoke(missingStateId)
         }
-        // then
-        Truth.assertThat(exception.message).contains("No state found")
-    }
 
+        assertThat(exception.message).contains("No state found")
+    }
 }

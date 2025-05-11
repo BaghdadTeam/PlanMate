@@ -2,42 +2,35 @@ package org.baghdad.presentation.projectStates
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
-import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import java.util.UUID
+import java.util.*
 
 class GetAllStatesPerProjectUI(
     private val useCase: GetAllStatesPerProjectUseCase,
     private val viewer: Viewer,
-    private val reader: Reader
 ) {
 
-    fun execute() {
-        val projectId = promptForProjectId() ?: return
+    fun execute(projectId : UUID) : List<UUID> {
+        val statesUUIDs = mutableListOf<UUID>()
 
         try {
             runBlocking {
-                val states = useCase.invoke(UUID.fromString(projectId))
+                val states = useCase.invoke(projectId)
                 if (states.isEmpty()) {
-                    viewer.logMessage("No states found for project ID: $projectId")
+                    viewer.logMessage("No states found for this project")
                 } else {
-                    viewer.logMessage("States for project ID: $projectId")
                     states.forEachIndexed { index, state ->
                         viewer.logMessage("${index + 1}. ${state.name}")
+                        statesUUIDs.add(state.id)
                     }
+
                 }
+
             }
+            return statesUUIDs
         } catch (e: Exception) {
             viewer.logError("Failed to retrieve states: ${e.message}")
-        }
-    }
-
-    private fun promptForProjectId(): String? {
-        while (true) {
-            viewer.logMessage("Enter the project ID to view its states:")
-            val input = reader.readInput()
-            if (!input.isNullOrBlank()) return input
-            viewer.logError("Project ID cannot be blank. Please try again.")
+            return emptyList()
         }
     }
 }
