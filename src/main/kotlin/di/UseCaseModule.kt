@@ -72,7 +72,7 @@ val useCaseModule = module {
     // region :: Audit ::
     single { AddAuditUseCase(get()) }
     single { GetAuditByTaskIdUseCase(get()) }
-    single { GetAuditByProjectIdUseCase(get() , get() , get()) }
+    single { GetAuditByProjectIdUseCase(get()) }
     // endregion
 
     // region :: Swimlane ::

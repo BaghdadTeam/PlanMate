@@ -8,8 +8,6 @@ import java.util.UUID
 
 class GetAuditByProjectIdUseCase(
     private val auditRepository: AuditRepository,
-    private val projectStatesRepository: ProjectStatesRepository,
-    private val taskRepository: TaskRepository
 ) {
     suspend operator fun invoke(projectId: UUID): List<AuditLogEntity> {
         val projectAudit = auditRepository.getAuditByProjectId(projectId)
