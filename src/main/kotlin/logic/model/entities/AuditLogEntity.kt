@@ -10,9 +10,11 @@ data class AuditLogEntity(
     @BsonId
     override val id: UUID = UUID.randomUUID(),
     val entityUnderAudit: String,  // => Project | State | Task
+    val entityUnderAuditId : UUID,
     @BsonProperty("project_id")
     val projectId: UUID,
     val action: String,
+    @BsonProperty("user_id")
     val userId: UUID,
     val timestamp: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Baghdad"))
 ): Identifiable
