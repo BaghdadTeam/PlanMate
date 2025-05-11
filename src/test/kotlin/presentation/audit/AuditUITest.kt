@@ -79,9 +79,6 @@ class AuditUITest {
     fun `should log error when invalid task UUID is entered`() {
         // Given
         val projectId = UUID.randomUUID()
-//        every { readln() } returns "2"
-//        every { reader.readInput() } returns "not-a-uuid" // Invalid UUID format
-//        every { getTasksByProjectIdUI.execute(projectId) } returns emptyList()
         every { readln() } returnsMany listOf("2", "0")
         every { getTasksByProjectIdUI.execute(projectId) } returns emptyList()
         // When
@@ -95,16 +92,14 @@ class AuditUITest {
         verify { viewer.logMessage("0. Back") }
         verify { viewer.logMessage("Enter your choice: ") }
         verify { viewer.logMessage("No tasks available to audit.") }
-//        verify(exactly = 0) { showAuditByTaskIdUI.execute(any()) }
+
     }
 
     @Test
     fun `should log error message when invalid task UUID is entered`() {
         // Given
         val projectId = UUID.randomUUID()
-//        every { readln() } returns "2"
         every { reader.readInput() } returns "not-a-uuid" // Invalid UUID format
-//        every { getTasksByProjectIdUI.execute(projectId) } returns emptyList()
         every { readln() } returnsMany listOf("2", "0")
         every { getTasksByProjectIdUI.execute(projectId) } returns listOf(projectId)
         // When
@@ -118,7 +113,6 @@ class AuditUITest {
         verify { viewer.logMessage("0. Back") }
         verify { viewer.logMessage("Enter your choice: ") }
         verify { viewer.logError("Invalid selection. Please enter a valid task number.") }
-//        verify(exactly = 0) { showAuditByTaskIdUI.execute(any()) }
     }
 
 
