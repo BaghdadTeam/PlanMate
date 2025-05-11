@@ -85,7 +85,7 @@ val uiModule = module {
 //endregion
 
     //region :: Audit ::
-    single { ShowAuditByProjectIdUI(get(), get()) }
+    single { ShowAuditByProjectIdUI(get(), get() , get()) }
     //endregion
 
 
