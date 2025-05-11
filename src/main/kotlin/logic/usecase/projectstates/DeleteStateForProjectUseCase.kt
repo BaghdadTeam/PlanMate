@@ -31,6 +31,7 @@ class DeleteStateForProjectUseCase (
         val action = "delete  state is deleted successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = state.id,
             projectId = state.projectId,
             action = action,
             userId = user.id,

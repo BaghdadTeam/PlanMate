@@ -31,6 +31,7 @@ class DeleteProjectUseCase(
         val action = "has been Project ${project.name}"
         return AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
+            entityUnderAuditId = project.id,
             projectId = project.id,
             action = action,
             userId = user.id,

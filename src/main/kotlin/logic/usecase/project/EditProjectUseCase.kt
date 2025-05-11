@@ -41,6 +41,7 @@ class EditProjectUseCase(
         val action = "name change form “${oldProject.name}” to “${newProject.name}” "
         return AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
+            entityUnderAuditId = oldProject.id,
             projectId = oldProject.id,
             action = action,
             userId = user.id,

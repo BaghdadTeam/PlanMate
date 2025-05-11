@@ -35,6 +35,7 @@ class CreateProjectUseCase(
         val action = "created project ${project.name}"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
+            entityUnderAuditId = project.id,
             projectId = project.id,
             action = action,
             userId = user.id,
