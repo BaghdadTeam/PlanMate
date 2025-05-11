@@ -43,19 +43,14 @@ class AuditMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val typeId = UUID.randomUUID()
-        val user = UserEntity(
-            name = "Youssef",
-            username = "Pixel",
-            hashedPassword = "someHashedPassword",
-            type = UserType.Mate
-        )
+        val userId = UUID.randomUUID()
+
 
         // → match the trailing ']' that your parser leaves in the argument
-        every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
 
         val timestamp = LocalDateTime.now()
         val auditEntityType = Entities.Task.name
-        val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
+        val line = "$uuid,$auditEntityType,$typeId,CREATE,$userId,$timestamp"
 
         // When
         val result = parser.deserializer(line)
@@ -65,13 +60,13 @@ class AuditMapperTest {
         assertThat(result.entityUnderAudit).isEqualTo(auditEntityType)
         assertThat(result.projectId).isEqualTo(typeId)
         assertThat(result.action).isEqualTo("CREATE")
-        assertThat(result.user).isEqualTo(user)
+        assertThat(result.userId).isEqualTo(userId)
         assertThat(result.timestamp).isEqualTo(timestamp)
     }
 
     @Test
     fun `deserializer throws IllegalArgumentException for bad UUID`() {
-        val badLine = "not-a-uuid,Type,ID,ACTION,[user],timestamp"
+        val badLine = "not-a-uuid,Type,ID,ACTION,userId,timestamp"
         assertThrows<IllegalArgumentException> {
             parser.deserializer(badLine)
         }
@@ -80,7 +75,8 @@ class AuditMapperTest {
 
     @Test
     fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
-        val malformed = "1234,OnlyTwoFields"
+        val randomUUID = UUID.randomUUID()
+        val malformed = "$randomUUID,OnlyTwoFields"
         assertThrows<IndexOutOfBoundsException> {
             parser.deserializer(malformed)
         }
@@ -92,27 +88,21 @@ class AuditMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val entityId = UUID.randomUUID()
-        val user = UserEntity(
-            name = "Youssef Mohamed",
-            username = "Pixel",
-            hashedPassword = "pw",
-            type = UserType.Mate
-        )
-        every { anyConstructed<UserMapper>().serializer(user) } returns "Pixel,Youssef Mohamed"
+        val userId = UUID.randomUUID()
 
         val entity = AuditLogEntity(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
             projectId = entityId,
             action = "UPDATE",
-            user = user,
+            userId = userId,
         )
 
         // When
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,UPDATE,[Pixel,Youssef Mohamed],${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,UPDATE,$userId,${entity.timestamp}")
     }
 
     @Test
@@ -120,21 +110,15 @@ class AuditMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val entityId = UUID.randomUUID()
-        val user = UserEntity(
-            name = "ASDASD",
-            username = "Bodi",
-            hashedPassword = "pw",
-            type = UserType.Mate
-        )
-        // simulate a user serializer with multiple commas
-        every { anyConstructed<UserMapper>().serializer(user) } returns "Bodi,ASDASD,Extra"
+        val userId = UUID.randomUUID()
+
 
         val entity = AuditLogEntity(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
             projectId = entityId,
             action = "DELETE",
-            user = user,
+            userId = userId,
 
             )
 
@@ -143,7 +127,7 @@ class AuditMapperTest {
 
         // Then
         // The user part should be wrapped in a single pair of brackets
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,DELETE,[Bodi,ASDASD,Extra],${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,DELETE,$userId,${entity.timestamp}")
     }
 
 
@@ -152,21 +136,15 @@ class AuditMapperTest {
         // Given
         val uuid = UUID.randomUUID()
         val typeId = UUID.randomUUID()
-        val user = UserEntity(
-            name = "Youssef",
-            username = "Pixel",
-            hashedPassword = "someHashedPassword",
-            type = UserType.Mate
-        )
+        val userId = UUID.randomUUID()
 
-        // → match the trailing ']' that your parser leaves in the argument
-        every { anyConstructed<UserMapper>().deserializer("Pixel,Youssef]") } returns user
+
 
         val timestamp = "2020-01-02" +
                 "" +
                 ""
         val auditEntityType = Entities.Task.name
-        val line = "$uuid,$auditEntityType,$typeId,CREATE,[Pixel,Youssef],$timestamp"
+        val line = "$uuid,$auditEntityType,$typeId,CREATE,$userId,$timestamp"
 
         // When
         assertThrows<UnSupportedTimeStampFormatException> { parser.deserializer(line) }
