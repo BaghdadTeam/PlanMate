@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.StateEntity
@@ -57,6 +58,7 @@ class StateTransitionUseCase(
             entityUnderAuditId = task.id,
             projectId = task.projectId,
             description = description,
+            action = Action.Update,
             userId = user.id,
         )
         auditRepository.addAuditEntry(auditEntry)
