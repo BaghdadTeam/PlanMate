@@ -54,7 +54,7 @@ class DeleteTaskUseCaseTest {
             auditRepository.addAuditEntry(match { audit ->
                 audit.entityUnderAudit == Entities.Task.name &&
                         audit.projectId == task.projectId &&
-                        audit.user == user &&
+                        audit.userId == user.id &&
                         audit.action == "has been deleted task ${task.title}"
             })
         }
