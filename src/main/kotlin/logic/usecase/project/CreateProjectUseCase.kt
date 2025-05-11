@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase.project
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.ProjectEntity
@@ -32,12 +33,13 @@ class CreateProjectUseCase(
         project: ProjectEntity,
         user: UserEntity
     ): AuditLogEntity {
-        val action = "created project ${project.name}"
+        val description = "created project ${project.name}"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
             entityUnderAuditId = project.id,
             projectId = project.id,
-            description = action,
+            description = description,
+            action = Action.Create,
             userId = user.id,
         )
         return audit
