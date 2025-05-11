@@ -1,10 +1,9 @@
 package org.baghdad.data.datasource.mapper.audit
 
 import org.baghdad.data.datasource.CsvMapper
-import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.data.utils.parseTimestamp
 import org.baghdad.logic.model.entities.AuditLogEntity
-import java.util.*
+import java.util.UUID
 
 class AuditMapper : CsvMapper<AuditLogEntity> {
 
@@ -20,8 +19,9 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
 
         return AuditLogEntity(
             id = UUID.fromString(audit[AuditColumns.ID]),
-            entityUnderAudit =audit[AuditColumns.ENTITY_TYPE],
-            projectId = UUID.fromString(audit[AuditColumns.ENTITY_ID]),
+            entityUnderAudit = audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE],
+            entityUnderAuditId = UUID.fromString(audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE_ID]),
+            projectId = UUID.fromString(audit[AuditColumns.PROJECT_ID]),
             action = audit[AuditColumns.ACTION],
             userId = UUID.fromString(audit[AuditColumns.USER_ID]),
             timestamp = parseTimestamp(audit[AuditColumns.TIMESTAMP]),
@@ -35,6 +35,12 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
     }
 
     override fun serializer(item: AuditLogEntity): String {
-        return "${item.id},${item.entityUnderAudit},${item.projectId},${item.action},${item.userId},${item.timestamp}"
+        return  "${item.id}," +
+                "${item.entityUnderAudit}," +
+                "${item.entityUnderAuditId}," +
+                "${item.projectId}," +
+                "${item.action}," +
+                "${item.userId}," +
+                "${item.timestamp}"
     }
 }
