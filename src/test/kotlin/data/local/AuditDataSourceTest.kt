@@ -35,7 +35,7 @@ class AuditDataSourceTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Task.name,
         )
 
@@ -50,7 +50,7 @@ class AuditDataSourceTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Task.name,
         )
 
@@ -69,7 +69,7 @@ class AuditDataSourceTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Project.name,
         )
 
@@ -96,11 +96,11 @@ class AuditDataSourceTest {
     @Test
     fun `should throw a NoProjectFoundException when getAuditByProjectId return empty list`()= runTest {
         // Given
-        val projectId = UUID.randomUUID()
+        val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(
-            projectId = projectId,
+            projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Task.name,
         )
 
@@ -127,7 +127,7 @@ class AuditDataSourceTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Task.name,
         )
         val inputRandomUUID = UUID.randomUUID()
@@ -145,7 +145,7 @@ class AuditDataSourceTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Project.name,
         )
         val inputRandomUUID = UUID.randomUUID()
@@ -163,7 +163,7 @@ class AuditDataSourceTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.State.name,
         )
         val inputRandomUUID = UUID.randomUUID()
@@ -182,7 +182,7 @@ class AuditDataSourceTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.State.name,
         )
         val inputRandomUUID = UUID.randomUUID()
