@@ -9,6 +9,7 @@ import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.NoTaskFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
+import org.baghdad.logic.usecase.user.GetUserByUserIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
@@ -18,6 +19,7 @@ import kotlin.test.Test
 class ShowAuditByTaskIdUITest {
     private lateinit var showAuditByTaskIdUI: ShowAuditByTaskIdUI
     private lateinit var getAuditByTaskIdUseCase: GetAuditByTaskIdUseCase
+    private lateinit var getUserByIdUseCase: GetUserByUserIdUseCase
     private lateinit var viewer: Viewer
 
 
@@ -25,7 +27,8 @@ class ShowAuditByTaskIdUITest {
     fun setup() {
         viewer = mockk(relaxed = true)
         getAuditByTaskIdUseCase = mockk(relaxed = true)
-        showAuditByTaskIdUI = ShowAuditByTaskIdUI(getAuditByTaskIdUseCase, viewer)
+        getUserByIdUseCase = mockk(relaxed = true)
+        showAuditByTaskIdUI = ShowAuditByTaskIdUI(getAuditByTaskIdUseCase, getUserByIdUseCase , viewer )
     }
 
 
@@ -76,25 +79,26 @@ class ShowAuditByTaskIdUITest {
     @Test
     fun `should show audits by Task ID when getAuditByTaskIdUseCase returns audits`(){
         // Given
-        val haider = createUserHelper()
+        val user = createUserHelper()
         val taskID = UUID.randomUUID()
         val auditEntities = listOf(
             AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
             projectId = taskID,
             action = "Create Task Aboud",
-            user = haider ,
+            userId = user.id ,
         )
         )
         // When
         coEvery { getAuditByTaskIdUseCase.invoke(taskID) } returns auditEntities
+        coEvery { getUserByIdUseCase.invoke(user.id) } returns user
 
         // Then
         showAuditByTaskIdUI.execute(taskID)
 
         verify { viewer.logMessage("1 :" +
-                " ${auditEntities[0].user.type} " +
-                " ${auditEntities[0].user.name} " +
+                " ${user.type} " +
+                " ${user.name} " +
                 " ${auditEntities[0].action} " +
                 "at ${auditEntities[0].timestamp}") }
 

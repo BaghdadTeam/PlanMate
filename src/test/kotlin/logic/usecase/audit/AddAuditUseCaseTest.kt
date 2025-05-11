@@ -13,8 +13,8 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 class AddAuditUseCaseTest {
-    lateinit var  auditRepository : AuditRepository
-    lateinit var  addAuditUseCase : AddAuditUseCase
+    private lateinit var  auditRepository : AuditRepository
+    private lateinit var  addAuditUseCase : AddAuditUseCase
 
     @BeforeEach
     fun setup(){
@@ -30,7 +30,7 @@ class AddAuditUseCaseTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "CREATE",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Task.name,
         )
 
@@ -46,7 +46,7 @@ class AddAuditUseCaseTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = "",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Task.name,
         )
 
@@ -62,7 +62,7 @@ class AddAuditUseCaseTest {
         val auditLogEntity = AuditLogEntity(
             projectId = randomUUID,
             action = " ",
-            user = mockk(),
+            userId = randomUUID,
             entityUnderAudit = Entities.Task.name,
         )
 

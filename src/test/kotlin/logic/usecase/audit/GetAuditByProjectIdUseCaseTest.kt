@@ -43,15 +43,15 @@ class GetAuditByProjectIdUseCaseTest {
 
     @Test
     fun `should fetch and combine all audit logs for project`() = runTest {
-        val projectId = UUID.randomUUID()
-
+        val userId = UUID.randomUUID()
+        val projectId =  UUID.randomUUID()
         // Prepare mock data for the audit logs
         val audit1 = AuditLogEntity(
             id = UUID.randomUUID(),
             entityUnderAudit = "Task",
             projectId = projectId,
             action = "Created",
-            user = mockUser,
+            userId = userId,
             timestamp = LocalDateTime.now().minusDays(1)
         )
 
@@ -60,7 +60,7 @@ class GetAuditByProjectIdUseCaseTest {
             entityUnderAudit = "Project",
             projectId = projectId,
             action = "Updated",
-            user = mockUser,
+            userId = userId,
             timestamp = LocalDateTime.now().minusDays(2)
         )
 
@@ -69,7 +69,7 @@ class GetAuditByProjectIdUseCaseTest {
             entityUnderAudit = "State",
             projectId = projectId,
             action = "Created",
-            user = mockUser,
+            userId = userId,
             timestamp = LocalDateTime.now()
         )
 
@@ -102,12 +102,13 @@ class GetAuditByProjectIdUseCaseTest {
     @Test
     fun `should return audits sorted by descending timestamp`() = runTest {
         val projectId = UUID.randomUUID()
+        val userId = UUID.randomUUID()
         val auditOld = AuditLogEntity(
             UUID.randomUUID(),
             "Project",
             projectId,
             "Old log",
-            mockUser,
+            userId,
             LocalDateTime.now().minusDays(2)
         )
         val auditMid = AuditLogEntity(
@@ -115,10 +116,10 @@ class GetAuditByProjectIdUseCaseTest {
             "Project",
             projectId,
             "Mid log",
-            mockUser,
+            userId,
             LocalDateTime.now().minusDays(1)
         )
-        val auditNew = AuditLogEntity(UUID.randomUUID(), "Project", projectId, "New log", mockUser, LocalDateTime.now())
+        val auditNew = AuditLogEntity(UUID.randomUUID(), "Project", projectId, "New log", userId, LocalDateTime.now())
 
         coEvery { auditRepository.getAuditByProjectId(projectId) } returns listOf(auditOld, auditMid, auditNew)
         coEvery { projectStatesRepository.getAllStatesPerProject(projectId) } returns emptyList()
