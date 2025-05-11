@@ -30,6 +30,7 @@ class DeleteTaskUseCase(
         val action = "has been deleted task ${task.title}"
         return AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = task.id,
             projectId = task.projectId,
             action = action,
             userId = user.id,

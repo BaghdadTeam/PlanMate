@@ -34,6 +34,7 @@ class CreateTaskUseCase(
         val action = "created task ${task.title}"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = task.id,
             projectId = task.projectId,
             action = action,
             userId = user.id,

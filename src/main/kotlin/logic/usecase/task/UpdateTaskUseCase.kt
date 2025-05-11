@@ -54,6 +54,7 @@ class UpdateTaskUseCase(
 
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = newTask.id,
             projectId = newTask.projectId,
             action = action,
             userId = user.id,
