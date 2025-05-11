@@ -5,7 +5,8 @@ object AuditColumns {
     const val ENTITY_UNDER_AUDIT_TYPE = 1
     const val ENTITY_UNDER_AUDIT_TYPE_ID = 2
     const val PROJECT_ID = 3
-    const val ACTION = 4
-    const val USER_ID = 5
-    const val TIMESTAMP = 6
+    const val DESCRIPTION = 4
+    const val ACTION = 5
+    const val USER_ID = 6
+    const val TIMESTAMP = 7
 }

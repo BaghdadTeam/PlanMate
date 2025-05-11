@@ -5,6 +5,7 @@ import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
@@ -48,7 +49,7 @@ class AuditMapperTest {
 
         val timestamp = LocalDateTime.now()
         val entityUnderAudit = Entities.Task.name
-        val line = "$uuid,$entityUnderAudit,$entityUnderAuditId,$projectId,CREATE,$userId,$timestamp"
+        val line = "$uuid,$entityUnderAudit,$entityUnderAuditId,$projectId,CREATE,${Action.Create.name},$userId,$timestamp"
         // When
         val result = parser.deserializer(line)
 
@@ -59,6 +60,7 @@ class AuditMapperTest {
         assertThat(result.entityUnderAuditId).isEqualTo(entityUnderAuditId)
         assertThat(result.projectId).isEqualTo(projectId)
         assertThat(result.description).isEqualTo("CREATE")
+        assertThat(result.action).isEqualTo(Action.Create)
         assertThat(result.userId).isEqualTo(userId)
         assertThat(result.timestamp).isEqualTo(timestamp)
     }
@@ -96,6 +98,7 @@ class AuditMapperTest {
             entityUnderAuditId = entityUnderAuditId,
             projectId = projectId,
             description = "UPDATE",
+            action = Action.Update,
             userId = userId,
         )
 
@@ -103,7 +106,7 @@ class AuditMapperTest {
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,UPDATE,$userId,${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,UPDATE,${Action.Update},$userId,${entity.timestamp}")
     }
 
     @Test
@@ -121,6 +124,7 @@ class AuditMapperTest {
             entityUnderAuditId = entityUnderAuditId,
             projectId = projectId,
             description = "DELETE",
+            action = Action.Delete,
             userId = userId,
 
             )
@@ -130,7 +134,7 @@ class AuditMapperTest {
 
         // Then
         // The user part should be wrapped in a single pair of brackets
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,DELETE,$userId,${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,DELETE,${Action.Delete.name},$userId,${entity.timestamp}")
     }
 
 
@@ -146,7 +150,7 @@ class AuditMapperTest {
 
         val timestamp = "2020-01-02"
         val auditEntityType = Entities.Task.name
-        val line = "$uuid,$auditEntityType,$auditEntityTypeId,$projectId,CREATE,$userId,$timestamp"
+        val line = "$uuid,$auditEntityType,$auditEntityTypeId,$projectId,CREATE,${Action.Create},$userId,$timestamp"
 
         // When
         assertThrows<UnSupportedTimeStampFormatException> { parser.deserializer(line) }

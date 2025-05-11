@@ -2,6 +2,7 @@ package org.baghdad.data.datasource.mapper.audit
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.utils.parseTimestamp
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import java.util.UUID
 
@@ -22,7 +23,8 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
             entityUnderAudit = audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE],
             entityUnderAuditId = UUID.fromString(audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE_ID]),
             projectId = UUID.fromString(audit[AuditColumns.PROJECT_ID]),
-            description = audit[AuditColumns.ACTION],
+            description = audit[AuditColumns.DESCRIPTION],
+            action = Action.valueOf(audit[AuditColumns.ACTION]),
             userId = UUID.fromString(audit[AuditColumns.USER_ID]),
             timestamp = parseTimestamp(audit[AuditColumns.TIMESTAMP]),
         )
@@ -40,6 +42,7 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
                 "${item.entityUnderAuditId}," +
                 "${item.projectId}," +
                 "${item.description}," +
+                "${item.action}," +
                 "${item.userId}," +
                 "${item.timestamp}"
     }
