@@ -33,10 +33,10 @@ class AddAuditUseCaseTest {
     }
 
     @Test
-    fun `should throw EmptyActionInAuditEntityException when add audit with empty action`() =
+    fun `should throw EmptyActionInAuditEntityException when add audit with empty description`() =
         runTest {
             // Given
-            val auditLogEntity = AuditTestData.createAuditHelper(action = "")
+            val auditLogEntity = AuditTestData.createAuditHelper(description = "")
 
 
             // when & Then
@@ -45,10 +45,10 @@ class AddAuditUseCaseTest {
         }
 
     @Test
-    fun `should throw EmptyActionInAuditEntityException when add audit with blank action`() =
+    fun `should throw EmptyActionInAuditEntityException when add audit with blank description`() =
         runTest {
             // Given
-            val auditLogEntity = AuditTestData.createAuditHelper(action = " ")
+            val auditLogEntity = AuditTestData.createAuditHelper(description = " ")
 
 
             // when & Then
