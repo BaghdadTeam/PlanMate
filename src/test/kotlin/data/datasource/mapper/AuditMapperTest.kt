@@ -42,23 +42,25 @@ class AuditMapperTest {
     fun `deserializer parses line into AuditEntity`() {
         // Given
         val uuid = UUID.randomUUID()
-        val typeId = UUID.randomUUID()
+        val entityUnderAuditId = UUID.randomUUID()
+        val projectId = UUID.randomUUID()
         val userId = UUID.randomUUID()
 
 
         // → match the trailing ']' that your parser leaves in the argument
 
         val timestamp = LocalDateTime.now()
-        val auditEntityType = Entities.Task.name
-        val line = "$uuid,$auditEntityType,$typeId,CREATE,$userId,$timestamp"
-
+        val entityUnderAudit = Entities.Task.name
+        val line = "$uuid,$entityUnderAudit,$entityUnderAuditId,$projectId,CREATE,$userId,$timestamp"
         // When
         val result = parser.deserializer(line)
 
+
         // Then
         assertThat(result.id).isEqualTo(uuid)
-        assertThat(result.entityUnderAudit).isEqualTo(auditEntityType)
-        assertThat(result.projectId).isEqualTo(typeId)
+        assertThat(result.entityUnderAudit).isEqualTo(entityUnderAudit)
+        assertThat(result.entityUnderAuditId).isEqualTo(entityUnderAuditId)
+        assertThat(result.projectId).isEqualTo(projectId)
         assertThat(result.action).isEqualTo("CREATE")
         assertThat(result.userId).isEqualTo(userId)
         assertThat(result.timestamp).isEqualTo(timestamp)
@@ -66,7 +68,7 @@ class AuditMapperTest {
 
     @Test
     fun `deserializer throws IllegalArgumentException for bad UUID`() {
-        val badLine = "not-a-uuid,Type,ID,ACTION,userId,timestamp"
+        val badLine = "not-a-uuid,Type,TypeId,ID,ACTION,userId,timestamp"
         assertThrows<IllegalArgumentException> {
             parser.deserializer(badLine)
         }
@@ -87,13 +89,15 @@ class AuditMapperTest {
     fun `serializer produces correct CSV line`() {
         // Given
         val uuid = UUID.randomUUID()
-        val entityId = UUID.randomUUID()
+        val projectId = UUID.randomUUID()
+        val entityUnderAuditId = UUID.randomUUID()
         val userId = UUID.randomUUID()
 
         val entity = AuditLogEntity(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
-            projectId = entityId,
+            entityUnderAuditId = entityUnderAuditId,
+            projectId = projectId,
             action = "UPDATE",
             userId = userId,
         )
@@ -102,21 +106,23 @@ class AuditMapperTest {
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,UPDATE,$userId,${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,UPDATE,$userId,${entity.timestamp}")
     }
 
     @Test
     fun `serializer wraps user CSV in square brackets`() {
         // Given
         val uuid = UUID.randomUUID()
-        val entityId = UUID.randomUUID()
+        val projectId = UUID.randomUUID()
         val userId = UUID.randomUUID()
+        val entityUnderAuditId = UUID.randomUUID()
 
 
         val entity = AuditLogEntity(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
-            projectId = entityId,
+            entityUnderAuditId = entityUnderAuditId,
+            projectId = projectId,
             action = "DELETE",
             userId = userId,
 
@@ -127,7 +133,7 @@ class AuditMapperTest {
 
         // Then
         // The user part should be wrapped in a single pair of brackets
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,DELETE,$userId,${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,DELETE,$userId,${entity.timestamp}")
     }
 
 
@@ -135,16 +141,15 @@ class AuditMapperTest {
     fun `throw UnSupportedTimeStampFormatException when deserializer parses line with wrong format for datetime`() {
         // Given
         val uuid = UUID.randomUUID()
-        val typeId = UUID.randomUUID()
+        val auditEntityTypeId = UUID.randomUUID()
+        val projectId = UUID.randomUUID()
         val userId = UUID.randomUUID()
 
 
 
-        val timestamp = "2020-01-02" +
-                "" +
-                ""
+        val timestamp = "2020-01-02"
         val auditEntityType = Entities.Task.name
-        val line = "$uuid,$auditEntityType,$typeId,CREATE,$userId,$timestamp"
+        val line = "$uuid,$auditEntityType,$auditEntityTypeId,$projectId,CREATE,$userId,$timestamp"
 
         // When
         assertThrows<UnSupportedTimeStampFormatException> { parser.deserializer(line) }
