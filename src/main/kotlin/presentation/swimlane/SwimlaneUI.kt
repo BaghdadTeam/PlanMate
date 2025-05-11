@@ -1,6 +1,6 @@
 package org.baghdad.presentation.swimlane
 
-import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
+import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.ProjectStatesUI
@@ -11,7 +11,7 @@ class SwimlaneUI(
     private val renderSwimlaneUI: RenderSwimlaneUI,
     private val projectStatesUI: ProjectStatesUI,
     private val taskUI: TaskManagementGatherUI,
-    private val auditByProjectIdUI: ShowAuditByProjectIdUI,
+    private val auditUI: AuditUI,
     private val reader: Reader,
     private val viewer: Viewer
 
@@ -22,18 +22,12 @@ class SwimlaneUI(
 
 
             while (true) {
-                viewer.logMessage(
-                    """
-== Plan Mate ==
-                $swimLane
-1- Manage States (Admin Only)
-2- Manage Tasks
-3- View Audit Log
-0- Back to Previous Screen
-
-Choose an action:
-            """.trimIndent()
-                )
+                viewer.logMessage("=== Plan Mate ===")
+                viewer.logMessage(swimLane)
+                viewer.logMessage("1. Manage States (Admin Only)")
+                viewer.logMessage("2. Manage Tasks")
+                viewer.logMessage("3. View Audit Log")
+                viewer.logMessage("0. Back to Previous Screen")
 
                 print("Enter your choice: ")
                 when (reader.readInput()?.toIntOrNull()) {
@@ -49,7 +43,7 @@ Choose an action:
 
                     3 -> {
                         println("Navigating to Audit Log Screen...")
-                        auditByProjectIdUI.execute(projectId)
+                        auditUI(projectId)
                     }
 
                     0 -> {

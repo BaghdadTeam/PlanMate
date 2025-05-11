@@ -65,11 +65,12 @@ class TaskManagementGatherUITest {
         ui.execute(projectId)
 
         verifySequence {
-            viewer.logMessage("")
+            viewer.logMessage("=== Task Management ===")
             viewer.logMessage("1. Create Task")
             viewer.logMessage("2. Edit Task")
             viewer.logMessage("3. Delete Task")
             viewer.logMessage("4. Change Task State")
+            viewer.logMessage("0. Back to Previous Screen")
             viewer.logMessage("Enter your choice: ")
             reader.readInput()
             viewer.logError("Invalid choice. Please try again.")
