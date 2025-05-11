@@ -1,5 +1,6 @@
 package logic.usecase.audit
 
+import helpers.audit.AuditTestData
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
@@ -26,13 +27,8 @@ class AddAuditUseCaseTest {
     @Test
     fun `should throw no exception when add audit`() = runTest {
         // Given
-        val randomUUID = UUID.randomUUID()
-        val auditLogEntity = AuditLogEntity(
-            projectId = randomUUID,
-            action = "CREATE",
-            userId = randomUUID,
-            entityUnderAudit = Entities.Task.name,
-        )
+        val auditLogEntity = AuditTestData.createAuditHelper()
+
 
         // when
         addAuditUseCase.invoke(auditLogEntity)
@@ -42,13 +38,8 @@ class AddAuditUseCaseTest {
     @Test
     fun `should throw EmptyActionInAuditEntityException when add audit with empty action`() = runTest {
         // Given
-        val randomUUID = UUID.randomUUID()
-        val auditLogEntity = AuditLogEntity(
-            projectId = randomUUID,
-            action = "",
-            userId = randomUUID,
-            entityUnderAudit = Entities.Task.name,
-        )
+        val auditLogEntity = AuditTestData.createAuditHelper(action = "")
+
 
         // when & Then
         assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditLogEntity)}
@@ -58,13 +49,8 @@ class AddAuditUseCaseTest {
     @Test
     fun `should throw EmptyActionInAuditEntityException when add audit with blank action`() = runTest {
         // Given
-        val randomUUID = UUID.randomUUID()
-        val auditLogEntity = AuditLogEntity(
-            projectId = randomUUID,
-            action = " ",
-            userId = randomUUID,
-            entityUnderAudit = Entities.Task.name,
-        )
+        val auditLogEntity = AuditTestData.createAuditHelper(action = " ")
+
 
         // when & Then
         assertThrows<EmptyActionInAuditEntityException> {addAuditUseCase.invoke(auditLogEntity)}

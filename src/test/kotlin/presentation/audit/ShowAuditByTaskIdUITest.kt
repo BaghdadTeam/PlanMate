@@ -1,5 +1,6 @@
 package presentation.audit
 
+import helpers.audit.AuditTestData
 import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -79,22 +80,15 @@ class ShowAuditByTaskIdUITest {
     @Test
     fun `should show audits by Task ID when getAuditByTaskIdUseCase returns audits`(){
         // Given
-        val user = createUserHelper()
-        val taskID = UUID.randomUUID()
-        val auditEntities = listOf(
-            AuditLogEntity(
-            entityUnderAudit = Entities.Task.name,
-            projectId = taskID,
-            action = "Create Task Aboud",
-            userId = user.id ,
-        )
-        )
+        val auditEntities = listOf(AuditTestData.createAuditHelper())
+        val user = createUserHelper(id = auditEntities[0].userId)
+
         // When
-        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } returns auditEntities
-        coEvery { getUserByIdUseCase.invoke(user.id) } returns user
+        coEvery { getAuditByTaskIdUseCase.invoke(auditEntities[0].entityUnderAuditId) } returns auditEntities
+        coEvery { getUserByIdUseCase.invoke(auditEntities[0].userId) } returns user
 
         // Then
-        showAuditByTaskIdUI.execute(taskID)
+        showAuditByTaskIdUI.execute(auditEntities[0].entityUnderAuditId)
 
         verify { viewer.logMessage("1 :" +
                 " ${user.type} " +
