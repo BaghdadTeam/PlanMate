@@ -35,6 +35,7 @@ class TaskManagementGatherUI(
         viewer.logMessage("2. Edit Task")
         viewer.logMessage("3. Delete Task")
         viewer.logMessage("4. Change Task State")
+        viewer.logMessage("0. Back to Previous Screen")
         viewer.logMessage("Enter your choice: ")
 
         when (reader.readInput()?.trim()) {
@@ -42,6 +43,7 @@ class TaskManagementGatherUI(
             "2" -> promptEdit(project.values.flatten())
             "3" -> promptDelete(project.values.flatten())
             "4" -> changeTaskStateUI.execute(project.keys.toList(),project.values.flatten())
+            "0" -> return
             else -> {
                 viewer.logError("Invalid choice. Please try again.")
 //                showOptions(projectId, tasksStatesIds, tasks)
