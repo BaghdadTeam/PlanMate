@@ -37,7 +37,7 @@ class CreateProjectUseCase(
             entityUnderAudit = Entities.Project.name,
             projectId = project.id,
             action = action,
-            user = user,
+            userId = user.id,
         )
         return audit
     }

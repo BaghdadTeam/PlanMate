@@ -36,7 +36,7 @@ class CreateTaskUseCase(
             entityUnderAudit = Entities.Task.name,
             projectId = task.projectId,
             action = action,
-            user = user,
+            userId = user.id,
         )
         return audit
     }

@@ -27,7 +27,7 @@ class EditProjectStatesUseCase (
             entityUnderAudit = Entities.Task.name,
             projectId = state.projectId,
             action = action,
-            user = user,
+            userId = user.id,
         )
         return audit
     }

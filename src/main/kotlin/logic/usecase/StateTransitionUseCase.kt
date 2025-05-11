@@ -53,7 +53,7 @@ class StateTransitionUseCase(
             entityUnderAudit = Entities.Task.name,
             projectId = taskId,
             action = action,
-            user = user,
+            userId = user.id,
         )
         auditRepository.addAuditEntry(auditEntry)
     }
