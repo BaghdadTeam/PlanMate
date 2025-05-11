@@ -2,6 +2,7 @@ package org.baghdad.di
 
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.logic.usecase.ViewServiceUseCase
+import org.baghdad.logic.usecase.admin.IsAdminUseCase
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
@@ -60,18 +61,22 @@ val useCaseModule = module {
 
     // region  ::  Auth Use Cases  ::
     single { LoginUseCase(get(), get(), get()) }
-    single{ LogoutUseCase(get())}
+    single { LogoutUseCase(get()) }
     // endregion
 
     // region :: User ::
     single { CreateUserUseCase(get(), get()) }
-    single { UserValidatorUseCase(get()) }
+    single { UserValidatorUseCase(get(), get()) }
+
+    // region :: Admin ::
+    single { IsAdminUseCase(get()) }
+
     // endregion
 
     // region :: Audit ::
     single { AddAuditUseCase(get()) }
     single { GetAuditByTaskIdUseCase(get()) }
-    single { GetAuditByProjectIdUseCase(get() , get() , get()) }
+    single { GetAuditByProjectIdUseCase(get(), get(), get()) }
     // endregion
 
     // region :: Swimlane ::

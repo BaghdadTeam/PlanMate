@@ -1,12 +1,13 @@
 package org.baghdad.logic.usecase.user
 
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.*
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.logic.usecase.admin.IsAdminUseCase
 import java.util.*
 
 class UserValidatorUseCase(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val isAdmin: IsAdminUseCase
 ) {
     suspend operator fun invoke(
         username: String,
@@ -16,7 +17,7 @@ class UserValidatorUseCase(
     ) {
 
         validateUsername(username)
-        checkAdmin(creatorId)
+        isAdmin(creatorId)
         validateName(name)
         validatePassword(passwordPlain)
         ensureUsernameUnique(username)
@@ -36,12 +37,6 @@ class UserValidatorUseCase(
         }
     }
 
-    private suspend fun checkAdmin(userId: UUID) {
-        val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) {
-            throw UnauthorizedException("Only admins can create users.")
-        }
-    }
 
     private fun validateName(name: String) {
         if (name.isBlank()) throw InvalidNameException("Name must not be empty.")
