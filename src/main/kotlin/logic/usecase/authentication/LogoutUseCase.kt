@@ -6,7 +6,7 @@ class LogoutUseCase(
     private val authenticationRepo: AuthenticationRepository
 )
 {
-    operator fun invoke() {
+    suspend operator fun invoke() {
         authenticationRepo.logout()
     }
 }

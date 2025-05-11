@@ -1,19 +1,19 @@
 package data.local
 
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
+import helpers.task.TaskTestData
+import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.*
 
 class ProjectStatesDataSourceTest {
 
@@ -32,22 +32,37 @@ class ProjectStatesDataSourceTest {
     }
 
     @Test
-    fun `should return data when there is a states for project`() {
+    fun `should return data when there are states for the project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        every { dataSource.loadAll() } returns projectStates
+        val id = projectStates.first().projectId
+        coEvery { dataSource.loadAll() } returns projectStates
+
         // When
-        val result = projectStatesDataSource.getAllStatesForProject()
+        val result = projectStatesDataSource.getAllStatesForProject(id)
+
         // Then
-        Truth.assertThat(result).isEqualTo(projectStates)
+        assertThat(result).isEqualTo(projectStates.filter { it.projectId == id })
     }
 
+    @Test
+    fun `should throw exception when there are no states for the project`() = runTest {
+        // Given
+        val id = UUID.randomUUID()
+        val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
+        coEvery { dataSource.loadAll() } returns projectStates // no states match the random ID
+
+        // When & Then
+        assertThrows<StateNotFoundException> {
+            projectStatesDataSource.getAllStatesForProject(id)
+        }
+    }
 
     @Test
-    fun `should return state when there is a state with same id`() {
+    fun `should return state when there is a state with same id`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.todoState()
-        every { dataSource.loadAll() } returns listOf(projectStates)
+        coEvery { dataSource.loadAll() } returns listOf(projectStates)
         // When
         val result = projectStatesDataSource.getStateById(projectStates.id)
         // Then
@@ -55,31 +70,32 @@ class ProjectStatesDataSourceTest {
     }
 
     @Test
-    fun `should return state when can add state successfully`() {
+    fun `should return state when can add state successfully`() = runTest {
         // Given
-        val projectStates = ProjectStatesEntityTestData.inProgressState()
-        every { dataSource.loadAll() } returns listOf(projectStates)
+        val projectState = ProjectStatesEntityTestData.inProgressState()
+        coEvery { dataSource.loadAll() } returns listOf(projectState)
+        coEvery { projectStatesDataSource.createState(projectState) } just Runs
         // When
-        projectStatesDataSource.createState(projectStates)
-        val result = projectStatesDataSource.getStateById(projectStates.id)
+        val result = projectStatesDataSource.getStateById(projectState.id)
 
         // Then
-        assertThat(result).isEqualTo(projectStates)
+        assertThat(result).isEqualTo(projectState)
     }
 
 
     @Test
-    fun `should return updated state when can update it successfully`() {
+    fun `should return updated state when can update it successfully`() = runTest {
         // Given
         val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
+        val id = allStates.first().projectId
         val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(id = allStates[1].id, name = "doing")
 
-        every { dataSource.loadAll() } returns allStates
-        every { dataSource.update(listOf(updatedProject)) } just Runs
+        coEvery { dataSource.loadAll() } returns allStates
+        coEvery { dataSource.update(updatedProject) } just Runs
 
         // When
         projectStatesDataSource.editState(updatedProject)
-        val result = projectStatesDataSource.getAllStatesForProject()
+        val result = projectStatesDataSource.getAllStatesForProject(id)
 
         // Then
         assertThat(result.contains(updatedProject))
@@ -87,60 +103,57 @@ class ProjectStatesDataSourceTest {
 
 
     @Test
-    fun `should trow exception when no state found while trying to update`() {
+    fun `should trow exception when no state found while trying to update`() = runTest {
 
         // Given
         val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
         val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(name = "doing")
 
-        every { dataSource.loadAll() } returns allStates
-        every { dataSource.update(listOf(updatedProject)) } just Runs
+        coEvery { dataSource.loadAll() } returns allStates
+        coEvery { dataSource.update(updatedProject) } just Runs
 
-        val exception = assertThrows<Exception> {
+        assertThrows<Exception> {
             projectStatesDataSource.editState(updatedProject)
         }
-        assertThat(exception.message).contains("No state found")
-
     }
 
-
     @Test
-    fun `should delete state when found it`() {
-
+    fun `should delete state and associated tasks when state exists`() = runTest {
         // Given
-        val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
-        val stateAfterDelete = ProjectStatesEntityTestData.getStatesAfterDelete()
-        allStates.last().id
-        val deleteState = ProjectStatesEntityTestData.doingState()
+        val stateToDelete = ProjectStatesEntityTestData.todoState()
+        val otherState   = ProjectStatesEntityTestData.inProgressState()
 
-        every { dataSource.loadAll() } returns allStates
-        every { dataSource.update(stateAfterDelete) } just Runs
+        val task1 = TaskTestData.taskWithState(stateId = stateToDelete.id)
+        val task2 = TaskTestData.taskWithState(stateId = otherState.id)
+
+        coEvery { dataSource.loadAll() } returns listOf(stateToDelete, otherState)
+        coEvery { taskDataSource.loadAll() } returns listOf(task1, task2)
+
+        coEvery { dataSource.delete(stateToDelete) } just Runs
+        coEvery { taskDataSource.delete(task1) } just Runs
 
         // When
-        projectStatesDataSource.deleteState(allStates.last().id)
-        val result = projectStatesDataSource.getAllStatesForProject()//.getStateById(deleteState.id.toString())
+        projectStatesDataSource.deleteState(stateToDelete.id)
 
         // Then
-        assertThat(result.contains(deleteState)).isFalse()
+        coVerify   { dataSource.delete(stateToDelete) }
+        coVerify   { taskDataSource.delete(task1) }
+        coVerify(exactly = 0) { taskDataSource.delete(task2) }
     }
-
     @Test
-    fun `should throw exception when trying ti delete not exist state`() {
-
+    fun `should throw exception when deleting non-existent state`() {
         // Given
-        val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
-        val stateAfterDelete = ProjectStatesEntityTestData.getStatesAfterDelete()
-        val deleteState = ProjectStatesEntityTestData.doingState()
+        val existingState = ProjectStatesEntityTestData.todoState()
+        val nonexistentStateId = UUID.randomUUID()
 
-        every { dataSource.loadAll() } returns allStates
-        every { dataSource.update(stateAfterDelete) } just Runs
+        coEvery { dataSource.loadAll() } returns listOf(existingState)
 
         // Then
         val exception = assertThrows<Exception> {
-            projectStatesDataSource.deleteState(deleteState.id)
+            runTest {
+                projectStatesDataSource.deleteState(nonexistentStateId)
+            }
         }
-        assertThat(exception.message).contains("No state found")
-
+        assertThat(exception.message).isEqualTo("No state found")
     }
-
 }

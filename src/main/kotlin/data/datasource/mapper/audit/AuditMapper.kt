@@ -4,7 +4,6 @@ import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.data.utils.parseTimestamp
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
 import java.util.*
 
 class AuditMapper : CsvMapper<AuditLogEntity> {
@@ -26,7 +25,7 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
         return AuditLogEntity(
             id = UUID.fromString(audit[AuditColumns.ID]),
             entityUnderAudit =audit[AuditColumns.ENTITY_TYPE],
-            entityId = UUID.fromString(audit[AuditColumns.ENTITY_ID]),
+            projectId = UUID.fromString(audit[AuditColumns.ENTITY_ID]),
             action = audit[AuditColumns.ACTION],
             user = userData,
             timestamp = parseTimestamp(audit[AuditColumns.TIMESTAMP]),
@@ -35,9 +34,12 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
 
     }
 
+    override fun getId(item: AuditLogEntity): String {
+        return item.id.toString()
+    }
 
     override fun serializer(item: AuditLogEntity): String {
         val serializedUser = UserMapper().serializer(item.user)
-        return "${item.id},${item.entityUnderAudit},${item.entityId},${item.action},[${serializedUser}],${item.timestamp}"
+        return "${item.id},${item.entityUnderAudit},${item.projectId},${item.action},[${serializedUser}],${item.timestamp}"
     }
 }

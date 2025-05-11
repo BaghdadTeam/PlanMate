@@ -1,7 +1,7 @@
 package presentation.audit
 
 import helpers.authentication.createUserHelper
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.model.entities.AuditLogEntity
@@ -12,7 +12,7 @@ import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class ShowAuditByTaskIdUITest {
@@ -35,7 +35,7 @@ class ShowAuditByTaskIdUITest {
         val taskID = UUID.randomUUID()
 
         // when
-        every { getAuditByTaskIdUseCase.invoke(taskID) } throws Exception()
+        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } throws Exception()
 
         // then
         showAuditByTaskIdUI.execute(taskID)
@@ -48,7 +48,7 @@ class ShowAuditByTaskIdUITest {
         val taskID = UUID.randomUUID()
 
         // when
-        every { getAuditByTaskIdUseCase.invoke(taskID) } throws
+        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } throws
                 NoTaskFoundException("No audit found for task with ID: $taskID")
 
         // then
@@ -63,7 +63,7 @@ class ShowAuditByTaskIdUITest {
         val taskID = UUID.randomUUID()
 
         // when
-        every { getAuditByTaskIdUseCase.invoke(taskID) } throws UnSupportedTimeStampFormatException(
+        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } throws UnSupportedTimeStampFormatException(
             "Invalid timestamp format"
         )
 
@@ -81,13 +81,13 @@ class ShowAuditByTaskIdUITest {
         val auditEntities = listOf(
             AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            entityId = taskID,
+            projectId = taskID,
             action = "Create Task Aboud",
             user = haider ,
         )
         )
         // When
-        every { getAuditByTaskIdUseCase.invoke(taskID) } returns auditEntities
+        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } returns auditEntities
 
         // Then
         showAuditByTaskIdUI.execute(taskID)

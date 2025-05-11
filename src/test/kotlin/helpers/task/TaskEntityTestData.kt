@@ -1,7 +1,7 @@
 package helpers.task
 
 import org.baghdad.logic.model.entities.TaskEntity
-import java.util.UUID
+import java.util.*
 
 object TaskEntityTestData {
 
@@ -67,5 +67,16 @@ object TaskEntityTestData {
         stateId = stateId,
         projectId = projectId,
         creatorId = creatorId
+    )
+}
+
+object TaskTestData {
+    fun taskWithState(stateId: UUID = UUID.randomUUID()) = TaskEntity(
+        id = UUID.randomUUID(),
+        title = "Task for $stateId",
+        stateId = stateId,
+        description = "Task description",
+        projectId = UUID.randomUUID(),
+        creatorId = UUID.randomUUID(),
     )
 }

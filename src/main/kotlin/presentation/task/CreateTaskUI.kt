@@ -1,5 +1,6 @@
 package org.baghdad.presentation.task
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
@@ -7,26 +8,32 @@ import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.usecase.task.CreateTaskUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
 import java.util.*
 
 class CreateTaskUI(
     private val createTaskUseCase: CreateTaskUseCase,
+    private val getAllStatesPerProjectUI: GetAllStatesPerProjectUI,
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader
 ) {
 
-    fun execute(projectId: UUID, stateId: UUID) {
-
+    fun execute(projectId: UUID) {
         val user = sessionManager.currentSession
+        val states = getAllStatesPerProjectUI.execute(projectId)
 
-        val task = promptForTaskDetails(user.id, projectId, stateId) ?: return
+        if (states.isEmpty()) {
+            viewer.logError("No states found for project $projectId")
+            return
+        }
 
-        tryCreateTask(task, user.id)
+        val task = promptForTaskDetails(user.userId, projectId, states[0]) ?: return
+        tryCreateTask(task, user.userId)
     }
 
-    private fun promptForTaskDetails(id: UUID, projectId: UUID, stateId: UUID): TaskEntity? {
-
+    private fun promptForTaskDetails(userId: UUID, projectId: UUID, stateId: UUID): TaskEntity? {
+        println("userID is $userId")
         val title = promptForTitle() ?: ""
         val description = promptForDescription() ?: ""
 
@@ -35,7 +42,7 @@ class CreateTaskUI(
             description = description,
             stateId = stateId,
             projectId = projectId,
-            creatorId = id
+            creatorId = userId
         )
     }
 
@@ -65,17 +72,19 @@ class CreateTaskUI(
 
     private fun tryCreateTask(task: TaskEntity, userId: UUID) {
         try {
-            createTaskUseCase(task, userId)
-            viewer.logMessage("Task created successfully.")
-        } catch (e: TaskWithMissingTitleException) {
+            runBlocking {
+                createTaskUseCase(task, userId)
+                viewer.logMessage("Task created successfully.")
+            }
+        } catch (_: TaskWithMissingTitleException) {
             viewer.logError("Task title is missing.")
             val updatedTask = promptForTitle()?.let { task.copy(title = it) } ?: task
             tryCreateTask(updatedTask, userId)
-        } catch (e: TaskWithMissingDescriptionException) {
+        } catch (_: TaskWithMissingDescriptionException) {
             viewer.logError("Task description is missing.")
             val updatedTask = promptForDescription()?.let { task.copy(description = it) } ?: task
             tryCreateTask(updatedTask, userId)
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
             viewer.logError("Failed to create task: ${e.message}")
         }
     }

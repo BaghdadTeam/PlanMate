@@ -1,6 +1,6 @@
 package presentation.projectStates
 
-import helpers.projectStates.ProjectStatesEntityTestData
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,7 +10,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class GetAllStatesPerProjectUITest {
@@ -20,13 +20,12 @@ class GetAllStatesPerProjectUITest {
     private lateinit var reader: Reader
     private lateinit var getAllStatesPerProjectUI: GetAllStatesPerProjectUI
 
-
     @BeforeEach
     fun setUp() {
         useCase = mockk()
         viewer = mockk(relaxed = true)
         reader = mockk()
-        getAllStatesPerProjectUI = GetAllStatesPerProjectUI(useCase, viewer, reader)
+        getAllStatesPerProjectUI = GetAllStatesPerProjectUI(useCase, viewer)
     }
 
     @Test
@@ -40,11 +39,10 @@ class GetAllStatesPerProjectUITest {
         )
 
         every { reader.readInput() } returns projectId.toString()
-        every { useCase.invoke(projectId) } returns states
+        coEvery { useCase.invoke(projectId) } returns states
 
-        getAllStatesPerProjectUI.execute()
+        getAllStatesPerProjectUI.execute(projectId)
 
-        verify { viewer.logMessage("States for project ID: $projectId") }
         verify { viewer.logMessage("1. Backlog") }
         verify { viewer.logMessage("2. In Progress") }
         verify { viewer.logMessage("3. Done") }
@@ -54,11 +52,11 @@ class GetAllStatesPerProjectUITest {
     fun `test valid project ID with no states`() {
         val projectId = UUID.randomUUID()
         every { reader.readInput() } returns projectId.toString()
-        every { useCase.invoke(projectId) } returns emptyList()
+        coEvery { useCase.invoke(projectId) } returns emptyList()
 
-        getAllStatesPerProjectUI.execute()
+        getAllStatesPerProjectUI.execute(projectId)
 
-        verify { viewer.logMessage("No states found for project ID: $projectId") }
+        verify { viewer.logMessage("No states found for this project") }
     }
 
     @Test
@@ -66,20 +64,20 @@ class GetAllStatesPerProjectUITest {
         val projectId = UUID.randomUUID()
 
         every { reader.readInput() } returnsMany listOf("", "  ", projectId.toString())
-        every { useCase.invoke(projectId) } returns emptyList()
-        getAllStatesPerProjectUI.execute()
+        coEvery { useCase.invoke(projectId) } returns emptyList()
 
-        verify(exactly = 2) { viewer.logError("Project ID cannot be blank. Please try again.") }
-        verify { viewer.logMessage("No states found for project ID: $projectId") }
+        getAllStatesPerProjectUI.execute(projectId)
+
+        verify { viewer.logMessage("No states found for this project") }
     }
 
     @Test
     fun `test exception is handled during use case invocation`() {
         val projectId = UUID.randomUUID()
         every { reader.readInput() } returns projectId.toString()
-        every { useCase.invoke(projectId) } throws RuntimeException("Something went wrong")
+        coEvery { useCase.invoke(projectId) } throws RuntimeException("Something went wrong")
 
-        getAllStatesPerProjectUI.execute()
+        getAllStatesPerProjectUI.execute(projectId)
 
         verify { viewer.logError("Failed to retrieve states: Something went wrong") }
     }

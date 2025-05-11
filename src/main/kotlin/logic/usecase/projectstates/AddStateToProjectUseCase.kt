@@ -1,10 +1,11 @@
 package org.baghdad.logic.usecase.projectstates
 
 import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
+import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.utils.getFormattedTimestamp
 import java.util.*
 
 class AddStateToProjectUseCase(
@@ -13,10 +14,12 @@ class AddStateToProjectUseCase(
     private val userRepository: UserRepository
 ) {
 
-    fun invoke(state: StateEntity, userId: UUID){
+    suspend fun invoke(state: StateEntity, userId: UUID){
         val user = userRepository.getUserById(userId)
-        if (user.type.name != UserType.Admin.name) throw Exception("Only Admin can add tasks")
-        if (state.name.isBlank()) throw Exception("state name can't be empty")
+        if (user.type != UserType.Admin) throw NotAccessException("Only Admin can add states")
+
+        if (state.name.isBlank()) throw CantAddStateWithNoNameException("state name can't be empty")
+
         projectStatesRepository.createState(state)
         val audit = createAudit(state, user)
         auditRepository.addAuditEntry(audit)
@@ -26,7 +29,7 @@ class AddStateToProjectUseCase(
         val action = "create ${state.name} state is created successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            entityId = state.id,
+            projectId = state.projectId,
             action = action,
             user = user,
         )

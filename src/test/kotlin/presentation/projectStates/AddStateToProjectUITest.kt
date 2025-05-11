@@ -1,9 +1,6 @@
 package presentation.projectStates
 
-import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.StateEntity
@@ -12,7 +9,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.AddStateToProjectUI
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 
@@ -44,11 +41,11 @@ class AddStateToProjectUITest {
         val stateName = "To Do"
         val projectId = UUID.randomUUID()
 
-        every { reader.readInput() } returnsMany listOf(stateName, projectId.toString())
+        every { reader.readInput() } returnsMany listOf(stateName)
 
-        ui.execute()
+        ui.execute(projectId)
 
-        verify {
+        coVerify {
             useCase.invoke(
                 match {
                     it.name == stateName &&
@@ -58,42 +55,30 @@ class AddStateToProjectUITest {
                 userId
             )
         }
+
         verify { viewer.logMessage("State 'To Do' added to project successfully.") }
     }
+
 
     @Test
     fun `promptForStateName should loop until valid name is provided`() {
         every { reader.readInput() } returnsMany listOf("", "  ", "Done")
-        val method = ui.javaClass.getDeclaredMethod("promptForStateName")
-        method.isAccessible = true
-        val result = method.invoke(ui) as String
-        assertThat(result).isEqualTo("Done")
+
+        ui.execute(UUID.randomUUID())
+
         verify(exactly = 2) { viewer.logError("State name cannot be blank. Please try again.") }
     }
 
     @Test
-    fun `promptForProjectId should loop until valid id is provided`() {
-        every { reader.readInput() } returnsMany listOf("", null, "project-456")
-        val method = ui.javaClass.getDeclaredMethod("promptForProjectId")
-        method.isAccessible = true
-        val result = method.invoke(ui) as String
-        assertThat(result).isEqualTo("project-456")
-        verify(exactly = 2) { viewer.logError("Project ID cannot be blank. Please try again.") }
-    }
-
-    @Test
     fun `tryAddState should show error message when useCase throws exception`() {
-        // given
+        every { reader.readInput() } returnsMany listOf("", "  ", "Done")
+
         val state = StateEntity(name = "Done", projectId = UUID.randomUUID(), creatorId = userId)
-        val uuid = userId
-        every { useCase.invoke(any(), any()) } throws RuntimeException("Something went wrong")
 
-        //when
-        val method = ui.javaClass.getDeclaredMethod("tryAddState", StateEntity::class.java, UUID::class.java)
-        method.isAccessible = true
-        method.invoke(ui, state, uuid)
+        coEvery { useCase.invoke(any(), any()) } throws RuntimeException("Something went wrong")
 
-        // then
-        verify { viewer.logError("Failed to add state: Something went wrong") }
+        ui.execute(state.projectId)
+
+        verify { viewer.logError("Failed to add state") }
     }
 }

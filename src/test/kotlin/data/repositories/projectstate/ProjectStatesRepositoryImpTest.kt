@@ -1,11 +1,9 @@
 package data.repositories.projectstate
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
 import org.junit.jupiter.api.BeforeEach
@@ -25,58 +23,81 @@ class ProjectStatesRepositoryImpTest{
 
 
     @Test
-    fun `should return data when there is a states for project`() {
+    fun `should return data when there are states for the project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        val projectId = projectStates[0].projectId
-        every { dataSource.getAllStatesForProject() } returns projectStates
+        val projectId = projectStates.first().projectId
+        coEvery { dataSource.getAllStatesForProject(projectId) } returns projectStates
 
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
 
         // Then
-        Truth.assertThat(result).isEqualTo(listOf(projectStates[0]))
+        assertThat(result).isEqualTo(projectStates)
     }
 
     @Test
-    fun `should not return data when there is no project id match`() {
+    fun `should return empty list when there are no states for the project`() = runTest {
         // Given
-        val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = UUID.randomUUID()
-        every { dataSource.getAllStatesForProject() } returns projectStates
+        coEvery { dataSource.getAllStatesForProject(projectId) } returns emptyList()
 
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
 
         // Then
-        Truth.assertThat(result).isEmpty()
+        assertThat(result).isEmpty()
     }
 
-
     @Test
-    fun `should return state when there is a state with same id`() {
+    fun `should return state when there is a state with same id`() = runTest {
         val projectStates = ProjectStatesEntityTestData.todoState()
         val id = projectStates.id
-        every { dataSource.getStateById(id) } returns projectStates
+        coEvery { dataSource.getStateById(id) } returns projectStates
 
         // When
         val result = projectStatesDataSource.getStateById(id)
 
         // Then
-        Truth.assertThat(result).isEqualTo(projectStates)
-        verify { dataSource.getStateById(id) }
+        assertThat(result).isEqualTo(projectStates)
+        coVerify { dataSource.getStateById(id) }
     }
 
 
     @Test
-    fun `should return state when can add state successfully`() {
+    fun `should return state when can add state successfully`() = runTest {
         val state = ProjectStatesEntityTestData.inProgressState()
 
         projectStatesDataSource.createState(state)
 
-        verify { dataSource.createState(state) }
-
+        coVerify { dataSource.createState(state) }
     }
 
+    @Test
+    fun `should call editState with updated data`() = runTest {
+        // Given
+        val state = ProjectStatesEntityTestData.inProgressState()
+        val updatedState = state.copy(name = "Doing")
+        coEvery { dataSource.editState(updatedState) } just Runs
+
+        // When
+        projectStatesDataSource.editState(state.id, updatedState)
+
+        // Then
+        coVerify(exactly = 1) { dataSource.editState(updatedState) }
+    }
+
+    @Test
+    fun `should delete state when can delete it successfully`() = runTest {
+        val state = ProjectStatesEntityTestData.inProgressState()
+
+        coEvery { projectStatesDataSource.createState(state)} just Runs
+        coEvery { projectStatesDataSource.deleteState(state.id) } just Runs
+
+        val result = projectStatesDataSource.getAllStatesPerProject(state.projectId)
+
+        val finalResult = result.find { it.id == state.id }
+        assertThat(finalResult).isNull()
+    }
 
 }

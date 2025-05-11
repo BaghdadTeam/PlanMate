@@ -1,14 +1,12 @@
 package logic.usecase.project
 
 import helpers.authentication.createUserHelper
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.runs
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
+import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
@@ -20,47 +18,49 @@ class CreateProjectUseCaseTest {
     lateinit var projectRepository: ProjectRepository
     lateinit var userRepository: UserRepository
     lateinit var createProjectUseCase: CreateProjectUseCase
+    lateinit var auditRepository: AuditRepository
 
     @BeforeEach
     fun setUp() {
         projectRepository = mockk()
         userRepository = mockk()
-        createProjectUseCase = CreateProjectUseCase(projectRepository, userRepository)
+        auditRepository = mockk()
+        createProjectUseCase = CreateProjectUseCase(projectRepository, userRepository , auditRepository)
     }
 
     @Test
-    fun `should return True when project is created with valid name and creator`() {
+    fun `should return True when project is created with valid name and creator`() = runTest {
         // Given
         val projectName = "Test Project"
         val user = createUserHelper()
 
-        every { userRepository.getUserById(user.id) } returns user
-        every { projectRepository.createProject(any()) } just runs
-
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { projectRepository.createProject(any()) } just runs
+        coEvery { auditRepository.addAuditEntry(any()) } just runs
         // When
         createProjectUseCase(projectName, user.id)
 
         // Then
-        verify { projectRepository.createProject(any()) }
+        coVerify { projectRepository.createProject(any()) }
     }
 
     @Test
-    fun `should throw EmptyProjectNameException when project name is empty`() {
+    fun `should throw EmptyProjectNameException when project name is empty`()  = runTest {
         // Given
         val projectName = ""
         val user = createUserHelper()
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<EmptyProjectNameException> { createProjectUseCase(projectName, user.id) }
     }
 
     @Test
-    fun `should throw AccessDeniedException when user is not admin`() {
+    fun `should throw AccessDeniedException when user is not admin`()  = runTest {
         // Given
         val projectName = "Test Project"
         val user = createUserHelper().copy(type = UserType.Mate)
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
         assertThrows<AccessDeniedException> { createProjectUseCase(projectName, user.id) }

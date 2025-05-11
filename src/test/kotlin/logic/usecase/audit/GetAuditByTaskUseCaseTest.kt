@@ -1,6 +1,7 @@
 package logic.usecase.audit
 
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +20,7 @@ class GetAuditByTaskUseCaseTest {
     }
 
     @Test
-    fun `Should throw no exception when get audit by task id`(){
+    fun `Should throw no exception when get audit by task id`() = runTest {
         // Given
         val projectID = UUID.randomUUID()
         // when & then

@@ -1,15 +1,14 @@
 package data.local
 
-import com.google.common.base.Verify.verify
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.SessionDataSource
 import org.baghdad.logic.model.entities.SessionEntity
-import org.baghdad.logic.model.exceptions.InvalidSessionException
 import org.baghdad.logic.model.exceptions.SessionNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,9 +25,9 @@ class SessionDataSourceTest {
     }
 
     @Test
-    fun `should load session data successfully from the database when loadSession is called`() {
+    fun `should load session data successfully from the database when loadSession is called`()= runTest {
         // Given
-        every { dataSource.loadAll() } returns listOf(SessionTestData.baseSession)
+        coEvery { dataSource.loadAll() } returns listOf(SessionTestData.baseSession)
         // When
         val result = sessionDataSource.loadSession()
         // Then
@@ -36,28 +35,28 @@ class SessionDataSourceTest {
 
     }
     @Test
-    fun `should execute dataSource update when deleteSession function is invoked`() {
+    fun `should execute dataSource update when deleteSession function is invoked`()= runTest {
         // Given
-        every { dataSource.loadAll() } returns listOf(SessionTestData.baseSession)
+        coEvery { dataSource.loadAll() } returns listOf(SessionTestData.baseSession)
         // When
         sessionDataSource.deleteSession()
         // Then
-        verify { dataSource.update(emptyList()) }
+        coVerify { dataSource.delete(any()) }
     }
     @Test
-    fun `should execute  dataSource append when saveSession is called`() {
+    fun `should execute  dataSource append when saveSession is called`()= runTest {
         // Given
-        every { dataSource.loadAll() } returns emptyList()
+        coEvery { dataSource.loadAll() } returns emptyList()
         // When
         sessionDataSource.saveSession(SessionTestData.baseSession)
         // Then
-        verify(exactly = 1) { dataSource.append(SessionTestData.baseSession) }
+        coVerify(exactly = 1) { dataSource.append(SessionTestData.baseSession) }
 
     }
     @Test
-    fun `Should return null if there i no session data found`() {
+    fun `Should return null if there i no session data found`()= runTest {
         // Given
-        every { dataSource.loadAll() } returns listOf()
+        coEvery { dataSource.loadAll() } returns listOf()
        // When & Then
         assertThrows<SessionNotFoundException> {sessionDataSource.loadSession()  }
     }

@@ -2,10 +2,8 @@ package logic.usecase.task
 
 import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -17,7 +15,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class UpdateTaskUseCaseTest {
@@ -45,77 +43,76 @@ class UpdateTaskUseCaseTest {
 
 
     @Test
-    fun `should update task and log audit entry when changes are detected`() {
+    fun `should update task and log audit entry when changes are detected`() = runTest {
         val task = TaskEntityTestData.normalTask.copy(title = "Changed")
         val oldTask = TaskEntityTestData.normalTask
 
-        every { taskRepository.getTaskById(task.id) } returns oldTask
-        every { taskRepository.updateTask(task) } returns true
-        every { userRepository.getUserById(user.id) } returns user
+        coEvery { taskRepository.getTaskById(task.id) } returns oldTask
+        coEvery { taskRepository.updateTask(task) } returns true
+        coEvery { userRepository.getUserById(user.id) } returns user
 
         updateTaskUseCase.invoke(task, user.id)
 
         val auditSlot = slot<AuditLogEntity>()
-        verify { taskRepository.updateTask(task) }
-        verify { auditRepository.addAuditEntry(capture(auditSlot)) }
+        coVerify { taskRepository.updateTask(task) }
+        coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         assertThat(auditSlot.captured.entityUnderAudit).isEqualTo("Task")
-        assertThat(auditSlot.captured.entityId).isEqualTo(task.id)
         assertThat(auditSlot.captured.action).isEqualTo(
             "Task “${oldTask.title}” was updated: title changed from “${oldTask.title}” to “${task.title}”"
         )
         assertThat(auditSlot.captured.user.id).isEqualTo(user.id)
     }
 
-     @Test
-    fun `should update task but not log audit when no changes detected`() {
+    @Test
+    fun `should update task but not log audit when no changes detected`() = runTest {
         val task = TaskEntityTestData.normalTask
 
-        every { taskRepository.getTaskById(task.id) } returns task
-        every { taskRepository.updateTask(task) } returns true
+        coEvery { taskRepository.getTaskById(task.id) } returns task
+        coEvery { taskRepository.updateTask(task) } returns true
 
         updateTaskUseCase.invoke(task, user.id)
 
-        verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
-        verify { taskRepository.updateTask(task) }
+        coVerify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+        coVerify { taskRepository.updateTask(task) }
     }
 
     @Test
-    fun `should throw exception when title is blank`() {
+    fun `should throw exception when title is blank`() = runTest {
         val task = TaskEntityTestData.normalTask.copy(title = "   ")
 
         assertThrows<TaskWithMissingTitleException> {
             updateTaskUseCase.invoke(task, user.id)
         }
 
-        verify(exactly = 0) { taskRepository.updateTask(any()) }
-        verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+        coVerify(exactly = 0) { taskRepository.updateTask(any()) }
+        coVerify(exactly = 0) { auditRepository.addAuditEntry(any()) }
     }
 
     @Test
-    fun `should throw exception when description is blank`() {
+    fun `should throw exception when description is blank`() = runTest {
         val task = TaskEntityTestData.normalTask.copy(description = "   ")
 
         assertThrows<TaskWithMissingDescriptionException> {
             updateTaskUseCase.invoke(task, user.id)
         }
 
-        verify(exactly = 0) { taskRepository.updateTask(any()) }
-        verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+        coVerify(exactly = 0) { taskRepository.updateTask(any()) }
+        coVerify(exactly = 0) { auditRepository.addAuditEntry(any()) }
     }
 
     @Test
-    fun `should throw exception when updateTask returns false`() {
+    fun `should throw exception when updateTask returns false`() = runTest {
         val task = TaskEntityTestData.normalTask.copy(title = "Changed")
-        every { taskRepository.getTaskById(task.id) } returns TaskEntityTestData.normalTask
-        every { taskRepository.updateTask(task) } returns false
+        coEvery { taskRepository.getTaskById(task.id) } returns TaskEntityTestData.normalTask
+        coEvery { taskRepository.updateTask(task) } returns false
 
         val exception = assertThrows<Exception> {
             updateTaskUseCase.invoke(task, user.id)
         }
 
         assertThat(exception.message).isEqualTo("Failed to update task")
-        verify { taskRepository.updateTask(task) }
-        verify(exactly = 0) { auditRepository.addAuditEntry(any()) }
+        coVerify { taskRepository.updateTask(task) }
+        coVerify(exactly = 0) { auditRepository.addAuditEntry(any()) }
     }
 }

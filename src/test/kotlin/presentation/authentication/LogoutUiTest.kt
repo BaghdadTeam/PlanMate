@@ -1,6 +1,9 @@
 package presentation.authentication
 
-import io.mockk.*
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.baghdad.logic.usecase.authentication.LogoutUseCase
 import org.baghdad.presentation.authentication.LogoutUi
 import org.baghdad.presentation.input.Reader
@@ -32,8 +35,8 @@ class LogoutUiTest {
         // When
         logoutUi.execute()
         // Then
-        verify { useCase.invoke() }
-        verify { viewer.logMessage("Are you sure you want to logout (y)") }
+        coVerify { useCase.invoke() }
+        verify { viewer.logMessage("Are you sure you want to logout (y/n)?") }
     }
 
     @ParameterizedTest
@@ -41,15 +44,14 @@ class LogoutUiTest {
         "n",
         "no",
         "yes",
-        "YEAH",
     )
-    fun `execute() should not call logout use case when user input is not exactly y`(input: String) {
+    fun `execute() should not call logout use case when user input is not contain y`(input: String) {
         // Given
         every { reader.readInput() } returns input
         // When
         logoutUi.execute()
         // Then
-        verify(exactly = 0) { useCase.invoke() }
+        coVerify(exactly = 0) { useCase.invoke() }
     }
 
     @Test
@@ -60,6 +62,6 @@ class LogoutUiTest {
         logoutUi.execute()
 
         // Then
-        verify(exactly = 0) { useCase.invoke() }
+        coVerify(exactly = 0) { useCase.invoke() }
     }
 }

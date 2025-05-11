@@ -2,7 +2,11 @@ package presentation.authentication
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.exceptions.InvalidCredentialsException
 import org.baghdad.logic.usecase.authentication.LoginUseCase
 import org.baghdad.presentation.authentication.LoginUi
@@ -30,10 +34,10 @@ class LoginUiTest {
 
     @ParameterizedTest
     @CsvSource("admin,1234", "user,pass123", "john,doe")
-    fun `execute() returns SessionEntity on successful login`(username: String, password: String) {
+    fun `execute() returns SessionEntity on successful login`(username: String, password: String) = runTest {
         // Given
         every { reader.readInput() } returnsMany listOf(username, password)
-        every { useCase(username, password) } returns SessionTestData.baseSession
+        coEvery { useCase(username, password) } returns SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then
@@ -42,11 +46,11 @@ class LoginUiTest {
     }
 
     @Test
-    fun `execute() loops on failed login and succeeds later`() {
+    fun `execute() loops on failed login and succeeds later`() = runTest {
         // Given
         every { reader.readInput() } returnsMany listOf("wrong", "IncorrectPass", "admin", "1234")
-        every { useCase("wrong", "IncorrectPass") } throws InvalidCredentialsException("Invalid login")
-        every { useCase("admin", "1234") } returns  SessionTestData.baseSession
+        coEvery { useCase("wrong", "IncorrectPass") } throws InvalidCredentialsException("Invalid login")
+        coEvery { useCase("admin", "1234") } returns SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then
@@ -60,12 +64,12 @@ class LoginUiTest {
         "admin, null",
         "null, null"
     )
-    fun `execute() handles null inputs for username or password`(rawUsername: String?, rawPassword: String?) {
+    fun `execute() handles null inputs for username or password`(rawUsername: String?, rawPassword: String?) = runTest {
         val username = if (rawUsername == "null") null else rawUsername
         val password = if (rawPassword == "null") null else rawPassword
         // Given
         every { reader.readInput() } returnsMany listOf(username, password, "admin", "1234")
-        every { useCase("admin", "1234") } returns SessionTestData.baseSession
+        coEvery { useCase("admin", "1234") } returns SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then
@@ -82,11 +86,11 @@ class LoginUiTest {
         firstUsername: String,
         firstPassword: String,
         errorMessage: String
-    ) {
+    ) = runTest {
         // Given
         every { reader.readInput() } returnsMany listOf(firstUsername, firstPassword, "admin", "1234")
-        every { useCase(firstUsername, firstPassword) } throws InvalidCredentialsException(errorMessage)
-        every { useCase("admin", "1234") } returns SessionTestData.baseSession
+        coEvery { useCase(firstUsername, firstPassword) } throws InvalidCredentialsException(errorMessage)
+        coEvery { useCase("admin", "1234") } returns SessionTestData.baseSession
         // When
         val result = loginUi.execute()
         // Then

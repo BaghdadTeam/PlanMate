@@ -1,6 +1,7 @@
 package logic.usecase.audit
 
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.EmptyActionInAuditEntityException
@@ -23,11 +24,11 @@ class AddAuditUseCaseTest {
     }
 
     @Test
-    fun `should throw no exception when add audit`(){
+    fun `should throw no exception when add audit`() = runTest {
         // Given
         val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(
-            entityId = randomUUID,
+            projectId = randomUUID,
             action = "CREATE",
             user = mockk(),
             entityUnderAudit = Entities.Task.name,
@@ -39,11 +40,11 @@ class AddAuditUseCaseTest {
     }
 
     @Test
-    fun `should throw EmptyActionInAuditEntityException when add audit with empty action`(){
+    fun `should throw EmptyActionInAuditEntityException when add audit with empty action`() = runTest {
         // Given
         val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(
-            entityId = randomUUID,
+            projectId = randomUUID,
             action = "",
             user = mockk(),
             entityUnderAudit = Entities.Task.name,
@@ -55,11 +56,11 @@ class AddAuditUseCaseTest {
     }
 
     @Test
-    fun `should throw EmptyActionInAuditEntityException when add audit with blank action`(){
+    fun `should throw EmptyActionInAuditEntityException when add audit with blank action`() = runTest {
         // Given
         val randomUUID = UUID.randomUUID()
         val auditLogEntity = AuditLogEntity(
-            entityId = randomUUID,
+            projectId = randomUUID,
             action = " ",
             user = mockk(),
             entityUnderAudit = Entities.Task.name,

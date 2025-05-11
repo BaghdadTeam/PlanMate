@@ -1,5 +1,6 @@
 package org.baghdad.presentation.projectStates
 
+import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
@@ -14,24 +15,15 @@ class EditProjectStateUI(
     private val reader: Reader
 ) {
 
-    fun execute(projectId: UUID) {
+    fun execute(projectId: UUID , stateId : UUID) {
         val session = sessionManager.currentSession
         val userId = session.userId
 
-        val stateId = promptForStateId() ?: return
         val newState = promptForNewStateDetails(userId, projectId) ?: return
 
-        tryEditState(UUID.fromString(stateId), newState, userId)
+        tryEditState(stateId, newState, userId)
     }
 
-    private fun promptForStateId(): String? {
-        while (true) {
-            viewer.logMessage("Enter the ID of the state to edit:")
-            val input = reader.readInput()
-            if (!input.isNullOrBlank()) return input
-            viewer.logError("State ID cannot be blank. Please try again.")
-        }
-    }
 
     private fun promptForNewStateDetails(userId: UUID, projectId: UUID): StateEntity? {
         val name = promptForStateName() ?: return null
@@ -55,8 +47,10 @@ class EditProjectStateUI(
 
     private fun tryEditState(stateId: UUID, newState: StateEntity, userId: UUID) {
         try {
-            useCase.invoke(stateId, newState, userId)
-            viewer.logMessage("State updated successfully.")
+            runBlocking {
+                useCase.invoke(stateId, newState, userId)
+                viewer.logMessage("State updated successfully.")
+            }
         } catch (e: Exception) {
             viewer.logError("Failed to update state: ${e.message}")
         }

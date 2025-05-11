@@ -4,12 +4,12 @@ import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.*
+import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
+import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.utils.getFormattedTimestamp
-import java.util.UUID
+import java.util.*
 
 class CreateTaskUseCase(
     private val taskRepository: TaskRepository,
@@ -17,7 +17,7 @@ class CreateTaskUseCase(
     private val userRepository: UserRepository
 ) {
 
-    operator fun invoke(task: TaskEntity, userId: UUID) {
+    suspend operator fun invoke(task: TaskEntity, userId: UUID) {
         val validatedTask = validateTask(task)
         taskRepository.createTask(validatedTask)
 
@@ -34,7 +34,7 @@ class CreateTaskUseCase(
         val action = "created task ${task.title}"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            entityId = task.id,
+            projectId = task.projectId,
             action = action,
             user = user,
         )

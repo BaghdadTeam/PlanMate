@@ -1,9 +1,6 @@
 package presentation.projectStates
 
-import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
@@ -11,7 +8,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.DeleteStateForProjectUI
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class DeleteStateForProjectUITest {
@@ -34,42 +31,38 @@ class DeleteStateForProjectUITest {
         every { session.userId } returns userId
         every { sessionManager.currentSession } returns session
 
-        ui = DeleteStateForProjectUI(useCase, sessionManager, viewer, reader)
+        ui = DeleteStateForProjectUI(useCase, sessionManager, viewer)
     }
 
     @Test
     fun `execute should call useCase with correct values`() {
         val stateId = UUID.randomUUID()
-        every { reader.readInput() } returns stateId.toString()
 
-        ui.execute()
+        ui.execute(stateId)
 
-        verify {
+        coVerify {
             useCase.invoke(stateId, userId)
         }
         verify { viewer.logMessage("State deleted successfully.") }
     }
 
     @Test
-    fun `promptForStateId should retry on blank input and succeed`() {
-        every { reader.readInput() } returnsMany listOf("", " ", "valid-id")
+    fun `execute should log error on invalid state ID`() {
+        val stateId = UUID.randomUUID()
 
-        val method = ui.javaClass.getDeclaredMethod("promptForStateId")
-        method.isAccessible = true
-        val result = method.invoke(ui) as String
+        coEvery { useCase.invoke(any(), any()) } throws Exception("State not found")
 
-        assertThat(result).isEqualTo("valid-id")
-        verify(exactly = 2) { viewer.logError("State ID cannot be blank. Please try again.") }
+        ui.execute(stateId)
+
+        verify { viewer.logError("Failed to delete state: State not found") }
     }
-
     @Test
     fun `tryDeleteState should log error on exception`() {
-        val method = ui.javaClass.getDeclaredMethod("tryDeleteState", UUID::class.java, UUID::class.java)
-        method.isAccessible = true
+        val stateId = UUID.randomUUID()
 
-        every { useCase.invoke(any(), any()) } throws Exception("State not found")
+        coEvery { useCase.invoke(any(), any()) } throws Exception("State not found")
 
-        method.invoke(ui, UUID.randomUUID(), userId)
+        ui.execute(stateId)
 
         verify { viewer.logError("Failed to delete state: State not found") }
     }

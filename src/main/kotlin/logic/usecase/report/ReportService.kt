@@ -9,7 +9,7 @@ class ReportService (
     private val taskRepository: TaskRepository,
     private val stateRepository: ProjectStatesRepository
 ) {
-    fun summary(): List<ProjectSummaryReport> {
+    suspend fun summary(): List<ProjectSummaryReport> {
         val projects = projectRepository.getAllProjects()
 
 

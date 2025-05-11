@@ -1,5 +1,7 @@
 package presentation.task
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -42,7 +44,7 @@ class GetTasksByProjectIdUITest {
     @Test
     fun `test valid project ID input with tasks found`() {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
-        every { getTasksByProjectIdUseCase(projectId) } returns tasks
+        coEvery { getTasksByProjectIdUseCase(projectId) } returns tasks
 
         getTasksByProjectIdUI.execute()
 
@@ -55,7 +57,7 @@ class GetTasksByProjectIdUITest {
     @Test
     fun `test valid project ID input with no tasks found`() {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
-        every { getTasksByProjectIdUseCase(projectId) } returns emptyList()
+        coEvery { getTasksByProjectIdUseCase(projectId) } returns emptyList()
 
         getTasksByProjectIdUI.execute()
 
@@ -69,13 +71,13 @@ class GetTasksByProjectIdUITest {
         getTasksByProjectIdUI.execute()
 
         verify { viewer.logMessage("Project ID cannot be empty.") }
-        verify(exactly = 0) { getTasksByProjectIdUseCase(any()) } // Ensure use case is not called
+        coVerify(exactly = 0) { getTasksByProjectIdUseCase(any()) } // Ensure use case is not called
     }
 
     @Test
     fun `test exception handling when tasks not found`() {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
-        every { getTasksByProjectIdUseCase(projectId) } throws TasksNotFoundException("No tasks found")
+        coEvery { getTasksByProjectIdUseCase(projectId) } throws TasksNotFoundException("No tasks found")
 
         getTasksByProjectIdUI.execute()
 
@@ -85,7 +87,7 @@ class GetTasksByProjectIdUITest {
     @Test
     fun `test exception handling for other errors`() {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
-        every { getTasksByProjectIdUseCase(projectId) } throws Exception("Unexpected error")
+        coEvery { getTasksByProjectIdUseCase(projectId) } throws Exception("Unexpected error")
 
         getTasksByProjectIdUI.execute()
 

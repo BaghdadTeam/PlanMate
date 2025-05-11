@@ -1,22 +1,22 @@
 package org.baghdad.presentation.authentication
 
 import org.baghdad.logic.model.entities.SessionEntity
+import org.baghdad.logic.model.exceptions.InvalidCredentialsException
+import org.baghdad.logic.model.exceptions.UserCanNotBeFoundException
 import org.baghdad.logic.usecase.authentication.LoginUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.logic.model.exceptions.InvalidCredentialsException
-import org.baghdad.logic.model.exceptions.UserCanNotBeFoundException
 
 class LoginUi(
     private val useCase: LoginUseCase,
     private val viewer: Viewer,
     private val reader: Reader,
 ) {
-    fun execute(): SessionEntity {
+    suspend fun execute(): SessionEntity {
         while (true) {
-            viewer.logMessage("Please enter username:")
+            viewer.logAuth("Please enter username:")
             val username = reader.readInput()
-            viewer.logMessage("Please enter password:")
+            viewer.logAuth("Please enter password:")
             val password = reader.readInput()
 
             if (username != null && password != null) {
@@ -26,7 +26,6 @@ class LoginUi(
                     return session
                 } catch (e: InvalidCredentialsException) {
                     viewer.logMessage("Login failed: ${e.message}")
-
                 } catch (e: UserCanNotBeFoundException) {
                     viewer.logMessage("Login failed ${e.message}")
                 } catch (e: Exception) {
@@ -38,3 +37,4 @@ class LoginUi(
         }
     }
 }
+

@@ -9,8 +9,7 @@ import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.utils.getFormattedTimestamp
-import java.util.UUID
+import java.util.*
 
 class UpdateTaskUseCase(
     private val taskRepository: TaskRepository,
@@ -18,7 +17,7 @@ class UpdateTaskUseCase(
     private val userRepository: UserRepository
 ) {
 
-    operator fun invoke(newTask: TaskEntity, userId: UUID) {
+    suspend operator fun invoke(newTask: TaskEntity, userId: UUID) {
         val oldTask = taskRepository.getTaskById(newTask.id)
 
         val validatedTask = validateNewTask(newTask)
@@ -33,12 +32,11 @@ class UpdateTaskUseCase(
         }
     }
 
-    private fun logTaskUpdate(
+    private suspend fun logTaskUpdate(
         newTask: TaskEntity,
         oldTask: TaskEntity,
         user: UserEntity
     ) {
-        val timestamp = getFormattedTimestamp()
         val changes = mutableListOf<String>()
 
         if (newTask.title != oldTask.title) {
@@ -56,7 +54,7 @@ class UpdateTaskUseCase(
 
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            entityId = newTask.id,
+            projectId = newTask.projectId,
             action = action,
             user = user,
         )

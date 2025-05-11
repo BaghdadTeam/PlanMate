@@ -2,9 +2,10 @@ package logic.usecase.projectstates
 
 import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -29,32 +30,32 @@ class GetAllStatesPerProjectUseCaseTest {
     }
 
     @Test
-    fun `should return list of sates when there is a states for project`() {
+    fun `should return list of sates when there is a states for project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        val stateId = projectStates[0].projectId
-        every { statesRepository.getAllStatesPerProject(stateId) } returns projectStates
+        val projectId = projectStates[0].projectId
+        coEvery { statesRepository.getAllStatesPerProject(projectId) } returns projectStates
 
         // When
-        val result = getStatesUseCase.invoke(stateId)
+        val result = getStatesUseCase.invoke(projectId)
 
         // Then
         Truth.assertThat(result).isEqualTo(projectStates)
     }
 
     @Test
-    fun `should return empty list of states when there is no states for project`() {
+    fun `should return empty list of states when there is no states for project`() = runTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val stateId = projectStates[0].projectId
-        every { statesRepository.getAllStatesPerProject(stateId) } returns emptyList()
+        coEvery { statesRepository.getAllStatesPerProject(stateId) } returns emptyList()
 
         // When
         val result = getStatesUseCase.invoke(stateId)
 
         // Then
         Truth.assertThat(result).isEmpty()
-        verify { statesRepository.getAllStatesPerProject(stateId) }
+        coVerify { statesRepository.getAllStatesPerProject(stateId) }
     }
 
 

@@ -21,6 +21,10 @@ class TaskMapper : CsvMapper<TaskEntity> {
         )
     }
 
+    override fun getId(item: TaskEntity): String {
+        return item.id.toString()
+    }
+
     override fun serializer(item: TaskEntity): String {
         return "${item.id},${item.title},${item.description},${item.stateId},${item.projectId},${item.creatorId}"
     }

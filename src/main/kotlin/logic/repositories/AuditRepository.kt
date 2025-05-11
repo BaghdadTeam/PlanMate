@@ -6,7 +6,7 @@ import java.util.UUID
 
 interface AuditRepository {
 
-    fun addAuditEntry(audit: AuditLogEntity)
-    fun getAuditByTaskId(taskId: UUID): List<AuditLogEntity>
-    fun getAuditByProjectId(projectId: UUID): List<AuditLogEntity>
+    suspend fun addAuditEntry(audit: AuditLogEntity)
+    suspend fun getAuditByTaskId(taskId: UUID): List<AuditLogEntity>
+    suspend fun getAuditByProjectId(projectId: UUID): List<AuditLogEntity>
 }
