@@ -23,6 +23,7 @@ import org.baghdad.logic.usecase.task.GetTasksByProjectIdUseCase
 import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.baghdad.logic.usecase.user.CreateUserUseCase
+import org.baghdad.logic.usecase.user.GetUserByUserIdUseCase
 import org.baghdad.logic.usecase.user.UserValidatorUseCase
 import org.koin.dsl.module
 
@@ -51,7 +52,6 @@ val useCaseModule = module {
     // endregion
 
     // region  ::  Project Use Cases  ::
-
     single { CreateProjectUseCase(get(), get(), get()) }
     single { DeleteProjectUseCase(get(), get(), get()) }
     single { EditProjectUseCase(get(), get(), get()) }
@@ -66,6 +66,7 @@ val useCaseModule = module {
     // region :: User ::
     single { CreateUserUseCase(get(), get()) }
     single { UserValidatorUseCase(get()) }
+    single { GetUserByUserIdUseCase(get()) }
     // endregion
 
     // region :: Audit ::
