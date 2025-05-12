@@ -8,7 +8,7 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 import kotlin.test.Test
 
-class StateMapperTest {
+class TaskStateMapperTest {
     private lateinit var parser: TaskStateMapper
 
     @BeforeEach

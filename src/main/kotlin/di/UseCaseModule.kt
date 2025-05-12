@@ -1,6 +1,6 @@
 package org.baghdad.di
 
-import org.baghdad.logic.usecase.StateTransitionUseCase
+import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
@@ -30,7 +30,7 @@ val useCaseModule = module {
 
     // region  ::  Task Use Cases  ::
 
-    single { StateTransitionUseCase(get(), get(), get(), get()) }
+    single { TaskStateTransitionUseCase(get(), get(), get(), get()) }
     single { CreateTaskUseCase(get(), get(), get()) }
     single { DeleteTaskUseCase(get(), get(), get()) }
     single { UpdateTaskUseCase(get(), get(), get()) }

@@ -2,7 +2,7 @@ package org.baghdad.di
 
 
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
-import org.baghdad.presentation.StateTransitionUI
+import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
@@ -74,7 +74,7 @@ val uiModule = module {
     single { DeleteStateForProjectUI(get(), get(), get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
     single { ProjectStatesUI(get(), get(), get(), get(), get(), get()) }
-    single { StateTransitionUI(get(), get(), get(), get()) }
+    single { TaskStateTransitionUI(get(), get(), get(), get()) }
     //endregion
 
     //region :: Task ::

@@ -1,4 +1,4 @@
-package org.baghdad.logic.usecase
+package org.baghdad.logic.usecase.task
 
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
@@ -8,9 +8,9 @@ import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import java.util.*
+import java.util.UUID
 
-class StateTransitionUseCase(
+class TaskStateTransitionUseCase(
     private val taskRepository: TaskRepository,
     private val projectStatesRepository: ProjectStatesRepository,
     private val userRepository: UserRepository,
