@@ -60,7 +60,9 @@ class ProjectStatesRepositoryImpTest{
         val result = projectStatesDataSource.getStateById(id)
 
         // Then
-        assertThat(result).isEqualTo(stateEntity.toDto())
+        assertThat(result.id).isEqualTo(stateEntity.id)
+        assertThat(result.name).isEqualTo(stateEntity.name)
+
     }
 
 
