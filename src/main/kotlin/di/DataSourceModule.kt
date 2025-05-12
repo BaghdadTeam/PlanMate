@@ -7,10 +7,12 @@ import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
 import org.baghdad.data.datasource.csv.StorageFileNames
+import org.baghdad.data.datasource.mapper.project.ProjectDtoCsvMapper
 import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mongodb.CollectionNames
 import org.baghdad.data.datasource.mongodb.MongoDataSourceImpl
 import org.baghdad.data.datasource.mongodb.MongoSetup
+import org.baghdad.data.dto.ProjectDto
 import org.baghdad.data.local.*
 import org.baghdad.logic.model.entities.*
 import org.koin.core.module.Module
@@ -52,6 +54,7 @@ val dataSourceModule = module {
 
 //    registerCsvDataSource<AuditEntity>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
 //    registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
+      registerCsvDataSource<ProjectDto>(Entities.Project, StorageFileNames.projectFile, ProjectDtoCsvMapper())
 //    registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
 //    registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
     registerCsvDataSource<SessionEntity>(Entities.Session, StorageFileNames.sessionFile, SessionMapper())
