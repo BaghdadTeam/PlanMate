@@ -7,7 +7,7 @@ import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidNameException
 import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException

@@ -1,7 +1,7 @@
 package presentation.task
 
 import io.mockk.*
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.presentation.task.TaskStateTransitionUI
@@ -29,7 +29,7 @@ class TaskManagementGatherUITest {
     private val projectId = UUID.randomUUID()
     private lateinit var task1: TaskEntity
     private lateinit var task2: TaskEntity
-    private lateinit var state: StateEntity
+    private lateinit var state: TaskStateEntity
 
     @BeforeEach
     fun setUp() {
@@ -55,7 +55,7 @@ class TaskManagementGatherUITest {
             TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", UUID.randomUUID(), projectId, UUID.randomUUID())
         task2 =
             TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", UUID.randomUUID(), projectId, UUID.randomUUID())
-        state = StateEntity(UUID.randomUUID(), "IN_PROGRESS", projectId, UUID.randomUUID())
+        state = TaskStateEntity(UUID.randomUUID(), "IN_PROGRESS", projectId, UUID.randomUUID())
     }
 
     @Test

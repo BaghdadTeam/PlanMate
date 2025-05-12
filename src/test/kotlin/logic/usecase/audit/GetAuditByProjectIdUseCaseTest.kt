@@ -1,14 +1,12 @@
 package logic.usecase.audit
 
 import com.google.common.truth.Truth.assertThat
-import helpers.projectStates.ProjectStatesEntityTestData
-import helpers.task.TaskEntityTestData
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository

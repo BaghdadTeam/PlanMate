@@ -1,10 +1,10 @@
 package org.baghdad.logic.usecase.projectstates
 
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.enums.Entities
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -27,7 +27,7 @@ class DeleteStateForProjectUseCase (
 
     }
 
-    private fun createAudit(state: StateEntity, user: UserEntity):AuditLogEntity {
+    private fun createAudit(state: TaskStateEntity, user: UserEntity):AuditLogEntity {
         val action = "delete  state is deleted successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,

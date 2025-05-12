@@ -3,7 +3,7 @@ package presentation.projectStates
 import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -73,7 +73,7 @@ class AddTaskStateToProjectUITest {
     fun `tryAddState should show error message when useCase throws exception`() {
         every { reader.readInput() } returnsMany listOf("", "  ", "Done")
 
-        val state = StateEntity(name = "Done", projectId = UUID.randomUUID(), creatorId = userId)
+        val state = TaskStateEntity(name = "Done", projectId = UUID.randomUUID(), creatorId = userId)
 
         coEvery { useCase.invoke(any(), any()) } throws RuntimeException("Something went wrong")
 

@@ -3,7 +3,7 @@ package logic.usecase.project
 import helpers.authentication.createUserHelper
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.AuditRepository

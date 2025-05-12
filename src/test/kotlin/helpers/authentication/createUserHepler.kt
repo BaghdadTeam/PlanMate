@@ -1,7 +1,7 @@
 package helpers.authentication
 
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.utils.md5WithSalt
 
 fun createUserHelper(

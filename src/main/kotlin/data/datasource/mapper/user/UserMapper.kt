@@ -2,7 +2,7 @@ package org.baghdad.data.datasource.mapper.user
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import java.util.*
 
 class UserMapper : CsvMapper<UserEntity> {

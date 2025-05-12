@@ -1,6 +1,8 @@
 package org.baghdad.logic.usecase.projectstates
 
 import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.enums.Entities
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
 import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
@@ -14,7 +16,7 @@ class AddTaskStateToProjectUseCase(
     private val userRepository: UserRepository
 ) {
 
-    suspend fun invoke(state: StateEntity, userId: UUID){
+    suspend fun invoke(state: TaskStateEntity, userId: UUID){
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) throw NotAccessException("Only Admin can add states")
 
@@ -25,7 +27,7 @@ class AddTaskStateToProjectUseCase(
         auditRepository.addAuditEntry(audit)
     }
 
-    private fun createAudit(state: StateEntity,user: UserEntity):AuditLogEntity {
+    private fun createAudit(state: TaskStateEntity, user: UserEntity):AuditLogEntity {
         val action = "create ${state.name} state is created successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,

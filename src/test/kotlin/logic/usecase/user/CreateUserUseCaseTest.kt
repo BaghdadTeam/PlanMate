@@ -6,7 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +19,6 @@ class CreateUserUseCaseTest {
     private lateinit var userValidatorUseCase: UserValidatorUseCase
 
     private val adminUser = createUserHelper()
-    private val mateUser = createUserHelper().copy(type = UserType.Mate)
 
 
     @BeforeEach

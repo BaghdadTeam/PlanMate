@@ -6,10 +6,10 @@ import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -32,8 +32,8 @@ class TaskStateTransitionUseCaseTest {
     private lateinit var service: TaskStateTransitionUseCase
 
     private lateinit var task: TaskEntity
-    private lateinit var oldState: StateEntity
-    private lateinit var newState: StateEntity
+    private lateinit var oldState: TaskStateEntity
+    private lateinit var newState: TaskStateEntity
     private lateinit var user: UserEntity
 
     @BeforeEach
@@ -47,8 +47,8 @@ class TaskStateTransitionUseCaseTest {
 
         user = UserEntity(UUID.randomUUID(), "Test", "testUser", "hash", UserType.Mate)
 
-        oldState = StateEntity(oldStateId, "TODO", projectId, user.id)
-        newState = StateEntity(newStateId, "IN_PROGRESS", projectId, user.id)
+        oldState = TaskStateEntity(oldStateId, "TODO", projectId, user.id)
+        newState = TaskStateEntity(newStateId, "IN_PROGRESS", projectId, user.id)
 
         task = TaskEntity(
             taskId,

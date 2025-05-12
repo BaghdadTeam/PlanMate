@@ -1,5 +1,6 @@
 package org.baghdad.logic.model.entities
 
+import org.baghdad.logic.model.enums.UserType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonProperty
 import java.util.UUID

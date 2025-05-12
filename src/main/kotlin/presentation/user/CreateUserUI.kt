@@ -1,8 +1,6 @@
 package org.baghdad.presentation.user
 
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidNameException
 import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
@@ -55,4 +53,3 @@ class CreateUserUI(
         return reader.readInput()?.trim().orEmpty()
     }
 }
-//

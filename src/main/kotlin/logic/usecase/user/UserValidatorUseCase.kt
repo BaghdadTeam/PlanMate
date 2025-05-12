@@ -1,6 +1,6 @@
 package org.baghdad.logic.usecase.user
 
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.user.*
 import org.baghdad.logic.repositories.UserRepository
 import java.util.*
