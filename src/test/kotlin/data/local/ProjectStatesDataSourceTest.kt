@@ -6,8 +6,10 @@ import helpers.task.TaskTestData
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
+import org.baghdad.data.dto.StateDto
 import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.data.mapper.toDomain
+import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +19,7 @@ import java.util.*
 
 class ProjectStatesDataSourceTest {
 
-    private lateinit var dataSource: DataSource<StateEntity>
+    private lateinit var dataSource: DataSource<StateDto>
     private lateinit var taskDataSource: DataSource<TaskEntity>
     private lateinit var projectStatesDataSource: ProjectStatesDataSource
 
@@ -36,7 +38,7 @@ class ProjectStatesDataSourceTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val id = projectStates.first().projectId
-        coEvery { dataSource.loadAll() } returns projectStates
+        coEvery { dataSource.loadAll() } returns projectStates.map { it.toDto() }
 
         // When
         val result = projectStatesDataSource.getAllStatesForProject(id)
@@ -44,13 +46,12 @@ class ProjectStatesDataSourceTest {
         // Then
         assertThat(result).isEqualTo(projectStates.filter { it.projectId == id })
     }
-
     @Test
     fun `should throw exception when there are no states for the project`() = runTest {
         // Given
         val id = UUID.randomUUID()
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
-        coEvery { dataSource.loadAll() } returns projectStates // no states match the random ID
+        coEvery { dataSource.loadAll() } returns projectStates.map { it.toDto() } // no states match the random ID
 
         // When & Then
         assertThrows<StateNotFoundException> {
@@ -61,8 +62,9 @@ class ProjectStatesDataSourceTest {
     @Test
     fun `should return state when there is a state with same id`() = runTest {
         // Given
+
         val projectStates = ProjectStatesEntityTestData.todoState()
-        coEvery { dataSource.loadAll() } returns listOf(projectStates)
+        coEvery { dataSource.loadAll() } returns listOf(projectStates.toDto())
         // When
         val result = projectStatesDataSource.getStateById(projectStates.id)
         // Then
@@ -73,8 +75,8 @@ class ProjectStatesDataSourceTest {
     fun `should return state when can add state successfully`() = runTest {
         // Given
         val projectState = ProjectStatesEntityTestData.inProgressState()
-        coEvery { dataSource.loadAll() } returns listOf(projectState)
-        coEvery { projectStatesDataSource.createState(projectState) } just Runs
+        coEvery { dataSource.loadAll() } returns listOf(projectState.toDto())
+        coEvery { projectStatesDataSource.createState(projectState.toDto().toDomain()) } just Runs
         // When
         val result = projectStatesDataSource.getStateById(projectState.id)
 
@@ -90,15 +92,15 @@ class ProjectStatesDataSourceTest {
         val id = allStates.first().projectId
         val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(id = allStates[1].id, name = "doing")
 
-        coEvery { dataSource.loadAll() } returns allStates
-        coEvery { dataSource.update(updatedProject) } just Runs
+        coEvery { dataSource.loadAll() } returns allStates.map { it.toDto() }
+        coEvery { dataSource.update(updatedProject.toDto()) } just Runs
 
         // When
-        projectStatesDataSource.editState(updatedProject)
+        projectStatesDataSource.editState(updatedProject.toDto().toDomain())
         val result = projectStatesDataSource.getAllStatesForProject(id)
 
         // Then
-        assertThat(result.contains(updatedProject))
+        assertThat(result.contains(updatedProject.toDto().toDomain()))
     }
 
 
@@ -109,11 +111,11 @@ class ProjectStatesDataSourceTest {
         val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
         val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(name = "doing")
 
-        coEvery { dataSource.loadAll() } returns allStates
-        coEvery { dataSource.update(updatedProject) } just Runs
+        coEvery { dataSource.loadAll() } returns allStates.map { it.toDto() }
+        coEvery { dataSource.update(updatedProject.toDto()) } just Runs
 
         assertThrows<Exception> {
-            projectStatesDataSource.editState(updatedProject)
+            projectStatesDataSource.editState(updatedProject.toDto().toDomain())
         }
     }
 
@@ -126,17 +128,17 @@ class ProjectStatesDataSourceTest {
         val task1 = TaskTestData.taskWithState(stateId = stateToDelete.id)
         val task2 = TaskTestData.taskWithState(stateId = otherState.id)
 
-        coEvery { dataSource.loadAll() } returns listOf(stateToDelete, otherState)
+        coEvery { dataSource.loadAll() } returns listOf(stateToDelete.toDto(), otherState.toDto())
         coEvery { taskDataSource.loadAll() } returns listOf(task1, task2)
 
-        coEvery { dataSource.delete(stateToDelete) } just Runs
+        coEvery { dataSource.delete(stateToDelete.toDto()) } just Runs
         coEvery { taskDataSource.delete(task1) } just Runs
 
         // When
         projectStatesDataSource.deleteState(stateToDelete.id)
 
         // Then
-        coVerify   { dataSource.delete(stateToDelete) }
+        coVerify   { dataSource.delete(stateToDelete.toDto()) }
         coVerify   { taskDataSource.delete(task1) }
         coVerify(exactly = 0) { taskDataSource.delete(task2) }
     }
@@ -146,7 +148,7 @@ class ProjectStatesDataSourceTest {
         val existingState = ProjectStatesEntityTestData.todoState()
         val nonexistentStateId = UUID.randomUUID()
 
-        coEvery { dataSource.loadAll() } returns listOf(existingState)
+        coEvery { dataSource.loadAll() } returns listOf(existingState.toDto())
 
         // Then
         val exception = assertThrows<Exception> {

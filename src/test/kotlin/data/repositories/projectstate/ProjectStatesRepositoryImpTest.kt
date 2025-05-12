@@ -5,6 +5,8 @@ import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.ProjectStatesDataSource
+import org.baghdad.data.mapper.toDomain
+import org.baghdad.data.mapper.toDto
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,7 +30,6 @@ class ProjectStatesRepositoryImpTest{
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = projectStates.first().projectId
         coEvery { dataSource.getAllStatesForProject(projectId) } returns projectStates
-
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
 
@@ -51,26 +52,46 @@ class ProjectStatesRepositoryImpTest{
 
     @Test
     fun `should return state when there is a state with same id`() = runTest {
-        val projectStates = ProjectStatesEntityTestData.todoState()
-        val id = projectStates.id
-        coEvery { dataSource.getStateById(id) } returns projectStates
+        val stateEntity = ProjectStatesEntityTestData.todoState()
+        val id = stateEntity.id
+        coEvery { dataSource.getStateById(id) } returns stateEntity
 
         // When
         val result = projectStatesDataSource.getStateById(id)
 
         // Then
-        assertThat(result).isEqualTo(projectStates)
-        coVerify { dataSource.getStateById(id) }
+        assertThat(result).isEqualTo(stateEntity.toDto())
     }
 
 
     @Test
     fun `should return state when can add state successfully`() = runTest {
+        val stateEntity = ProjectStatesEntityTestData.inProgressState()
+        val domainModel = stateEntity.toDto()
+
+        coEvery { dataSource.createState(domainModel.toDomain()) } just Runs
+
+        projectStatesDataSource.createState(domainModel.toDomain())
+
+        coVerify { dataSource.createState(domainModel.toDomain()) }
+    }
+
+    @Test
+    fun `should delete state when can delete it successfully`() = runTest {
+        // Given
         val state = ProjectStatesEntityTestData.inProgressState()
+        val projectId = state.projectId
 
-        projectStatesDataSource.createState(state)
+        coEvery { dataSource.deleteState(state.id) } just Runs
+        coEvery { dataSource.getAllStatesForProject(projectId) } returns
+                ProjectStatesEntityTestData.getStatesAfterDelete()
 
-        coVerify { dataSource.createState(state) }
+        // When
+        projectStatesDataSource.deleteState(state.id)
+        val result = projectStatesDataSource.getAllStatesPerProject(projectId)
+
+        // Then
+        assertThat(result.find { it.id == state.id }).isNull()
     }
 
     @Test
@@ -78,26 +99,13 @@ class ProjectStatesRepositoryImpTest{
         // Given
         val state = ProjectStatesEntityTestData.inProgressState()
         val updatedState = state.copy(name = "Doing")
-        coEvery { dataSource.editState(updatedState) } just Runs
+        coEvery { dataSource.editState(updatedState.toDto().toDomain()) } just Runs
 
         // When
-        projectStatesDataSource.editState(state.id, updatedState)
+        projectStatesDataSource.editState(state.id, updatedState.toDto().toDomain())
 
         // Then
-        coVerify(exactly = 1) { dataSource.editState(updatedState) }
-    }
-
-    @Test
-    fun `should delete state when can delete it successfully`() = runTest {
-        val state = ProjectStatesEntityTestData.inProgressState()
-
-        coEvery { projectStatesDataSource.createState(state)} just Runs
-        coEvery { projectStatesDataSource.deleteState(state.id) } just Runs
-
-        val result = projectStatesDataSource.getAllStatesPerProject(state.projectId)
-
-        val finalResult = result.find { it.id == state.id }
-        assertThat(finalResult).isNull()
+        coVerify(exactly = 1) { dataSource.editState(any()) }
     }
 
 }
