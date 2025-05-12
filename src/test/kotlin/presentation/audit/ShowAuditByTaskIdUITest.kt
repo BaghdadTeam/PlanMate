@@ -10,6 +10,7 @@ import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.utils.formatTimestamp
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.test.Test
@@ -84,11 +85,10 @@ class ShowAuditByTaskIdUITest {
         // Then
         showAuditByTaskIdUI.execute(auditEntities[0].entityUnderAuditId)
 
-        verify { viewer.logMessage("1 :" +
-                " ${user.type} " +
-                " ${user.name} " +
-                " ${auditEntities[0].description} " +
-                "at ${auditEntities[0].timestamp}") }
-
+        verify { viewer.logMessage("1: " +
+                "${user.type} " +
+                "${user.name} " +
+                "${auditEntities[0].description} " +
+                "at ${formatTimestamp(auditEntities[0].timestamp)}") }
     }
 }

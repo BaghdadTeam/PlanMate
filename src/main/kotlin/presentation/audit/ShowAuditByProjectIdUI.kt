@@ -1,11 +1,11 @@
 package org.baghdad.presentation.audit
 
 import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.NoProjectFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.utils.formatTimestamp
 import java.util.UUID
 
 class ShowAuditByProjectIdUI(
@@ -16,15 +16,15 @@ class ShowAuditByProjectIdUI(
 
         runBlocking {
             try {
-                val (auditsList , usersList) = getAuditByProjectIdUseCase(projectId)
+                val (auditsList, usersList) = getAuditByProjectIdUseCase(projectId)
                 auditsList.zip(usersList).forEachIndexed { index, pair ->
                     val (auditEntity, userEntity) = pair
                     viewer.logMessage(
-                           "${index + 1} :" +
-                                " ${userEntity.type} " +
-                                " ${userEntity.name} " +
-                                " ${auditEntity.description} " +
-                                "at ${auditEntity.timestamp}"
+                        "${index + 1}: " +
+                                "${userEntity.type} " +
+                                "${userEntity.name} " +
+                                "${auditEntity.description} " +
+                                "at ${formatTimestamp(auditEntity.timestamp)}"
                     )
                 }
             } catch (_: UnSupportedTimeStampFormatException) {
