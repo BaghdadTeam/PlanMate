@@ -2,12 +2,12 @@ package org.baghdad.logic.usecase.user
 
 import org.baghdad.logic.model.exceptions.user.*
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.admin.IsAdminUseCase
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import java.util.*
 
 class UserValidatorUseCase(
     private val userRepository: UserRepository,
-    private val isAdminUseCase: IsAdminUseCase
+    private val adminValidation: AdminPermissionCheckerUseCase
 ) {
     suspend operator fun invoke(
         username: String,
@@ -18,7 +18,7 @@ class UserValidatorUseCase(
     ) {
 
         validateUsername(username)
-        isAdminUseCase(creatorId)
+        adminValidation(creatorId)
         validateName(name)
         validatePassword(passwordPlain)
         ensureUsernameUnique(username)

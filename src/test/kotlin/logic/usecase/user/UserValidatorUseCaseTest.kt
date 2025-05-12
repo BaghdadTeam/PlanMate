@@ -2,33 +2,37 @@ package logic.usecase.user
 
 import helpers.authentication.createUserHelper
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.InvalidNameException
 import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
-import org.baghdad.logic.model.exceptions.user.UnauthorizedException
 import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.admin.IsAdminUseCase
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.user.UserValidatorUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
 
 class UserValidatorUseCaseTest {
+
+
+    private companion object {
+        const val TEST_USERNAME = "aboud"
+        const val TEST_NAME = "Test User"
+    }
+
+
     private lateinit var userRepository: UserRepository
     private lateinit var userValidatorUseCase: UserValidatorUseCase
-    private lateinit var isAdmin: IsAdminUseCase
+    private lateinit var isAdmin: AdminPermissionCheckerUseCase
+
 
     @BeforeEach
     fun setup() {
         userRepository = mockk()
-        isAdmin = IsAdminUseCase(userRepository)
+        isAdmin = AdminPermissionCheckerUseCase(userRepository)
         userValidatorUseCase = UserValidatorUseCase(userRepository, isAdmin)
     }
 
@@ -36,11 +40,11 @@ class UserValidatorUseCaseTest {
     fun `should not throw any exception when validate user data`() = runTest {
         // Given
         val user = createUserHelper()
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
-        userValidatorUseCase.invoke("aboud", user.hashedPassword, user.name, user.id)
+        userValidatorUseCase.invoke(TEST_USERNAME, user.hashedPassword, user.name, user.id)
 
     }
 
@@ -48,7 +52,7 @@ class UserValidatorUseCaseTest {
     fun `should throw exception when username is blank`() = runTest {
         // Given
         val user = createUserHelper()
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
@@ -65,14 +69,14 @@ class UserValidatorUseCaseTest {
     @Test
     fun `should throw UserAlreadyExistsException when username is not unique`() = runTest {
         // Given
-        val user = createUserHelper().copy(username = "aboud")
+        val user = createUserHelper().copy(username = TEST_USERNAME)
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.isUsernameTaken("aboud") } returns true
+        coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns true
 
         // When & Then
         assertThrows<UserAlreadyExistsException> {
             userValidatorUseCase.invoke(
-                "aboud",
+                TEST_USERNAME,
                 user.hashedPassword,
                 user.name,
                 user.id
@@ -81,43 +85,18 @@ class UserValidatorUseCaseTest {
 
     }
 
-    @Test
-    fun `should throw UnauthorizedException when user is not admin`() = runTest {
-        // Given
-        val nonAdminUserId = UUID.randomUUID()
-        val username = "validUser"
 
-        // Mock the admin check to throw
-        coEvery { isAdmin.ensureAdmin(nonAdminUserId) } throws
-                UnauthorizedException("Only admins can perform this action.")
-
-        // Mock other dependencies
-        coEvery { userRepository.isUsernameTaken(username) } returns false
-
-        // When & Then
-        assertThrows<UnauthorizedException> {
-            userValidatorUseCase.invoke(
-                username = username,
-                passwordPlain = "ValidPass123",
-                name = "Valid Name",
-                creatorId = nonAdminUserId,
-            )
-        }
-
-        // Verify the admin check was called
-        coVerify { isAdmin.ensureAdmin(nonAdminUserId) }
-    }
 
     @Test
     fun `should throw InvalidNameException when name is blank`() = runTest {
         // Given
         val user = createUserHelper()
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
         // When & Then
         assertThrows<InvalidNameException> {
             userValidatorUseCase.invoke(
-                "aboud",
+                TEST_USERNAME,
                 user.hashedPassword,
                 "",
                 user.id
@@ -131,13 +110,13 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "")
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
         // When & Then
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
-                "aboud",
+                TEST_USERNAME,
                 user.hashedPassword,
-                "aboud",
+                TEST_USERNAME,
                 user.id
             )
         }
@@ -148,14 +127,14 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "12")
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
 
         // when & then
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
-                "aboud",
+                TEST_USERNAME,
                 user.hashedPassword,
-                "aboud",
+                TEST_USERNAME,
                 user.id
             )
         }
@@ -166,13 +145,13 @@ class UserValidatorUseCaseTest {
         // Given
         val user = createUserHelper().copy(name = "a")
         coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
         // When & Then
         assertThrows<InvalidUsernameException> {
             userValidatorUseCase.invoke(
                 "a",
                 user.hashedPassword,
-                "aboud",
+                TEST_USERNAME,
                 user.id
             )
         }

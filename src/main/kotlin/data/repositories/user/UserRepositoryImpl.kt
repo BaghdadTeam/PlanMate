@@ -26,6 +26,5 @@ class UserRepositoryImpl(
     override suspend fun isUsernameTaken(username: String): Boolean {
         return dataSource.isUsernameTaken(username)
     }
-
     override suspend fun getAllUsers(): List<UserEntity> = dataSource.loadUsers()
 }

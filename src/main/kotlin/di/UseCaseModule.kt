@@ -2,7 +2,7 @@ package org.baghdad.di
 
 import org.baghdad.logic.usecase.StateTransitionUseCase
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.logic.usecase.admin.IsAdminUseCase
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
@@ -69,7 +69,7 @@ val useCaseModule = module {
     single { UserValidatorUseCase(get(), get()) }
 
     // region :: Admin ::
-    single { IsAdminUseCase(get()) }
+    single { AdminPermissionCheckerUseCase(get()) }
 
     // endregion
 
