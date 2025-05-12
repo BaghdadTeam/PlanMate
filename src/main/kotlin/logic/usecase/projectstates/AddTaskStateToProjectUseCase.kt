@@ -10,7 +10,7 @@ import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
 import java.util.*
 
-class AddStateToProjectUseCase(
+class AddTaskStateToProjectUseCase(
     private val projectStatesRepository: ProjectStatesRepository,
     private val auditRepository: AuditRepository,
     private val userRepository: UserRepository,

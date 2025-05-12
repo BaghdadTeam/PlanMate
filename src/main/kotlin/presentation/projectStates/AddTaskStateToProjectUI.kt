@@ -3,13 +3,13 @@ package org.baghdad.presentation.projectStates
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
+import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
 
-class AddStateToProjectUI(
-    private val useCase: AddStateToProjectUseCase,
+class AddTaskStateToProjectUI(
+    private val useCase: AddTaskStateToProjectUseCase,
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader

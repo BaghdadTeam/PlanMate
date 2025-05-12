@@ -46,7 +46,7 @@ class GetTasksByProjectIdUITest {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         coEvery { getTasksByProjectIdUseCase(projectId) } returns tasks
 
-        getTasksByProjectIdUI.execute()
+        getTasksByProjectIdUI.execute(projectId)
 
         verify { viewer.logMessage("Tasks for project $projectId:") }
         tasks.forEachIndexed { index, task ->
@@ -59,19 +59,9 @@ class GetTasksByProjectIdUITest {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         coEvery { getTasksByProjectIdUseCase(projectId) } returns emptyList()
 
-        getTasksByProjectIdUI.execute()
+        getTasksByProjectIdUI.execute(projectId)
 
         verify { viewer.logMessage("No tasks found for the given project.") }
-    }
-
-    @Test
-    fun `test empty project ID input`() {
-        every { reader.readInput() } returns emptyProjectId // User enters empty project ID
-
-        getTasksByProjectIdUI.execute()
-
-        verify { viewer.logMessage("Project ID cannot be empty.") }
-        coVerify(exactly = 0) { getTasksByProjectIdUseCase(any()) } // Ensure use case is not called
     }
 
     @Test
@@ -79,7 +69,7 @@ class GetTasksByProjectIdUITest {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         coEvery { getTasksByProjectIdUseCase(projectId) } throws TasksNotFoundException("No tasks found")
 
-        getTasksByProjectIdUI.execute()
+        getTasksByProjectIdUI.execute(projectId)
 
         verify { viewer.logMessage("No tasks found for project ID: $projectId") }
     }
@@ -89,7 +79,7 @@ class GetTasksByProjectIdUITest {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
         coEvery { getTasksByProjectIdUseCase(projectId) } throws Exception("Unexpected error")
 
-        getTasksByProjectIdUI.execute()
+        getTasksByProjectIdUI.execute(projectId)
 
         verify { viewer.logMessage("Failed to get tasks: Unexpected error") }
     }

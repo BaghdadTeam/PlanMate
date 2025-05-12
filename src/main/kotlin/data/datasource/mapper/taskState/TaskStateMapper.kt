@@ -1,10 +1,11 @@
 package org.baghdad.data.datasource.mapper.state
 
+import data.datasource.mapper.taskState.TaskStateColumns
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.StateEntity
 import java.util.UUID
 
-class StateMapper : CsvMapper<StateEntity> {
+class TaskStateMapper : CsvMapper<StateEntity> {
     override fun header(): String {
         return "id,name,projectId,creatorId"
     }
@@ -12,10 +13,10 @@ class StateMapper : CsvMapper<StateEntity> {
     override fun deserializer(content: String): StateEntity {
         val state = content.split(",")
         return StateEntity(
-            id = UUID.fromString(state[StateColumns.ID]),
-            name = state[StateColumns.NAME],
-            projectId = UUID.fromString(state[StateColumns.PROJECT_ID]),
-            creatorId = UUID.fromString(state[StateColumns.CREATOR_ID]),
+            id = UUID.fromString(state[TaskStateColumns.ID]),
+            name = state[TaskStateColumns.NAME],
+            projectId = UUID.fromString(state[TaskStateColumns.PROJECT_ID]),
+            creatorId = UUID.fromString(state[TaskStateColumns.CREATOR_ID]),
         )
     }
 
