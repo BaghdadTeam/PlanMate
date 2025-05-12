@@ -12,4 +12,8 @@ class ViewerImpl : Viewer {
     override fun logAuth(msg: String) {
         print(msg)
     }
+
+    override fun log(msg: String) {
+        print(msg)
+    }
 }
