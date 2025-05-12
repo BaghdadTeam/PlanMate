@@ -1,10 +1,8 @@
 package org.baghdad.presentation.task
 
 import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.*
@@ -15,7 +13,7 @@ class TaskManagementGatherUI(
     private val createTaskUI: CreateTaskUI,
     private val editTaskUI: UpdateTaskUI,
     private val deleteTaskUI: DeleteTaskUI,
-    private val changeTaskStateUI: StateTransitionUI,
+    private val changeTaskStateUI: TaskStateTransitionUI,
     private val viewServiceUseCase: ViewServiceUseCase
 ) {
 

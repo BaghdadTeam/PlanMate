@@ -11,8 +11,8 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.NotFoundException
-import org.baghdad.logic.usecase.StateTransitionUseCase
-import org.baghdad.presentation.StateTransitionUI
+import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
+import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
@@ -20,13 +20,13 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 import kotlin.test.Test
 
-class StateTransitionUITest {
+class TaskStateTransitionUITest {
 
-    private lateinit var useCase: StateTransitionUseCase
+    private lateinit var useCase: TaskStateTransitionUseCase
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
     private lateinit var session: SessionManager
-    private lateinit var ui: StateTransitionUI
+    private lateinit var ui: TaskStateTransitionUI
 
     private val testUserId = UUID.randomUUID()
 
@@ -42,7 +42,7 @@ class StateTransitionUITest {
 
         every { session.currentSession.userId } returns testUserId
 
-        ui = StateTransitionUI(useCase, session, viewer, reader)
+        ui = TaskStateTransitionUI(useCase, session, viewer, reader)
 
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
