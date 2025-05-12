@@ -1,7 +1,7 @@
 package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.mapper.state.StateMapper
+import org.baghdad.data.datasource.mapper.state.TaskStateMapper
 import org.baghdad.logic.model.entities.StateEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -9,11 +9,11 @@ import java.util.*
 import kotlin.test.Test
 
 class StateMapperTest {
-    private lateinit var parser: StateMapper
+    private lateinit var parser: TaskStateMapper
 
     @BeforeEach
     fun setUp() {
-        parser = StateMapper()
+        parser = TaskStateMapper()
     }
 
     @Test

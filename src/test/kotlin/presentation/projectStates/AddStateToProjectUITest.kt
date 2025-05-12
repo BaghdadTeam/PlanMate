@@ -4,7 +4,7 @@ import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
+import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.projectStates.AddStateToProjectUI
@@ -15,7 +15,7 @@ import kotlin.test.Test
 
 class AddStateToProjectUITest {
 
-    private lateinit var useCase: AddStateToProjectUseCase
+    private lateinit var useCase: AddTaskStateToProjectUseCase
     private lateinit var sessionManager: SessionManager
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader

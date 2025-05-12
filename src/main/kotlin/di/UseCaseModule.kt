@@ -11,7 +11,7 @@ import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.baghdad.logic.usecase.project.DeleteProjectUseCase
 import org.baghdad.logic.usecase.project.EditProjectUseCase
 import org.baghdad.logic.usecase.project.GetAllProjectsUseCase
-import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
+import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
@@ -42,7 +42,7 @@ val useCaseModule = module {
 
     // region  ::  Project States Use Cases  ::
 
-    single { AddStateToProjectUseCase(get(), get(), get()) }
+    single { AddTaskStateToProjectUseCase(get(), get(), get()) }
     single { DeleteStateForProjectUseCase(get(), get(), get()) }
     single { GetAllStatesPerProjectUseCase(get()) }
     single { GetStateByIdUseCase(get()) }
