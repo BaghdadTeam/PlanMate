@@ -23,6 +23,7 @@ class ViewMainManu(
             viewer.logMessage("2. Create user")
             viewer.logMessage("3. Logout")
             viewer.logMessage("0. Exit")
+            viewer.log("Enter here : ")
             when (reader.readInput()?.toIntOrNull()) {
                 1 -> {
                     val projectId = projectUi.invoke()

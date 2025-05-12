@@ -17,7 +17,7 @@ class StartApp(
     fun run() = runBlocking {
         try {
 
-           resolveActiveSession()
+            resolveActiveSession()
             viewMainManu()
         } catch (_: UnauthorizedException) {
             viewer.logMessage("Unauthorized user")
