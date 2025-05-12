@@ -3,7 +3,9 @@ package org.baghdad.di
 
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
 import org.baghdad.presentation.StateTransitionUI
+import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
+import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.project.CreateProjectUi
 import org.baghdad.presentation.project.DeleteProjectUi
@@ -86,6 +88,8 @@ val uiModule = module {
 
     //region :: Audit ::
     single { ShowAuditByProjectIdUI(get(), get()) }
+    single { AuditUI(get(), get(), get(), get(), get()) }
+    single { ShowAuditByTaskIdUI(get(), get()) }
     //endregion
 
 
