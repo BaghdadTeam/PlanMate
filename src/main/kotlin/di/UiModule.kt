@@ -12,7 +12,7 @@ import org.baghdad.presentation.project.DeleteProjectUi
 import org.baghdad.presentation.project.EditProjectUi
 import org.baghdad.presentation.project.GetAllProjectsUi
 import org.baghdad.presentation.project.ProjectUi
-import org.baghdad.presentation.projectStates.AddStateToProjectUI
+import org.baghdad.presentation.projectStates.AddTaskStateToProjectUI
 import org.baghdad.presentation.projectStates.DeleteStateForProjectUI
 import org.baghdad.presentation.projectStates.EditProjectStateUI
 import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
@@ -40,7 +40,7 @@ val uiModule = module {
 
     // region  :: PROJECT STATES ::
 
-    single { AddStateToProjectUI(get(), get(), get(), get()) }
+    single { AddTaskStateToProjectUI(get(), get(), get(), get()) }
     single { EditProjectStateUI(get(), get(), get(), get()) }
     single { DeleteStateForProjectUseCase(get(), get(), get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
@@ -69,7 +69,7 @@ val uiModule = module {
     // endregion
 
     //region :: ProjectStates ::
-    single { AddStateToProjectUI(get(), get(), get(), get()) }
+    single { AddTaskStateToProjectUI(get(), get(), get(), get()) }
     single { EditProjectStateUI(get(), get(), get(), get()) }
     single { DeleteStateForProjectUI(get(), get(), get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }

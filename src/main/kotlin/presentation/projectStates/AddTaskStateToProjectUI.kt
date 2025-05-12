@@ -8,7 +8,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
 
-class AddStateToProjectUI(
+class AddTaskStateToProjectUI(
     private val useCase: AddTaskStateToProjectUseCase,
     private val sessionManager: SessionManager,
     private val viewer: Viewer,
