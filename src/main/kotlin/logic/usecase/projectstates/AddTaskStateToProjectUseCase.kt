@@ -26,12 +26,14 @@ class AddTaskStateToProjectUseCase(
     }
 
     private fun createAudit(state: StateEntity,user: UserEntity):AuditLogEntity {
-        val action = "create ${state.name} state is created successfully"
+        val description = "create ${state.name} state is created successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = state.id,
             projectId = state.projectId,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Create,
+            userId = user.id,
         )
         return audit
     }

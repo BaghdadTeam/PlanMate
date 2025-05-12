@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase.project
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.ProjectEntity
@@ -28,12 +29,14 @@ class DeleteProjectUseCase(
 
     private fun logProjectDeletion(project: ProjectEntity, user: UserEntity): AuditLogEntity {
 
-        val action = "has been Project ${project.name}"
+        val description = "has been Project ${project.name}"
         return AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
+            entityUnderAuditId = project.id,
             projectId = project.id,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Delete,
+            userId = user.id,
         )
     }
 }
