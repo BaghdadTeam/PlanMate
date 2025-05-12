@@ -5,6 +5,7 @@ import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
 import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.authentication.LoginUi
+import org.baghdad.presentation.authentication.LogoutUi
 import org.baghdad.presentation.project.CreateProjectUi
 import org.baghdad.presentation.project.DeleteProjectUi
 import org.baghdad.presentation.project.EditProjectUi
@@ -40,7 +41,7 @@ val uiModule = module {
 
     single { AddStateToProjectUI(get(), get(), get(), get()) }
     single { EditProjectStateUI(get(), get(), get(), get()) }
-    single { DeleteStateForProjectUseCase(get(), get(), get()) }
+    single { DeleteStateForProjectUseCase(get(), get(), get(),get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
     single { GetStateByIdUI(get(), get(), get()) }
 
@@ -56,6 +57,7 @@ val uiModule = module {
 
     // region :: Auth ::
     single { LoginUi(get(), get(), get()) }
+    single { LogoutUi(get(), get(),get() )}
 
     // region :: User ::
     single { CreateUserUI(get(), get(), get(), get()) }
