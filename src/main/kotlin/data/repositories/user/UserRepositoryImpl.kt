@@ -1,7 +1,8 @@
 package org.baghdad.data.repositories.user
 
-import org.baghdad.data.dto.user.toDomain
 import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.mapper.toDomain
+import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
@@ -12,7 +13,8 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     override suspend fun createUser(user: UserEntity, hashedPassword: String) {
-        dataSource.addUser(user, hashedPassword)
+        dataSource.addUser(user.toDto(hashedPassword)
+        )
     }
 
     override suspend fun getUserByUsername(username: String): UserEntity {
