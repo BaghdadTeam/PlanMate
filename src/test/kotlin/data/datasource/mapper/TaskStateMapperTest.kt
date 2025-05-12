@@ -1,8 +1,8 @@
 package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.mapper.state.TaskStateMapper
-import org.baghdad.logic.model.entities.StateEntity
+import data.datasource.mapper.taskState.TaskStateMapper
+import org.baghdad.data.dto.StateDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -52,7 +52,8 @@ class TaskStateMapperTest {
     @Test
     fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
         // Only three fields instead of four
-        val malformed = "123e4567-e89b-12d3-a456-426614174000,OnlyName,123e4567-e89b-12d3-a456-426614174000"
+        val malformed =
+            "123e4567-e89b-12d3-a456-426614174000,OnlyName,123e4567-e89b-12d3-a456-426614174000"
         assertThrows<IndexOutOfBoundsException> { parser.deserializer(malformed) }
     }
 
@@ -63,7 +64,7 @@ class TaskStateMapperTest {
         val name = "Done"
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
-        val entity = StateEntity(
+        val entity = StateDto(
             id = uuid,
             name = name,
             projectId = projectId,
