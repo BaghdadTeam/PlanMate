@@ -1,17 +1,17 @@
 package data.datasource.mapper.taskState
 
 import org.baghdad.data.datasource.CsvMapper
-import org.baghdad.data.dto.StateDto
+import org.baghdad.data.dto.TaskStateDto
 import java.util.UUID
 
-class TaskStateMapper : CsvMapper<StateDto> {
+class TaskStateMapper : CsvMapper<TaskStateDto> {
     override fun header(): String {
         return "id,name,projectId,creatorId"
     }
 
-    override fun deserializer(content: String): StateDto {
+    override fun deserializer(content: String): TaskStateDto {
         val state = content.split(",")
-        return StateDto(
+        return TaskStateDto(
             id = UUID.fromString(state[TaskStateColumns.ID]),
             name = state[TaskStateColumns.NAME],
             projectId = UUID.fromString(state[TaskStateColumns.PROJECT_ID]),
@@ -19,11 +19,11 @@ class TaskStateMapper : CsvMapper<StateDto> {
         )
     }
 
-    override fun getId(item: StateDto): String {
+    override fun getId(item: TaskStateDto): String {
         return item.id.toString()
     }
 
-    override fun serializer(item: StateDto): String {
+    override fun serializer(item: TaskStateDto): String {
         return "${item.id},${item.name},${item.projectId},${item.creatorId}"
     }
 }

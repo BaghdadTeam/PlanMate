@@ -6,7 +6,7 @@ import helpers.task.TaskTestData
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.dto.StateDto
+import org.baghdad.data.dto.TaskStateDto
 import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.data.mapper.toDomain
 import org.baghdad.data.mapper.toDto
@@ -19,7 +19,7 @@ import java.util.*
 
 class ProjectStatesDataSourceTest {
 
-    private lateinit var dataSource: DataSource<StateDto>
+    private lateinit var dataSource: DataSource<TaskStateDto>
     private lateinit var taskDataSource: DataSource<TaskEntity>
     private lateinit var projectStatesDataSource: ProjectStatesDataSource
 

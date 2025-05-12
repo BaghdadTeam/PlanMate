@@ -2,7 +2,7 @@ package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
 import data.datasource.mapper.taskState.TaskStateMapper
-import org.baghdad.data.dto.StateDto
+import org.baghdad.data.dto.TaskStateDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -64,7 +64,7 @@ class TaskStateMapperTest {
         val name = "Done"
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
-        val entity = StateDto(
+        val entity = TaskStateDto(
             id = uuid,
             name = name,
             projectId = projectId,
