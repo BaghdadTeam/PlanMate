@@ -7,10 +7,8 @@ import java.time.ZoneId
 import java.util.UUID
 
 data class AuditLogEntity(
-    @BsonId
     override val id: UUID = UUID.randomUUID(),
     val entityUnderAudit: String,  // => Project | State | Task
-    @BsonProperty("project_id")
     val projectId: UUID,
     val action: String,
     val user: UserEntity,
