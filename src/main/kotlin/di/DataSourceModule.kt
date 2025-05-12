@@ -7,12 +7,11 @@ import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
 import org.baghdad.data.datasource.csv.StorageFileNames
-import org.baghdad.data.datasource.mapper.project.ProjectDtoCsvMapper
 import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mongodb.CollectionNames
 import org.baghdad.data.datasource.mongodb.MongoDataSourceImpl
 import org.baghdad.data.datasource.mongodb.MongoSetup
-import org.baghdad.data.dto.ProjectDto
+import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.local.*
 import org.baghdad.logic.model.entities.*
 import org.koin.core.module.Module
@@ -53,8 +52,7 @@ val dataSourceModule = module {
     // region  ::  CSV Data Sources  ::
 
 //    registerCsvDataSource<AuditEntity>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
-//    registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
-      registerCsvDataSource<ProjectDto>(Entities.Project, StorageFileNames.projectFile, ProjectDtoCsvMapper())
+//    registerCsvDataSource<ProjectDto>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
 //    registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
 //    registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
     registerCsvDataSource<SessionEntity>(Entities.Session, StorageFileNames.sessionFile, SessionMapper())
@@ -71,7 +69,7 @@ val dataSourceModule = module {
     }
 
     registerMongoDataSource<UserEntity>(Entities.User, CollectionNames.USERS_COLLECTION)
-    registerMongoDataSource<ProjectEntity>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
+    registerMongoDataSource<ProjectDto>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
     registerMongoDataSource<StateEntity>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
     registerMongoDataSource<TaskEntity>(Entities.Task, CollectionNames.TASKS_COLLECTION)
     registerMongoDataSource<AuditLogEntity>(Entities.Audit, CollectionNames.AUDIT_COLLECTION)

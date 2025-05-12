@@ -1,8 +1,7 @@
 package org.baghdad.data.repositories.project
 
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.dto.ProjectDto
-import org.baghdad.data.local.ProjectDataSource
+import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.mapper.toDto
 import org.baghdad.data.mapper.toEntity
 import org.baghdad.logic.model.entities.ProjectEntity
@@ -39,4 +38,3 @@ class ProjectRepositoryImpl(
         dataSource.update(project.toDto())
     }
 }
-//
