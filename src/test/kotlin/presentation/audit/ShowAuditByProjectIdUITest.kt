@@ -8,7 +8,6 @@ import io.mockk.verify
 import org.baghdad.logic.model.exceptions.NoProjectFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
-import org.baghdad.logic.usecase.user.GetUserByUserIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
@@ -18,16 +17,16 @@ import kotlin.test.Test
 class ShowAuditByProjectIdUITest {
     private lateinit var showAuditByProjectIdUI: ShowAuditByProjectIdUI
     private lateinit var getAuditByProjectIdUseCase: GetAuditByProjectIdUseCase
-    private lateinit var getUserByIdUseCase: GetUserByUserIdUseCase
+
     private lateinit var viewer: Viewer
 
     @BeforeEach
     fun setup() {
         viewer = mockk(relaxed = true)
         getAuditByProjectIdUseCase = mockk(relaxed = true)
-        getUserByIdUseCase = mockk(relaxed = true)
+
         showAuditByProjectIdUI =
-            ShowAuditByProjectIdUI(getAuditByProjectIdUseCase, getUserByIdUseCase, viewer)
+            ShowAuditByProjectIdUI(getAuditByProjectIdUseCase, viewer)
     }
 
     @Test
@@ -80,8 +79,7 @@ class ShowAuditByProjectIdUITest {
         val user = createUserHelper(id = auditEntities[0].userId)
 
         // When
-        coEvery { getUserByIdUseCase.invoke(auditEntities[0].userId) } returns user
-        coEvery { getAuditByProjectIdUseCase.invoke(auditEntities[0].projectId) } returns auditEntities
+        coEvery { getAuditByProjectIdUseCase.invoke(auditEntities[0].projectId) } returns  Pair((auditEntities), listOf(user))
 
         // Then
         showAuditByProjectIdUI.execute(auditEntities[0].projectId)

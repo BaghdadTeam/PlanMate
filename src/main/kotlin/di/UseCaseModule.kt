@@ -23,7 +23,6 @@ import org.baghdad.logic.usecase.task.GetTasksByProjectIdUseCase
 import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.baghdad.logic.usecase.user.CreateUserUseCase
-import org.baghdad.logic.usecase.user.GetUserByUserIdUseCase
 import org.baghdad.logic.usecase.user.UserValidatorUseCase
 import org.koin.dsl.module
 
@@ -66,13 +65,12 @@ val useCaseModule = module {
     // region :: User ::
     single { CreateUserUseCase(get(), get()) }
     single { UserValidatorUseCase(get()) }
-    single { GetUserByUserIdUseCase(get()) }
     // endregion
 
     // region :: Audit ::
     single { AddAuditUseCase(get()) }
-    single { GetAuditByTaskIdUseCase(get()) }
-    single { GetAuditByProjectIdUseCase(get()) }
+    single { GetAuditByTaskIdUseCase(get() , get()) }
+    single { GetAuditByProjectIdUseCase(get() , get()) }
     // endregion
 
     // region :: Swimlane ::

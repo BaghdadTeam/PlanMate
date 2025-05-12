@@ -87,9 +87,9 @@ val uiModule = module {
 //endregion
 
     //region :: Audit ::
-    single { ShowAuditByProjectIdUI(get(), get(), get()) }
+    single { ShowAuditByProjectIdUI(get(), get())}
     single { AuditUI(get(), get(), get(), get(), get()) }
-    single { ShowAuditByTaskIdUI(get(), get(), get()) }
+    single { ShowAuditByTaskIdUI(get(), get(),) }
     //endregion
 
 

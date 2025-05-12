@@ -8,7 +8,6 @@ import io.mockk.verify
 import org.baghdad.logic.model.exceptions.NoTaskFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
-import org.baghdad.logic.usecase.user.GetUserByUserIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +17,6 @@ import kotlin.test.Test
 class ShowAuditByTaskIdUITest {
     private lateinit var showAuditByTaskIdUI: ShowAuditByTaskIdUI
     private lateinit var getAuditByTaskIdUseCase: GetAuditByTaskIdUseCase
-    private lateinit var getUserByIdUseCase: GetUserByUserIdUseCase
     private lateinit var viewer: Viewer
 
 
@@ -26,8 +24,7 @@ class ShowAuditByTaskIdUITest {
     fun setup() {
         viewer = mockk(relaxed = true)
         getAuditByTaskIdUseCase = mockk(relaxed = true)
-        getUserByIdUseCase = mockk(relaxed = true)
-        showAuditByTaskIdUI = ShowAuditByTaskIdUI(getAuditByTaskIdUseCase, getUserByIdUseCase , viewer )
+        showAuditByTaskIdUI = ShowAuditByTaskIdUI(getAuditByTaskIdUseCase, viewer )
     }
 
 
@@ -82,8 +79,7 @@ class ShowAuditByTaskIdUITest {
         val user = createUserHelper(id = auditEntities[0].userId)
 
         // When
-        coEvery { getAuditByTaskIdUseCase.invoke(auditEntities[0].entityUnderAuditId) } returns auditEntities
-        coEvery { getUserByIdUseCase.invoke(auditEntities[0].userId) } returns user
+        coEvery { getAuditByTaskIdUseCase.invoke(auditEntities[0].entityUnderAuditId) } returns Pair((auditEntities), listOf(user))
 
         // Then
         showAuditByTaskIdUI.execute(auditEntities[0].entityUnderAuditId)

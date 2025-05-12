@@ -2,10 +2,13 @@ package logic.usecase.audit
 
 import com.google.common.truth.Truth.assertThat
 import helpers.audit.AuditTestData
+import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
+import jdk.internal.net.http.common.Pair.pair
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.repositories.AuditRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,34 +18,39 @@ import java.util.UUID
 class GetAuditByProjectIdUseCaseTest {
 
     private lateinit var auditRepository: AuditRepository
+    private lateinit var userRepository : UserRepository
     private lateinit var getAuditByProjectIdUseCase: GetAuditByProjectIdUseCase
 
     @BeforeEach
     fun setup() {
         auditRepository = mockk(relaxed = true)
+        userRepository = mockk(relaxed = true)
         getAuditByProjectIdUseCase =
-            GetAuditByProjectIdUseCase(auditRepository)
+            GetAuditByProjectIdUseCase(auditRepository , userRepository)
     }
 
     @Test
     fun `should fetch and combine all audit logs for project`() = runTest {
         // Given
+        val user = createUserHelper()
         val audit1 = AuditTestData.createAuditHelper()
         val audit2 = audit1.copy(projectId = audit1.projectId)
         val audit3 = audit1.copy(projectId = audit1.projectId)
 
+
         coEvery { auditRepository.getAuditByProjectId(audit1.projectId) } returns listOf(
             audit1,
             audit2,
-            audit3
-        )
+            audit3)
+        coEvery { userRepository.getUserById(audit1.userId) } returns user
 
         // when
         val auditLogs = getAuditByProjectIdUseCase.invoke(audit1.projectId)
 
         // then
-        val expectedAuditLogs = listOf(audit3, audit1, audit2)
-        assertThat(expectedAuditLogs.size).isEqualTo(auditLogs.size)
+        val expectedAuditLogs = Pair(listOf(audit3, audit1, audit2) , listOf(user,user,user))
+        assertThat(expectedAuditLogs.first.size).isEqualTo(auditLogs.first.size)
+        assertThat(expectedAuditLogs.second.size).isEqualTo(auditLogs.second.size)
         assertThat(expectedAuditLogs).isEqualTo(auditLogs)
     }
 
@@ -54,7 +62,7 @@ class GetAuditByProjectIdUseCaseTest {
 
         val result = getAuditByProjectIdUseCase.invoke(projectId)
 
-        assertThat(result).isEmpty()
+        assertThat(result.first).isEmpty()
     }
 
     @Test
@@ -77,7 +85,7 @@ class GetAuditByProjectIdUseCaseTest {
 
         // when
         val result = getAuditByProjectIdUseCase.invoke(projectId = auditOld.projectId)
-        val timestamps = result.map { it.timestamp }
+        val timestamps = result.first.map { it.timestamp }
 
         // then
         assertThat(timestamps).isEqualTo(timestamps.sortedDescending())
