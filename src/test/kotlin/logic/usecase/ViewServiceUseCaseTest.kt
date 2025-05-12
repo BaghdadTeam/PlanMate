@@ -5,18 +5,27 @@ import io.github.classgraph.AnnotationInfoList.emptyList
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.ViewServiceUseCase
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class ViewServiceUseCaseTest {
     private val taskRepository: TaskRepository = mockk()
     private val stateRepository: ProjectStatesRepository = mockk()
-    private val useCase = ViewServiceUseCase(taskRepository, stateRepository)
+    private val sessionManager: SessionManager = mockk()
+    private val useCase = ViewServiceUseCase(taskRepository, stateRepository,sessionManager)
+    @BeforeEach
+    fun setUp() {
+        coEvery { sessionManager.isAuthenticated() } returns true
+    }
 
     @Test
     fun `should group tasks by state for given project`() = runTest {
@@ -122,4 +131,10 @@ class ViewServiceUseCaseTest {
             )
         )
     }
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows <UnauthorizedException> {
+            useCase.swimlane(UUID.randomUUID())
+        }}
 }

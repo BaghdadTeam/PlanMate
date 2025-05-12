@@ -35,7 +35,7 @@ class UserValidatorUseCaseTest {
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
-        userValidatorUseCase.invoke("aboud", user.hashedPassword, user.name, user.id)
+        userValidatorUseCase.invoke("aboud", "password", user.name, user.id)
 
     }
 
@@ -50,7 +50,7 @@ class UserValidatorUseCaseTest {
         assertThrows<InvalidUsernameException> {
             userValidatorUseCase.invoke(
                 "",
-                user.hashedPassword,
+                "password",
                 user.name,
                 user.id
             )
@@ -68,7 +68,7 @@ class UserValidatorUseCaseTest {
         assertThrows<UserAlreadyExistsException> {
             userValidatorUseCase.invoke(
                 "aboud",
-                user.hashedPassword,
+                "password",
                 user.name,
                 user.id
             )
@@ -86,7 +86,7 @@ class UserValidatorUseCaseTest {
         assertThrows<UnauthorizedException> {
             userValidatorUseCase.invoke(
                 "aboud",
-                user.hashedPassword,
+                "password",
                 user.name,
                 user.id
             )
@@ -103,7 +103,7 @@ class UserValidatorUseCaseTest {
         assertThrows<InvalidNameException> {
             userValidatorUseCase.invoke(
                 "aboud",
-                user.hashedPassword,
+                "password",
                 "",
                 user.id
             )
@@ -114,14 +114,14 @@ class UserValidatorUseCaseTest {
     @Test
     fun `should throw InvalidPasswordException when password is blank`()= runTest {
         // Given
-        val user = createUserHelper().copy(hashedPassword = "")
+        val user = createUserHelper()
         coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { userRepository.isUsernameTaken("aboud") } returns false
         // When & Then
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
                 "aboud",
-                user.hashedPassword,
+                "",
                 "aboud",
                 user.id
             )
@@ -131,7 +131,7 @@ class UserValidatorUseCaseTest {
     @Test
     fun `should throw InvalidPasswordException when password is too short`()= runTest {
         // Given
-        val user = createUserHelper().copy(hashedPassword = "12")
+        val user = createUserHelper()
         coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { userRepository.isUsernameTaken("aboud") } returns false
 
@@ -139,7 +139,7 @@ class UserValidatorUseCaseTest {
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
                 "aboud",
-                user.hashedPassword,
+                "12",
                 "aboud",
                 user.id
             )
@@ -156,7 +156,7 @@ class UserValidatorUseCaseTest {
         assertThrows<InvalidUsernameException> {
             userValidatorUseCase.invoke(
                 "a",
-                user.hashedPassword,
+                "password",
                 "aboud",
                 user.id
             )

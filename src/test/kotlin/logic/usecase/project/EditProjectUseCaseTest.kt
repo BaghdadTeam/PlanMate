@@ -3,33 +3,45 @@ package logic.usecase.project
 import helpers.authentication.createUserHelper
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.project.EditProjectUseCase
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
-import kotlin.test.Test
 
 class EditProjectUseCaseTest {
     lateinit var projectRepository: ProjectRepository
     lateinit var userRepository: UserRepository
     lateinit var editProjectUseCase: EditProjectUseCase
     lateinit var auditRepository: AuditRepository
+    private val sessionManager: SessionManager = mockk()
+
 
     @BeforeEach
     fun setUp() {
         projectRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        editProjectUseCase = EditProjectUseCase(projectRepository, userRepository , auditRepository)
+        editProjectUseCase = EditProjectUseCase(projectRepository, userRepository , auditRepository, sessionManager )
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
 
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> {
+            editProjectUseCase.invoke(UUID.randomUUID() ,"project", UUID.randomUUID())
+        }
+    }
     @Test
     fun `should edit project when call EditProjectUseCase`() = runTest {
         // Given
