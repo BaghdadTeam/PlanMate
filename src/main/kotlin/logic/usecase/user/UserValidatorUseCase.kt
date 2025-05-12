@@ -7,17 +7,18 @@ import java.util.*
 
 class UserValidatorUseCase(
     private val userRepository: UserRepository,
-    private val isAdmin: IsAdminUseCase
+    private val isAdminUseCase: IsAdminUseCase
 ) {
     suspend operator fun invoke(
         username: String,
         passwordPlain: String,
         name: String,
-        creatorId: UUID
+        creatorId: UUID,
+        isAdmin: Boolean = false
     ) {
 
         validateUsername(username)
-        isAdmin(creatorId)
+        isAdminUseCase(creatorId)
         validateName(name)
         validatePassword(passwordPlain)
         ensureUsernameUnique(username)
@@ -53,4 +54,6 @@ class UserValidatorUseCase(
             throw UserAlreadyExistsException("User with username $username already exists.")
         }
     }
+
+
 }

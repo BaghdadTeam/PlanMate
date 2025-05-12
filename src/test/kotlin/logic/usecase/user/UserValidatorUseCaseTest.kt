@@ -2,6 +2,7 @@ package logic.usecase.user
 
 import helpers.authentication.createUserHelper
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserType
@@ -12,23 +13,27 @@ import org.baghdad.logic.model.exceptions.user.UnauthorizedException
 import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.logic.usecase.admin.IsAdminUseCase
 import org.baghdad.logic.usecase.user.UserValidatorUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 
 class UserValidatorUseCaseTest {
     private lateinit var userRepository: UserRepository
     private lateinit var userValidatorUseCase: UserValidatorUseCase
+    private lateinit var isAdmin: IsAdminUseCase
 
     @BeforeEach
     fun setup() {
         userRepository = mockk()
-        userValidatorUseCase = UserValidatorUseCase(userRepository)
+        isAdmin = IsAdminUseCase(userRepository)
+        userValidatorUseCase = UserValidatorUseCase(userRepository, isAdmin)
     }
 
     @Test
-    fun `should not throw any exception when validate user data`()= runTest {
+    fun `should not throw any exception when validate user data`() = runTest {
         // Given
         val user = createUserHelper()
         coEvery { userRepository.isUsernameTaken("aboud") } returns false
@@ -40,7 +45,7 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw exception when username is blank`()= runTest {
+    fun `should throw exception when username is blank`() = runTest {
         // Given
         val user = createUserHelper()
         coEvery { userRepository.isUsernameTaken("aboud") } returns false
@@ -58,7 +63,7 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw UserAlreadyExistsException when username is not unique`()= runTest {
+    fun `should throw UserAlreadyExistsException when username is not unique`() = runTest {
         // Given
         val user = createUserHelper().copy(username = "aboud")
         coEvery { userRepository.getUserById(user.id) } returns user
@@ -77,24 +82,34 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw UnauthorizedException when user is not admin`()= runTest {
+    fun `should throw UnauthorizedException when user is not admin`() = runTest {
         // Given
-        val user = createUserHelper().copy(type = UserType.Mate)
-        coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        val nonAdminUserId = UUID.randomUUID()
+        val username = "validUser"
+
+        // Mock the admin check to throw
+        coEvery { isAdmin.ensureAdmin(nonAdminUserId) } throws
+                UnauthorizedException("Only admins can perform this action.")
+
+        // Mock other dependencies
+        coEvery { userRepository.isUsernameTaken(username) } returns false
+
         // When & Then
         assertThrows<UnauthorizedException> {
             userValidatorUseCase.invoke(
-                "aboud",
-                user.hashedPassword,
-                user.name,
-                user.id
+                username = username,
+                passwordPlain = "ValidPass123",
+                name = "Valid Name",
+                creatorId = nonAdminUserId,
             )
         }
+
+        // Verify the admin check was called
+        coVerify { isAdmin.ensureAdmin(nonAdminUserId) }
     }
 
     @Test
-    fun `should throw InvalidNameException when name is blank`()= runTest {
+    fun `should throw InvalidNameException when name is blank`() = runTest {
         // Given
         val user = createUserHelper()
         coEvery { userRepository.getUserById(user.id) } returns user
@@ -112,7 +127,7 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidPasswordException when password is blank`()= runTest {
+    fun `should throw InvalidPasswordException when password is blank`() = runTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "")
         coEvery { userRepository.getUserById(user.id) } returns user
@@ -129,7 +144,7 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidPasswordException when password is too short`()= runTest {
+    fun `should throw InvalidPasswordException when password is too short`() = runTest {
         // Given
         val user = createUserHelper().copy(hashedPassword = "12")
         coEvery { userRepository.getUserById(user.id) } returns user
@@ -147,7 +162,7 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw InvalidNameException when username is too short`()= runTest {
+    fun `should throw InvalidNameException when username is too short`() = runTest {
         // Given
         val user = createUserHelper().copy(name = "a")
         coEvery { userRepository.getUserById(user.id) } returns user
