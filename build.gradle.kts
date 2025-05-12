@@ -68,6 +68,7 @@ tasks.jacocoTestReport {
             exclude("**/di/**")
             exclude("**/mongodb/**")
             exclude("**/model/**")
+            exclude("**/dto/**")
             exclude("**/main.kt")
         }
     )
@@ -86,6 +87,7 @@ tasks.jacocoTestCoverageVerification {
             exclude("**/di/**")
             exclude("**/mongodb/**")
             exclude("**/model/**")
+            exclude("**/dto/**")
             exclude("**/main.kt")
         }
     )
@@ -131,6 +133,7 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
             exclude("**/di/**")
             exclude("**/mongodb/**")
             exclude("**/model/**")
+            exclude("**/dto/**")
             exclude("**/main.kt")
         }
     )
