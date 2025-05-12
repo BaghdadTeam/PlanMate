@@ -5,6 +5,7 @@ import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.usecase.authentication.LogoutUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import kotlin.system.exitProcess
 
 class LogoutUi(
     private val useCase: LogoutUseCase,
@@ -20,12 +21,13 @@ class LogoutUi(
                 if (userChoice != null) {
                     if (userChoice == "y") {
                         useCase.invoke()
+                        exitProcess(0)
                     }
                 }
             } catch (e: LogoutFailedException) {
                 viewer.logError("Logout failed: ${e.message}")
             } catch (_: Exception) {
-                viewer.logError("Somthing went wrong")
+                viewer.logError("Something went wrong")
             }
         }
     }

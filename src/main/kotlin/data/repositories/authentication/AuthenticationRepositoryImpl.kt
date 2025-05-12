@@ -1,5 +1,6 @@
 package org.baghdad.data.repositories.authentication
 
+import org.baghdad.data.dto.user.toDomain
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
@@ -17,7 +18,7 @@ class AuthenticationRepositoryImpl(
         val user = userDataSource.findUserByUsername(username)
         if (inputHashedPassword != user.hashedPassword)
             throw InvalidPasswordException("Invalid hashedPassword")
-        return user
+        return user.toDomain()
     }
 
     override suspend fun logout() {

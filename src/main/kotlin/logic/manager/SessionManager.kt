@@ -7,22 +7,29 @@ import org.baghdad.logic.repositories.SessionRepository
 class SessionManager(private val sessionRepository: SessionRepository) {
 
     lateinit var currentSession: SessionEntity
-
     fun setSession(session: SessionEntity) {
         this.currentSession = session
     }
-
     suspend fun getActiveSession(): SessionEntity {
         val session = sessionRepository.loadSession()
-        if (session.isExpired()){
+        if (session.isExpired()) {
             clearExpiredSession()
             throw SessionEndedException("Session expired")
         }
-
+        currentSession = session
         return session
     }
 
+    suspend fun isAuthenticated(): Boolean {
+        return try {
+            getActiveSession()
+            true
+        } catch (_: SessionEndedException) {
+            false
+        }
+    }
+
     private suspend fun clearExpiredSession() {
-            sessionRepository.deleteSession()
+        sessionRepository.deleteSession()
     }
 }

@@ -12,12 +12,13 @@ import java.util.*
 
 class StateTransitionUI(
     private val useCase: StateTransitionUseCase,
-    private val session: SessionManager,
+    private val sessionManager: SessionManager,
     private val viewer: Viewer,
     private val reader: Reader,
 ) {
     fun execute(tasksStates: List<StateEntity>, tasks: List<TaskEntity>) {
 
+        val userId = sessionManager.currentSession.userId
         viewer.logMessage("== All Tasks == ")
         tasks.forEachIndexed { index, task ->
             viewer.logMessage("${index + 1}. ${task.title} - ${task.description}")
@@ -37,8 +38,6 @@ class StateTransitionUI(
         val newStateId = reader.readInput()?.trim()
 
         if (newStateId.isNullOrBlank()) throw Exception("New State ID cannot be null or blank.")
-        val userId = session.currentSession.userId
-
         try {
             runBlocking {
                 useCase.changeTaskState(UUID.fromString(taskId), UUID.fromString(newStateId), userId)

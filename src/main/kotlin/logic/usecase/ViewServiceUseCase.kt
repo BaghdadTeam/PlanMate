@@ -1,7 +1,9 @@
 package org.baghdad.logic.usecase
 
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import java.util.UUID
@@ -9,10 +11,12 @@ import java.util.UUID
 
 class ViewServiceUseCase(
     private val taskRepository: TaskRepository,
-    private val stateRepository: ProjectStatesRepository
+    private val stateRepository: ProjectStatesRepository,
+    private val sessionManager: SessionManager
 ) {
 
     suspend fun swimlane(projectId: UUID): Map<StateEntity, List<TaskEntity>> {
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
         try {
             // Fetch states for the project
             val stateEntities = stateRepository.getAllStatesPerProject(projectId)

@@ -1,9 +1,11 @@
 package org.baghdad.logic.usecase
 
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
@@ -14,9 +16,11 @@ class StateTransitionUseCase(
     private val taskRepository: TaskRepository,
     private val projectStatesRepository: ProjectStatesRepository,
     private val userRepository: UserRepository,
-    private val auditRepository: AuditRepository
+    private val auditRepository: AuditRepository,
+    private val sessionManager: SessionManager
 ) {
     suspend fun changeTaskState(taskId: UUID, newStateId: UUID, userId: UUID) {
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
         val task = taskRepository.getTaskById(taskId)
 
         val currentState = projectStatesRepository.getStateById(task.stateId)

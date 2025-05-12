@@ -5,7 +5,7 @@ import java.util.UUID
 
 interface UserRepository {
 
-    suspend fun createUser(user: UserEntity)
+    suspend fun createUser(user: UserEntity, hashedPassword: String)
     suspend fun getAllUsers(): List<UserEntity>
     suspend fun getUserByUsername(username: String): UserEntity
     suspend fun getUserById(id: UUID): UserEntity

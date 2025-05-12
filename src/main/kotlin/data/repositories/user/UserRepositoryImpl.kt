@@ -1,5 +1,6 @@
 package org.baghdad.data.repositories.user
 
+import org.baghdad.data.dto.user.toDomain
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
@@ -10,16 +11,16 @@ class UserRepositoryImpl(
     private val dataSource: UserDataSource
 ) : UserRepository {
 
-    override suspend fun createUser(user: UserEntity) {
-        dataSource.addUser(user)
+    override suspend fun createUser(user: UserEntity, hashedPassword: String) {
+        dataSource.addUser(user, hashedPassword)
     }
 
     override suspend fun getUserByUsername(username: String): UserEntity {
-        return dataSource.findUserByUsername(username)
+        return dataSource.findUserByUsername(username).toDomain()
     }
 
     override suspend fun getUserById(id: UUID): UserEntity {
-        return dataSource.findUserById(id)
+        return dataSource.findUserById(id)?.toDomain()
             ?: throw UserNotFoundException("User not found with id: $id")
     }
 
@@ -27,5 +28,5 @@ class UserRepositoryImpl(
         return dataSource.isUsernameTaken(username)
     }
 
-    override suspend fun getAllUsers(): List<UserEntity> = dataSource.loadUsers()
+    override suspend fun getAllUsers(): List<UserEntity> = dataSource.loadUsers().map { it.toDomain() }
 }

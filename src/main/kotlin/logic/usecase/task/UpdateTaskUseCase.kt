@@ -1,11 +1,13 @@
 package org.baghdad.logic.usecase.task
 
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -14,10 +16,12 @@ import java.util.*
 class UpdateTaskUseCase(
     private val taskRepository: TaskRepository,
     private val auditRepository: AuditRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ) {
 
     suspend operator fun invoke(newTask: TaskEntity, userId: UUID) {
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
         val oldTask = taskRepository.getTaskById(newTask.id)
 
         val validatedTask = validateNewTask(newTask)
