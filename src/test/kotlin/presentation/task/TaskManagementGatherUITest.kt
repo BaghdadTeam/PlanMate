@@ -4,7 +4,7 @@ import io.mockk.*
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.presentation.StateTransitionUI
+import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.task.CreateTaskUI
@@ -22,7 +22,7 @@ class TaskManagementGatherUITest {
     private lateinit var createTaskUI: CreateTaskUI
     private lateinit var editTaskUI: UpdateTaskUI
     private lateinit var deleteTaskUI: DeleteTaskUI
-    private lateinit var changeTaskStateUI: StateTransitionUI
+    private lateinit var changeTaskStateUI: TaskStateTransitionUI
     private lateinit var viewServiceUseCase: ViewServiceUseCase
     private lateinit var ui: TaskManagementGatherUI
 
