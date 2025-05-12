@@ -13,7 +13,7 @@ import java.util.*
 import kotlin.test.Test
 
 
-class AddStateToProjectUITest {
+class AddTaskStateToProjectUITest {
 
     private lateinit var useCase: AddTaskStateToProjectUseCase
     private lateinit var sessionManager: SessionManager

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.*
 
-class AddStateToProjectUseCaseTest {
+class AddTaskStateToProjectUseCaseTest {
 
     private lateinit var statesRepository: ProjectStatesRepository
     private lateinit var auditRepository: AuditRepository
