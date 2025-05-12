@@ -9,7 +9,9 @@ import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.baghdad.data.dto.user.UserDto
 import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.mapper.toDto
 import org.baghdad.data.repositories.user.UserRepositoryImpl
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
@@ -23,28 +25,30 @@ class UserRepositoryImplTest {
     private lateinit var dataSource: UserDataSource
     private lateinit var repository: UserRepositoryImpl
     private lateinit var sampleUser: UserEntity
+    private lateinit var dtoUser : UserDto
 
     @BeforeEach
     fun setup() {
         dataSource = mockk()
         repository = UserRepositoryImpl(dataSource)
         sampleUser = createUserHelper()
+        dtoUser = sampleUser.toDto("hashedPassword")
     }
 
     @Test
     fun `createUser delegates to dataSource`() = runTest {
         // Given
-        coEvery { dataSource.addUser(sampleUser) } just runs
+        coEvery { dataSource.addUser(dtoUser) } just runs
         // When
-        repository.createUser(sampleUser)
+        repository.createUser(sampleUser, "hashedPassword")
         // Then
-        coVerify { dataSource.addUser(sampleUser) }
+        coVerify { dataSource.addUser(dtoUser) }
     }
 
     @Test
     fun `findByUsername returns data source result`() = runTest {
         // Given
-        coEvery { dataSource.findUserByUsername("sample") } returns sampleUser
+        coEvery { dataSource.findUserByUsername("sample") } returns dtoUser
         // When
         val result = repository.getUserByUsername("sample")
         // Then
@@ -55,7 +59,7 @@ class UserRepositoryImplTest {
     @Test
     fun `getUserById returns existing user`() = runTest {
         // Given
-        coEvery { dataSource.findUserById(sampleUser.id) } returns sampleUser
+        coEvery { dataSource.findUserById(sampleUser.id) } returns dtoUser
         // When
         val result = repository.getUserById(sampleUser.id)
         // Then
@@ -79,12 +83,12 @@ class UserRepositoryImplTest {
     @Test
     fun `getAllUsers returns data source list`() = runTest {
         // Given
-        val list = listOf(sampleUser)
+        val list = listOf(dtoUser)
         coEvery { dataSource.loadUsers() } returns list
         // When
         val result = repository.getAllUsers()
         // Then
-        assertThat(result).isEqualTo(list)
+        assertThat(result.map { it.toDto("hashedPassword") }).isEqualTo(list)
         coVerify { dataSource.loadUsers() }
     }
 
@@ -98,5 +102,4 @@ class UserRepositoryImplTest {
         assertThat(result).isTrue()
         coVerify { dataSource.isUsernameTaken(sampleUser.username) }
     }
-
 }
