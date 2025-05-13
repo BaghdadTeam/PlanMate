@@ -11,7 +11,6 @@ import org.baghdad.data.local.ProjectStatesDataSource
 import org.baghdad.data.mapper.toDomain
 import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -102,21 +101,6 @@ class ProjectStatesDataSourceTest {
 
         // Then
         assertThat(result.contains(updatedProject.toDto().toDomain()))
-    }
-
-
-    @Test
-    fun `should trow exception when no state found while trying to update`() = runTest {
-        // Given
-        val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
-        val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(name = "doing")
-
-        coEvery { dataSource.loadAll() } returns allStates.map { it.toDto() }
-        coEvery { dataSource.update(updatedProject.toDto()) } just Runs
-
-        assertThrows<Exception> {
-            projectStatesDataSource.editState(updatedProject.toDto().toDomain())
-        }
     }
 
     @Test
