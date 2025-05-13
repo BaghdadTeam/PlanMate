@@ -17,7 +17,7 @@ class SessionManager(private val sessionRepository: SessionRepository) {
             throw SessionEndedException("Session expired")
         }
         currentSession = session
-        return session
+        return currentSession
     }
 
     suspend fun isAuthenticated(): Boolean {
