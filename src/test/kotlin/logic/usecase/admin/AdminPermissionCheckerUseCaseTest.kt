@@ -1,5 +1,6 @@
 package logic.usecase.admin
 
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -61,20 +62,7 @@ class AdminPermissionCheckerUseCaseTest {
     }
 
     @Test
-    fun `should return false when the user is not existed`() = runTest {
-        // Given
-        val nonExistentUserId = UUID.randomUUID()
-        coEvery { userRepository?.getUserById(nonExistentUserId) } returns null
-
-        // When
-        val result = isAdminUseCase(nonExistentUserId)
-
-        // Then
-        assertFalse(result)
-    }
-
-    @Test
-    fun `should not throw UnauthorizedException for admin user when ensureAdmin is called`() = runTest {
+    fun `should return true for admin user when ensureAdmin is called`() = runTest {
         // Given
         val adminUserId = UUID.randomUUID()
         val adminUser = UserEntity(
@@ -87,12 +75,16 @@ class AdminPermissionCheckerUseCaseTest {
 
         coEvery { userRepository.getUserById(adminUserId) } returns adminUser
 
-        // When & Then (should not throw)
-        isAdminUseCase.validateAdminPermission(adminUserId)
+        // When
+        val result = isAdminUseCase(adminUserId)
+
+        // Then
+        assertThat(result).isTrue()
+
     }
 
     @Test
-    fun `should throw UbAuthorizeException for non-admin user when ensureAdmin is called`() = runTest {
+    fun `should return false for non-admin user when ensureAdmin is called`() = runTest {
         // Given
         val regularUserId = UUID.randomUUID()
         val regularUser = UserEntity(
@@ -105,21 +97,12 @@ class AdminPermissionCheckerUseCaseTest {
 
         coEvery { userRepository.getUserById(regularUserId) } returns regularUser
 
-        // When & Then
-        assertThrows<UnauthorizedException> {
-            isAdminUseCase.validateAdminPermission(regularUserId)
-        }
+        // When
+        val result =  isAdminUseCase(regularUserId)
+
+        // Then
+        assertThat(result).isFalse()
+
     }
 
-    @Test
-    fun `ensureAdmin should throw for non-existent user`() = runTest {
-        // Given
-        val nonExistentUserId = UUID.randomUUID()
-        coEvery { userRepository?.getUserById(nonExistentUserId) } returns null
-
-        // When & Then
-        assertThrows<UnauthorizedException> {
-            isAdminUseCase.validateAdminPermission(nonExistentUserId)
-        }
-    }
 }

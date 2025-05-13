@@ -10,6 +10,7 @@ import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.project.EditProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -18,16 +19,16 @@ import kotlin.test.Test
 
 class EditProjectUseCaseTest {
     private lateinit var projectRepository: ProjectRepository
-    private lateinit var userRepository: UserRepository
     private lateinit var editProjectUseCase: EditProjectUseCase
     private lateinit var auditRepository: AuditRepository
+    private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
 
     @BeforeEach
     fun setUp() {
         projectRepository = mockk(relaxed = true)
-        userRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        editProjectUseCase = EditProjectUseCase(projectRepository, userRepository , auditRepository)
+        adminPermissionCheckerUseCase = mockk(relaxed = true)
+        editProjectUseCase = EditProjectUseCase(projectRepository ,auditRepository , adminPermissionCheckerUseCase)
     }
 
     @Test
@@ -36,7 +37,7 @@ class EditProjectUseCaseTest {
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Admin)
 
-        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { adminPermissionCheckerUseCase(user.id) } returns true
         coEvery { projectRepository.getProjectById(project.id) } returns project
 
         coEvery { projectRepository.editProject(project) } just runs
@@ -49,12 +50,12 @@ class EditProjectUseCaseTest {
     }
 
     @Test
-    fun `should throw AccessDeniedException when user is not admin`() = runTest {
+    fun `should throw AccessDeniedException when adminPermissionCheckerUseCase return false`() = runTest {
         // Given
         val projectName = "Test Project"
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Mate)
-        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { adminPermissionCheckerUseCase(user.id) } returns false
 
         // When & Then
         assertThrows<AccessDeniedException> {
@@ -72,7 +73,7 @@ class EditProjectUseCaseTest {
         val projectName = ""
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper()
-        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { adminPermissionCheckerUseCase(user.id) } returns true
 
         // When & Then
         assertThrows<EmptyProjectNameException> {
