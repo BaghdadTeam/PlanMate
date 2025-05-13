@@ -1,5 +1,4 @@
-package logic.usecase
-
+package logic.usecase.admin
 
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -11,7 +10,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.*
+import java.util.UUID
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
