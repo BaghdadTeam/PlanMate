@@ -4,10 +4,10 @@ import org.baghdad.data.dto.UserDto
 import org.baghdad.data.mapper.toDomain
 import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
-import org.junit.jupiter.api.Assertions.*
+import org.baghdad.logic.model.enums.UserType
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 class UserMapperTest {
     @Test

@@ -5,18 +5,14 @@ import helpers.audit.AuditTestData
 import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
-import jdk.internal.net.http.common.Pair.pair
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class GetAuditByProjectIdUseCaseTest {
 

@@ -3,8 +3,6 @@ package logic.usecase.audit
 import helpers.audit.AuditTestData
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.EmptyActionInAuditEntityException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
