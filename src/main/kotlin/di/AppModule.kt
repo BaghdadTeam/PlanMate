@@ -17,6 +17,6 @@ val appModule = module {
     single<Viewer> { ViewerImpl() }
     single<Reader> { ReaderImpl() }
     single { StartApp(get(), get(), get(), get()) }
-    single { ViewMainManu(get(), get(), get(), get(), get()) }
+    single { ViewMainManu(get(), get(), get(), get(), get() , get() ,  get()) }
     single { SessionManager(get()) }
 }

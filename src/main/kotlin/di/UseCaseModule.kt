@@ -43,7 +43,7 @@ val useCaseModule = module {
 
     // region  ::  Project States Use Cases  ::
 
-    single { AddTaskStateToProjectUseCase(get(), get(), get()) }
+    single { AddTaskStateToProjectUseCase(get(), get(), get() ) }
     single { DeleteStateForProjectUseCase(get(), get(), get()) }
     single { GetAllStatesPerProjectUseCase(get()) }
     single { GetStateByIdUseCase(get()) }
@@ -53,7 +53,7 @@ val useCaseModule = module {
 
     // region  ::  Project Use Cases  ::
     single { CreateProjectUseCase(get(), get(), get()) }
-    single { DeleteProjectUseCase(get(), get(), get()) }
+    single { DeleteProjectUseCase(get(), get(), get() ) }
     single { EditProjectUseCase(get(), get(), get()) }
     single { GetAllProjectsUseCase(get()) }
     // endregion
