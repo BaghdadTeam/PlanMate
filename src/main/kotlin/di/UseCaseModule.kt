@@ -34,9 +34,9 @@ val useCaseModule = module {
     single { CreateTaskUseCase(get(), get(), get()) }
     single { DeleteTaskUseCase(get(), get(), get()) }
     single { UpdateTaskUseCase(get(), get(), get()) }
-    single { GetTasksByStateIdUseCase(get()) }
-    single { GetAllTasksUseCase(get()) }
-    single { GetTasksByProjectIdUseCase(get()) }
+    single { GetTasksByStateIdUseCase(get(),get()) }
+    single { GetAllTasksUseCase(get(),get()) }
+    single { GetTasksByProjectIdUseCase(get(),get()) }
 
     // endregion
 
@@ -54,7 +54,7 @@ val useCaseModule = module {
     single { CreateProjectUseCase(get(), get(), get()) }
     single { DeleteProjectUseCase(get(), get(), get()) }
     single { EditProjectUseCase(get(), get(), get()) }
-    single { GetAllProjectsUseCase(get()) }
+    single { GetAllProjectsUseCase(get(),get()) }
     // endregion
 
     // region  ::  Auth Use Cases  ::
@@ -68,7 +68,7 @@ val useCaseModule = module {
     // endregion
 
     // region :: Audit ::
-    single { AddAuditUseCase(get()) }
+    single { AddAuditUseCase(get(),get()) }
     single { GetAuditByTaskIdUseCase(get() , get()) }
     single { GetAuditByProjectIdUseCase(get() , get()) }
     // endregion
