@@ -14,12 +14,17 @@ class CreateProjectUi(
     suspend fun createProject() {
         val userId = sessionManager.currentSession.userId
         viewer.logMessage("=== Create Project ===")
-        viewer.logMessage("Enter project name: ")
+        viewer.log("Enter project name: ")
         val name = reader.readInput()
-        if (name != null) {
-            createProjectUseCase(name, userId)
-        } else {
-            viewer.logError("Project Id should be a number")
+        try {
+            if (name != null) {
+                createProjectUseCase(name, userId)
+                println("Project ${name} created successfully.")
+            } else {
+                viewer.logError("Project Id should be a number")
+            }
+        }catch (e: Exception) {
+            viewer.logError("Failed to create project: ${e.message}")
         }
     }
 }
