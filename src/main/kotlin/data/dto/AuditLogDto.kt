@@ -1,5 +1,6 @@
 package org.baghdad.data.dto
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.Identifiable
 import org.baghdad.logic.model.entities.UserEntity
 import org.bson.codecs.pojo.annotations.BsonId
@@ -10,11 +11,16 @@ import java.util.UUID
 
 data class AuditLogDto(
     @BsonId
-    override val id: UUID = UUID.randomUUID(),
+    override val id: UUID,
+    @BsonProperty("entity_Under_Audit")
     val entityUnderAudit: String,  // => Project | State | Task
+    @BsonProperty("entity_Under_Audit_id")
+    val entityUnderAuditId : String,
     @BsonProperty("project_id")
-    val projectId: UUID,
+    val projectId: String,
     val action: String,
-    val user: UserEntity,
-    val timestamp: LocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Baghdad"))
+    val description: String,
+    @BsonProperty("user_id")
+    val userId: String,
+    val timestamp: String
 ): Identifiable

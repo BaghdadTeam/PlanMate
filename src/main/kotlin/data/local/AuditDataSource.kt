@@ -17,14 +17,14 @@ class AuditDataSource(
 
     suspend fun getAuditByTaskId(taskId: UUID): List<AuditLogDto> {
         return dataSources.loadAll()
-            .filter {(it.entityUnderAuditId == taskId) }
+            .filter {(it.entityUnderAuditId == taskId.toString()) }
             .takeIf { it.isNotEmpty() }
             ?: throw NoTaskFoundException("No audit found for task with ID: $taskId")
     }
 
     suspend fun getAuditByProjectId(projectId: UUID): List<AuditLogDto> {
         return dataSources.loadAll()
-            .filter { it.projectId == projectId }
+            .filter { it.projectId == projectId.toString() }
             .takeIf { it.isNotEmpty() }
             ?: throw NoProjectFoundException("No audit found for project with ID: $projectId")
     }

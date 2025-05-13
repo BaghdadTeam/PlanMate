@@ -5,6 +5,8 @@ import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
+import org.baghdad.data.dto.AuditLogDto
+import org.baghdad.data.mapper.toDomain
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.enums.Entities
@@ -13,7 +15,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import kotlin.test.Test
 
 class AuditMapperTest {
@@ -57,12 +59,12 @@ class AuditMapperTest {
         // Then
         assertThat(result.id).isEqualTo(uuid)
         assertThat(result.entityUnderAudit).isEqualTo(entityUnderAudit)
-        assertThat(result.entityUnderAuditId).isEqualTo(entityUnderAuditId)
-        assertThat(result.projectId).isEqualTo(projectId)
+        assertThat(result.entityUnderAuditId).isEqualTo(entityUnderAuditId.toString())
+        assertThat(result.projectId).isEqualTo(projectId.toString())
         assertThat(result.description).isEqualTo("CREATE")
-        assertThat(result.action).isEqualTo(Action.Create)
-        assertThat(result.userId).isEqualTo(userId)
-        assertThat(result.timestamp).isEqualTo(timestamp)
+        assertThat(result.action).isEqualTo(Action.Create.name)
+        assertThat(result.userId).isEqualTo(userId.toString())
+        assertThat(result.timestamp).isEqualTo(timestamp.toString())
     }
 
     @Test
@@ -91,14 +93,15 @@ class AuditMapperTest {
         val entityUnderAuditId = UUID.randomUUID()
         val userId = UUID.randomUUID()
 
-        val entity = AuditLogEntity(
+        val entity = AuditLogDto(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
-            entityUnderAuditId = entityUnderAuditId,
-            projectId = projectId,
+            entityUnderAuditId = entityUnderAuditId.toString(),
+            projectId = projectId.toString(),
             description = "UPDATE",
-            action = Action.Update,
-            userId = userId,
+            action = Action.Update.name,
+            userId = userId.toString(),
+            timestamp = LocalDateTime.now().toString()
         )
 
         val expected = "$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,UPDATE,Update,$userId,${entity.timestamp}"
@@ -119,15 +122,15 @@ class AuditMapperTest {
         val entityUnderAuditId = UUID.randomUUID()
 
 
-        val entity = AuditLogEntity(
+        val entity = AuditLogDto(
             id = uuid,
             entityUnderAudit = Entities.Task.name,
-            entityUnderAuditId = entityUnderAuditId,
-            projectId = projectId,
+            entityUnderAuditId = entityUnderAuditId.toString(),
+            projectId = projectId.toString(),
             description = "DELETE",
-            action = Action.Delete,
-            userId = userId,
-
+            action = Action.Delete.name,
+            userId = userId.toString(),
+            timestamp = LocalDateTime.now().toString()
             )
 
         // When

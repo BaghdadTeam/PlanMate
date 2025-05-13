@@ -11,6 +11,7 @@ import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mongodb.CollectionNames
 import org.baghdad.data.datasource.mongodb.MongoDataSourceImpl
 import org.baghdad.data.datasource.mongodb.MongoSetup
+import org.baghdad.data.dto.AuditLogDto
 import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.*
 import org.baghdad.logic.model.entities.*
@@ -52,7 +53,7 @@ val dataSourceModule = module {
 
     // region  ::  CSV Data Sources  ::
 
-//    registerCsvDataSource<AuditEntity>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
+//    registerCsvDataSource<AuditLogDto>(Entities.Audit, StorageFileNames.auditFile, AuditMapper())
 //    registerCsvDataSource<ProjectEntity>(Entities.Project, StorageFileNames.projectFile, ProjectMapper())
 //    registerCsvDataSource<StateEntity>(Entities.State, StorageFileNames.stateFile, StateMapper())
 //    registerCsvDataSource<UserEntity>(Entities.User, StorageFileNames.userFile, UserMapper())
@@ -73,7 +74,7 @@ val dataSourceModule = module {
     registerMongoDataSource<ProjectEntity>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
     registerMongoDataSource<TaskStateEntity>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
     registerMongoDataSource<TaskEntity>(Entities.Task, CollectionNames.TASKS_COLLECTION)
-    registerMongoDataSource<AuditLogEntity>(Entities.Audit, CollectionNames.AUDIT_COLLECTION)
+    registerMongoDataSource<AuditLogDto>(Entities.Audit, CollectionNames.AUDIT_COLLECTION)
 
     // endregion  ::  Mongo Data Sources  ::
 
