@@ -27,6 +27,8 @@ class TaskManagementGatherUITest {
     private lateinit var ui: TaskManagementGatherUI
 
     private val projectId = UUID.randomUUID()
+    private val creatorId = UUID.randomUUID()
+
     private lateinit var task1: TaskEntity
     private lateinit var task2: TaskEntity
     private lateinit var state: TaskStateEntity
@@ -39,7 +41,6 @@ class TaskManagementGatherUITest {
         editTaskUI = mockk(relaxed = true)
         deleteTaskUI = mockk(relaxed = true)
         changeTaskStateUI = mockk(relaxed = true)
-        viewServiceUseCase = mockk { coEvery { swimlane(any()) } returns emptyMap() }
 
         ui = TaskManagementGatherUI(
             viewer,
@@ -48,7 +49,6 @@ class TaskManagementGatherUITest {
             editTaskUI,
             deleteTaskUI,
             changeTaskStateUI,
-            viewServiceUseCase
         )
 
         task1 =
@@ -61,8 +61,17 @@ class TaskManagementGatherUITest {
     @Test
     fun `should display task management options and handle invalid input`() {
         every { reader.readInput() } returnsMany listOf("5")
-
-        ui.execute(projectId)
+        val state = TaskStateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
+        val task = TaskEntity(
+            id = UUID.randomUUID(),
+            title = "Task 1",
+            description = "Some description",
+            stateId = state.id,
+            projectId = projectId,
+            creatorId = creatorId
+        )
+        val project = mapOf(state to listOf(task))
+        ui.execute(project , projectId)
 
         verifySequence {
             viewer.logMessage("=== Task Management ===")
@@ -81,8 +90,17 @@ class TaskManagementGatherUITest {
     @Test
     fun `should call CreateTaskUI when option 1 is selected`() {
         every { reader.readInput() } returns "1"
-
-        ui.execute(projectId)
+        val state = TaskStateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
+        val task = TaskEntity(
+            id = UUID.randomUUID(),
+            title = "Task 1",
+            description = "Some description",
+            stateId = state.id,
+            projectId = projectId,
+            creatorId = creatorId
+        )
+        val project = mapOf(state to listOf(task))
+        ui.execute(project , projectId)
 
         verify { createTaskUI.execute(projectId) }
     }
@@ -91,8 +109,17 @@ class TaskManagementGatherUITest {
     fun `should call EditTaskUI when option 2 is selected`() {
         every { reader.readInput() } returns "2"
 
-        // Again, we just verify that the correct UI method is called, not the service logic
-        ui.execute(projectId)
+        val state = TaskStateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
+        val task = TaskEntity(
+            id = UUID.randomUUID(),
+            title = "Task 1",
+            description = "Some description",
+            stateId = state.id,
+            projectId = projectId,
+            creatorId = creatorId
+        )
+        val project = mapOf(state to listOf(task))
+        ui.execute(project , projectId)
 
         // Verify that EditTaskUI is executed with the list of tasks
         verify { editTaskUI.execute(any()) }
@@ -101,8 +128,17 @@ class TaskManagementGatherUITest {
     @Test
     fun `should call DeleteTaskUI when option 3 is selected`() {
         every { reader.readInput() } returns "3"
-
-        ui.execute(projectId)
+        val state = TaskStateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
+        val task = TaskEntity(
+            id = UUID.randomUUID(),
+            title = "Task 1",
+            description = "Some description",
+            stateId = state.id,
+            projectId = projectId,
+            creatorId = creatorId
+        )
+        val project = mapOf(state to listOf(task))
+        ui.execute(project , projectId)
 
         verify { deleteTaskUI.execute(any()) }
     }
@@ -111,8 +147,17 @@ class TaskManagementGatherUITest {
     fun `should call ChangeTaskStateUI when option 4 is selected`() {
         every { reader.readInput() } returns "4"
 
-        // We don't need to mock the service logic here, just verify that the correct UI method is called
-        ui.execute(projectId)
+        val state = TaskStateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
+        val task = TaskEntity(
+            id = UUID.randomUUID(),
+            title = "Task 1",
+            description = "Some description",
+            stateId = state.id,
+            projectId = projectId,
+            creatorId = creatorId
+        )
+        val project = mapOf(state to listOf(task))
+        ui.execute(project , projectId)
 
         // Verify that StateTransitionUI is executed with the expected arguments
         verify { changeTaskStateUI.execute(any(), any()) }

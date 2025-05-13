@@ -5,14 +5,9 @@ import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.exceptions.AccessDeniedException
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -48,13 +43,14 @@ class EditProjectStatesUseCaseTest {
     @Test
     fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
         coEvery { sessionManager.isAuthenticated() } returns false
-        assertThrows <UnauthorizedException> {
+        assertThrows<UnauthorizedException> {
             editStateUseCase.invoke(
                 UUID.randomUUID(),
-                ProjectStatesEntityTestData.todoState(),
+                ProjectStatesEntityTestData.todoState().name,
                 UUID.randomUUID()
             )
-        }}
+        }
+    }
 
     @Test
     fun `should edit state and add audit when user is admin`() = runTest {
@@ -64,20 +60,23 @@ class EditProjectStatesUseCaseTest {
         val newState = state.copy(name = newName)
         val userId = UUID.randomUUID()
 
+        coEvery { statesRepository.getStateById(state.id) } returns state
         coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
         // When
-        editStateUseCase.invoke(state.id, newState, userId)
+        editStateUseCase.invoke(state.id, newName, userId)
 
         // Then
-        coVerify { statesRepository.editState(state.id, newState) }
+        coVerify { statesRepository.editState(newState) }
 
-        val auditSlot = slot<AuditLogEntity>()
-        coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
-
-        val audit = auditSlot.captured
-        assertThat(audit.userId).isEqualTo(userId)
-        assertThat(audit.description).contains("state is updated successfully")
+        // Verifying that the auditRepository.addAuditEntry was called with the correct parameters
+        coVerify {
+            auditRepository.addAuditEntry(
+                match { audit ->
+                    audit.userId == userId &&
+                            audit.description.contains("state has been updated successfully")
+                })
+        }
     }
 
     @Test
@@ -91,8 +90,9 @@ class EditProjectStatesUseCaseTest {
 
         // when
         val exception = assertThrows<AccessDeniedException> {
-            editStateUseCase.invoke(state.id, newState, userId)
+            editStateUseCase.invoke(state.id, newState.name, userId)
         }
+
         // then
         assertThat(exception.message).contains("Not authorized")
     }

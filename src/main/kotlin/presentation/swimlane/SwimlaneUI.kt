@@ -1,6 +1,7 @@
 package org.baghdad.presentation.swimlane
 
 import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.input.Reader
@@ -17,16 +18,20 @@ class SwimlaneUI(
     private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
     private val session: SessionManager,
     private val reader: Reader,
-    private val viewer: Viewer
-
+    private val viewer: Viewer,
+    private val viewServiceUseCase: ViewServiceUseCase
 ) {
     suspend fun invoke(project: Pair<UUID, String>) {
         try {
-            val swimLane = renderSwimlaneUI.invoke(project.first)
             val userId = session.currentSession.userId
-
             while (true) {
-                viewer.logMessage("=== ${project.second} ===")
+                val projectData = try {
+                    viewServiceUseCase.invoke(project.first)
+                } catch (_: Exception) {
+                    emptyMap()
+                }
+                val swimLane = renderSwimlaneUI.invoke(projectData)
+                viewer.logMessage("=== Plan Mate ===")
                 viewer.logMessage(swimLane)
                 viewer.logMessage("1. Manage Tasks")
                 viewer.logMessage("2. View Audit Log")
@@ -40,7 +45,7 @@ class SwimlaneUI(
                 when (reader.readInput()?.toIntOrNull()) {
                     1 -> {
                         println("Navigating to Tasks Screen...")
-                        taskUI.execute(project.first)
+                        taskUI.execute(projectData, project.first)
                     }
 
                     2 -> {
@@ -51,8 +56,8 @@ class SwimlaneUI(
                     3 -> {
                         if (adminPermissionCheckerUseCase(userId)) {
                             viewer.logMessage("Navigating to Project States Screen...")
-                            projectStatesUI.invoke(project.first)}
-                        else{
+                            projectStatesUI.invoke(project.first)
+                        } else {
                             viewer.logMessage("Invalid choice. Please try again.")
                         }
                     }

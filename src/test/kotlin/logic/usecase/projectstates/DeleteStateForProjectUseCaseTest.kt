@@ -58,6 +58,7 @@ class DeleteStateForProjectUseCaseTest {
             val id = state.id
             val userId = UUID.randomUUID()
 
+            coEvery { sessionManager.isAuthenticated() } returns true
             coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
             // when
@@ -81,6 +82,7 @@ class DeleteStateForProjectUseCaseTest {
             // Given
             val userId = UUID.randomUUID()
             val stateId = UUID.randomUUID()
+            coEvery { sessionManager.isAuthenticated() } returns true
             coEvery { adminPermissionCheckerUseCase(userId) } returns false
 
             // When

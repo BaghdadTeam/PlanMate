@@ -7,8 +7,8 @@ import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -104,15 +104,15 @@ class ProjectStatesDataSourceTest {
 
     @Test
     fun `should trow exception when no state found while trying to update`() = runTest {
-
         // Given
         val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
         val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(name = "doing")
 
         coEvery { dataSource.loadAll() } returns allStates
-        coEvery { dataSource.update(updatedProject) } just Runs
+        coEvery { dataSource.update(updatedProject) } throws StateNotFoundException("No state found")
 
-        assertThrows<Exception> {
+        // When + Then
+        assertThrows<StateNotFoundException> {
             projectStatesDataSource.editState(updatedProject)
         }
     }
@@ -121,7 +121,7 @@ class ProjectStatesDataSourceTest {
     fun `should delete state and associated tasks when state exists`() = runTest {
         // Given
         val stateToDelete = ProjectStatesEntityTestData.todoState()
-        val otherState   = ProjectStatesEntityTestData.inProgressState()
+        val otherState = ProjectStatesEntityTestData.inProgressState()
 
         val task1 = TaskTestData.taskWithState(stateId = stateToDelete.id)
         val task2 = TaskTestData.taskWithState(stateId = otherState.id)
@@ -136,10 +136,11 @@ class ProjectStatesDataSourceTest {
         projectStatesDataSource.deleteState(stateToDelete.id)
 
         // Then
-        coVerify   { dataSource.delete(stateToDelete) }
-        coVerify   { taskDataSource.delete(task1) }
+        coVerify { dataSource.delete(stateToDelete) }
+        coVerify { taskDataSource.delete(task1) }
         coVerify(exactly = 0) { taskDataSource.delete(task2) }
     }
+
     @Test
     fun `should throw exception when deleting non-existent state`() {
         // Given

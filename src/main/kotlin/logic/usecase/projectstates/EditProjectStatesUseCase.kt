@@ -1,9 +1,9 @@
 package org.baghdad.logic.usecase.projectstates
 
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.TaskStateEntity
-import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
@@ -20,11 +20,13 @@ class EditProjectStatesUseCase(
 ) {
 
 
-    suspend fun invoke(stateId: UUID, newState: TaskStateEntity, userId: UUID){
+    suspend fun invoke(stateId: UUID, newTaskStateName: String, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
 
-        repository.editState(stateId, newState)
+        val state = repository.getStateById(stateId)
+        val newState = state.copy(name = newTaskStateName)
+        repository.editState(newState)
 
         val audit = createAudit(newState, userId)
         auditRepository.addAuditEntry(audit)
@@ -33,7 +35,7 @@ class EditProjectStatesUseCase(
     private fun createAudit(state: TaskStateEntity, userId: UUID): AuditLogEntity {
         val action = "create ${state.name} state is updated successfully"
         val audit = AuditLogEntity(
-            entityUnderAudit = Entities.Task.name,
+            entityUnderAudit = Entities.State.name,
             entityUnderAuditId = state.id,
             projectId = state.projectId,
             description = action,
