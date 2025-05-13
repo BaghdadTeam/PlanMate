@@ -17,11 +17,11 @@ class SwimlaneUI(
     private val viewer: Viewer,
     private val viewServiceUseCase: ViewServiceUseCase
 ) {
-    suspend fun invoke(projectId: UUID) {
+    suspend fun invoke(project: Pair<UUID, String>) {
         try {
             while (true) {
                 val projectData =try {
-                  viewServiceUseCase.invoke(projectId)
+                  viewServiceUseCase.invoke(project.first)
                 }catch (_:Exception){
                     emptyMap()
                 }
@@ -37,17 +37,17 @@ class SwimlaneUI(
                 when (reader.readInput()?.toIntOrNull()) {
                     1 -> {
                         println("Navigating to Project States Screen...")
-                        projectStatesUI.invoke(projectId)
+                        projectStatesUI.invoke(project.first)
                     }
 
                     2 -> {
                         println("Navigating to Tasks Screen...")
-                        taskUI.execute(projectData,projectId)
+                        taskUI.execute(projectData , project.first)
                     }
 
                     3 -> {
                         println("Navigating to Audit Log Screen...")
-                        auditUI(projectId)
+                        auditUI(project.first)
                     }
 
                     0 -> {

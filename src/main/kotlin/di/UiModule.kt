@@ -93,6 +93,4 @@ val uiModule = module {
     single { AuditUI(get(), get(), get()) }
     single { ShowAuditByTaskIdUI(get(), get(),) }
     //endregion
-
-
 }
