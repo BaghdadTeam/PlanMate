@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.enums.UserType
+import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
 import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository

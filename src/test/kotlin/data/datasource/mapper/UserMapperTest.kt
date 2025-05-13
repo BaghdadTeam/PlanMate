@@ -3,7 +3,7 @@ package data.datasource.mapper
 import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.data.dto.UserDto
-import org.baghdad.logic.model.enums.UserType
+import org.baghdad.logic.model.entities.UserType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -30,7 +30,7 @@ class UserMapperTest {
         val name = "Alice"
         val username = "alice123"
         val hashedPassword = "hashedPw"
-        val type = UserType.Admin.toString()
+        val type = UserType.Admin.name
         val line = "$uuid,$name,$username,$hashedPassword,${type}"
 
         // When

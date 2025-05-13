@@ -6,7 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.enums.UserType
+import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.utils.md5WithSalt
