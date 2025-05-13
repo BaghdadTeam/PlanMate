@@ -20,7 +20,7 @@ class CreateProjectUseCase(
     private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
 ) {
     suspend operator fun invoke(projectName: String, userId : UUID){
-        if(adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
+        if(!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
         if (projectName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
 
         val project = ProjectEntity(name = projectName, creatorId = userId)
