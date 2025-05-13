@@ -13,7 +13,7 @@ class AdminPermissionCheckerUseCase(
 
     }
 
-    suspend fun validateAdminPermission(userId: UUID): Boolean {
+    private suspend fun validateAdminPermission(userId: UUID): Boolean {
         val user = userRepository.getUserById(userId)
         return user.type == UserType.Admin
     }
