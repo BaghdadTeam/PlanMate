@@ -33,11 +33,7 @@ class ProjectStatesDataSource(
     }
 
     suspend fun editState(state: TaskStateEntity) {
-        val allData = projectStateDataSource.loadAll()
-        allData.find { it.id == state.id }
-            ?: throw StateNotFoundException("No state found")
-
-        projectStateDataSource.update(state.toDto())
+        projectStateDataSource.update(state)
     }
 
     suspend fun deleteState(stateId: UUID) {

@@ -86,7 +86,8 @@ class ProjectStatesRepositoryImpTest {
         coEvery { dataSource.editState(updatedState.toDto().toDomain()) } just Runs
 
         // When
-        projectStatesDataSource.editState(state.id, updatedState.toDto().toDomain())
+
+        projectStatesDataSource.editState(updatedState.toDto().toDomain())
 
         // Then
         coVerify(exactly = 1) { dataSource.editState(any()) }
