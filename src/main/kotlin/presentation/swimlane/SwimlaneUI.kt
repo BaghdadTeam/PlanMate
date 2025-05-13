@@ -16,13 +16,13 @@ class SwimlaneUI(
     private val viewer: Viewer
 
 ) {
-    fun invoke(projectId: UUID) {
+    fun invoke(project: Pair<UUID, String>) {
         try {
-            val swimLane = renderSwimlaneUI.invoke(projectId)
+            val swimLane = renderSwimlaneUI.invoke(project.first)
 
 
             while (true) {
-                viewer.logMessage("=== Plan Mate ===")
+                viewer.logMessage("=== ${project.second} ===")
                 viewer.logMessage(swimLane)
                 viewer.logMessage("1. Manage States (Admin Only)")
                 viewer.logMessage("2. Manage Tasks")
@@ -33,17 +33,17 @@ class SwimlaneUI(
                 when (reader.readInput()?.toIntOrNull()) {
                     1 -> {
                         println("Navigating to Project States Screen...")
-                        projectStatesUI.invoke(projectId)
+                        projectStatesUI.invoke(project.first)
                     }
 
                     2 -> {
                         println("Navigating to Tasks Screen...")
-                        taskUI.execute(projectId)
+                        taskUI.execute(project.first)
                     }
 
                     3 -> {
                         println("Navigating to Audit Log Screen...")
-                        auditUI(projectId)
+                        auditUI(project.first)
                     }
 
                     0 -> {

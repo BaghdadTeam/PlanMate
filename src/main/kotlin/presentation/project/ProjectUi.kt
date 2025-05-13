@@ -12,7 +12,7 @@ class ProjectUi(
     private val viewer: Viewer,
     private val reader: Reader
 ) {
-    suspend operator fun invoke(): UUID? {
+    suspend operator fun invoke(): Pair<UUID, String>? {
         while (true) {
             viewer.logMessage("=== Project UI ===")
             viewer.logMessage("1. Create Project")
@@ -29,11 +29,11 @@ class ProjectUi(
                 3 -> editProjectUi.editProject()
                 4 -> {
                     viewer.logMessage("=== View Projects ===")
-                    val ids = getAllProjectsUi()
-                    viewer.log("Enter project id: ")
+                    val projects = getAllProjectsUi()
+                    viewer.log("Enter project number: ")
                     val projectsId = reader.readInput()?.toIntOrNull()
                     if (projectsId != null) {
-                        return ids[projectsId - 1]
+                        return projects.first[projectsId - 1] to projects.second[projectsId - 1]
                     } else {
                         viewer.logError("Project Id should be a number")
                     }

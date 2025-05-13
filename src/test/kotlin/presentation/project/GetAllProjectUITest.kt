@@ -1,5 +1,6 @@
 package presentation.project
 
+import com.google.common.truth.Truth.assertThat
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.model.entities.ProjectEntity
@@ -39,7 +40,6 @@ class GetAllProjectsUiTest {
         val result = getAllProjectsUi()
 
         // Then
-        verify { viewer.logMessage("=== List of Projects ===") }
         verify { viewer.logMessage("+----------------------+----------------------+") }
         verify { viewer.logMessage("| Project Number       | Name                 |") }
         verify { viewer.logMessage("+----------------------+----------------------+") }
@@ -62,12 +62,12 @@ class GetAllProjectsUiTest {
         val result = getAllProjectsUi()
 
         // Then
-        verify { viewer.logMessage("=== List of Projects ===") }
         verify { viewer.logMessage("+----------------------+----------------------+") }
         verify { viewer.logMessage("| Project Number       | Name                 |") }
         verify { viewer.logMessage("+----------------------+----------------------+") }
         verify { viewer.logMessage("+----------------------+----------------------+") }
 
-        assert(result.isEmpty())  // Ensure an empty list is returned
+        assertThat(result.first).isEmpty()
+        assertThat(result.second).isEmpty()
     }
 }
