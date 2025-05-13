@@ -33,7 +33,7 @@ class ProjectUi(
             val choice = reader.readInput()?.toIntOrNull()
 
             when (choice) {
-                1 -> {
+                2 -> {
                     if (adminPermissionCheckerUseCase(userId)) {
                         createProjectUi.createProject()
                     } else {
@@ -41,7 +41,7 @@ class ProjectUi(
                     }
                 }
 
-                2 -> {
+                3 -> {
                     if (adminPermissionCheckerUseCase(userId)) {
                         deleteProjectUi.deleteProject()
                     } else {
@@ -49,13 +49,13 @@ class ProjectUi(
                     }
                 }
 
-                3 -> if (adminPermissionCheckerUseCase(userId)) {
+                4 -> if (adminPermissionCheckerUseCase(userId)) {
                     editProjectUi.editProject()
                 } else {
                     viewer.logError("Invalid choice. Please try again.")
                 }
 
-                4 -> {
+                1 -> {
                     viewer.logMessage("=== View Projects ===")
                     val projects = getAllProjectsUi()
                     viewer.log("Enter project number: ")
