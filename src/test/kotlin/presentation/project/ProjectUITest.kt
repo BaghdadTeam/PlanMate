@@ -170,7 +170,7 @@ class ProjectUiTest {
     fun `should call getAllProjectsUi when option 4 is selected`() = runTest {
         val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
 
-        every { reader.readInput() } returns "4" andThen "1" andThen "0"
+        every { reader.readInput() } returns "1" andThen "1" andThen "0"
         coEvery { getAllProjectsUi() } returns projects
 
         projectUi()
@@ -182,7 +182,7 @@ class ProjectUiTest {
     fun `should call logError when invalid project ID is entered in option 4`() = runTest {
         val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
 
-        every { reader.readInput() } returns "4" andThen "invalid" andThen "0"
+        every { reader.readInput() } returns "1" andThen "invalid" andThen "0"
         coEvery { getAllProjectsUi() } returns projects
 
         projectUi()
