@@ -34,6 +34,7 @@ class ViewMainManu(
             }
 
             viewer.logMessage("0. Exit")
+            viewer.log("Enter your choice: ")
             when (reader.readInput()?.toIntOrNull()) {
                 1 -> {
                     val projectId = projectUi.invoke()

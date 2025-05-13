@@ -43,7 +43,7 @@ val uiModule = module {
 
     single { AddTaskStateToProjectUI(get(), get(), get(), get()) }
     single { EditProjectStateUI(get(), get(), get(), get()) }
-    single { DeleteStateForProjectUseCase(get(), get(), get()) }
+    single { DeleteStateForProjectUseCase(get(), get(), get(),get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
     single { GetStateByIdUI(get(), get(), get()) }
 
@@ -93,6 +93,4 @@ val uiModule = module {
     single { AuditUI(get(), get(), get()) }
     single { ShowAuditByTaskIdUI(get(), get(),) }
     //endregion
-
-
 }

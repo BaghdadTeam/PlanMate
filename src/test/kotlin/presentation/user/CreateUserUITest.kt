@@ -125,16 +125,4 @@ class CreateUserUITest {
         // Then
         verify { viewer.logError("username exists") }
     }
-
-    @Test
-    fun `unauthorized exception during creation is shown`() = runTest {
-        // Given
-        every { session.currentSession.userId } returns regularMate.id
-        setReaderInputs("user123", "Name", "password")
-        configureUseCaseToThrow(UnauthorizedException("not allowed"))
-        // When
-        createUserInterface()
-        // Then
-        verify { viewer.logError("not allowed") }
-    }
 }

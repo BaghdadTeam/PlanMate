@@ -6,12 +6,16 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 
 class GetAllStatesPerProjectUseCaseTest {
 
@@ -19,6 +23,7 @@ class GetAllStatesPerProjectUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var getStatesUseCase: GetAllStatesPerProjectUseCase
     private lateinit var userRepository: UserRepository
+    private val sessionManager: SessionManager = mockk()
 
 
     @BeforeEach
@@ -26,8 +31,17 @@ class GetAllStatesPerProjectUseCaseTest {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        getStatesUseCase = GetAllStatesPerProjectUseCase(statesRepository)
+        getStatesUseCase = GetAllStatesPerProjectUseCase(statesRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows <UnauthorizedException> {
+            getStatesUseCase.invoke(UUID.randomUUID())
+        }
+    }
+
 
     @Test
     fun `should return list of sates when there is a states for project`() = runTest {

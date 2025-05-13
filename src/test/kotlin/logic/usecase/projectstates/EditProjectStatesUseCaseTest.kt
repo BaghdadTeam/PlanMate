@@ -7,8 +7,13 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.exceptions.AccessDeniedException
+import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
@@ -24,6 +29,7 @@ class EditProjectStatesUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var editStateUseCase: EditProjectStatesUseCase
     private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
+    private val sessionManager: SessionManager = mockk()
 
     @BeforeEach
     fun setup() {
@@ -33,9 +39,22 @@ class EditProjectStatesUseCaseTest {
         editStateUseCase = EditProjectStatesUseCase(
             statesRepository,
             auditRepository,
-            adminPermissionCheckerUseCase
+            adminPermissionCheckerUseCase,
+            sessionManager
         )
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
+
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows <UnauthorizedException> {
+            editStateUseCase.invoke(
+                UUID.randomUUID(),
+                ProjectStatesEntityTestData.todoState(),
+                UUID.randomUUID()
+            )
+        }}
 
     @Test
     fun `should edit state and add audit when user is admin`() = runTest {

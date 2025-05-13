@@ -7,23 +7,28 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.Test
+import java.util.UUID
 
 class CreateProjectUseCaseTest {
     private lateinit var projectRepository: ProjectRepository
     private lateinit var createProjectUseCase: CreateProjectUseCase
     private lateinit var auditRepository: AuditRepository
     private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
+    private val sessionManager: SessionManager = mockk()
+
 
     @BeforeEach
     fun setUp() {
@@ -31,7 +36,13 @@ class CreateProjectUseCaseTest {
         auditRepository = mockk()
         adminPermissionCheckerUseCase = mockk()
         createProjectUseCase =
-            CreateProjectUseCase(projectRepository, auditRepository , adminPermissionCheckerUseCase)
+            CreateProjectUseCase(projectRepository, auditRepository , adminPermissionCheckerUseCase , sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
+    }
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> { createProjectUseCase.invoke("project", UUID.randomUUID())}
     }
 
     @Test

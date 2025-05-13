@@ -43,7 +43,6 @@ class SessionManagerTest {
     }
 
 
-
     @Test
     fun `setSession correctly sets the currentSession`() {
         // Given
@@ -54,5 +53,17 @@ class SessionManagerTest {
         assertEquals(session, sessionManager.currentSession)
     }
 
+    @Test
+    fun `isAuthenticated should return true where there is active session `() = runTest {
+        coEvery { sessionRepository.loadSession() } returns SessionTestData.baseSession
+        val result = sessionManager.isAuthenticated()
+        assertThat(result).isTrue()
+    }
 
+    @Test
+    fun `isAuthenticated should return false if there is no active session `() = runTest {
+        coEvery { sessionRepository.loadSession() } returns SessionTestData.baseSessionWithExpiredDate
+        val result = sessionManager.isAuthenticated()
+        assertThat(result).isFalse()
+    }
 }

@@ -13,7 +13,6 @@ class CreateProjectUi(
 ) {
     suspend fun createProject() {
         val userId = sessionManager.currentSession.userId
-
         viewer.logMessage("=== Create Project ===")
         viewer.logMessage("Enter project name: ")
         val name = reader.readInput()
@@ -22,6 +21,5 @@ class CreateProjectUi(
         } else {
             viewer.logError("Project Id should be a number")
         }
-
     }
 }

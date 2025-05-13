@@ -7,8 +7,10 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.exceptions.AccessDeniedException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
@@ -24,6 +26,7 @@ class DeleteStateForProjectUseCaseTest {
     private lateinit var statesRepository: ProjectStatesRepository
     private lateinit var auditRepository: AuditRepository
     private lateinit var deleteStateUseCase: DeleteStateForProjectUseCase
+    private val sessionManager: SessionManager = mockk()
     private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
 
     @BeforeEach
@@ -35,10 +38,18 @@ class DeleteStateForProjectUseCaseTest {
             DeleteStateForProjectUseCase(
                 statesRepository,
                 auditRepository,
-                adminPermissionCheckerUseCase
+                adminPermissionCheckerUseCase,
+                sessionManager
             )
-    }
 
+    }
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> {
+            deleteStateUseCase.invoke(UUID.randomUUID(), UUID.randomUUID())
+        }
+    }
     @Test
     fun `should delete state and add audit when adminPermissionCheckerUseCase return true and state is valid`() =
         runTest {

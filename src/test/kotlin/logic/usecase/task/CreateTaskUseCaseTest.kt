@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -29,13 +30,22 @@ class CreateTaskUseCaseTest {
         username = "Pixelise",
         type = UserType.Mate
     )
+    private val sessionManager: SessionManager = mockk()
 
     @BeforeEach
     fun setup() {
         taskRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        createTaskUseCase = CreateTaskUseCase(taskRepository, auditRepository, userRepository)
+        createTaskUseCase = CreateTaskUseCase(taskRepository, auditRepository, userRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
+    }
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<Exception> {
+            createTaskUseCase(TaskEntityTestData.normalTask, UUID.randomUUID())
+        }
     }
 
     @Test

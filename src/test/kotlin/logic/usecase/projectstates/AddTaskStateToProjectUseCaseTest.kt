@@ -8,11 +8,13 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
 import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -30,15 +32,24 @@ class AddTaskStateToProjectUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var createStateUseCase: AddTaskStateToProjectUseCase
     private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
+    private lateinit var userRepository: UserRepository
+    private val sessionManager: SessionManager = mockk(relaxed = true)
 
     @BeforeEach
     fun setup() {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         adminPermissionCheckerUseCase = mockk(relaxed = true)
-        createStateUseCase = AddTaskStateToProjectUseCase(statesRepository, auditRepository, adminPermissionCheckerUseCase)
+        createStateUseCase = AddTaskStateToProjectUseCase(statesRepository, auditRepository, adminPermissionCheckerUseCase ,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
-
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> {
+            createStateUseCase.invoke(ProjectStatesEntityTestData.todoState(), UUID.randomUUID())
+        }
+    }
 
     @Test
     fun `should create state and add audit when adminPermissionCheckerUseCase return true and state is valid`()= runTest {

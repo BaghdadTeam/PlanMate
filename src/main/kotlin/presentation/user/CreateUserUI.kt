@@ -19,11 +19,11 @@ class CreateUserUI(
     suspend operator fun invoke() {
         val userId = session.currentSession.userId
         viewer.logMessage("=== Create New Mate ===")
-        viewer.logAuth("Username: ")
+        viewer.log("Username: ")
         val username = reader.readInput()
-        viewer.logAuth("Name: ")
+        viewer.log("Name: ")
         val name = reader.readInput()
-        viewer.logAuth("Password: ")
+        viewer.log("Password: ")
         val password = reader.readInput()
 
 

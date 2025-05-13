@@ -7,7 +7,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import kotlin.system.exitProcess
 
-class LogoutUi(
+class  LogoutUi(
     private val useCase: LogoutUseCase,
     private val reader: Reader,
     private val viewer: Viewer,

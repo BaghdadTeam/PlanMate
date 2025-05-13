@@ -3,8 +3,10 @@ package org.baghdad.logic.usecase.project
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.ProjectEntity
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.AccessDeniedException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
@@ -13,9 +15,11 @@ import java.util.UUID
 class DeleteProjectUseCase(
     private val projectRepository: ProjectRepository,
     private val auditRepository: AuditRepository,
-    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
+    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
+    private val sessionManager: SessionManager
 ) {
-    suspend operator fun invoke(projectId: UUID, userId: UUID) {
+    suspend operator fun invoke(projectId: UUID,userId : UUID){
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
 
         val project = projectRepository.getProjectById(projectId)
