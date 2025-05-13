@@ -2,7 +2,7 @@ package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
+import org.baghdad.logic.model.exceptions.UserNotFoundException
 import java.util.UUID
 
 class UserDataSource(

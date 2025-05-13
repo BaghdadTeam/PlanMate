@@ -7,8 +7,8 @@ import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.enums.UserType
-import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer

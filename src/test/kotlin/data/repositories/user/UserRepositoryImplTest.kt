@@ -12,7 +12,7 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.repositories.user.UserRepositoryImpl
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
+import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

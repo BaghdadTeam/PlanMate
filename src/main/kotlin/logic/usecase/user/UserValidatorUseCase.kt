@@ -1,7 +1,11 @@
 package org.baghdad.logic.usecase.user
 
 import org.baghdad.logic.model.enums.UserType
-import org.baghdad.logic.model.exceptions.user.*
+import org.baghdad.logic.model.exceptions.InvalidNameException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
+import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
 import java.util.*
 
