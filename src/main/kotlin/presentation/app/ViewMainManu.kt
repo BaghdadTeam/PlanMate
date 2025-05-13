@@ -6,6 +6,7 @@ import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.project.ProjectUi
 import org.baghdad.presentation.swimlane.SwimlaneUI
 import org.baghdad.presentation.user.CreateUserUI
+import org.baghdad.presentation.user.UserManagementUI
 import kotlin.system.exitProcess
 
 class ViewMainManu(
@@ -35,7 +36,9 @@ class ViewMainManu(
                 }
 
                 2 -> createUserUI.invoke()
+                
                 3->logoutUI.execute()
+
                 0 -> {
                     viewer.logMessage("Goodbye!")
                     exitProcess(0)
