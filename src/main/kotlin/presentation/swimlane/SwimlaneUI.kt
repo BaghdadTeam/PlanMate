@@ -25,11 +25,14 @@ class SwimlaneUI(
         try {
             val userId = session.currentSession.userId
             while (true) {
+
                 val projectData = try {
                     viewServiceUseCase.invoke(project.first)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    print(e)
                     emptyMap()
                 }
+
                 val swimLane = renderSwimlaneUI.invoke(projectData)
                 viewer.logMessage("=== Plan Mate ===")
                 viewer.logMessage(swimLane)

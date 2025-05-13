@@ -12,9 +12,18 @@ import org.baghdad.data.datasource.mongodb.CollectionNames
 import org.baghdad.data.datasource.mongodb.MongoDataSourceImpl
 import org.baghdad.data.datasource.mongodb.MongoSetup
 import org.baghdad.data.dto.AuditLogDto
+import org.baghdad.data.dto.TaskStateDto
 import org.baghdad.data.dto.UserDto
-import org.baghdad.data.local.*
-import org.baghdad.logic.model.entities.*
+import org.baghdad.data.local.AuditDataSource
+import org.baghdad.data.local.ProjectDataSource
+import org.baghdad.data.local.ProjectStatesDataSource
+import org.baghdad.data.local.SessionDataSource
+import org.baghdad.data.local.TaskDataSource
+import org.baghdad.data.local.UserDataSource
+import org.baghdad.logic.model.entities.Identifiable
+import org.baghdad.logic.model.entities.ProjectEntity
+import org.baghdad.logic.model.entities.SessionEntity
+import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.enums.Entities
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -72,7 +81,7 @@ val dataSourceModule = module {
 
     registerMongoDataSource<UserDto>(Entities.User, CollectionNames.USERS_COLLECTION)
     registerMongoDataSource<ProjectEntity>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
-    registerMongoDataSource<TaskStateEntity>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
+    registerMongoDataSource<TaskStateDto>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
     registerMongoDataSource<TaskEntity>(Entities.Task, CollectionNames.TASKS_COLLECTION)
     registerMongoDataSource<AuditLogDto>(Entities.Audit, CollectionNames.AUDIT_COLLECTION)
 
