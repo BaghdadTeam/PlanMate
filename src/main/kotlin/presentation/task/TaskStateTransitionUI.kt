@@ -2,7 +2,7 @@ package org.baghdad.presentation.task
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
@@ -16,7 +16,7 @@ class TaskStateTransitionUI(
     private val viewer: Viewer,
     private val reader: Reader,
 ) {
-    fun execute(tasksStates: List<StateEntity>, tasks: List<TaskEntity>) {
+    fun execute(tasksStates: List<TaskStateEntity>, tasks: List<TaskEntity>) {
 
         viewer.logMessage("== All Tasks == ")
         tasks.forEachIndexed { index, task ->
@@ -24,24 +24,18 @@ class TaskStateTransitionUI(
         }
 
         viewer.logMessage("Enter Task Number:")
-        val taskId = reader.readInput()?.trim()
+        val taskNumber = reader.readInput()?.trim()
 
-        if (taskId.isNullOrBlank()) throw Exception("Task ID cannot be null or blank.")
+        if (taskNumber.isNullOrBlank()) throw Exception("Task ID cannot be null or blank.")
+        val taskId = getTaskIdFromUser(tasks)
 
-        viewer.logMessage("== All States == ")
+        val taskStateId = getTaskStateIdFromUser(tasksStates)
 
-        tasksStates.forEachIndexed { index, state ->
-            viewer.logMessage("${index + 1}. ${state.name}")
-        }
-        viewer.logMessage("Enter New State Number: ")
-        val newStateId = reader.readInput()?.trim()
-
-        if (newStateId.isNullOrBlank()) throw Exception("New State ID cannot be null or blank.")
         val userId = session.currentSession.userId
 
         try {
             runBlocking {
-                useCase.changeTaskState(UUID.fromString(taskId), UUID.fromString(newStateId), userId)
+                useCase.changeTaskState(taskId, taskStateId , userId)
                 viewer.logMessage("Task state changed successfully.")
             }
         } catch (e: NotFoundException) {
@@ -53,5 +47,43 @@ class TaskStateTransitionUI(
         } catch (_: Exception) {
             viewer.logError(" something went wrong while trying to change task state.")
         }
+    }
+
+    private fun getTaskIdFromUser(tasks: List<TaskEntity>): UUID {
+        viewer.logMessage("== All Tasks == ")
+
+        tasks.forEachIndexed { index, task ->
+            viewer.logMessage("${index + 1}. ${task.title} - ${task.description}")
+        }
+
+        viewer.logMessage("Enter Task Number:")
+        val userTaskNumberChoice = reader.readInput()?.trim()
+
+        if (userTaskNumberChoice.isNullOrBlank())
+            throw Exception("Task ID cannot be null or blank.")
+
+        if (userTaskNumberChoice.toInt() > tasks.size)
+            throw Exception("Invalid choice.")
+
+        return tasks[userTaskNumberChoice.toInt() - 1].id
+    }
+
+    private fun getTaskStateIdFromUser(tasksStates: List<TaskStateEntity>): UUID {
+        viewer.logMessage("== All States == ")
+
+        tasksStates.forEachIndexed { index, state ->
+            viewer.logMessage("${index + 1}. ${state.name}")
+        }
+
+        viewer.logMessage("Enter New State Number: ")
+        val userStateNumberChoice = reader.readInput()?.trim()
+
+        if (userStateNumberChoice.isNullOrBlank())
+            throw Exception("New State ID cannot be null or blank.")
+
+        if (userStateNumberChoice.toInt() > tasksStates.size)
+            throw Exception("Invalid choice.")
+
+        return tasksStates[userStateNumberChoice.toInt() - 1].id
     }
 }

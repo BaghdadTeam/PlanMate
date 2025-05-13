@@ -1,7 +1,7 @@
 package org.baghdad.presentation.swimlane
 
 import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import java.util.*
 
@@ -22,33 +22,60 @@ class RenderSwimlaneUI(
 
                 val maxRows = swimlaneData.values.maxOfOrNull { it.size } ?: 0
 
-                val headerRow = buildHeaderRow(states)
-                val separator = buildSeparator(states)
-                val taskRows = buildTaskRows(states, tasksByState, maxRows)
+                val columnWidths = calculateColumnWidths(states, tasksByState)
 
-                "$separator\n$headerRow\n$separator\n$taskRows\n$separator"
+                val separator = buildSeparator(columnWidths)
+                val headerRow = buildHeaderRow(states, columnWidths)
+                val taskRows = buildTaskRows(states, tasksByState, columnWidths, maxRows)
+
+                // Final composed table with full borders
+                buildString {
+                    appendLine(separator)
+                    appendLine(headerRow)
+                    appendLine(separator)
+                    appendLine(taskRows)
+                    appendLine(separator)
+                }
             }
         } catch (e: Exception) {
             "Error: ${e.message}"
         }
     }
 
-    private fun buildHeaderRow(states: List<StateEntity>): String {
-        return states.joinToString(" | ") { it.name.padEnd(10) }
+    private fun calculateColumnWidths(
+        states: List<TaskStateEntity>,
+        tasksByState: Map<String, List<String>>
+    ): Map<String, Int> {
+        return states.associate { state ->
+            val name = state.name
+            val maxTaskLength = tasksByState[name]?.maxOfOrNull { it.length } ?: 0
+            val width = maxOf(name.length, maxTaskLength, 10) + 2 // padding
+            name to width
+        }
     }
 
-    private fun buildSeparator(states: List<StateEntity>): String {
-        return "+${"-".repeat(10)}+".repeat(states.size)
+    private fun buildSeparator(columnWidths: Map<String, Int>): String {
+        return columnWidths.values.joinToString("+", prefix = "+", postfix = "+") {
+            "-".repeat(it+2)
+        }
+    }
+
+    private fun buildHeaderRow(states: List<TaskStateEntity>, columnWidths: Map<String, Int>): String {
+        return states.joinToString(" | ", prefix = "| ", postfix = " |") { state ->
+            state.name.padEnd(columnWidths[state.name] ?: 12)
+        }
     }
 
     private fun buildTaskRows(
-        states: List<StateEntity>,
+        states: List<TaskStateEntity>,
         tasksByState: Map<String, List<String>>,
+        columnWidths: Map<String, Int>,
         maxRows: Int
     ): String {
         return (0 until maxRows).joinToString("\n") { row ->
-            states.joinToString(" | ") { state ->
-                tasksByState[state.name]?.getOrNull(row)?.padEnd(10) ?: "".padEnd(10)
+            states.joinToString(" | ", prefix = "| ", postfix = " |") { state ->
+                val task = tasksByState[state.name]?.getOrNull(row) ?: ""
+                task.padEnd(columnWidths[state.name] ?: 12)
             }
         }
     }

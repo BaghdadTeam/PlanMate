@@ -1,7 +1,12 @@
 package org.baghdad.logic.usecase.user
 
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.user.*
+import org.baghdad.logic.model.exceptions.AccessDeniedException
+import org.baghdad.logic.model.exceptions.InvalidNameException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
+import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
 import java.util.*
 
@@ -39,7 +44,7 @@ class UserValidatorUseCase(
     private suspend fun checkAdmin(userId: UUID) {
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) {
-            throw UnauthorizedException("Only admins can create users.")
+            throw AccessDeniedException("Not authorized")
         }
     }
 

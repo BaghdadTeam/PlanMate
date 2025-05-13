@@ -3,7 +3,7 @@ package presentation.swimlane
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.presentation.swimlane.RenderSwimlaneUI
@@ -37,7 +37,7 @@ class RenderSwimlaneUITest {
         // Given
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
-        val state = StateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
+        val state = TaskStateEntity(UUID.randomUUID(), "To Do", projectId, creatorId)
         val task = TaskEntity(
             id = UUID.randomUUID(),
             title = "Task 1",

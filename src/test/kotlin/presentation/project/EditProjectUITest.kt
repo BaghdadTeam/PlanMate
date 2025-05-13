@@ -37,16 +37,16 @@ class EditProjectUiTest {
     @Test
     fun `should edit project successfully`() = runBlocking {
         // Given
-        val projectIds = listOf(UUID.randomUUID(), UUID.randomUUID())
+        val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
         val userId = UUID.randomUUID()
         val projectId = 0
         val newProjectName = "New Project Name"
 
         // when
         coEvery { session.currentSession.userId } returns userId
-        coEvery { getAllProjectsUi() } returns projectIds
+        coEvery { getAllProjectsUi() } returns projects
         coEvery { reader.readInput() } returns projectId.toString() andThen newProjectName
-        coEvery { editProjectUseCase(projectIds[projectId], newProjectName, userId) } returns Unit
+        coEvery { editProjectUseCase(projects.first[projectId], newProjectName, userId) } returns Unit
 
         // Act
         editProjectUi.editProject()
@@ -55,18 +55,19 @@ class EditProjectUiTest {
         verify { viewer.logMessage("=== Edit Project ===") }
         verify { viewer.logMessage("=== View Project ===") }
         verify { viewer.logMessage("Enter new project name: ") }
-        coVerify { editProjectUseCase(projectIds[projectId], newProjectName, userId) }
+        coVerify { editProjectUseCase(projects.first[projectId], newProjectName, userId) }
     }
 
     @Test
     fun `should log error when project id is not a number`() = runBlocking {
         // Given
         val userId = UUID.randomUUID()
+        val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
 
         // when
         coEvery { session.currentSession.userId } returns userId
-        coEvery { getAllProjectsUi() } returns listOf(UUID.randomUUID())  // A valid project list
-        coEvery { reader.readInput() } returns "invalid"  // Simulating non-numeric input
+        coEvery { getAllProjectsUi() } returns projects
+        coEvery { reader.readInput() } returns "invalid"
 
         // Act
         editProjectUi.editProject()
@@ -82,13 +83,14 @@ class EditProjectUiTest {
     @Test
     fun `should log error when new project name is null`() = runBlocking {
         // Given
-        val projectIds = listOf(UUID.randomUUID(), UUID.randomUUID())
         val userId = UUID.randomUUID()
         val projectId = 0
+        val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
+
 
         // when
         coEvery { session.currentSession.userId } returns userId
-        coEvery { getAllProjectsUi() } returns projectIds
+        coEvery { getAllProjectsUi() } returns projects
         coEvery { reader.readInput() } returns projectId.toString() andThen null  // Simulating null project name input
 
         // Act

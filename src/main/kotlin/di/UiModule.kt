@@ -7,6 +7,7 @@ import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.authentication.LoginUi
+import org.baghdad.presentation.authentication.LogoutUi
 import org.baghdad.presentation.project.CreateProjectUi
 import org.baghdad.presentation.project.DeleteProjectUi
 import org.baghdad.presentation.project.EditProjectUi
@@ -42,7 +43,7 @@ val uiModule = module {
 
     single { AddTaskStateToProjectUI(get(), get(), get(), get()) }
     single { EditProjectStateUI(get(), get(), get(), get()) }
-    single { DeleteStateForProjectUseCase(get(), get(), get()) }
+    single { DeleteStateForProjectUseCase(get(), get(), get(),get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
     single { GetStateByIdUI(get(), get(), get()) }
 
@@ -58,6 +59,7 @@ val uiModule = module {
 
     // region :: Auth ::
     single { LoginUi(get(), get(), get()) }
+    single{ LogoutUi(get(),get(),get()) }
 
     // region :: User ::
     single { CreateUserUI(get(), get(), get(), get()) }
@@ -87,10 +89,8 @@ val uiModule = module {
 //endregion
 
     //region :: Audit ::
-    single { ShowAuditByProjectIdUI(get(), get()) }
-    single { AuditUI(get(), get(), get(), get(), get()) }
-    single { ShowAuditByTaskIdUI(get(), get()) }
+    single { ShowAuditByProjectIdUI(get(), get())}
+    single { AuditUI(get(), get(), get()) }
+    single { ShowAuditByTaskIdUI(get(), get(),) }
     //endregion
-
-
 }

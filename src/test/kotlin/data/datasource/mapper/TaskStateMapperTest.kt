@@ -3,6 +3,7 @@ package data.datasource.mapper
 import com.google.common.truth.Truth.assertThat
 import data.datasource.mapper.taskState.TaskStateMapper
 import org.baghdad.data.dto.TaskStateDto
+import org.baghdad.data.datasource.mapper.taskState.TaskStateMapper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -52,8 +53,7 @@ class TaskStateMapperTest {
     @Test
     fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
         // Only three fields instead of four
-        val malformed =
-            "123e4567-e89b-12d3-a456-426614174000,OnlyName,123e4567-e89b-12d3-a456-426614174000"
+        val malformed = "123e4567-e89b-12d3-a456-426614174000,OnlyName,123e4567-e89b-12d3-a456-426614174000"
         assertThrows<IndexOutOfBoundsException> { parser.deserializer(malformed) }
     }
 
@@ -76,5 +76,23 @@ class TaskStateMapperTest {
 
         // Then
         assertThat(csvLine).isEqualTo("$uuid,$name,$projectId,$creatorId")
+    }
+
+    @Test
+    fun `getId returns correct ID as string`() {
+        // Given
+        val uuid = UUID.randomUUID()
+        val entity = TaskStateDto(
+            id = uuid,
+            name = "TestState",
+            projectId = UUID.randomUUID(),
+            creatorId = UUID.randomUUID(),
+        )
+
+        // When
+        val result = parser.getId(entity)
+
+        // Then
+        assertThat(result).isEqualTo(uuid.toString())
     }
 }

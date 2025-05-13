@@ -3,7 +3,7 @@ package presentation.projectStates
 import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -68,7 +68,7 @@ class EditProjectStateUITest {
     @Test
     fun `tryEditState should show error message on failure`() {
         val stateId = UUID.randomUUID()
-        val state = StateEntity(name = "To Do", projectId = UUID.randomUUID(), creatorId = userId)
+        val state = TaskStateEntity(name = "To Do", projectId = UUID.randomUUID(), creatorId = userId)
 
         every { reader.readInput() } returns "Valid State Name"
         coEvery { useCase.invoke(any(), any(), any()) } throws Exception("state not found")
