@@ -1,9 +1,6 @@
 package org.baghdad.logic.model.entities
 
-import org.baghdad.logic.model.enums.UserType
-import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.codecs.pojo.annotations.BsonProperty
-import java.util.UUID
+import java.util.*
 
 data class UserEntity(
     override val id: UUID = UUID.randomUUID(),
@@ -11,3 +8,7 @@ data class UserEntity(
     val username: String,
     val type: UserType
 ): Identifiable
+
+enum class UserType {
+    Admin, Mate
+}
