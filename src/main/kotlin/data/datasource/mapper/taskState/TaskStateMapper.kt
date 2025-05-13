@@ -1,8 +1,8 @@
-package org.baghdad.data.datasource.mapper.state
+package data.datasource.mapper.taskState
 
-import data.datasource.mapper.taskState.TaskStateColumns
 import org.baghdad.data.datasource.CsvMapper
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.data.datasource.mapper.taskState.TaskStateColumns
+import org.baghdad.data.dto.TaskStateDto
 import java.util.UUID
 
 class TaskStateMapper : CsvMapper<TaskStateDto> {

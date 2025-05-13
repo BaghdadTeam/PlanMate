@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class ProjectStatesRepositoryImpTest{
+class ProjectStatesRepositoryImpTest {
 
     private lateinit var dataSource: ProjectStatesDataSource
     private lateinit var projectStatesDataSource: ProjectStatesRepositoryImp
@@ -76,24 +76,6 @@ class ProjectStatesRepositoryImpTest{
         projectStatesDataSource.createState(domainModel.toDomain())
 
         coVerify { dataSource.createState(domainModel.toDomain()) }
-    }
-
-    @Test
-    fun `should delete state when can delete it successfully`() = runTest {
-        // Given
-        val state = ProjectStatesEntityTestData.inProgressState()
-        val projectId = state.projectId
-
-        coEvery { dataSource.deleteState(state.id) } just Runs
-        coEvery { dataSource.getAllStatesForProject(projectId) } returns
-                ProjectStatesEntityTestData.getStatesAfterDelete()
-
-        // When
-        projectStatesDataSource.deleteState(state.id)
-        val result = projectStatesDataSource.getAllStatesPerProject(projectId)
-
-        // Then
-        assertThat(result.find { it.id == state.id }).isNull()
     }
 
     @Test

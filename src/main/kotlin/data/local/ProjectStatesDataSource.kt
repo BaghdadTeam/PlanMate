@@ -4,7 +4,6 @@ import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.TaskStateDto
 import org.baghdad.data.mapper.toDomain
 import org.baghdad.data.mapper.toDto
-import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
@@ -16,24 +15,24 @@ class ProjectStatesDataSource(
     private val taskDataSource: DataSource<TaskEntity>
 ) {
 
-    suspend fun getAllStatesForProject(projectId: UUID): List<StateEntity> {
+    suspend fun getAllStatesForProject(projectId: UUID): List<TaskStateEntity> {
         val allData = projectStateDataSource.loadAll()
         val states = allData.filter { it.projectId == projectId }.map { it.toDomain() }
         if (states.isEmpty()) throw StateNotFoundException("No state found")
         return states
     }
 
-    suspend fun getStateById(id: UUID): StateEntity {
+    suspend fun getStateById(id: UUID): TaskStateEntity {
         val allData = projectStateDataSource.loadAll()
         return allData.find { it.id == id }?.toDomain()
             ?: throw StateNotFoundException("No state found")
     }
 
-    suspend fun createState(state: StateEntity) {
+    suspend fun createState(state: TaskStateEntity) {
         projectStateDataSource.append(state.toDto())
     }
 
-    suspend fun editState(state: StateEntity) {
+    suspend fun editState(state: TaskStateEntity) {
         val allData = projectStateDataSource.loadAll()
         allData.find { it.id == state.id }
             ?: throw StateNotFoundException("No state found")
