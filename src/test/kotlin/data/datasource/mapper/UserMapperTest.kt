@@ -2,7 +2,7 @@ package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.mapper.user.UserMapper
-import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.data.dto.UserDto
 import org.baghdad.logic.model.entities.UserType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -24,14 +24,14 @@ class UserMapperTest {
     }
 
     @Test
-    fun `deserializer parses line into UserEntity`() {
+    fun `deserializer parses line into UserDto`() {
         // Given
         val uuid = UUID.randomUUID()
         val name = "Alice"
         val username = "alice123"
         val hashedPassword = "hashedPw"
-        val type = UserType.Admin
-        val line = "$uuid,$name,$username,$hashedPassword,${type.name}"
+        val type = UserType.Admin.name
+        val line = "$uuid,$name,$username,$hashedPassword,${type}"
 
         // When
         val result = parser.deserializer(line)
@@ -51,17 +51,10 @@ class UserMapperTest {
     }
 
     @Test
-    fun `deserializer throws IllegalArgumentException for invalid user type`() {
-        val uuid = UUID.randomUUID()
-        val badTypeLine = "$uuid,Bob,bob,pass,INVALID_TYPE"
-        assertThrows<IllegalArgumentException> { parser.deserializer(badTypeLine) }
-    }
-
-    @Test
     fun `deserializer throws IndexOutOfBoundsException for malformed line`() {
         // Only four fields instead of five
         val uuid = UUID.randomUUID()
-        val malformed = "$uuid,Alice,alice,pass"
+        val malformed = "$uuid,"
         assertThrows<IndexOutOfBoundsException> { parser.deserializer(malformed) }
     }
 
@@ -72,8 +65,8 @@ class UserMapperTest {
         val name = "Charlie"
         val username = "charlieX"
         val hashedPassword = "pw123"
-        val type = UserType.Mate
-        val entity = UserEntity(
+        val type = UserType.Mate.toString()
+        val entity = UserDto(
             id = uuid,
             name = name,
             username = username,
@@ -85,6 +78,6 @@ class UserMapperTest {
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,$name,$username,$hashedPassword,${type.name}")
+        assertThat(csvLine).isEqualTo("$uuid,$name,$username,$hashedPassword,${type}")
     }
 }

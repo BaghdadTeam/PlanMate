@@ -1,10 +1,7 @@
 package org.baghdad.presentation.task
 
-import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.presentation.StateTransitionUI
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.*
@@ -15,13 +12,13 @@ class TaskManagementGatherUI(
     private val createTaskUI: CreateTaskUI,
     private val editTaskUI: UpdateTaskUI,
     private val deleteTaskUI: DeleteTaskUI,
-    private val changeTaskStateUI: StateTransitionUI,
+    private val changeTaskStateUI: TaskStateTransitionUI,
 ) {
-    fun execute(projectData :Map<StateEntity, List<TaskEntity>>,projectId: UUID) {
+    fun execute(projectData :Map<TaskStateEntity, List<TaskEntity>>,projectId: UUID) {
         showOptions(projectData,projectId)
 
     }
-    private fun showOptions(project: Map<StateEntity, List<TaskEntity>>,projectId: UUID) {
+    private fun showOptions(project: Map<TaskStateEntity, List<TaskEntity>>,projectId: UUID) {
 
         viewer.logMessage("=== Task Management ===")
         viewer.logMessage("1. Create Task")

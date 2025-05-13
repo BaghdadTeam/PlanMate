@@ -5,6 +5,7 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.usecase.task.CreateTaskUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -20,7 +21,7 @@ class CreateTaskUI(
 ) {
 
     fun execute(projectId: UUID) {
-        val user = sessionManager.currentSession
+        val userId = sessionManager.currentSession.userId
         val states = getAllStatesPerProjectUI.execute(projectId)
 
         if (states.isEmpty()) {
@@ -28,8 +29,8 @@ class CreateTaskUI(
             return
         }
 
-        val task = promptForTaskDetails(user.userId, projectId, states[0]) ?: return
-        tryCreateTask(task, user.userId)
+        val task = promptForTaskDetails(userId, projectId, states[0]) ?: return
+        tryCreateTask(task, userId)
     }
 
     private fun promptForTaskDetails(userId: UUID, projectId: UUID, stateId: UUID): TaskEntity? {

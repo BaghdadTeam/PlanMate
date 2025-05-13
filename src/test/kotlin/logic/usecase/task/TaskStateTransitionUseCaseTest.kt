@@ -1,10 +1,9 @@
-package logic.usecase
-
+package logic.usecase.task
 
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.NotFoundException
@@ -12,7 +11,7 @@ import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.StateTransitionUseCase
+import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -20,33 +19,32 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
-class StateTransitionUseCaseTest {
+class TaskStateTransitionUseCaseTest {
 
     private val taskRepository = mockk<TaskRepository>()
     private val projectStatesRepository = mockk<ProjectStatesRepository>()
     private val userRepository = mockk<UserRepository>() // NEW
     private val auditRepository = mockk<AuditRepository>()
-    private lateinit var service: StateTransitionUseCase
+    private lateinit var service: TaskStateTransitionUseCase
 
     private lateinit var task: TaskEntity
-    private lateinit var oldState: StateEntity
-    private lateinit var newState: StateEntity
+    private lateinit var oldState: TaskStateEntity
+    private lateinit var newState: TaskStateEntity
     private lateinit var user: UserEntity
 
     @BeforeEach
     fun setup() {
-        service = StateTransitionUseCase(taskRepository, projectStatesRepository, userRepository, auditRepository)
+        service = TaskStateTransitionUseCase(taskRepository, projectStatesRepository, userRepository, auditRepository)
 
         val projectId = UUID.randomUUID()
         val oldStateId = UUID.randomUUID()
         val newStateId = UUID.randomUUID()
         val taskId = UUID.randomUUID()
 
-        user = UserEntity(UUID.randomUUID(), "Test", "testUser", "hash", UserType.Mate)
+        user = UserEntity(UUID.randomUUID(), "Test", "testUser",  UserType.Mate)
 
-        oldState = StateEntity(oldStateId, "TODO", projectId, user.id)
-        newState = StateEntity(newStateId, "IN_PROGRESS", projectId, user.id)
+        oldState = TaskStateEntity(oldStateId, "TODO", projectId, user.id)
+        newState = TaskStateEntity(newStateId, "IN_PROGRESS", projectId, user.id)
 
         task = TaskEntity(
             taskId,

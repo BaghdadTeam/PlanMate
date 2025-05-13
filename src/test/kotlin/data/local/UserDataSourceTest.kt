@@ -1,27 +1,31 @@
 package data.local
 
 import com.google.common.truth.Truth.assertThat
-import helpers.authentication.createUserHelper
 import io.mockk.coEvery
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
+import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 
 class UserDataSourceTest {
 
-    private lateinit var dataSource: DataSource<UserEntity>
+    private lateinit var dataSource: DataSource<UserDto>
     private lateinit var userDataSource: UserDataSource
 
-    private val sampleUser = createUserHelper()
+    private val sampleUser = UserDto(
+        id = UUID.randomUUID(),
+        name = "name",
+        username = "username",
+        hashedPassword = "hashedPassword",
+        type = UserType.Admin.name,
+    )
 
     @BeforeEach
     fun setup() {
@@ -41,18 +45,6 @@ class UserDataSourceTest {
         // Then
         assertThat(result).isEqualTo(list)
         coEvery { dataSource.loadAll() }
-    }
-
-    @Test
-    fun `addUser delegates to data source append`() = runTest {
-        // Given
-        coEvery { dataSource.append(sampleUser) } just runs
-
-        // When
-        userDataSource.addUser(sampleUser)
-
-        // Then
-        coEvery { dataSource.append(sampleUser) }
     }
 
     @Test

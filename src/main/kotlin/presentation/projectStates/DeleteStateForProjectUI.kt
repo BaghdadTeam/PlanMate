@@ -3,7 +3,6 @@ package org.baghdad.presentation.projectStates
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.projectstates.DeleteStateForProjectUseCase
-import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
 

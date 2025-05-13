@@ -1,15 +1,12 @@
 package org.baghdad.presentation.swimlane
-import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import java.util.*
 
 class RenderSwimlaneUI(
-    private val viewServiceUseCase: ViewServiceUseCase
 ) {
 
-    operator fun invoke(swimlaneData: Map<StateEntity, List<TaskEntity>>): String {
+    operator fun invoke(swimlaneData: Map<TaskStateEntity, List<TaskEntity>>): String {
         return try {
             if (swimlaneData.isEmpty()) {
                 "Error: Failed to fetch data"
@@ -32,16 +29,16 @@ class RenderSwimlaneUI(
         }
     }
 
-    private fun buildHeaderRow(states: List<StateEntity>): String {
+    private fun buildHeaderRow(states: List<TaskStateEntity>): String {
         return states.joinToString(" | ") { it.name.padEnd(10) }
     }
 
-    private fun buildSeparator(states: List<StateEntity>): String {
+    private fun buildSeparator(states: List<TaskStateEntity>): String {
         return "+${"-".repeat(10)}+".repeat(states.size)
     }
 
     private fun buildTaskRows(
-      states: List<StateEntity>,
+        states: List<TaskStateEntity>,
         tasksByState: Map<String, List<String>>,
         maxRows: Int
     ): String {

@@ -4,7 +4,6 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.project.EditProjectUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import java.util.UUID
 
 class EditProjectUi(
     private val editProjectUseCase: EditProjectUseCase,
