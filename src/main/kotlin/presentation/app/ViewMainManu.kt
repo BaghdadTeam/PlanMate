@@ -5,12 +5,13 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.project.ProjectUi
 import org.baghdad.presentation.swimlane.SwimlaneUI
+import org.baghdad.presentation.user.CreateUserUI
 import org.baghdad.presentation.user.UserManagementUI
 import kotlin.system.exitProcess
 
 class ViewMainManu(
     private val projectUi: ProjectUi,
-    private val userManagementUI: UserManagementUI,
+    private val createUserUI: CreateUserUI,
     private val viewer: Viewer,
     private val reader: Reader,
     private val swimlaneUI: SwimlaneUI,

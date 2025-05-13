@@ -30,7 +30,6 @@ class UserManagementUITest {
         id = adminId,
         username = "admin",
         name = "Admin User",
-        hashedPassword = "hashed",
         type = UserType.Admin
     )
 
