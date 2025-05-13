@@ -65,7 +65,7 @@ val uiModule = module {
 
     // region :: Swimlane ::
     single { RenderSwimlaneUI(get()) }
-    single { SwimlaneUI(get(), get(), get(), get(), get() , get()) }
+    single { SwimlaneUI(get(), get(), get(), get(), get() ,get(),get()) }
     // endregion
 
     //region :: ProjectStates ::
@@ -82,7 +82,7 @@ val uiModule = module {
     single { DeleteTaskUI(get(), get(), get(), get()) }
     single { GetTasksByStateIdUI(get(), get(), get()) }
     single { UpdateTaskUI(get(), get(), get(), get()) }
-    single { TaskManagementGatherUI(get(), get(), get(), get(), get(), get() , get()) }
+    single { TaskManagementGatherUI(get(), get(), get(), get(), get(), get()) }
     single { GetTasksByProjectIdUI(get(), get(), get()) }
 //endregion
 

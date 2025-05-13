@@ -1,5 +1,4 @@
 package logic.usecase
-
 import com.google.common.truth.Truth.assertThat
 import io.github.classgraph.AnnotationInfoList.emptyList
 import io.mockk.coEvery

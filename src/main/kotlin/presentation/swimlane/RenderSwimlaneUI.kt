@@ -1,7 +1,7 @@
 package org.baghdad.presentation.swimlane
-
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import java.util.*
 
@@ -9,9 +9,8 @@ class RenderSwimlaneUI(
     private val viewServiceUseCase: ViewServiceUseCase
 ) {
 
-    operator fun invoke(projectId: UUID): String {
+    operator fun invoke(swimlaneData: Map<StateEntity, List<TaskEntity>>): String {
         return try {
-            val swimlaneData = runBlocking { viewServiceUseCase.swimlane(projectId) }
             if (swimlaneData.isEmpty()) {
                 "Error: Failed to fetch data"
             } else {
@@ -42,14 +41,14 @@ class RenderSwimlaneUI(
     }
 
     private fun buildTaskRows(
-        states: List<StateEntity>,
+      states: List<StateEntity>,
         tasksByState: Map<String, List<String>>,
         maxRows: Int
     ): String {
         return (0 until maxRows).joinToString("\n") { row ->
-            states.joinToString(" | ") { state ->
+           states.joinToString(" | ") { state ->
                 tasksByState[state.name]?.getOrNull(row)?.padEnd(10) ?: "".padEnd(10)
-            }
-        }
+           }
+       }
     }
 }

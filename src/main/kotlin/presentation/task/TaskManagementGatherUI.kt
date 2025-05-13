@@ -16,20 +16,13 @@ class TaskManagementGatherUI(
     private val editTaskUI: UpdateTaskUI,
     private val deleteTaskUI: DeleteTaskUI,
     private val changeTaskStateUI: StateTransitionUI,
-    private val viewServiceUseCase: ViewServiceUseCase
 ) {
+    fun execute(projectData :Map<StateEntity, List<TaskEntity>>,projectId: UUID) {
+        showOptions(projectData,projectId)
 
-    fun execute(projectId : UUID) {
-        showOptions(projectId)
     }
+    private fun showOptions(project: Map<StateEntity, List<TaskEntity>>,projectId: UUID) {
 
-
-    private fun showOptions(projectId: UUID) {
-        val project =try {
-            runBlocking {viewServiceUseCase.swimlane(projectId) }
-        }catch (_:Exception){
-            emptyMap()
-        }
         viewer.logMessage("=== Task Management ===")
         viewer.logMessage("1. Create Task")
         viewer.logMessage("2. Edit Task")
