@@ -34,7 +34,7 @@ class ProjectStatesUI(
             3 -> {
                 val stateId = getStateIdFromUser(projectId , "edit")
                 if (stateId != null) {
-                    editProjectStateUI.execute(projectId , stateId)
+                    editProjectStateUI.execute(stateId)
                 }else{
                     viewer.logError("Invalid choice. Please try again.")
                 }

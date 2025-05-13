@@ -28,8 +28,6 @@ class ProjectStatesDataSource(
     }
 
     suspend fun editState(state: TaskStateEntity) {
-        val allData = projectStateDataSource.loadAll().toMutableList()
-        val state = allData.find { it.id == state.id } ?: throw StateNotFoundException("No state found")
         projectStateDataSource.update(state)
     }
 
