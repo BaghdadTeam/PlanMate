@@ -10,24 +10,27 @@ import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import java.util.UUID
 
 class DeleteProjectUseCase(
     private val projectRepository: ProjectRepository,
     private val userRepository: UserRepository,
-    private val auditRepository: AuditRepository
+    private val auditRepository: AuditRepository,
+    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
 ) {
     suspend operator fun invoke(projectId: UUID,userId : UUID){
-        val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
+        if(adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
+
         val project = projectRepository.getProjectById(projectId)
         projectRepository.deleteProject(projectId)
-        val audit = logProjectDeletion(project, user)
+
+        val audit = logProjectDeletion(project, userId)
         auditRepository.addAuditEntry(audit)
     }
 
 
-    private fun logProjectDeletion(project: ProjectEntity, user: UserEntity): AuditLogEntity {
+    private fun logProjectDeletion(project: ProjectEntity, userId: UUID): AuditLogEntity {
 
         val description = "has been Project ${project.name}"
         return AuditLogEntity(
@@ -36,7 +39,7 @@ class DeleteProjectUseCase(
             projectId = project.id,
             description = description,
             action = Action.Delete,
-            userId = user.id,
+            userId = userId,
         )
     }
 }
