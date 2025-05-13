@@ -4,7 +4,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.projectstates.GetAllStatesPerProjectUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -33,9 +33,9 @@ class GetAllStatesPerProjectUITest {
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
         val states = listOf(
-            StateEntity(name = "Backlog", projectId = projectId, creatorId = creatorId),
-            StateEntity(name = "In Progress", projectId = projectId, creatorId = creatorId),
-            StateEntity(name = "Done", projectId = projectId, creatorId = creatorId)
+            TaskStateEntity(name = "Backlog", projectId = projectId, creatorId = creatorId),
+            TaskStateEntity(name = "In Progress", projectId = projectId, creatorId = creatorId),
+            TaskStateEntity(name = "Done", projectId = projectId, creatorId = creatorId)
         )
 
         every { reader.readInput() } returns projectId.toString()

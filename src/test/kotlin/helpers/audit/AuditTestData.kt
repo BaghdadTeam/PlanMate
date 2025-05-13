@@ -2,7 +2,7 @@ package helpers.audit
 
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
+import org.baghdad.logic.model.enums.Entities
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.UUID

@@ -8,11 +8,11 @@ import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
+import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 
 class UserDataSourceTest {
 
@@ -24,7 +24,7 @@ class UserDataSourceTest {
         name = "name",
         username = "username",
         hashedPassword = "hashedPassword",
-        type = UserType.Admin.toString(),
+        type = UserType.Admin.name,
     )
 
     @BeforeEach

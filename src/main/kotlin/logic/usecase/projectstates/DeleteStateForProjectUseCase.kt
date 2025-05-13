@@ -1,11 +1,7 @@
 package org.baghdad.logic.usecase.projectstates
 
-import org.baghdad.logic.model.entities.Action
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -20,7 +16,7 @@ class DeleteStateForProjectUseCase (
 
     suspend fun invoke(stateId: UUID, userId: UUID){
         val user = userRepository.getUserById(userId)
-        if (user.type.name == UserType.Mate.name) throw NotAccessException("Only Admin can delete states")
+        if (user.type == UserType.Mate) throw NotAccessException("Only Admin can delete states")
         val state = repository.getStateById(stateId)
         repository.deleteState(stateId)
         val audit = createAudit(state, user)
@@ -28,7 +24,7 @@ class DeleteStateForProjectUseCase (
 
     }
 
-    private fun createAudit(state: StateEntity, user: UserEntity):AuditLogEntity {
+    private fun createAudit(state: TaskStateEntity, user: UserEntity):AuditLogEntity {
         val description = "delete  state is deleted successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,

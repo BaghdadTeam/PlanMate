@@ -1,6 +1,7 @@
 package org.baghdad.logic.usecase.projectstates
 
 import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -13,7 +14,7 @@ class EditProjectStatesUseCase (
     private val userRepository: UserRepository
 ) {
 
-    suspend fun invoke(stateId: UUID, newState: StateEntity , userId: UUID){
+    suspend fun invoke(stateId: UUID, newState: TaskStateEntity, userId: UUID){
         val user = userRepository.getUserById(userId)
         if (user.type.name != UserType.Admin.name) throw NotAccessException("Only Admin can edit states")
         repository.editState(stateId, newState)
@@ -21,8 +22,8 @@ class EditProjectStatesUseCase (
         auditRepository.addAuditEntry(audit)
     }
 
-    private fun createAudit(state: StateEntity, user: UserEntity):AuditLogEntity {
-        val action = "${state.name} state is updated successfully"
+    private fun createAudit(state: TaskStateEntity, user: UserEntity):AuditLogEntity {
+        val action = "create ${state.name} state is updated successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
             entityUnderAuditId = state.id,

@@ -11,7 +11,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 class GetAuditByTaskUseCaseTest {
     private lateinit var  auditRepository : AuditRepository

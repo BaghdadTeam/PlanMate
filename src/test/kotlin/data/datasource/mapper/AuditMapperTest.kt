@@ -7,13 +7,13 @@ import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class AuditMapperTest {
@@ -33,7 +33,7 @@ class AuditMapperTest {
     @Test
     fun `header returns correct CSV header`() {
         assertThat(parser.header())
-            .isEqualTo("id,entityType,entityId,action,user,timestamp")
+            .isEqualTo("id,entityUnderAudit,entityUnderAuditId,projectId,description,action,userId,timestamp")
     }
 
     @Test
@@ -83,7 +83,6 @@ class AuditMapperTest {
         }
     }
 
-
     @Test
     fun `serializer produces correct CSV line`() {
         // Given
@@ -102,11 +101,13 @@ class AuditMapperTest {
             userId = userId,
         )
 
+        val expected = "$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,UPDATE,Update,$userId,${entity.timestamp}"
+
         // When
-        val csvLine = parser.serializer(entity)
+        val csvLine = AuditMapper().serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,UPDATE,${Action.Update},$userId,${entity.timestamp}")
+        assertThat(csvLine).isEqualTo(expected)
     }
 
     @Test

@@ -1,7 +1,7 @@
 package org.baghdad.data.repositories.projectstates
 
 import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import java.util.UUID
 
@@ -9,19 +9,19 @@ class ProjectStatesRepositoryImp(
     private val dataSource: ProjectStatesDataSource
 ) : ProjectStatesRepository {
 
-    override suspend fun getAllStatesPerProject(projectId: UUID): List<StateEntity> {
+    override suspend fun getAllStatesPerProject(projectId: UUID): List<TaskStateEntity> {
         return dataSource.getAllStatesForProject(projectId)
     }
 
-    override suspend fun createState(state: StateEntity) {
+    override suspend fun createState(state: TaskStateEntity) {
         return dataSource.createState(state)
     }
 
-    override suspend fun getStateById(stateId: UUID): StateEntity {
+    override suspend fun getStateById(stateId: UUID): TaskStateEntity {
         return dataSource.getStateById(stateId)
     }
 
-    override suspend fun editState(stateId: UUID, newState: StateEntity) {
+    override suspend fun editState(stateId: UUID, newState: TaskStateEntity) {
         dataSource.editState(newState)
     }
 

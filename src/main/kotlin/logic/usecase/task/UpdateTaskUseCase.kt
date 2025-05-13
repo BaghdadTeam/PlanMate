@@ -2,7 +2,7 @@ package org.baghdad.logic.usecase.task
 
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException

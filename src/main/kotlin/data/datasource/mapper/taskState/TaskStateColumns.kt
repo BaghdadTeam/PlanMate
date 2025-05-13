@@ -1,4 +1,4 @@
-package data.datasource.mapper.taskState
+package org.baghdad.data.datasource.mapper.taskState
 
 object TaskStateColumns {
     const val ID = 0
