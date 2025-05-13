@@ -30,7 +30,7 @@ class UserMapperTest {
         val name = "Alice"
         val username = "alice123"
         val hashedPassword = "hashedPw"
-        val type = UserType.Admin.toString()
+        val type = UserType.Admin.name
         val line = "$uuid,$name,$username,$hashedPassword,${type}"
 
         // When

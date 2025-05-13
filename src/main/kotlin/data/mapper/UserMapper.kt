@@ -4,7 +4,6 @@ import org.baghdad.data.dto.UserDto
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 
-
 fun UserDto.toDomain(): UserEntity {
     return UserEntity(
         id = this.id,

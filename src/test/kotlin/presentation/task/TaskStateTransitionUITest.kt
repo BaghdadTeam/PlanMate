@@ -8,7 +8,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
@@ -31,7 +31,7 @@ class TaskStateTransitionUITest {
     private val testUserId = UUID.randomUUID()
 
     private lateinit var task: TaskEntity
-    private lateinit var state: StateEntity
+    private lateinit var state: TaskStateEntity
 
     @BeforeEach
     fun setUp() {
@@ -54,7 +54,7 @@ class TaskStateTransitionUITest {
             projectId,
             creatorId
         )
-        state = StateEntity(UUID.randomUUID(), "IN_PROGRESS", projectId, creatorId)
+        state = TaskStateEntity(UUID.randomUUID(), "IN_PROGRESS", projectId, creatorId)
     }
 
     @Test

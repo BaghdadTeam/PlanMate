@@ -5,19 +5,15 @@ import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.UnauthorizedException
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.DeleteTaskUseCase
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import kotlin.test.Test
 
 class DeleteTaskUseCaseTest {
 
@@ -25,7 +21,6 @@ class DeleteTaskUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var deleteTaskUseCase: DeleteTaskUseCase
     private lateinit var userRepository: UserRepository
-    private val sessionManager: SessionManager = mockk()
 
     private val user = UserEntity(
         name = "Youssef Mohamed",
@@ -38,15 +33,7 @@ class DeleteTaskUseCaseTest {
         taskRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        deleteTaskUseCase = DeleteTaskUseCase(taskRepository, auditRepository, userRepository,sessionManager)
-        coEvery { sessionManager.isAuthenticated() } returns true
-    }
-    @Test
-    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
-        coEvery { sessionManager.isAuthenticated() } returns false
-        assertThrows<UnauthorizedException> {
-            deleteTaskUseCase.invoke(UUID.randomUUID(),UUID.randomUUID())
-        }
+        deleteTaskUseCase = DeleteTaskUseCase(taskRepository, auditRepository, userRepository)
     }
 
     @Test

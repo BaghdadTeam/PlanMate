@@ -2,7 +2,7 @@ package org.baghdad.presentation.task
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
@@ -16,7 +16,17 @@ class TaskStateTransitionUI(
     private val viewer: Viewer,
     private val reader: Reader,
 ) {
-    fun execute(tasksStates: List<StateEntity>, tasks: List<TaskEntity>) {
+    fun execute(tasksStates: List<TaskStateEntity>, tasks: List<TaskEntity>) {
+
+        viewer.logMessage("== All Tasks == ")
+        tasks.forEachIndexed { index, task ->
+            viewer.logMessage("${index + 1}. ${task.title} - ${task.description}")
+        }
+
+        viewer.logMessage("Enter Task Number:")
+        val taskNumber = reader.readInput()?.trim()
+
+        if (taskNumber.isNullOrBlank()) throw Exception("Task ID cannot be null or blank.")
         val taskId = getTaskIdFromUser(tasks)
 
         val taskStateId = getTaskStateIdFromUser(tasksStates)
@@ -58,7 +68,7 @@ class TaskStateTransitionUI(
         return tasks[userTaskNumberChoice.toInt() - 1].id
     }
 
-    private fun getTaskStateIdFromUser(tasksStates: List<StateEntity>): UUID {
+    private fun getTaskStateIdFromUser(tasksStates: List<TaskStateEntity>): UUID {
         viewer.logMessage("== All States == ")
 
         tasksStates.forEachIndexed { index, state ->

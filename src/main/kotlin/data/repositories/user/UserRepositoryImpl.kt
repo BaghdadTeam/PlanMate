@@ -4,7 +4,7 @@ import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.mapper.toDomain
 import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
+import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 import java.util.UUID
 

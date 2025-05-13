@@ -1,18 +1,14 @@
 package org.baghdad.logic.usecase.projectstates
 
-import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.model.exceptions.UnauthorizedException
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import java.util.*
 
 class GetStateByIdUseCase (
-    private val repository: ProjectStatesRepository,
-    private val sessionManager: SessionManager
+    private val repository: ProjectStatesRepository
 ) {
 
-    suspend fun invoke(stateId: UUID): StateEntity {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
+    suspend fun invoke(stateId: UUID): TaskStateEntity {
         return repository.getStateById(stateId)
     }
 }

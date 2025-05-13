@@ -5,27 +5,18 @@ import io.github.classgraph.AnnotationInfoList.emptyList
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class ViewServiceUseCaseTest {
     private val taskRepository: TaskRepository = mockk()
     private val stateRepository: ProjectStatesRepository = mockk()
-    private val sessionManager: SessionManager = mockk()
-    private val useCase = ViewServiceUseCase(taskRepository, stateRepository,sessionManager)
-    @BeforeEach
-    fun setUp() {
-        coEvery { sessionManager.isAuthenticated() } returns true
-    }
+    private val useCase = ViewServiceUseCase(taskRepository, stateRepository)
 
     @Test
     fun `should group tasks by state for given project`() = runTest {
@@ -34,9 +25,9 @@ class ViewServiceUseCaseTest {
         val state1Id = UUID.randomUUID()
         val state2Id = UUID.randomUUID()
 
-        val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
+        val state1 = TaskStateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
         val state2 =
-            StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
+            TaskStateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
         val states = listOf(state1, state2)
 
         val task1 = TaskEntity(
@@ -76,14 +67,14 @@ class ViewServiceUseCaseTest {
     fun `should return empty map when no states exist for project`() = runTest {
         // given
         val projectId = UUID.randomUUID()
-        coEvery { stateRepository.getAllStatesPerProject(projectId) } returns emptyList<StateEntity>()
+        coEvery { stateRepository.getAllStatesPerProject(projectId) } returns emptyList<TaskStateEntity>()
         coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList<TaskEntity>()
 
         // when
         val result = useCase.swimlane(projectId)
 
         // then
-        assertThat(result).isEqualTo(emptyMap<StateEntity, List<TaskEntity>>())
+        assertThat(result).isEqualTo(emptyMap<TaskStateEntity, List<TaskEntity>>())
     }
 
     @Test
@@ -112,9 +103,9 @@ class ViewServiceUseCaseTest {
         val state1Id = UUID.randomUUID()
         val state2Id = UUID.randomUUID()
 
-        val state1 = StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
+        val state1 = TaskStateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = UUID.randomUUID())
         val state2 =
-            StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
+            TaskStateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = UUID.randomUUID())
         val states = listOf(state1, state2)
 
         coEvery { stateRepository.getAllStatesPerProject(projectId) } returns states
@@ -131,10 +122,4 @@ class ViewServiceUseCaseTest {
             )
         )
     }
-    @Test
-    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
-        coEvery { sessionManager.isAuthenticated() } returns false
-        assertThrows <UnauthorizedException> {
-            useCase.swimlane(UUID.randomUUID())
-        }}
 }
