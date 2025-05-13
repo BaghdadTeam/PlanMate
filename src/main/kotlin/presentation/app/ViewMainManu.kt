@@ -20,7 +20,7 @@ class ViewMainManu(
     suspend operator fun invoke() {
         while (true) {
             viewer.logMessage("=== Main Menu ===")
-            viewer.logMessage("1. View projects")
+            viewer.logMessage("1. Project Management")
             viewer.logMessage("2. Create user")
             viewer.logMessage("3. Logout")
             viewer.logMessage("0. Exit")
