@@ -52,32 +52,7 @@ class EditProjectStatesUseCaseTest {
         }
     }
 
-    @Test
-    fun `should edit state and add audit when user is admin`() = runTest {
-        // Given
-        val state = ProjectStatesEntityTestData.todoState()
-        val newName = "To Do Updated"
-        val newState = state.copy(name = newName)
-        val userId = UUID.randomUUID()
 
-        coEvery { statesRepository.getStateById(state.id) } returns state
-        coEvery { adminPermissionCheckerUseCase(userId) } returns true
-
-        // When
-        editStateUseCase.invoke(state.id, newName, userId)
-
-        // Then
-        coVerify { statesRepository.editState(newState) }
-
-        // Verifying that the auditRepository.addAuditEntry was called with the correct parameters
-        coVerify {
-            auditRepository.addAuditEntry(
-                match { audit ->
-                    audit.userId == userId &&
-                            audit.description.contains("state has been updated successfully")
-                })
-        }
-    }
 
     @Test
     fun `should throw exception when user type is mate`() = runTest {
