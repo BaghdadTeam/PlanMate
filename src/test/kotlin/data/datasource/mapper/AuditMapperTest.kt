@@ -8,15 +8,12 @@ import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.enums.UserType
-import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class AuditMapperTest {
@@ -109,7 +106,7 @@ class AuditMapperTest {
         val csvLine = parser.serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityId,UPDATE,[Pixel,Youssef Mohamed],${entity.timestamp}")
+        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,UPDATE,[Pixel,Youssef Mohamed],${entity.timestamp}")
     }
 
     @Test
