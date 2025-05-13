@@ -2,7 +2,6 @@ package org.baghdad.presentation.projectStates
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -15,24 +14,20 @@ class EditProjectStateUI(
     private val reader: Reader
 ) {
 
-    fun execute(projectId: UUID , stateId : UUID) {
+    fun execute(stateId: UUID) {
         val session = sessionManager.currentSession
         val userId = session.userId
 
-        val newState = promptForNewStateDetails(userId, projectId) ?: return
+        val newTaskStateName = promptForNewStateDetails() ?: return
 
-        tryEditState(stateId, newState, userId)
+        tryEditState(stateId, newTaskStateName, userId)
     }
 
 
-    private fun promptForNewStateDetails(userId: UUID, projectId: UUID): TaskStateEntity? {
-        val name = promptForStateName() ?: return null
+    private fun promptForNewStateDetails(): String? {
+        val newTaskStateName = promptForStateName() ?: return null
 
-        return TaskStateEntity(
-            name = name,
-            projectId = projectId,
-            creatorId = userId
-        )
+        return newTaskStateName
     }
 
     private fun promptForStateName(): String? {
@@ -45,10 +40,11 @@ class EditProjectStateUI(
     }
 
 
-    private fun tryEditState(stateId: UUID, newState: TaskStateEntity, userId: UUID) {
+    private fun tryEditState(stateId: UUID, newTaskStateName: String, userId: UUID) {
         try {
             runBlocking {
-                useCase.invoke(stateId, newState, userId)
+                println("This is the new task state name: $newTaskStateName")
+                useCase.invoke(stateId, newTaskStateName, userId)
                 viewer.logMessage("State updated successfully.")
             }
         } catch (e: Exception) {

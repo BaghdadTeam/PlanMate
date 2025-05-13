@@ -1,5 +1,6 @@
 package org.baghdad.presentation.swimlane
 
+import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -13,15 +14,18 @@ class SwimlaneUI(
     private val taskUI: TaskManagementGatherUI,
     private val auditUI: AuditUI,
     private val reader: Reader,
-    private val viewer: Viewer
-
+    private val viewer: Viewer,
+    private val viewServiceUseCase: ViewServiceUseCase
 ) {
-    fun invoke(projectId: UUID) {
+    suspend fun invoke(project: Pair<UUID, String>) {
         try {
-            val swimLane = renderSwimlaneUI.invoke(projectId)
-
-
             while (true) {
+                val projectData =try {
+                  viewServiceUseCase.invoke(project.first)
+                }catch (_:Exception){
+                    emptyMap()
+                }
+                val swimLane= renderSwimlaneUI.invoke(projectData)
                 viewer.logMessage("=== Plan Mate ===")
                 viewer.logMessage(swimLane)
                 viewer.logMessage("1. Manage States (Admin Only)")
@@ -33,17 +37,17 @@ class SwimlaneUI(
                 when (reader.readInput()?.toIntOrNull()) {
                     1 -> {
                         println("Navigating to Project States Screen...")
-                        projectStatesUI.invoke(projectId)
+                        projectStatesUI.invoke(project.first)
                     }
 
                     2 -> {
                         println("Navigating to Tasks Screen...")
-                        taskUI.execute(projectId)
+                        taskUI.execute(projectData , project.first)
                     }
 
                     3 -> {
                         println("Navigating to Audit Log Screen...")
-                        auditUI(projectId)
+                        auditUI(project.first)
                     }
 
                     0 -> {

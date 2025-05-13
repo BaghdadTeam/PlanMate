@@ -2,15 +2,14 @@ package helpers.authentication
 
 import org.baghdad.logic.model.entities.SessionEntity
 import java.time.LocalDateTime
-import java.util.UUID
-import kotlin.random.Random
+import java.util.*
 
 object SessionTestData {
     object TestSession {
-        val id = UUID.randomUUID()
+        val id: UUID = UUID.randomUUID()
         val token = UUID.randomUUID().toString()
         val loginTime: LocalDateTime = LocalDateTime.now()
-        val userId = UUID.randomUUID()
+        val userId: UUID = UUID.randomUUID()
         val line = "$id,$userId,$token,$loginTime"
     }
 

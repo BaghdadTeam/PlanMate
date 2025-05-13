@@ -8,6 +8,6 @@ interface ProjectStatesRepository {
     suspend fun createState(state: TaskStateEntity)
     suspend fun getAllStatesPerProject(projectId: UUID): List<TaskStateEntity>
     suspend fun getStateById(stateId: UUID): TaskStateEntity
-    suspend fun editState(stateId: UUID, newState: TaskStateEntity)
+    suspend fun editState(newState: TaskStateEntity)
     suspend fun deleteState(stateId: UUID)
 }
