@@ -21,7 +21,8 @@ class ProjectStatesRepositoryImp(
         return dataSource.getStateById(stateId)
     }
 
-    override suspend fun editState(stateId: UUID, newState: TaskStateEntity) {
+    override suspend fun editState(newState: TaskStateEntity) {
+        println("Repository: State updated successfully: $newState")
         dataSource.editState(newState)
     }
 

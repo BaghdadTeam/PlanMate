@@ -57,10 +57,10 @@ class EditProjectStatesUseCaseTest {
         coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
 
         // When
-        editStateUseCase.invoke(state.id, newState, adminUser.id)
+        editStateUseCase.invoke(state.id, newName, adminUser.id)
 
         // Then
-        coVerify { statesRepository.editState(state.id, newState) }
+        coVerify { statesRepository.editState(newState) }
 
         val auditSlot = slot<AuditLogEntity>()
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
@@ -79,7 +79,7 @@ class EditProjectStatesUseCaseTest {
 
         // when
         val exception = assertThrows<NotAccessException> {
-            editStateUseCase.invoke(state.id, newState, mateUser.id)
+            editStateUseCase.invoke(state.id, newState.name, mateUser.id)
         }
         // then
         Truth.assertThat(exception.message).contains("Only Admin can edit states")

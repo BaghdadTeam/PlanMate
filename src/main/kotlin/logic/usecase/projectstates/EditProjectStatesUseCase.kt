@@ -14,18 +14,21 @@ class EditProjectStatesUseCase (
     private val userRepository: UserRepository
 ) {
 
-    suspend fun invoke(stateId: UUID, newState: TaskStateEntity, userId: UUID){
+    suspend fun invoke(stateId: UUID, newTaskStateName: String, userId: UUID){
         val user = userRepository.getUserById(userId)
-        if (user.type.name != UserType.Admin.name) throw NotAccessException("Only Admin can edit states")
-        repository.editState(stateId, newState)
+        if (user.type != UserType.Admin) throw NotAccessException("Only Admin can edit states")
+        val state = repository.getStateById(stateId)
+
+        val newState = state.copy(name = newTaskStateName)
+        repository.editState(newState)
         val audit = createAudit(newState, user)
         auditRepository.addAuditEntry(audit)
     }
 
     private fun createAudit(state: TaskStateEntity, user: UserEntity):AuditLogEntity {
-        val action = "create ${state.name} state is updated successfully"
+        val action = "${state.name} state has been updated successfully"
         val audit = AuditLogEntity(
-            entityUnderAudit = Entities.Task.name,
+            entityUnderAudit = Entities.State.name,
             entityUnderAuditId = state.id,
             projectId = state.projectId,
             description = action,
