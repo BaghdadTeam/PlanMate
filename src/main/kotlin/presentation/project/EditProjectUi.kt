@@ -19,14 +19,14 @@ class EditProjectUi(
 
         viewer.logMessage("=== Edit Project ===")
         viewer.logMessage("=== View Project ===")
-        val ids = getAllProjectsUi()
+        val projects = getAllProjectsUi()
 
         viewer.logMessage("Enter new project name: ")
 
         val projectId = reader.readInput()?.toIntOrNull()
         val newName = reader.readInput()
         if (projectId != null && newName != null) {
-            editProjectUseCase(ids[projectId], newName, userId)
+            editProjectUseCase(projects.first[projectId], newName, userId)
         } else {
             viewer.logError("Project Id should be a number")
         }
