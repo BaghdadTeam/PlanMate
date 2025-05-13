@@ -1,9 +1,7 @@
 package org.baghdad.logic.usecase.project
 
-import org.baghdad.logic.model.entities.Action
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.ProjectEntity
+import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.AuditRepository
@@ -25,9 +23,7 @@ class CreateProjectUseCase(
 
         val audit = logProjectCreation(project, userId)
         auditRepository.addAuditEntry(audit)
-
     }
-
     private fun logProjectCreation(
         project: ProjectEntity,
         userId: UUID

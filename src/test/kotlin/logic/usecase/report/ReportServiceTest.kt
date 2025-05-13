@@ -35,8 +35,8 @@ class ReportServiceTest {
         val project = ProjectEntity(id = projectId, name = "Test Project", creatorId = user1Id)
 
         val states = listOf(
-            StateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = user1Id),
-            StateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = user1Id)
+            TaskStateEntity(id = state1Id, name = "To Do", projectId = projectId, creatorId = user1Id),
+            TaskStateEntity(id = state2Id, name = "In Progress", projectId = projectId, creatorId = user1Id)
         )
 
         val tasks = listOf(

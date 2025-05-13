@@ -2,7 +2,7 @@ package org.baghdad.presentation.projectStates
 
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -25,10 +25,10 @@ class EditProjectStateUI(
     }
 
 
-    private fun promptForNewStateDetails(userId: UUID, projectId: UUID): StateEntity? {
+    private fun promptForNewStateDetails(userId: UUID, projectId: UUID): TaskStateEntity? {
         val name = promptForStateName() ?: return null
 
-        return StateEntity(
+        return TaskStateEntity(
             name = name,
             projectId = projectId,
             creatorId = userId
@@ -45,7 +45,7 @@ class EditProjectStateUI(
     }
 
 
-    private fun tryEditState(stateId: UUID, newState: StateEntity, userId: UUID) {
+    private fun tryEditState(stateId: UUID, newState: TaskStateEntity, userId: UUID) {
         try {
             runBlocking {
                 useCase.invoke(stateId, newState, userId)

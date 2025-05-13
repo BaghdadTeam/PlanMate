@@ -2,7 +2,10 @@ package logic.usecase.task
 
 import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
@@ -29,7 +32,6 @@ class UpdateTaskUseCaseTest {
         id = UUID.fromString("9d597711-f9fa-40ca-9f8e-94f59ae957c9"), // <-- Set explicitly
         name = "Youssef Mohamed",
         username = "Pixelise",
-        hashedPassword = "hashedPassword",
         type = UserType.Mate,
     )
 

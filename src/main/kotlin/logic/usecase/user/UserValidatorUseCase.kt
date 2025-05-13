@@ -1,6 +1,11 @@
 package org.baghdad.logic.usecase.user
 
-import org.baghdad.logic.model.exceptions.user.*
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.InvalidNameException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
+import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import java.util.*
@@ -38,6 +43,12 @@ class UserValidatorUseCase(
         }
     }
 
+    private suspend fun checkAdmin(userId: UUID) {
+        val user = userRepository.getUserById(userId)
+        if (user.type != UserType.Admin) {
+            throw UnauthorizedException("Only admins can create users.")
+        }
+    }
 
     private fun validateName(name: String) {
         if (name.isBlank()) throw InvalidNameException("Name must not be empty.")
@@ -54,6 +65,4 @@ class UserValidatorUseCase(
             throw UserAlreadyExistsException("User with username $username already exists.")
         }
     }
-
-
 }

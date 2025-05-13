@@ -1,19 +1,15 @@
 package helpers.projectStates
 
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import java.util.UUID
 
 object ProjectStatesEntityTestData {
 
     fun getAllStatesPerProject() =
-        listOf<StateEntity>(
+        listOf<TaskStateEntity>(
             todoState(), inProgressState(), inReviewState(), readyState(), doneState()
         )
 
-    fun getStatesAfterDelete() =
-        listOf<StateEntity>(
-            todoState(), inProgressState(), inReviewState(), readyState()
-        )
 
     fun todoState() = createProjectStateHelper(
         name = "TODO",
@@ -23,9 +19,6 @@ object ProjectStatesEntityTestData {
         name = "In Progress",
     )
 
-    fun doingState() = createProjectStateHelper(
-        name = "Doing",
-    )
 
     fun inReviewState() = createProjectStateHelper(
         name = "Ready For Review",
@@ -45,7 +38,7 @@ object ProjectStatesEntityTestData {
         name: String = "",
         projectId: UUID = UUID.randomUUID(),
         creatorId: UUID = UUID.randomUUID()
-    ) = StateEntity(
+    ) = TaskStateEntity(
         name = name ,
         projectId = projectId,
         creatorId = creatorId

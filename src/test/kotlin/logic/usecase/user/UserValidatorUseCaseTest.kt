@@ -4,10 +4,8 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.exceptions.user.InvalidNameException
-import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
-import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
-import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
+import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.*
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.user.UserValidatorUseCase
@@ -44,7 +42,7 @@ class UserValidatorUseCaseTest {
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
-        userValidatorUseCase.invoke(TEST_USERNAME, user.hashedPassword, user.name, user.id)
+        userValidatorUseCase.invoke(TEST_USERNAME, user.name, user.id)
 
     }
 
@@ -59,8 +57,8 @@ class UserValidatorUseCaseTest {
         assertThrows<InvalidUsernameException> {
             userValidatorUseCase.invoke(
                 "",
-                user.hashedPassword,
                 user.name,
+                "h213123i",
                 user.id
             )
         }
@@ -76,8 +74,26 @@ class UserValidatorUseCaseTest {
         // When & Then
         assertThrows<UserAlreadyExistsException> {
             userValidatorUseCase.invoke(
-                TEST_USERNAME,
-                user.hashedPassword,
+                "aboud",
+                "password",
+                user.name,
+                user.id
+            )
+        }
+
+    }
+
+    @Test
+    fun `should throw UnauthorizedException when user is not admin`()= runTest {
+        // Given
+        val user = createUserHelper().copy(type = UserType.Mate)
+        coEvery { userRepository.getUserById(user.id) } returns user
+        coEvery { userRepository.isUsernameTaken("aboud") } returns false
+        // When & Then
+        assertThrows<UnauthorizedException> {
+            userValidatorUseCase.invoke(
+                "aboud",
+                "password",
                 user.name,
                 user.id
             )
@@ -96,8 +112,8 @@ class UserValidatorUseCaseTest {
         // When & Then
         assertThrows<InvalidNameException> {
             userValidatorUseCase.invoke(
-                TEST_USERNAME,
-                user.hashedPassword,
+                "aboud",
+                "password",
                 "",
                 user.id
             )
@@ -108,15 +124,15 @@ class UserValidatorUseCaseTest {
     @Test
     fun `should throw InvalidPasswordException when password is blank`() = runTest {
         // Given
-        val user = createUserHelper().copy(hashedPassword = "")
+        val user = createUserHelper()
         coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
         // When & Then
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
-                TEST_USERNAME,
-                user.hashedPassword,
-                TEST_USERNAME,
+                "aboud",
+                "",
+                "aboud",
                 user.id
             )
         }
@@ -132,9 +148,9 @@ class UserValidatorUseCaseTest {
         // when & then
         assertThrows<InvalidPasswordException> {
             userValidatorUseCase.invoke(
-                TEST_USERNAME,
-                user.hashedPassword,
-                TEST_USERNAME,
+                "aboud",
+                "12",
+                "aboud",
                 user.id
             )
         }
@@ -150,8 +166,8 @@ class UserValidatorUseCaseTest {
         assertThrows<InvalidUsernameException> {
             userValidatorUseCase.invoke(
                 "a",
-                user.hashedPassword,
-                TEST_USERNAME,
+                "password",
+                "aboud",
                 user.id
             )
         }

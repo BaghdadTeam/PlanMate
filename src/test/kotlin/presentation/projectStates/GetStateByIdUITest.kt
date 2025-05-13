@@ -4,7 +4,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.projectstates.GetStateByIdUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -31,7 +31,7 @@ class GetStateByIdUITest {
 
     @Test
     fun `should display state name when found`() {
-        val state = StateEntity(name = "In Progress", projectId = UUID.randomUUID(), creatorId = UUID.randomUUID())
+        val state = TaskStateEntity(name = "In Progress", projectId = UUID.randomUUID(), creatorId = UUID.randomUUID())
 
         every { reader.readInput() } returns state.id.toString()
         coEvery { useCase.invoke(state.id) } returns state
@@ -57,7 +57,7 @@ class GetStateByIdUITest {
     fun `should retry when input is blank`() {
         val id = UUID.randomUUID()
         every { reader.readInput() } returnsMany listOf("", "  ", "$id")
-        coEvery { useCase.invoke(id) } returns StateEntity(
+        coEvery { useCase.invoke(id) } returns TaskStateEntity(
             id = id, name = "To Do",
             projectId = UUID.randomUUID(),
             creatorId = UUID.randomUUID()
