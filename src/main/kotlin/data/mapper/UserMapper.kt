@@ -2,8 +2,7 @@ package org.baghdad.data.mapper
 
 import org.baghdad.data.dto.UserDto
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
-
+import org.baghdad.logic.model.enums.UserType
 
 fun UserDto.toDomain(): UserEntity {
     return UserEntity(
