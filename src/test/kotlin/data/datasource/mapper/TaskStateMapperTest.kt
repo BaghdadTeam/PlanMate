@@ -1,7 +1,7 @@
 package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
-import data.datasource.mapper.taskState.TaskStateMapper
+import org.baghdad.data.datasource.mapper.taskState.TaskStateMapper
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -75,5 +75,23 @@ class TaskStateMapperTest {
 
         // Then
         assertThat(csvLine).isEqualTo("$uuid,$name,$projectId,$creatorId")
+    }
+
+    @Test
+    fun `getId returns correct ID as string`() {
+        // Given
+        val uuid = UUID.randomUUID()
+        val entity = TaskStateEntity(
+            id = uuid,
+            name = "TestState",
+            projectId = UUID.randomUUID(),
+            creatorId = UUID.randomUUID(),
+        )
+
+        // When
+        val result = parser.getId(entity)
+
+        // Then
+        assertThat(result).isEqualTo(uuid.toString())
     }
 }

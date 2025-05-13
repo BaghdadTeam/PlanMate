@@ -1,8 +1,8 @@
-package data.datasource.mapper.taskState
+package org.baghdad.data.datasource.mapper.taskState
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.logic.model.entities.TaskStateEntity
-import java.util.UUID
+import java.util.*
 
 class TaskStateMapper : CsvMapper<TaskStateEntity> {
     override fun header(): String {
