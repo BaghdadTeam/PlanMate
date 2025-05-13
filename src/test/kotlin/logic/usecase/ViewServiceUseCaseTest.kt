@@ -1,5 +1,4 @@
 package logic.usecase
-
 import com.google.common.truth.Truth.assertThat
 import io.github.classgraph.AnnotationInfoList.emptyList
 import io.mockk.coEvery
@@ -52,7 +51,7 @@ class ViewServiceUseCaseTest {
         coEvery { taskRepository.getTasksByProjectId(projectId) } returns tasks
 
         // when
-        val result = useCase.swimlane(projectId)
+        val result = useCase.invoke(projectId)
 
         // then
         assertThat(result).isEqualTo(
@@ -71,7 +70,7 @@ class ViewServiceUseCaseTest {
         coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList<TaskEntity>()
 
         // when
-        val result = useCase.swimlane(projectId)
+        val result = useCase.invoke(projectId)
 
         // then
         assertThat(result).isEqualTo(emptyMap<TaskStateEntity, List<TaskEntity>>())
@@ -85,7 +84,7 @@ class ViewServiceUseCaseTest {
 
         // when
         val exception = try {
-            useCase.swimlane(projectId)
+            useCase.invoke(projectId)
             null // This should not be reached
         } catch (e: Exception) {
             e
@@ -112,7 +111,7 @@ class ViewServiceUseCaseTest {
         coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList<TaskEntity>()
 
         // when
-        val result = useCase.swimlane(projectId)
+        val result = useCase.invoke(projectId)
 
         // then
         assertThat(result).isEqualTo(
