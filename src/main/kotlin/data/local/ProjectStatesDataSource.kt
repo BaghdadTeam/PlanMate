@@ -33,7 +33,7 @@ class ProjectStatesDataSource(
     }
 
     suspend fun editState(state: TaskStateEntity) {
-        projectStateDataSource.update(state)
+        projectStateDataSource.update(state.toDto())
     }
 
     suspend fun deleteState(stateId: UUID) {
