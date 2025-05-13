@@ -7,7 +7,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.NotAccessException
@@ -56,7 +55,7 @@ class EditProjectStatesUseCaseTest {
         assertThrows <UnauthorizedException> {
             editStateUseCase.invoke(
                 UUID.randomUUID(),
-                ProjectStatesEntityTestData.todoState(),
+                ProjectStatesEntityTestData.todoState().name,
                 UUID.randomUUID()
             )
         }}
