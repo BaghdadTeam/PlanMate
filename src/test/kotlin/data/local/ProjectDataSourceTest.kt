@@ -4,7 +4,9 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
+import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.local.ProjectDataSource
+import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
@@ -15,7 +17,7 @@ import java.util.*
 import kotlin.test.Test
 
 class ProjectDataSourceTest {
-    private lateinit var dataSource: DataSource<ProjectEntity>
+    private lateinit var dataSource: DataSource<ProjectDto>
     private lateinit var projectStatesDataSource: DataSource<StateEntity>
     private lateinit var taskDataSource: DataSource<TaskEntity>
     private lateinit var projectDataSource: ProjectDataSource
@@ -30,98 +32,101 @@ class ProjectDataSourceTest {
     }
 
     @Test
-    fun `should return data when there is a projects`() = runTest{
+    fun `should return data when there is a projects`() = runTest {
         // Given
-        val projects = listOf(ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()))
-        coEvery { dataSource.loadAll() } returns projects
+        val entity = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
+        val dto = entity.toDto()
+        coEvery { dataSource.loadAll() } returns listOf(dto)
 
         // When
         val result = projectDataSource.getAllProjects()
 
         // Then
-        assert(result == projects)
-
+        assertThat(result).containsExactly(entity)
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when updateProject and there is no projects`() = runTest{
-        // Given
-        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        coEvery { dataSource.loadAll() } returns emptyList()
+    fun `should throw ProjectNotFoundException when updateProject and there is no projects`() =
+        runTest {
+            // Given
+            val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
+            coEvery { dataSource.loadAll() } returns emptyList()
 
-        // When & Then
-        assertThrows<ProjectNotFoundException> { projectDataSource.updateProject(project) }
-    }
-
-    @Test
-    fun `should throw ProjectNotFoundException when deleteProject and there is no projects`()= runTest {
-        // Given
-        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        coEvery { dataSource.loadAll() } returns emptyList()
-
-        // When & Then
-        assertThrows<ProjectNotFoundException> { projectDataSource.deleteProject(project.id) }
-    }
+            // When & Then
+            assertThrows<ProjectNotFoundException> {
+                projectDataSource.updateProject(project)
+            }
+        }
 
     @Test
-    fun `createProject should call append on data source`()= runTest {
+    fun `should throw ProjectNotFoundException when deleteProject and there is no projects`() =
+        runTest {
+            // Given
+            val id = UUID.randomUUID()
+            coEvery { dataSource.loadAll() } returns emptyList()
+
+            // When & Then
+            assertThrows<ProjectNotFoundException> {
+                projectDataSource.deleteProject(id)
+            }
+        }
+
+    @Test
+    fun `createProject should call append on data source`() = runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        coEvery { dataSource.append(project) } just Runs
+        val dto = project.toDto()
+        coEvery { dataSource.append(dto) } just Runs
 
         // When
         projectDataSource.createProject(project)
 
         // Then
-        coVerify { dataSource.append(project) }
+        coVerify { dataSource.append(dto) }
     }
 
     @Test
-    fun `should return project when there is a project with same id`()= runTest {
+    fun `should return project when there is a project with same id`() = runTest {
         // Given
-        val projects = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        coEvery { dataSource.loadAll() } returns listOf(projects)
+        val entity = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
+        val dto = entity.toDto()
+        coEvery { dataSource.loadAll() } returns listOf(dto)
 
         // When
-        val result = projectDataSource.getProjectById(projects.id)
+        val result = projectDataSource.getProjectById(entity.id)
 
         // Then
-        assert(result == projects)
+        assertThat(result).isEqualTo(entity)
     }
 
     @Test
-    fun `should throw ProjectNotFoundException when there is no project with same id`()= runTest {
+    fun `should throw ProjectNotFoundException when there is no project with same id`() = runTest {
         // Given
-        val projects = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        coEvery { dataSource.loadAll() } returns listOf(projects)
+        val entity = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
+        coEvery { dataSource.loadAll() } returns listOf(entity.toDto())
 
         // When & Then
-        assertThrows<ProjectNotFoundException> { projectDataSource.getProjectById(UUID.randomUUID()) }
+        assertThrows<ProjectNotFoundException> {
+            projectDataSource.getProjectById(UUID.randomUUID())
+        }
     }
 
     @Test
-    fun `should return updated project when can update it successfully`()= runTest {
+    fun `should return updated project when can update it successfully`() = runTest {
         // Given
-        val allProjects = listOf(
-            ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()),
-            ProjectEntity(name = "Project 2", creatorId = UUID.randomUUID())
-        )
-        val updatedProject = ProjectEntity(
-            name = "Project 3",
-            creatorId = UUID.randomUUID()
-        ).copy(id = allProjects[1].id)
-
-        coEvery { dataSource.loadAll() } returns allProjects
-        coEvery { dataSource.update(updatedProject) } just Runs
+        val existing = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
+        val updated = existing.copy(name = "Project 3")
+        coEvery { dataSource.loadAll() } returns listOf(existing.toDto())
+        coEvery { dataSource.update(updated.toDto()) } just Runs
 
         // When
-        projectDataSource.updateProject(updatedProject)
+        projectDataSource.updateProject(updated)
 
         // Then
         coVerify {
             dataSource.update(withArg {
-                assertThat(updatedProject.id).isEqualTo(it.id)
-                assertThat("Project 3").isEqualTo(it.name)
+                assertThat(it.id).isEqualTo(updated.id)
+                assertThat(it.name).isEqualTo("Project 3")
             })
         }
     }
@@ -129,38 +134,76 @@ class ProjectDataSourceTest {
     @Test
     fun `should delete project with its states and tasks when delete it successfully`() = runTest {
         // Given
-        val projectIdToDelete = UUID.randomUUID()
-
-        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).copy(id = projectIdToDelete)
-        val projectState = StateEntity(name = "State 1", projectId = projectIdToDelete, creatorId = UUID.randomUUID())
+        val id = UUID.randomUUID()
+        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).copy(id = id)
+        val state = StateEntity(name = "State 1", projectId = id, creatorId = UUID.randomUUID())
         val task = TaskEntity(
             title = "Task 1",
             description = "Description 1",
             stateId = UUID.randomUUID(),
             creatorId = UUID.randomUUID(),
-            projectId = projectIdToDelete
+            projectId = id
         )
 
-        val allProjects = listOf(project)
-        val allStates = listOf(projectState)
-        val allTasks = listOf(task)
-
-        coEvery { dataSource.loadAll() } returns allProjects
-        coEvery { projectStatesDataSource.loadAll() } returns allStates
-        coEvery { taskDataSource.loadAll() } returns allTasks
-
-        coEvery { dataSource.delete(project) } just Runs
-        coEvery { projectStatesDataSource.delete(projectState) } just Runs
+        coEvery { dataSource.loadAll() } returns listOf(project.toDto())
+        coEvery { projectStatesDataSource.loadAll() } returns listOf(state)
+        coEvery { taskDataSource.loadAll() } returns listOf(task)
+        coEvery { dataSource.delete(project.toDto()) } just Runs
+        coEvery { projectStatesDataSource.delete(state) } just Runs
         coEvery { taskDataSource.delete(task) } just Runs
 
-        val projectDataSource = ProjectDataSource(dataSource, projectStatesDataSource, taskDataSource)
-
         // When
-        projectDataSource.deleteProject(projectIdToDelete)
+        projectDataSource.deleteProject(id)
 
         // Then
-        coVerify { dataSource.delete(project) }
-        coVerify { projectStatesDataSource.delete(projectState) }
+        coVerify { dataSource.delete(project.toDto()) }
+        coVerify { projectStatesDataSource.delete(state) }
         coVerify { taskDataSource.delete(task) }
+    }
+
+    @Test
+    fun `deleteProject should not call delete on states and tasks if none are associated`() =
+        runTest {
+            // Given
+            val projectIdToDelete = UUID.randomUUID()
+            val projectToDelete = ProjectEntity(
+                name = "Project to Delete",
+                creatorId = UUID.randomUUID()
+            ).copy(id = projectIdToDelete)
+
+            coEvery { dataSource.loadAll() } returns listOf(projectToDelete.toDto())
+            coEvery { projectStatesDataSource.loadAll() } returns emptyList()
+            coEvery { taskDataSource.loadAll() } returns emptyList()
+            coEvery { dataSource.delete(projectToDelete.toDto()) } just Runs
+
+            // When
+            projectDataSource.deleteProject(projectIdToDelete)
+
+            // Then
+            coVerify { dataSource.delete(projectToDelete.toDto()) }
+            coVerify(exactly = 0) { projectStatesDataSource.delete(any()) }
+            coVerify(exactly = 0) { taskDataSource.delete(any()) }
+        }
+
+    @Test
+    fun `getProjectById throws when project not found in non-empty list`() = runTest {
+        val existingEntity =
+            ProjectEntity(name = "Existing", creatorId = UUID.randomUUID(), id = UUID.randomUUID())
+        coEvery { dataSource.loadAll() } returns listOf(existingEntity.toDto())
+
+        assertThrows<ProjectNotFoundException> {
+            projectDataSource.getProjectById(UUID.randomUUID())
+        }
+    }
+
+    @Test
+    fun `deleteProject does not call delete on dataSource when project not found`() = runTest {
+        coEvery { dataSource.loadAll() } returns emptyList()
+
+        assertThrows<ProjectNotFoundException> {
+            projectDataSource.deleteProject(UUID.randomUUID())
+        }
+
+        coVerify(exactly = 0) { dataSource.delete(any()) }
     }
 }
