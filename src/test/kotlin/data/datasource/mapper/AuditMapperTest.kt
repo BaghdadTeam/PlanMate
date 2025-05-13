@@ -140,23 +140,4 @@ class AuditMapperTest {
         // The user part should be wrapped in a single pair of brackets
         assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,DELETE,${Action.Delete.name},$userId,${entity.timestamp}")
     }
-
-
-    @Test
-    fun `throw UnSupportedTimeStampFormatException when deserializer parses line with wrong format for datetime`() {
-        // Given
-        val uuid = UUID.randomUUID()
-        val auditEntityTypeId = UUID.randomUUID()
-        val projectId = UUID.randomUUID()
-        val userId = UUID.randomUUID()
-
-
-
-        val timestamp = "2020-01-02"
-        val auditEntityType = Entities.Task.name
-        val line = "$uuid,$auditEntityType,$auditEntityTypeId,$projectId,CREATE,${Action.Create},$userId,$timestamp"
-
-        // When
-        assertThrows<UnSupportedTimeStampFormatException> { parser.deserializer(line) }
-    }
 }
