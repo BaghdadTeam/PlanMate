@@ -9,7 +9,6 @@ import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.exceptions.AccessDeniedException
-import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
@@ -31,7 +30,11 @@ class EditProjectStatesUseCaseTest {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         adminPermissionCheckerUseCase = mockk(relaxed = true)
-        editStateUseCase = EditProjectStatesUseCase(statesRepository, auditRepository, adminPermissionCheckerUseCase)
+        editStateUseCase = EditProjectStatesUseCase(
+            statesRepository,
+            auditRepository,
+            adminPermissionCheckerUseCase
+        )
     }
 
     @Test

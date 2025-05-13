@@ -6,11 +6,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.user.UnauthorizedException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -27,7 +25,6 @@ class AdminPermissionCheckerUseCaseTest {
             id = adminUserId,
             type = UserType.Admin,
             username = "admin",
-            hashedPassword = "hash",
             name = "Admin User"
         )
 
@@ -48,7 +45,6 @@ class AdminPermissionCheckerUseCaseTest {
             id = regularUserId,
             type = UserType.Mate,
             username = "regular",
-            hashedPassword = "hash",
             name = "Regular User"
         )
 
@@ -69,7 +65,6 @@ class AdminPermissionCheckerUseCaseTest {
             id = adminUserId,
             type = UserType.Admin,
             username = "admin",
-            hashedPassword = "hash",
             name = "Admin User"
         )
 
@@ -91,7 +86,6 @@ class AdminPermissionCheckerUseCaseTest {
             id = regularUserId,
             type = UserType.Mate,
             username = "regular",
-            hashedPassword = "hash",
             name = "Regular User"
         )
 

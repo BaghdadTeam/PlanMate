@@ -1,7 +1,6 @@
 package org.baghdad.logic.usecase.admin
 
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.user.UnauthorizedException
 import org.baghdad.logic.repositories.UserRepository
 import java.util.UUID
 

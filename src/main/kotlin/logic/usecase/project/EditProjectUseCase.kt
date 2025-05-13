@@ -1,13 +1,13 @@
 package org.baghdad.logic.usecase.project
 
-import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.entities.Action
+import org.baghdad.logic.model.entities.AuditLogEntity
+import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
-import org.baghdad.logic.repositories.UserRepository
-import java.util.*
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import java.util.UUID
 

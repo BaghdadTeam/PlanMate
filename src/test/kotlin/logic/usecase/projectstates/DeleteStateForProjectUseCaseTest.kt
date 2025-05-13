@@ -65,18 +65,19 @@ class DeleteStateForProjectUseCaseTest {
 
 
     @Test
-    fun `should throw AccessDeniedException when adminPermissionCheckerUseCase return false`() = runTest {
-        // Given
-        val userId = UUID.randomUUID()
-        val stateId = UUID.randomUUID()
-        coEvery { adminPermissionCheckerUseCase(userId) } returns false
+    fun `should throw AccessDeniedException when adminPermissionCheckerUseCase return false`() =
+        runTest {
+            // Given
+            val userId = UUID.randomUUID()
+            val stateId = UUID.randomUUID()
+            coEvery { adminPermissionCheckerUseCase(userId) } returns false
 
-        // When
-        val exception = assertThrows<AccessDeniedException> {
-            deleteStateUseCase.invoke(stateId, userId)
+            // When
+            val exception = assertThrows<AccessDeniedException> {
+                deleteStateUseCase.invoke(stateId, userId)
+            }
+
+            // Then
+            Truth.assertThat(exception.message).contains("Not authorized")
         }
-
-        // Then
-        Truth.assertThat(exception.message).contains("Not authorized")
-    }
 }

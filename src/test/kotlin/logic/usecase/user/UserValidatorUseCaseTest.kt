@@ -18,7 +18,6 @@ class UserValidatorUseCaseTest {
 
     private companion object {
         const val TEST_USERNAME = "aboud"
-        const val TEST_NAME = "Test User"
     }
 
 
@@ -42,7 +41,7 @@ class UserValidatorUseCaseTest {
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
-        userValidatorUseCase.invoke(TEST_USERNAME, user.name, user.id)
+        userValidatorUseCase.invoke(TEST_USERNAME,"hi123123" ,user.name, user.id)
 
     }
 
@@ -84,26 +83,6 @@ class UserValidatorUseCaseTest {
     }
 
     @Test
-    fun `should throw UnauthorizedException when user is not admin`()= runTest {
-        // Given
-        val user = createUserHelper().copy(type = UserType.Mate)
-        coEvery { userRepository.getUserById(user.id) } returns user
-        coEvery { userRepository.isUsernameTaken("aboud") } returns false
-        // When & Then
-        assertThrows<UnauthorizedException> {
-            userValidatorUseCase.invoke(
-                "aboud",
-                "password",
-                user.name,
-                user.id
-            )
-        }
-
-    }
-
-
-
-    @Test
     fun `should throw InvalidNameException when name is blank`() = runTest {
         // Given
         val user = createUserHelper()
@@ -141,7 +120,7 @@ class UserValidatorUseCaseTest {
     @Test
     fun `should throw InvalidPasswordException when password is too short`() = runTest {
         // Given
-        val user = createUserHelper().copy(hashedPassword = "12")
+        val user = createUserHelper()
         coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { userRepository.isUsernameTaken(TEST_USERNAME) } returns false
 
