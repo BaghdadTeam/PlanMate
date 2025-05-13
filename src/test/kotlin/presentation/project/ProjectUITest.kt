@@ -131,7 +131,7 @@ class ProjectUiTest {
         every { session.currentSession.userId } returns userId
         coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
-        every { reader.readInput() } returns "1" andThen "0"
+        every { reader.readInput() } returns "2" andThen "0"
 
         projectUi()
 
@@ -145,7 +145,7 @@ class ProjectUiTest {
         every { session.currentSession.userId } returns userId
         coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
-        every { reader.readInput() } returns "2" andThen "0"
+        every { reader.readInput() } returns "3" andThen "0"
 
         projectUi()
 
@@ -159,7 +159,7 @@ class ProjectUiTest {
         every { session.currentSession.userId } returns userId
         coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
-        every { reader.readInput() } returns "3" andThen "0"
+        every { reader.readInput() } returns "4" andThen "0"
 
         projectUi()
 
