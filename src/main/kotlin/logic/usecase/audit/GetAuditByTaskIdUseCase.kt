@@ -14,7 +14,7 @@ class GetAuditByTaskIdUseCase(
     private val sessionManager: SessionManager
 ) {
     suspend operator fun invoke(taskId : UUID): Pair<List<AuditLogEntity>, List<UserEntity>> {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Unauthorized to get audit.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val taskAudit = auditRepository.getAuditByTaskId(taskId)
         val sortedAudit = taskAudit.sortedByDescending { it.timestamp }
         val users = sortedAudit.map { auditEntry ->

@@ -8,6 +8,7 @@ import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -21,7 +22,7 @@ class CreateTaskUseCase(
 ) {
 
     suspend operator fun invoke(task: TaskEntity, userId: UUID) {
-        if (!sessionManager.isAuthenticated()) throw Exception("Not authenticated")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val validatedTask = validateTask(task)
         taskRepository.createTask(validatedTask)
 

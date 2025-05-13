@@ -11,7 +11,7 @@ class GetTasksByStateIdUseCase(
     private val sessionManager: SessionManager,
 ) {
     suspend operator fun invoke(stateId: UUID): List<TaskEntity> {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         return taskRepository.getTasksByStateId(stateId)
     }
 }

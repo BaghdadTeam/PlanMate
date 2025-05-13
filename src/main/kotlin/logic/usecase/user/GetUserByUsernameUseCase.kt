@@ -11,7 +11,7 @@ class GetUserByUsernameUseCase(
     private val sessionManager: SessionManager
 ) {
     suspend operator fun invoke(username: String): UserEntity {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Unauthorized ")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         if (username.isBlank()) {
             throw InvalidUsernameException("Username must not be empty.")
         }

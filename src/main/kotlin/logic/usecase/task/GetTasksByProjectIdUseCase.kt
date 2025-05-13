@@ -12,7 +12,7 @@ class GetTasksByProjectIdUseCase(
 ) {
 
     suspend operator fun invoke(projectId: UUID): List<TaskEntity> {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         return taskRepository.getTasksByProjectId(projectId)
     }
 }

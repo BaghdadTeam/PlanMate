@@ -10,7 +10,7 @@ class ReportUseCase(
     private val sessionManager: SessionManager,
 ) {
     suspend fun generateProjectSummary(): List<ProjectSummaryReport> {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         return reportService.summary()
     }
 }

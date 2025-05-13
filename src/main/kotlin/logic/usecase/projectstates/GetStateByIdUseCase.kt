@@ -12,7 +12,7 @@ class GetStateByIdUseCase (
 ) {
 
     suspend fun invoke(stateId: UUID): TaskStateEntity {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Unauthorized to get states.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         return repository.getStateById(stateId)
     }
 }

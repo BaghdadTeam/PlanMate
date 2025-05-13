@@ -12,7 +12,7 @@ class GetAllStatesPerProjectUseCase(
 ) {
 
     suspend fun invoke(projectId: UUID): List<TaskStateEntity> {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Unauthorized to get states.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         return repository.getAllStatesPerProject(projectId)
     }
 }

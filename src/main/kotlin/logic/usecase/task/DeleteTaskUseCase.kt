@@ -20,7 +20,7 @@ class DeleteTaskUseCase(
 ) {
 
     suspend operator fun invoke(taskId: UUID, userId: UUID) {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Not authenticated")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val task = taskRepository.getTaskById(taskId)
         taskRepository.deleteTask(taskId)
 

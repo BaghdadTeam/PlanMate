@@ -18,7 +18,7 @@ class DeleteStateForProjectUseCase (
 ) {
 
     suspend fun invoke(stateId: UUID, userId: UUID){
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Not authenticated")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val user = userRepository.getUserById(userId)
         if (user.type == UserType.Mate) throw NotAccessException("Only Admin can delete states")
         val state = repository.getStateById(stateId)

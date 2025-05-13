@@ -11,7 +11,7 @@ class GetAllTasksUseCase(
 ) {
 
     suspend operator fun invoke(): List<TaskEntity> {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         return taskRepository.getAllTasks()
     }
 }

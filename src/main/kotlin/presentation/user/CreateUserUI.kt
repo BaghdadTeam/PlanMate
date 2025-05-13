@@ -17,7 +17,7 @@ class CreateUserUI(
     private val session : SessionManager
 ) {
     suspend operator fun invoke() {
-        val userId = session.currentSession?.userId ?:throw UnauthorizedException("User Not logged in.")
+        val userId = session.currentSession.userId
         viewer.logMessage("=== Create New Mate ===")
         viewer.logAuth("Username: ")
         val username = reader.readInput()

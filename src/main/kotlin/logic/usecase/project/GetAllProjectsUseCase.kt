@@ -10,7 +10,7 @@ class GetAllProjectsUseCase(
     private val sessionManager: SessionManager,
 ) {
     suspend operator fun invoke():List<ProjectEntity>{
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         return projectRepository.getAllProjects()
     }
 }

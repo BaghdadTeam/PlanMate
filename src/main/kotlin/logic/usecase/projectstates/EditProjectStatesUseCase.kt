@@ -18,7 +18,7 @@ class EditProjectStatesUseCase (
 ) {
 
     suspend fun invoke(stateId: UUID, newState: TaskStateEntity, userId: UUID){
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Not authenticated")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val user = userRepository.getUserById(userId)
         if (user.type.name != UserType.Admin.name) throw NotAccessException("Only Admin can edit states")
         repository.editState(stateId, newState)

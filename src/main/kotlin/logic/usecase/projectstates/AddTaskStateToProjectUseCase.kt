@@ -19,7 +19,7 @@ class AddTaskStateToProjectUseCase(
 ) {
 
     suspend fun invoke(state: TaskStateEntity, userId: UUID) {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Not authenticated")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
 
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) throw NotAccessException("Only Admin can add states")

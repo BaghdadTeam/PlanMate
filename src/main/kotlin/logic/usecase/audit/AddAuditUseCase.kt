@@ -11,7 +11,7 @@ class AddAuditUseCase(
   private val sessionManager: SessionManager,
 ) {
     suspend operator fun invoke(auditLogEntity: AuditLogEntity) {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("User Not logged in.")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         validateAuditEntity(auditLogEntity)
         auditRepository.addAuditEntry(auditLogEntity)
     }

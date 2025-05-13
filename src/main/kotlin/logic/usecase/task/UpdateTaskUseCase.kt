@@ -22,7 +22,7 @@ class UpdateTaskUseCase(
 ) {
 
     suspend operator fun invoke(newTask: TaskEntity, userId: UUID) {
-        if (!sessionManager.isAuthenticated()) throw UnauthorizedException("Not authenticated")
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val oldTask = taskRepository.getTaskById(newTask.id)
 
         val validatedTask = validateNewTask(newTask)

@@ -19,7 +19,7 @@ class EditProjectUseCase(
 
 ) {
     suspend operator fun invoke(projectId: UUID, projectNewName: String, userId: UUID) {
-        if(!sessionManager.isAuthenticated()) throw UnauthorizedException("Not Authenticated user")
+        if(!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
         if (projectNewName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
