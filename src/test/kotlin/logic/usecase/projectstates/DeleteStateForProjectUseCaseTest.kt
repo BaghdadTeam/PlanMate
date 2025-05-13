@@ -7,10 +7,12 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -27,6 +29,7 @@ class DeleteStateForProjectUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var deleteStateUseCase: DeleteStateForProjectUseCase
     private lateinit var userRepository: UserRepository
+    private val sessionManager: SessionManager = mockk()
 
     private val adminUser = UserEntity(
         name = "Narges Nagy",
@@ -45,9 +48,16 @@ class DeleteStateForProjectUseCaseTest {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        deleteStateUseCase = DeleteStateForProjectUseCase(statesRepository, auditRepository, userRepository)
+        deleteStateUseCase = DeleteStateForProjectUseCase(statesRepository, auditRepository,userRepository, sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
-
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> {
+            deleteStateUseCase.invoke(UUID.randomUUID(), UUID.randomUUID())
+        }
+    }
     @Test
     fun `should delete state and add audit when state is valid`() = runTest{
         // given

@@ -7,19 +7,21 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
-import kotlin.test.Test
 
 class UpdateTaskUseCaseTest {
 
@@ -27,6 +29,7 @@ class UpdateTaskUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var updateTaskUseCase: UpdateTaskUseCase
     private lateinit var userRepository: UserRepository
+    private val sessionManager: SessionManager = mockk()
 
     private val user = UserEntity(
         id = UUID.fromString("9d597711-f9fa-40ca-9f8e-94f59ae957c9"), // <-- Set explicitly
@@ -40,9 +43,14 @@ class UpdateTaskUseCaseTest {
         taskRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        updateTaskUseCase = UpdateTaskUseCase(taskRepository, auditRepository, userRepository)
+        updateTaskUseCase = UpdateTaskUseCase(taskRepository, auditRepository, userRepository,sessionManager,)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
-
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows <UnauthorizedException> { updateTaskUseCase.invoke(TaskEntityTestData.normalTask, UUID.randomUUID())  }
+        }
 
     @Test
     fun `should update task and log audit entry when changes are detected`() = runTest {

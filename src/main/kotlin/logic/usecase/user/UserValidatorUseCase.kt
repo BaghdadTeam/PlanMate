@@ -1,6 +1,7 @@
 package org.baghdad.logic.usecase.user
 
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.InvalidNameException
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.InvalidUsernameException
@@ -43,7 +44,7 @@ class UserValidatorUseCase(
     private suspend fun checkAdmin(userId: UUID) {
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) {
-            throw UnauthorizedException("Only admins can create users.")
+            throw AccessDeniedException("Not authorized")
         }
     }
 

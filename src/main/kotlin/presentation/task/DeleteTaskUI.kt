@@ -38,8 +38,8 @@ class DeleteTaskUI(
     private fun tryDeleteTask(task: TaskEntity) {
         try {
             runBlocking {
-                val session = sessionManager.currentSession
-                useCase(task.id, session.userId)
+                val userId = sessionManager.currentSession.userId
+                useCase(task.id, userId)
 
                 viewer.logMessage("Task deleted successfully.")
             }

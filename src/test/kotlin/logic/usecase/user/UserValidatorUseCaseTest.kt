@@ -78,7 +78,7 @@ class UserValidatorUseCaseTest {
         coEvery { userRepository.getUserById(user.id) } returns user
         coEvery { userRepository.isUsernameTaken("aboud") } returns false
         // When & Then
-        assertThrows<UnauthorizedException> {
+        assertThrows<AccessDeniedException> {
             userValidatorUseCase.invoke(
                 "aboud",
                 "password",

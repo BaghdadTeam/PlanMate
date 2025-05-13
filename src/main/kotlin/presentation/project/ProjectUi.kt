@@ -30,7 +30,7 @@ class ProjectUi(
                 4 -> {
                     viewer.logMessage("=== View Projects ===")
                     val ids = getAllProjectsUi()
-                    viewer.logAuth("Enter project id: ")
+                    viewer.log("Enter project id: ")
                     val projectsId = reader.readInput()?.toIntOrNull()
                     if (projectsId != null) {
                         return ids[projectsId - 1]

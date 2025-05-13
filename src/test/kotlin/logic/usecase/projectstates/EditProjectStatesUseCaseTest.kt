@@ -8,10 +8,12 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -19,6 +21,7 @@ import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 
 class EditProjectStatesUseCaseTest {
 
@@ -26,6 +29,7 @@ class EditProjectStatesUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var editStateUseCase: EditProjectStatesUseCase
     private lateinit var userRepository: UserRepository
+    private val sessionManager: SessionManager = mockk()
 
     private val adminUser = UserEntity(
         name = "Narges Nagy",
@@ -44,8 +48,20 @@ class EditProjectStatesUseCaseTest {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        editStateUseCase = EditProjectStatesUseCase(statesRepository, auditRepository, userRepository)
+        editStateUseCase = EditProjectStatesUseCase(statesRepository, auditRepository, userRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
+
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows <UnauthorizedException> {
+            editStateUseCase.invoke(
+                UUID.randomUUID(),
+                ProjectStatesEntityTestData.todoState(),
+                UUID.randomUUID()
+            )
+        }}
 
     @Test
     fun `should edit state and add audit when user is admin`() = runTest {
