@@ -33,7 +33,7 @@ class AuditMapperTest {
     @Test
     fun `header returns correct CSV header`() {
         assertThat(parser.header())
-            .isEqualTo("id,entityType,entityId,action,user,timestamp")
+            .isEqualTo("id,entityUnderAudit,entityUnderAuditId,projectId,description,action,userId,timestamp")
     }
 
     @Test
@@ -83,7 +83,6 @@ class AuditMapperTest {
         }
     }
 
-
     @Test
     fun `serializer produces correct CSV line`() {
         // Given
@@ -102,11 +101,13 @@ class AuditMapperTest {
             userId = userId,
         )
 
+        val expected = "$uuid,${entity.entityUnderAudit},$entityUnderAuditId,$projectId,UPDATE,Update,$userId,${entity.timestamp}"
+
         // When
-        val csvLine = parser.serializer(entity)
+        val csvLine = AuditMapper().serializer(entity)
 
         // Then
-        assertThat(csvLine).isEqualTo("$uuid,${entity.entityUnderAudit},$entityUnderAuditId,UPDATE,[Pixel,Youssef Mohamed],${entity.timestamp}")
+        assertThat(csvLine).isEqualTo(expected)
     }
 
     @Test

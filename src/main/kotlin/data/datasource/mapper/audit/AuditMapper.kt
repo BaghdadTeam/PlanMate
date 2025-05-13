@@ -4,12 +4,12 @@ import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.utils.parseTimestamp
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
-import java.util.UUID
+import java.util.*
 
 class AuditMapper : CsvMapper<AuditLogEntity> {
 
     override fun header(): String {
-        return "id,entityType,entityId,action,user,timestamp"
+        return "id,entityUnderAudit,entityUnderAuditId,projectId,description,action,userId,timestamp"
     }
 
     override fun deserializer(content: String): AuditLogEntity {
@@ -37,7 +37,7 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
     }
 
     override fun serializer(item: AuditLogEntity): String {
-        return  "${item.id}," +
+        return "${item.id}," +
                 "${item.entityUnderAudit}," +
                 "${item.entityUnderAuditId}," +
                 "${item.projectId}," +
