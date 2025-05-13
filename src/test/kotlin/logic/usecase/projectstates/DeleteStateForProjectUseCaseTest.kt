@@ -31,14 +31,12 @@ class DeleteStateForProjectUseCaseTest {
     private val adminUser = UserEntity(
         name = "Narges Nagy",
         username = "nargesnagy",
-        hashedPassword = "jkjhjkljlk",
         type = UserType.Admin
     )
 
     private val mateUser = UserEntity(
         name = "Narges Nagy",
         username = "narges21",
-        hashedPassword = "tryhghjg",
         type = UserType.Mate
     )
 

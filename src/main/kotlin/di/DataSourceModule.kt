@@ -11,6 +11,7 @@ import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mongodb.CollectionNames
 import org.baghdad.data.datasource.mongodb.MongoDataSourceImpl
 import org.baghdad.data.datasource.mongodb.MongoSetup
+import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.*
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
@@ -68,7 +69,7 @@ val dataSourceModule = module {
         }
     }
 
-    registerMongoDataSource<UserEntity>(Entities.User, CollectionNames.USERS_COLLECTION)
+    registerMongoDataSource<UserDto>(Entities.User, CollectionNames.USERS_COLLECTION)
     registerMongoDataSource<ProjectEntity>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
     registerMongoDataSource<TaskStateEntity>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
     registerMongoDataSource<TaskEntity>(Entities.Task, CollectionNames.TASKS_COLLECTION)

@@ -45,7 +45,7 @@ class TaskStateTransitionUseCaseTest {
         val newStateId = UUID.randomUUID()
         val taskId = UUID.randomUUID()
 
-        user = UserEntity(UUID.randomUUID(), "Test", "testUser", "hash", UserType.Mate)
+        user = UserEntity(UUID.randomUUID(), "Test", "testUser",  UserType.Mate)
 
         oldState = TaskStateEntity(oldStateId, "TODO", projectId, user.id)
         newState = TaskStateEntity(newStateId, "IN_PROGRESS", projectId, user.id)

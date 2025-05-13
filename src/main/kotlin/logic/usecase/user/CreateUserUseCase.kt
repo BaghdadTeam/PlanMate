@@ -9,7 +9,7 @@ import java.util.UUID
 
 class CreateUserUseCase(
     private val userRepository: UserRepository,
-    private val validatorUseCase: UserValidatorUseCase
+    private val validatorUseCase: UserValidatorUseCase,
 ) {
     suspend operator fun invoke(
         username: String,
@@ -18,16 +18,15 @@ class CreateUserUseCase(
         creatorId: UUID
     ): UserEntity {
         validatorUseCase.invoke(username, passwordPlain, name, creatorId)
-        val newUser = createUserEntity(username, passwordPlain, name)
-        userRepository.createUser(newUser)
+        val newUser = createUserEntity(username,  name)
+        userRepository.createUser(newUser,passwordPlain.md5WithSalt())
         return newUser
     }
 
-    private fun createUserEntity(username: String, password: String, name: String): UserEntity {
+    private fun createUserEntity(username: String, name: String): UserEntity {
         return UserEntity(
             name = name,
             username = username,
-            hashedPassword = password.md5WithSalt(),
             type = UserType.Mate
         )
     }

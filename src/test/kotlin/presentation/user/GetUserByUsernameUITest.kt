@@ -26,7 +26,6 @@ class GetUserByUsernameUITest {
     private val sampleUser = UserEntity(
         name           = "Alice",
         username       = "alice",
-        hashedPassword = "hashed",
         type           = UserType.Mate
     )
 

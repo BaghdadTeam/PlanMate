@@ -7,6 +7,7 @@ import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.authentication.LoginUi
+import org.baghdad.presentation.authentication.LogoutUi
 import org.baghdad.presentation.project.CreateProjectUi
 import org.baghdad.presentation.project.DeleteProjectUi
 import org.baghdad.presentation.project.EditProjectUi
@@ -58,6 +59,7 @@ val uiModule = module {
 
     // region :: Auth ::
     single { LoginUi(get(), get(), get()) }
+    single{ LogoutUi(get(),get(),get()) }
 
     // region :: User ::
     single { CreateUserUI(get(), get(), get(), get()) }

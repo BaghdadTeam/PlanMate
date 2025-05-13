@@ -62,7 +62,6 @@ class GetUserByUsernameUseCaseTest {
         return UserEntity(
             name = "Alice",
             username = "alice",
-            hashedPassword = "",
             type = UserType.Mate
         )
     }

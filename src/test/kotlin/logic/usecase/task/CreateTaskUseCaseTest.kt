@@ -32,7 +32,6 @@ class CreateTaskUseCaseTest {
     private val user = UserEntity(
         name = "Youssef Mohamed",
         username = "Pixelise",
-        hashedPassword = "jd12d1sad",
         type = UserType.Mate
     )
 

@@ -33,14 +33,12 @@ class CreateUserUITest {
         id = UUID.randomUUID(),
         name = "Administrator",
         username = "admin",
-        hashedPassword = "hashed",
         type = UserType.Admin
     )
     private val regularMate = UserEntity(
         id = UUID.randomUUID(),
         name = "Regular Mate",
         username = "mate",
-        hashedPassword = "hashed",
         type = UserType.Mate
     )
 
