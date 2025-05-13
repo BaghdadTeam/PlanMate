@@ -20,10 +20,10 @@ import java.util.*
 import kotlin.test.Test
 
 class DeleteProjectUseCaseTest {
-    lateinit var projectRepository: ProjectRepository
-    lateinit var userRepository: UserRepository
-    lateinit var deleteProjectUseCase: DeleteProjectUseCase
-    lateinit var auditRepository: AuditRepository
+    private lateinit var projectRepository: ProjectRepository
+    private lateinit var userRepository: UserRepository
+    private lateinit var deleteProjectUseCase: DeleteProjectUseCase
+    private lateinit var auditRepository: AuditRepository
 
     @BeforeEach
     fun setUp() {

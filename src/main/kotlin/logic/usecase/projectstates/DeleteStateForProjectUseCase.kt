@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase.projectstates
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.StateEntity
@@ -28,12 +29,14 @@ class DeleteStateForProjectUseCase (
     }
 
     private fun createAudit(state: StateEntity, user: UserEntity):AuditLogEntity {
-        val action = "delete  state is deleted successfully"
+        val description = "delete  state is deleted successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = state.id,
             projectId = state.projectId,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Delete,
+            userId = user.id,
         )
         return audit
 

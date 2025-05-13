@@ -1,10 +1,8 @@
 package org.baghdad.presentation.task
 
 import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.presentation.StateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.*
@@ -15,7 +13,7 @@ class TaskManagementGatherUI(
     private val createTaskUI: CreateTaskUI,
     private val editTaskUI: UpdateTaskUI,
     private val deleteTaskUI: DeleteTaskUI,
-    private val changeTaskStateUI: StateTransitionUI,
+    private val changeTaskStateUI: TaskStateTransitionUI,
     private val viewServiceUseCase: ViewServiceUseCase
 ) {
 
@@ -30,11 +28,12 @@ class TaskManagementGatherUI(
         }catch (_:Exception){
             emptyMap()
         }
-        viewer.logMessage("")
+        viewer.logMessage("=== Task Management ===")
         viewer.logMessage("1. Create Task")
         viewer.logMessage("2. Edit Task")
         viewer.logMessage("3. Delete Task")
         viewer.logMessage("4. Change Task State")
+        viewer.logMessage("0. Back to Previous Screen")
         viewer.logMessage("Enter your choice: ")
 
         when (reader.readInput()?.trim()) {
@@ -42,6 +41,7 @@ class TaskManagementGatherUI(
             "2" -> promptEdit(project.values.flatten())
             "3" -> promptDelete(project.values.flatten())
             "4" -> changeTaskStateUI.execute(project.keys.toList(),project.values.flatten())
+            "0" -> return
             else -> {
                 viewer.logError("Invalid choice. Please try again.")
 //                showOptions(projectId, tasksStatesIds, tasks)
