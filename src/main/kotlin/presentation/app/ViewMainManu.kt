@@ -1,5 +1,7 @@
 package org.baghdad.presentation.app
 
+import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.project.ProjectUi
@@ -12,13 +14,21 @@ class ViewMainManu(
     private val createUserUI: CreateUserUI,
     private val viewer: Viewer,
     private val reader: Reader,
-    private val swimlaneUI: SwimlaneUI
+    private val swimlaneUI: SwimlaneUI,
+    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
+    private val session: SessionManager
 ) {
     suspend operator fun invoke() {
+        val userId = session.currentSession.userId
+
         while (true) {
             viewer.logMessage("=== Main Menu ===")
             viewer.logMessage("1. View projects")
-            viewer.logMessage("2. Create user")
+
+            if (adminPermissionCheckerUseCase(userId)) {
+                viewer.logMessage("2. Create user")
+            }
+
             viewer.logMessage("0. Exit")
             when (reader.readInput()?.toIntOrNull()) {
                 1 -> {
@@ -30,10 +40,21 @@ class ViewMainManu(
                     }
                 }
 
-                2 -> createUserUI.invoke()
+                2 -> {
+                    if (adminPermissionCheckerUseCase(userId)) {
+                        createUserUI.invoke()
+                    } else {
+                        viewer.logMessage("Invalid choice. Please try again.")
+                    }
+                }
+
                 0 -> {
                     viewer.logMessage("Goodbye!")
                     exitProcess(0)
+                }
+
+                else -> {
+                    viewer.logMessage("Invalid choice. Please try again.")
                 }
             }
 
