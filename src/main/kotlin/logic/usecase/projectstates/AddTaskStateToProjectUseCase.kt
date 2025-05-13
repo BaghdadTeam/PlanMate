@@ -16,7 +16,7 @@ class AddTaskStateToProjectUseCase(
     private val userRepository: UserRepository
 ) {
 
-    suspend fun invoke(state: TaskStateEntity, userId: UUID){
+    suspend fun invoke(state: TaskStateEntity, userId: UUID) {
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) throw NotAccessException("Only Admin can add states")
 
@@ -27,13 +27,15 @@ class AddTaskStateToProjectUseCase(
         auditRepository.addAuditEntry(audit)
     }
 
-    private fun createAudit(state: TaskStateEntity, user: UserEntity):AuditLogEntity {
-        val action = "create ${state.name} state is created successfully"
+    private fun createAudit(state: TaskStateEntity, user: UserEntity): AuditLogEntity {
+        val description = "create ${state.name} state is created successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = state.id,
             projectId = state.projectId,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Create,
+            userId = user.id,
         )
         return audit
     }

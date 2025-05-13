@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase.project
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.entities.ProjectEntity
@@ -38,12 +39,14 @@ class EditProjectUseCase(
         user: UserEntity
     ): AuditLogEntity {
 
-        val action = "name change form “${oldProject.name}” to “${newProject.name}” "
+        val description = "name change form “${oldProject.name}” to “${newProject.name}” "
         return AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
+            entityUnderAuditId = oldProject.id,
             projectId = oldProject.id,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Update,
+            userId = user.id,
         )
     }
 }

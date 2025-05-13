@@ -17,10 +17,10 @@ import java.util.*
 import kotlin.test.Test
 
 class EditProjectUseCaseTest {
-    lateinit var projectRepository: ProjectRepository
-    lateinit var userRepository: UserRepository
-    lateinit var editProjectUseCase: EditProjectUseCase
-    lateinit var auditRepository: AuditRepository
+    private lateinit var projectRepository: ProjectRepository
+    private lateinit var userRepository: UserRepository
+    private lateinit var editProjectUseCase: EditProjectUseCase
+    private lateinit var auditRepository: AuditRepository
 
     @BeforeEach
     fun setUp() {

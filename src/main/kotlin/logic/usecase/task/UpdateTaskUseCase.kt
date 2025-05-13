@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase.task
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.entities.TaskEntity
@@ -9,7 +10,7 @@ import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import java.util.*
+import java.util.UUID
 
 class UpdateTaskUseCase(
     private val taskRepository: TaskRepository,
@@ -50,13 +51,15 @@ class UpdateTaskUseCase(
         if (changes.isEmpty()) return
 
         // join them with “and” for readability
-        val action = "Task “${oldTask.title}” was updated: ${changes.joinToString(" and ")}"
+        val description = "Task “${oldTask.title}” was updated: ${changes.joinToString(" and ")}"
 
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = newTask.id,
             projectId = newTask.projectId,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Update,
+            userId = user.id,
         )
         auditRepository.addAuditEntry(audit)
     }

@@ -51,7 +51,6 @@ val useCaseModule = module {
     // endregion
 
     // region  ::  Project Use Cases  ::
-
     single { CreateProjectUseCase(get(), get(), get()) }
     single { DeleteProjectUseCase(get(), get(), get()) }
     single { EditProjectUseCase(get(), get(), get()) }
@@ -70,8 +69,8 @@ val useCaseModule = module {
 
     // region :: Audit ::
     single { AddAuditUseCase(get()) }
-    single { GetAuditByTaskIdUseCase(get()) }
-    single { GetAuditByProjectIdUseCase(get() , get() , get()) }
+    single { GetAuditByTaskIdUseCase(get() , get()) }
+    single { GetAuditByProjectIdUseCase(get() , get()) }
     // endregion
 
     // region :: Swimlane ::

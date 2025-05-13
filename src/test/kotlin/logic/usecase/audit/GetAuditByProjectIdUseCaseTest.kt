@@ -1,86 +1,59 @@
 package logic.usecase.audit
 
 import com.google.common.truth.Truth.assertThat
+import helpers.audit.AuditTestData
+import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
+import jdk.internal.net.http.common.Pair.pair
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.repositories.AuditRepository
-import org.baghdad.logic.repositories.ProjectStatesRepository
-import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 class GetAuditByProjectIdUseCaseTest {
 
     private lateinit var auditRepository: AuditRepository
-    private lateinit var projectStatesRepository: ProjectStatesRepository
-    private lateinit var taskRepository: TaskRepository
+    private lateinit var userRepository : UserRepository
     private lateinit var getAuditByProjectIdUseCase: GetAuditByProjectIdUseCase
-
-    private val mockUser = UserEntity(
-        name = "Audit User",
-        username = "audituser",
-        hashedPassword = "hashed",
-        type = UserType.Admin
-    )
 
     @BeforeEach
     fun setup() {
         auditRepository = mockk(relaxed = true)
-        projectStatesRepository = mockk(relaxed = true)
-        taskRepository = mockk(relaxed = true)
+        userRepository = mockk(relaxed = true)
         getAuditByProjectIdUseCase =
-            GetAuditByProjectIdUseCase(auditRepository, projectStatesRepository, taskRepository)
+            GetAuditByProjectIdUseCase(auditRepository , userRepository)
     }
 
     @Test
     fun `should fetch and combine all audit logs for project`() = runTest {
-        val projectId = UUID.randomUUID()
+        // Given
+        val user = createUserHelper()
+        val audit1 = AuditTestData.createAuditHelper()
+        val audit2 = audit1.copy(projectId = audit1.projectId)
+        val audit3 = audit1.copy(projectId = audit1.projectId)
 
-        // Prepare mock data for the audit logs
-        val audit1 = AuditLogEntity(
-            id = UUID.randomUUID(),
-            entityUnderAudit = "Task",
-            projectId = projectId,
-            action = "Created",
-            user = mockUser,
-            timestamp = LocalDateTime.now().minusDays(1)
-        )
 
-        val audit2 = AuditLogEntity(
-            id = UUID.randomUUID(),
-            entityUnderAudit = "Project",
-            projectId = projectId,
-            action = "Updated",
-            user = mockUser,
-            timestamp = LocalDateTime.now().minusDays(2)
-        )
+        coEvery { auditRepository.getAuditByProjectId(audit1.projectId) } returns listOf(
+            audit1,
+            audit2,
+            audit3)
+        coEvery { userRepository.getUserById(audit1.userId) } returns user
 
-        val audit3 = AuditLogEntity(
-            id = UUID.randomUUID(),
-            entityUnderAudit = "State",
-            projectId = projectId,
-            action = "Created",
-            user = mockUser,
-            timestamp = LocalDateTime.now()
-        )
+        // when
+        val auditLogs = getAuditByProjectIdUseCase.invoke(audit1.projectId)
 
-        coEvery { auditRepository.getAuditByProjectId(projectId) } returns listOf(audit1, audit2, audit3)
-
-        // Run the use case
-        val auditLogs = getAuditByProjectIdUseCase.invoke(projectId)
-
-        // Define the expected list of audit logs
-        val expectedAuditLogs = listOf(audit3, audit1, audit2)
-
-        // Verify that the fetched logs are as expected
-        assertThat(expectedAuditLogs.size).isEqualTo(auditLogs.size)
+        // then
+        val expectedAuditLogs = Pair(listOf(audit3, audit1, audit2) , listOf(user,user,user))
+        assertThat(expectedAuditLogs.first.size).isEqualTo(auditLogs.first.size)
+        assertThat(expectedAuditLogs.second.size).isEqualTo(auditLogs.second.size)
         assertThat(expectedAuditLogs).isEqualTo(auditLogs)
     }
 
@@ -89,42 +62,35 @@ class GetAuditByProjectIdUseCaseTest {
         val projectId = UUID.randomUUID()
 
         coEvery { auditRepository.getAuditByProjectId(any()) } returns emptyList()
-        coEvery { projectStatesRepository.getAllStatesPerProject(projectId) } returns emptyList()
-        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
 
         val result = getAuditByProjectIdUseCase.invoke(projectId)
 
-        assertThat(result).isEmpty()
+        assertThat(result.first).isEmpty()
     }
 
     @Test
     fun `should return audits sorted by descending timestamp`() = runTest {
-        val projectId = UUID.randomUUID()
-        val auditOld = AuditLogEntity(
-            UUID.randomUUID(),
-            "Project",
-            projectId,
-            "Old log",
-            mockUser,
-            LocalDateTime.now().minusDays(2)
+        // Given
+        val auditOld = AuditTestData.createAuditHelper(timestamp = LocalDateTime.now().minusDays(2))
+        val auditMid = AuditTestData.createAuditHelper(
+            timestamp = LocalDateTime.now().minusDays(1),
+            projectId = auditOld.projectId
         )
-        val auditMid = AuditLogEntity(
-            UUID.randomUUID(),
-            "Project",
-            projectId,
-            "Mid log",
-            mockUser,
-            LocalDateTime.now().minusDays(1)
+        val auditNew = AuditTestData.createAuditHelper(
+            projectId = auditOld.projectId
         )
-        val auditNew = AuditLogEntity(UUID.randomUUID(), "Project", projectId, "New log", mockUser, LocalDateTime.now())
 
-        coEvery { auditRepository.getAuditByProjectId(projectId) } returns listOf(auditOld, auditMid, auditNew)
-        coEvery { projectStatesRepository.getAllStatesPerProject(projectId) } returns emptyList()
-        coEvery { taskRepository.getTasksByProjectId(projectId) } returns emptyList()
+        coEvery { auditRepository.getAuditByProjectId(projectId = auditOld.projectId) } returns listOf(
+            auditOld,
+            auditMid,
+            auditNew
+        )
 
-        val result = getAuditByProjectIdUseCase.invoke(projectId)
+        // when
+        val result = getAuditByProjectIdUseCase.invoke(projectId = auditOld.projectId)
+        val timestamps = result.first.map { it.timestamp }
 
-        val timestamps = result.map { it.timestamp }
+        // then
         assertThat(timestamps).isEqualTo(timestamps.sortedDescending())
     }
 }
