@@ -26,5 +26,5 @@ val repositoryModule = module {
     single<AuthenticationRepository> { AuthenticationRepositoryImpl(get(), get()) }
     single<UserRepository> { UserRepositoryImpl(get()) }
     single<AuditRepository> { AuditRepositoryImpl(get()) }
-    single<ProjectRepository> { ProjectRepositoryImpl(get(named(Entities.Project))) }
+    single<ProjectRepository> { ProjectRepositoryImpl(get()) }
 }

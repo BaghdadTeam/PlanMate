@@ -1,40 +1,32 @@
 package org.baghdad.data.repositories.project
 
-import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.dto.project.ProjectDto
-import org.baghdad.data.mapper.toDto
-import org.baghdad.data.mapper.toEntity
+import org.baghdad.data.local.ProjectDataSource
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import org.baghdad.logic.repositories.ProjectRepository
 import java.util.UUID
 
 class ProjectRepositoryImpl(
-    private val dataSource: DataSource<ProjectDto>
+    private val dataSource: ProjectDataSource
 ) : ProjectRepository {
+
     override suspend fun createProject(project: ProjectEntity) {
-        dataSource.append(project.toDto())
+        dataSource.createProject(project)
     }
 
     override suspend fun getProjectById(id: UUID): ProjectEntity {
-        return dataSource.loadAll()
-            .find { it.id == id }
-            ?.toEntity()
-            ?: throw ProjectNotFoundException("Project with id $id not found")
+        return dataSource.getProjectById(id)
     }
 
     override suspend fun getAllProjects(): List<ProjectEntity> {
-        return dataSource.loadAll().map { it.toEntity() }
+        return dataSource.getAllProjects()
     }
 
     override suspend fun deleteProject(id: UUID) {
-        dataSource.loadAll()
-            .find { it.id == id }
-            ?.also { dataSource.delete(it) }
-            ?: throw ProjectNotFoundException("Project with id $id not found")
+        dataSource.deleteProject(id)
     }
 
+
     override suspend fun editProject(project: ProjectEntity) {
-        dataSource.update(project.toDto())
+        dataSource.updateProject(project)
     }
 }
