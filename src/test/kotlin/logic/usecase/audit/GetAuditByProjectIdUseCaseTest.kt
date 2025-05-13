@@ -6,6 +6,7 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
@@ -19,14 +20,18 @@ class GetAuditByProjectIdUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var userRepository : UserRepository
     private lateinit var getAuditByProjectIdUseCase: GetAuditByProjectIdUseCase
+    private val sessionManager = mockk<SessionManager>(relaxed = true)
 
     @BeforeEach
     fun setup() {
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
         getAuditByProjectIdUseCase =
-            GetAuditByProjectIdUseCase(auditRepository , userRepository)
+            GetAuditByProjectIdUseCase(auditRepository , userRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
+
+
 
     @Test
     fun `should fetch and combine all audit logs for project`() = runTest {

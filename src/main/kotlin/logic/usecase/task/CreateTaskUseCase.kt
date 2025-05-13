@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase.task
 
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.enums.Entities
@@ -15,10 +16,12 @@ import java.util.UUID
 class CreateTaskUseCase(
     private val taskRepository: TaskRepository,
     private val auditRepository: AuditRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ) {
 
     suspend operator fun invoke(task: TaskEntity, userId: UUID) {
+        if (!sessionManager.isAuthenticated()) throw Exception("Not authenticated")
         val validatedTask = validateTask(task)
         taskRepository.createTask(validatedTask)
 

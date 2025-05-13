@@ -24,6 +24,14 @@ class AddAuditUseCaseTest {
         coEvery { sessionManager.isAuthenticated() } returns true
 
     }
+    @Test
+    fun `Should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<Exception> {
+            addAuditUseCase.invoke(AuditTestData.createAuditHelper())
+        }
+
+    }
 
     @Test
     fun `should throw no exception when add audit`() = runTest {

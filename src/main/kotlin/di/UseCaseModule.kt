@@ -31,8 +31,8 @@ val useCaseModule = module {
     // region  ::  Task Use Cases  ::
 
     single { TaskStateTransitionUseCase(get(), get(), get(), get()) }
-    single { CreateTaskUseCase(get(), get(), get()) }
-    single { DeleteTaskUseCase(get(), get(), get()) }
+    single { CreateTaskUseCase(get(), get(), get(),get()) }
+    single { DeleteTaskUseCase(get(), get(), get(),get()) }
     single { UpdateTaskUseCase(get(), get(), get(),get()) }
     single { GetTasksByStateIdUseCase(get(),get()) }
     single { GetAllTasksUseCase(get(),get()) }
@@ -52,8 +52,8 @@ val useCaseModule = module {
 
     // region  ::  Project Use Cases  ::
     single { CreateProjectUseCase(get(), get(), get(),get()) }
-    single { DeleteProjectUseCase(get(), get(), get()) }
-    single { EditProjectUseCase(get(), get(), get()) }
+    single { DeleteProjectUseCase(get(), get(), get(),get()) }
+    single { EditProjectUseCase(get(), get(), get(),get()) }
     single { GetAllProjectsUseCase(get(),get()) }
     // endregion
 
@@ -69,8 +69,8 @@ val useCaseModule = module {
 
     // region :: Audit ::
     single { AddAuditUseCase(get(),get()) }
-    single { GetAuditByTaskIdUseCase(get() , get()) }
-    single { GetAuditByProjectIdUseCase(get() , get()) }
+    single { GetAuditByTaskIdUseCase(get() , get(),get()) }
+    single { GetAuditByProjectIdUseCase(get() , get(),get()) }
     // endregion
 
     // region :: Swimlane ::
