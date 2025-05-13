@@ -4,13 +4,10 @@ import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
-import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import java.util.UUID
 
@@ -19,8 +16,8 @@ class CreateProjectUseCase(
     private val auditRepository: AuditRepository,
     private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
 ) {
-    suspend operator fun invoke(projectName: String, userId : UUID){
-        if(!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
+    suspend operator fun invoke(projectName: String, userId: UUID) {
+        if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
         if (projectName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
 
         val project = ProjectEntity(name = projectName, creatorId = userId)
@@ -30,6 +27,7 @@ class CreateProjectUseCase(
         auditRepository.addAuditEntry(audit)
 
     }
+
     private fun logProjectCreation(
         project: ProjectEntity,
         userId: UUID
