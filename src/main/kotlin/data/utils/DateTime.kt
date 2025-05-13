@@ -13,3 +13,4 @@ fun parseTimestamp(timestampString: String): LocalDateTime {
         throw UnSupportedTimeStampFormatException("Invalid timestamp format: $timestampString. Expected: yyyy-MM-dd'T'HH:mm:ss'Z'")
     }
 }
+

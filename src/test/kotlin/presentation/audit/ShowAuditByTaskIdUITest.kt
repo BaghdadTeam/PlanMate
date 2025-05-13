@@ -1,17 +1,16 @@
 package presentation.audit
 
+import helpers.audit.AuditTestData
 import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.exceptions.NoTaskFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
-import org.baghdad.logic.usecase.user.GetUserByUserIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.utils.formatTimestamp
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.test.Test
@@ -19,7 +18,6 @@ import kotlin.test.Test
 class ShowAuditByTaskIdUITest {
     private lateinit var showAuditByTaskIdUI: ShowAuditByTaskIdUI
     private lateinit var getAuditByTaskIdUseCase: GetAuditByTaskIdUseCase
-    private lateinit var getUserByIdUseCase: GetUserByUserIdUseCase
     private lateinit var viewer: Viewer
 
 
@@ -27,8 +25,7 @@ class ShowAuditByTaskIdUITest {
     fun setup() {
         viewer = mockk(relaxed = true)
         getAuditByTaskIdUseCase = mockk(relaxed = true)
-        getUserByIdUseCase = mockk(relaxed = true)
-        showAuditByTaskIdUI = ShowAuditByTaskIdUI(getAuditByTaskIdUseCase, getUserByIdUseCase , viewer )
+        showAuditByTaskIdUI = ShowAuditByTaskIdUI(getAuditByTaskIdUseCase, viewer )
     }
 
 
@@ -79,28 +76,19 @@ class ShowAuditByTaskIdUITest {
     @Test
     fun `should show audits by Task ID when getAuditByTaskIdUseCase returns audits`(){
         // Given
-        val user = createUserHelper()
-        val taskID = UUID.randomUUID()
-        val auditEntities = listOf(
-            AuditLogEntity(
-            entityUnderAudit = Entities.Task.name,
-            projectId = taskID,
-            action = "Create Task Aboud",
-            userId = user.id ,
-        )
-        )
+        val auditEntities = listOf(AuditTestData.createAuditHelper())
+        val user = createUserHelper(id = auditEntities[0].userId)
+
         // When
-        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } returns auditEntities
-        coEvery { getUserByIdUseCase.invoke(user.id) } returns user
+        coEvery { getAuditByTaskIdUseCase.invoke(auditEntities[0].entityUnderAuditId) } returns Pair((auditEntities), listOf(user))
 
         // Then
-        showAuditByTaskIdUI.execute(taskID)
+        showAuditByTaskIdUI.execute(auditEntities[0].entityUnderAuditId)
 
-        verify { viewer.logMessage("1 :" +
-                " ${user.type} " +
-                " ${user.name} " +
-                " ${auditEntities[0].action} " +
-                "at ${auditEntities[0].timestamp}") }
-
+        verify { viewer.logMessage("1: " +
+                "${user.type} " +
+                "${user.name} " +
+                "${auditEntities[0].description} " +
+                "at ${formatTimestamp(auditEntities[0].timestamp)}") }
     }
 }

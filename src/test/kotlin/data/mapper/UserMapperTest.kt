@@ -1,6 +1,6 @@
 package data.mapper
 
-import org.baghdad.data.dto.user.UserDto
+import org.baghdad.data.dto.UserDto
 import org.baghdad.data.mapper.toDomain
 import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.UserEntity
@@ -10,22 +10,22 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class UserMapperTest {
-@Test
-fun `UserDto maps to UserEntity correctly`() {
-    val dto = UserDto(
-        id = UUID.randomUUID(),
-        username = "ali.dev",
-        name = "Ali Hussein",
-        hashedPassword = "hashed123",
-        type = UserType.Mate.name
-    )
+    @Test
+    fun `UserDto maps to UserEntity correctly`() {
+        val dto = UserDto(
+            id = UUID.randomUUID(),
+            username = "ali.dev",
+            name = "Ali Hussein",
+            hashedPassword = "hashed123",
+            type = UserType.Mate.name
+        )
 
-    val entity = dto.toDomain()
+        val entity = dto.toDomain()
 
-    assertEquals(dto.id, entity.id)
-    assertEquals(dto.username, entity.username)
-    assertEquals(dto.name, entity.name)
-}
+        assertEquals(dto.id, entity.id)
+        assertEquals(dto.username, entity.username)
+        assertEquals(dto.name, entity.name)
+    }
     @Test
     fun `UserEntity maps to UserDto correctly`() {
         val entity = UserEntity(

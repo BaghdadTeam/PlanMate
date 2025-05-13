@@ -14,7 +14,7 @@ class ViewMainManu(
     private val viewer: Viewer,
     private val reader: Reader,
     private val swimlaneUI: SwimlaneUI,
-    private val logoutUseCase: LogoutUi
+    private val logoutUI: LogoutUi
 ) {
     suspend operator fun invoke() {
         while (true) {
@@ -23,7 +23,6 @@ class ViewMainManu(
             viewer.logMessage("2. Create user")
             viewer.logMessage("3. Logout")
             viewer.logMessage("0. Exit")
-            viewer.log("Enter here : ")
             when (reader.readInput()?.toIntOrNull()) {
                 1 -> {
                     val projectId = projectUi.invoke()
@@ -35,7 +34,7 @@ class ViewMainManu(
                 }
 
                 2 -> createUserUI.invoke()
-                3-> logoutUseCase.execute()
+                3->logoutUI.execute()
                 0 -> {
                     viewer.logMessage("Goodbye!")
                     exitProcess(0)

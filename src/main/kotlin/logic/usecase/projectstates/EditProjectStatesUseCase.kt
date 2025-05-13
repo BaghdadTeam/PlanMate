@@ -26,11 +26,13 @@ class EditProjectStatesUseCase (
     }
 
     private fun createAudit(state: StateEntity, user: UserEntity):AuditLogEntity {
-        val action = "create ${state.name} state is updated successfully"
+        val action = "${state.name} state is updated successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = state.id,
             projectId = state.projectId,
-            action = action,
+            description = action,
+            action = Action.Update,
             userId = user.id,
         )
         return audit

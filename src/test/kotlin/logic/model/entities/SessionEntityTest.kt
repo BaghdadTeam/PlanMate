@@ -1,6 +1,7 @@
 package org.baghdad.logic.model.entities
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -21,6 +22,7 @@ class SessionEntityTest {
         // Then
         assertFalse(result)
     }
+
     @Test
     fun `isExpired should return true when session is past expiration time`() {
         // Given

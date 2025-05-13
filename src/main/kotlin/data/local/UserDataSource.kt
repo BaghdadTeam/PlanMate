@@ -1,7 +1,8 @@
 package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.dto.user.UserDto
+import org.baghdad.data.dto.UserDto
+import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import java.util.UUID
 
@@ -15,7 +16,7 @@ class UserDataSource(
     }
 
     suspend fun findUserByUsername(username: String): UserDto {
-        return loadUsers().firstOrNull{ it.username == username }
+        return loadUsers().firstOrNull() { it.username == username }
             ?: throw UserNotFoundException("User not found with username: $username")
     }
 

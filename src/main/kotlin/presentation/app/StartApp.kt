@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.exceptions.SessionEndedException
 import org.baghdad.logic.model.exceptions.SessionNotFoundException
-import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.presentation.authentication.LoginUi
 import org.baghdad.presentation.output.Viewer
 
@@ -19,8 +18,6 @@ class StartApp(
 
             resolveActiveSession()
             viewMainManu()
-        } catch (_: UnauthorizedException) {
-            viewer.logMessage("Unauthorized user")
         } catch (e: Exception) {
             viewer.logError("Something went wrong: ${e.message}")
         }

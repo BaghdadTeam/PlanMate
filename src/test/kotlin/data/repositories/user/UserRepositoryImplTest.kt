@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.baghdad.data.dto.user.UserDto
+import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.data.mapper.toDto
 import org.baghdad.data.repositories.user.UserRepositoryImpl
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
+
 
 class UserRepositoryImplTest {
 

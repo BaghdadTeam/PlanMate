@@ -10,7 +10,8 @@ import kotlin.system.exitProcess
 class LogoutUi(
     private val useCase: LogoutUseCase,
     private val reader: Reader,
-    private val viewer: Viewer
+    private val viewer: Viewer,
+    private val exit: () -> Unit = { exitProcess(0) }
 ) {
     fun execute() {
         runBlocking {
@@ -21,13 +22,13 @@ class LogoutUi(
                 if (userChoice != null) {
                     if (userChoice == "y") {
                         useCase.invoke()
-                        exitProcess(0)
+                       exit()
                     }
                 }
             } catch (e: LogoutFailedException) {
                 viewer.logError("Logout failed: ${e.message}")
             } catch (_: Exception) {
-                viewer.logError("Something went wrong")
+                viewer.logError("Somthing went wrong")
             }
         }
     }

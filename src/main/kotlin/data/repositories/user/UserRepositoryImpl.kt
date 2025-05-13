@@ -13,8 +13,7 @@ class UserRepositoryImpl(
 ) : UserRepository {
 
     override suspend fun createUser(user: UserEntity, hashedPassword: String) {
-        dataSource.addUser(user.toDto(hashedPassword)
-        )
+        dataSource.addUser(user.toDto(hashedPassword))
     }
 
     override suspend fun getUserByUsername(username: String): UserEntity {

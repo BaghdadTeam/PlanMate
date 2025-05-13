@@ -1,23 +1,21 @@
 package data.repositories.authentication
 
 import com.google.common.truth.Truth.assertThat
+import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.data.dto.user.UserDto
 import org.baghdad.data.local.SessionDataSource
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.data.mapper.toDomain
+import org.baghdad.data.mapper.toDto
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID.randomUUID
 
 class AuthenticationRepositoryImplTest {
     private lateinit var sessionDataSource: SessionDataSource
@@ -35,23 +33,21 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `should return UserEntity when credentials are valid`() = runTest {
+    fun ` should  return user entity if credentials are valid  when login`() = runTest {
         // Given
-        val validUser = user.copy(hashedPassword = password.md5WithSalt())
-        coEvery { userStorage.findUserByUsername(userName) } returns validUser
-
-        val result = authRepository.login(userName, password.md5WithSalt())
-
-        assertThat(result.id).isEqualTo(validUser.toDomain().id)
+        val user = createUserHelper(userName, password.md5WithSalt())
+        coEvery { userStorage.findUserByUsername(userName) } returns user.toDto(password.md5WithSalt())
+        // When & Then
+        assertThat(authRepository.login(userName, password.md5WithSalt()).id).isEqualTo(user.id)
     }
 
     @Test
     fun `Should throw InvalidPasswordException  if credentials are valid  when login`() = runTest {
         // Given
-        val inValidPasswordUser = user.copy(hashedPassword = "InvalidPassword")
-        coEvery { userStorage.findUserByUsername(userName) } returns inValidPasswordUser
+        val user = createUserHelper(userName, "invalidPassword".md5WithSalt())
+        coEvery { userStorage.findUserByUsername(userName) } returns user.toDto("invalidPassword")
         // When & Then
-        assertThrows<InvalidPasswordException> { authRepository.login(userName, "password") }
+        assertThrows<InvalidPasswordException> { authRepository.login(userName, password) }
 
     }
 
@@ -73,11 +69,5 @@ class AuthenticationRepositoryImplTest {
         // When & Then
         assertThrows<LogoutFailedException> { authRepository.logout() }
     }
-    val user = UserDto(
-        username = "test",
-        id = randomUUID(),
-        name = "test",
-        hashedPassword = "hashedPassword",
-        type = UserType.Admin.toString()
-    )
+
 }

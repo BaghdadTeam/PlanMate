@@ -67,7 +67,7 @@ class DeleteTaskUseCaseTest {
                 audit.entityUnderAudit == Entities.Task.name &&
                         audit.projectId == task.projectId &&
                         audit.userId == user.id &&
-                        audit.action == "has been deleted task ${task.title}"
+                        audit.description == "has been deleted task ${task.title}"
             })
         }
     }

@@ -11,7 +11,7 @@ import org.baghdad.data.datasource.mapper.session.SessionMapper
 import org.baghdad.data.datasource.mongodb.CollectionNames
 import org.baghdad.data.datasource.mongodb.MongoDataSourceImpl
 import org.baghdad.data.datasource.mongodb.MongoSetup
-import org.baghdad.data.dto.user.UserDto
+import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.*
 import org.baghdad.logic.model.entities.*
 import org.koin.core.module.Module

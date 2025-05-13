@@ -10,7 +10,6 @@ import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
 import org.baghdad.logic.model.exceptions.user.UnauthorizedException
 import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.user.UserValidatorUseCase
 import org.junit.jupiter.api.BeforeEach

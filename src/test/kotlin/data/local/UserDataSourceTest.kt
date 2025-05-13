@@ -5,7 +5,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.dto.user.UserDto
+import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.UserDataSource
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.user.UserNotFoundException

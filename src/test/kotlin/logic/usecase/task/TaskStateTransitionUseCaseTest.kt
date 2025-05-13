@@ -6,13 +6,11 @@ import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.NotFoundException
-import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
@@ -20,9 +18,9 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TaskStateTransitionUseCaseTest {
@@ -37,18 +35,17 @@ class TaskStateTransitionUseCaseTest {
     private lateinit var oldState: StateEntity
     private lateinit var newState: StateEntity
     private lateinit var user: UserEntity
-    private val sessionManager = mockk<SessionManager>()
 
     @BeforeEach
     fun setup() {
-        service = TaskStateTransitionUseCase(taskRepository, projectStatesRepository, userRepository, auditRepository,sessionManager)
+        service = TaskStateTransitionUseCase(taskRepository, projectStatesRepository, userRepository, auditRepository)
 
         val projectId = UUID.randomUUID()
         val oldStateId = UUID.randomUUID()
         val newStateId = UUID.randomUUID()
         val taskId = UUID.randomUUID()
 
-        user = UserEntity(UUID.randomUUID(), "Test", "testUser", UserType.Mate)
+        user = UserEntity(UUID.randomUUID(), "Test", "testUser",  UserType.Mate)
 
         oldState = StateEntity(oldStateId, "TODO", projectId, user.id)
         newState = StateEntity(newStateId, "IN_PROGRESS", projectId, user.id)
@@ -61,14 +58,8 @@ class TaskStateTransitionUseCaseTest {
             projectId,
             user.id
         )
-        coEvery { sessionManager.isAuthenticated() } returns true
     }
 
-    @Test
-    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
-        coEvery { sessionManager.isAuthenticated() } returns false
-        assertThrows <UnauthorizedException> { service.changeTaskState(UUID.randomUUID(), task.stateId,user.id)  }
-    }
     @Test
     fun `should successfully transition task state`() = runTest {
         coEvery { taskRepository.getTaskById(task.id) } returns task
