@@ -32,12 +32,11 @@ class GetAllProjectsUiTest {
         val project1 = ProjectEntity(name = "Project One", creatorId = UUID.randomUUID())
         val project2 = ProjectEntity(name = "Project Two", creatorId = UUID.randomUUID())
         val projects = listOf(project1, project2)
-
-        // when
+        val expectedOutput = listOf(project1.id, project2.id) to listOf("Project One", "Project Two")
         coEvery { listProjectsUseCase() } returns projects
 
-        // Act
-        val result = getAllProjectsUi()
+
+        val result = getAllProjectsUi.invoke()
 
         // Then
         verify { viewer.logMessage("+----------------------+----------------------+") }
@@ -47,7 +46,7 @@ class GetAllProjectsUiTest {
         verify { viewer.logMessage("| 2                    | Project Two          |") }
         verify { viewer.logMessage("+----------------------+----------------------+") }
 
-        assert(result == listOf(project1.id, project2.id))  // Ensure the correct UUIDs are returned
+        assertThat(result).isEqualTo(expectedOutput)  // Ensure the correct UUIDs are returned
     }
 
     @Test
