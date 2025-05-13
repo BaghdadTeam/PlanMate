@@ -25,7 +25,6 @@ class DeleteTaskUseCaseTest {
     private val user = UserEntity(
         name = "Youssef Mohamed",
         username = "Pixelise",
-        hashedPassword = "hashedPassword",
         type = UserType.Mate,
     )
 

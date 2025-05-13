@@ -29,7 +29,6 @@ class UpdateTaskUseCaseTest {
         id = UUID.fromString("9d597711-f9fa-40ca-9f8e-94f59ae957c9"), // <-- Set explicitly
         name = "Youssef Mohamed",
         username = "Pixelise",
-        hashedPassword = "hashedPassword",
         type = UserType.Mate,
     )
 

@@ -11,6 +11,6 @@ fun createUserHelper(
     userType: UserType = UserType.Admin, name: String = "haider",id: UUID = UUID.randomUUID(),
 )
         : UserEntity {
-    return UserEntity(id = id,username = userName, hashedPassword = password, type = userType, name = name)
+    return UserEntity(id = id,username = userName,type = userType, name = name)
 
 }

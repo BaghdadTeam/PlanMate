@@ -6,18 +6,19 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.data.local.SessionDataSource
 import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.mapper.toDto
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.LogoutFailedException
-import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class AuthenticationRepositoryImplTest {
-    private lateinit var sessionRepository: SessionRepository
+    private lateinit var sessionDataSource: SessionDataSource
     private lateinit var userStorage: UserDataSource
     private lateinit var authRepository: AuthenticationRepositoryImpl
 
@@ -27,15 +28,15 @@ class AuthenticationRepositoryImplTest {
     @BeforeEach
     fun setUp() {
         userStorage = mockk()
-        sessionRepository = mockk(relaxed = true)
-        authRepository = AuthenticationRepositoryImpl(userStorage, sessionRepository)
+        sessionDataSource = mockk(relaxed = true)
+        authRepository = AuthenticationRepositoryImpl(userStorage, sessionDataSource)
     }
 
     @Test
     fun ` should  return user entity if credentials are valid  when login`() = runTest {
         // Given
         val user = createUserHelper(userName, password.md5WithSalt())
-        coEvery { userStorage.findUserByUsername(userName) } returns user
+        coEvery { userStorage.findUserByUsername(userName) } returns user.toDto(password.md5WithSalt())
         // When & Then
         assertThat(authRepository.login(userName, password.md5WithSalt()).id).isEqualTo(user.id)
     }
@@ -44,7 +45,7 @@ class AuthenticationRepositoryImplTest {
     fun `Should throw InvalidPasswordException  if credentials are valid  when login`() = runTest {
         // Given
         val user = createUserHelper(userName, "invalidPassword".md5WithSalt())
-        coEvery { userStorage.findUserByUsername(userName) } returns user
+        coEvery { userStorage.findUserByUsername(userName) } returns user.toDto("invalidPassword")
         // When & Then
         assertThrows<InvalidPasswordException> { authRepository.login(userName, password) }
 
@@ -54,17 +55,17 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `Should invoke delete session function  when logout`() = runTest {
         // Given
-        coEvery { sessionRepository.deleteSession() } returns true
+        coEvery { sessionDataSource.deleteSession() } returns true
         // When
         authRepository.logout()
         // Then
-        coVerify { sessionRepository.deleteSession() }
+        coVerify { sessionDataSource.deleteSession() }
     }
 
     @Test
     fun `Should throw LogoutFailedException when logout fails`() = runTest {
         // Given
-        coEvery { sessionRepository.deleteSession() } returns false
+        coEvery { sessionDataSource.deleteSession() } returns false
         // When & Then
         assertThrows<LogoutFailedException> { authRepository.logout() }
     }

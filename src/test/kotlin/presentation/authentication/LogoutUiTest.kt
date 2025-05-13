@@ -31,12 +31,16 @@ class LogoutUiTest {
     @Test
     fun `execute() should call logout use case when user confirms with y`() {
         // Given
+        val fakeExit = mockk<() -> Unit>(relaxed = true)
         every { reader.readInput() } returns "y"
+        val logoutUi = LogoutUi(useCase, reader, viewer, fakeExit)
         // When
         logoutUi.execute()
+
         // Then
         coVerify { useCase.invoke() }
         verify { viewer.logMessage("Are you sure you want to logout (y/n)?") }
+        verify { fakeExit.invoke() }
     }
 
     @ParameterizedTest
