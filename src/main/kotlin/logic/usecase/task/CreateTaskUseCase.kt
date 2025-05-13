@@ -1,5 +1,6 @@
 package org.baghdad.logic.usecase.task
 
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.TaskEntity
@@ -9,7 +10,7 @@ import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import java.util.*
+import java.util.UUID
 
 class CreateTaskUseCase(
     private val taskRepository: TaskRepository,
@@ -31,12 +32,14 @@ class CreateTaskUseCase(
         task: TaskEntity,
         user: UserEntity
     ): AuditLogEntity {
-        val action = "created task ${task.title}"
+        val description = "created task ${task.title}"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = task.id,
             projectId = task.projectId,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Create,
+            userId = user.id,
         )
         return audit
     }

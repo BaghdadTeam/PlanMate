@@ -5,7 +5,7 @@ import org.baghdad.presentation.output.Viewer
 import java.util.UUID
 
 class ProjectStatesUI(
-    private val addStateToProjectUI: AddStateToProjectUI,
+    private val addStateToProjectUI: AddTaskStateToProjectUI,
     private val deleteStateForProjectUI: DeleteStateForProjectUI,
     private val editProjectStateUI: EditProjectStateUI,
     private val getAllStatesPerProjectUI  : GetAllStatesPerProjectUI,

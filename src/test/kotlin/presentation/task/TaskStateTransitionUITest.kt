@@ -1,26 +1,32 @@
 package presentation.task
 
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.StateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.NotFoundException
-import org.baghdad.logic.usecase.StateTransitionUseCase
-import org.baghdad.presentation.StateTransitionUI
+import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
+import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.*
+import java.util.UUID
 import kotlin.test.Test
 
-class StateTransitionUITest {
+class TaskStateTransitionUITest {
 
-    private lateinit var useCase: StateTransitionUseCase
+    private lateinit var useCase: TaskStateTransitionUseCase
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
     private lateinit var session: SessionManager
-    private lateinit var ui: StateTransitionUI
+    private lateinit var ui: TaskStateTransitionUI
 
     private val testUserId = UUID.randomUUID()
 
@@ -36,17 +42,24 @@ class StateTransitionUITest {
 
         every { session.currentSession.userId } returns testUserId
 
-        ui = StateTransitionUI(useCase, session, viewer, reader)
+        ui = TaskStateTransitionUI(useCase, session, viewer, reader)
 
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
-        task = TaskEntity(UUID.randomUUID(), "Sample Task", "A sample task", UUID.randomUUID(), projectId, creatorId)
+        task = TaskEntity(
+            UUID.randomUUID(),
+            "Sample Task",
+            "A sample task",
+            UUID.randomUUID(),
+            projectId,
+            creatorId
+        )
         state = StateEntity(UUID.randomUUID(), "IN_PROGRESS", projectId, creatorId)
     }
 
     @Test
     fun `should log success message on successful state change`() {
-        every { reader.readInput() } returnsMany listOf(task.id.toString(), state.id.toString())
+        every { reader.readInput() } returnsMany listOf("1", "1")
         coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } just Runs
 
         ui.execute(listOf(state), listOf(task))
@@ -56,8 +69,12 @@ class StateTransitionUITest {
 
     @Test
     fun `should log NotFoundException message if state not found in this project`() {
-        every { reader.readInput() } returnsMany listOf(task.id.toString(), state.id.toString())
-        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws NotFoundException("State not found")
+        // given
+
+        every { reader.readInput() } returnsMany listOf("1", "1")
+        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws NotFoundException(
+            "State not found"
+        )
 
         ui.execute(listOf(state), listOf(task))
 
@@ -66,8 +83,14 @@ class StateTransitionUITest {
 
     @Test
     fun `should log IllegalStateException message if invalid operation`() {
-        every { reader.readInput() } returnsMany listOf(task.id.toString(), state.id.toString())
-        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws IllegalStateException("Not allowed")
+        every { reader.readInput() } returnsMany listOf("1", "1")
+        coEvery {
+            useCase.changeTaskState(
+                task.id,
+                state.id,
+                testUserId
+            )
+        } throws IllegalStateException("Not allowed")
 
         ui.execute(listOf(state), listOf(task))
 
@@ -76,11 +99,17 @@ class StateTransitionUITest {
 
     @Test
     fun `should log unexpected error`() {
-        val validTaskId = task.id.toString()  // Using valid UUID string
-        val validStateId = state.id.toString()  // Using valid UUID string
+        val userTaskNumberChoice = "1"  // Using valid UUID string
+        val userStateNumberChoice = "1"  // Using valid UUID string
 
-        every { reader.readInput() } returnsMany listOf(validTaskId, validStateId)
-        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws RuntimeException("Oops")
+        every { reader.readInput() } returnsMany listOf(userTaskNumberChoice, userStateNumberChoice)
+        coEvery {
+            useCase.changeTaskState(
+                task.id,
+                state.id,
+                testUserId
+            )
+        } throws RuntimeException("Oops")
 
         ui.execute(listOf(state), listOf(task))
 
@@ -89,7 +118,7 @@ class StateTransitionUITest {
 
     @Test
     fun `should trim and pass both taskId and newStateId correctly`() {
-        every { reader.readInput() } returnsMany listOf(task.id.toString(), state.id.toString())
+        every { reader.readInput() } returnsMany listOf("1", "1")
         coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } just Runs
 
         ui.execute(listOf(state), listOf(task))
@@ -136,11 +165,17 @@ class StateTransitionUITest {
 
     @Test
     fun `should log general error if unknown exception occurs`() {
-        val validTaskId = task.id.toString()
-        val validStateId = state.id.toString()
+        val userTaskNumberChoice = "1"  // Using valid UUID string
+        val userStateNumberChoice = "1"  // Using valid UUID string
 
-        every { reader.readInput() } returnsMany listOf(validTaskId, validStateId)
-        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws Exception("Generic")
+        every { reader.readInput() } returnsMany listOf(userTaskNumberChoice, userStateNumberChoice)
+        coEvery {
+            useCase.changeTaskState(
+                task.id,
+                state.id,
+                testUserId
+            )
+        } throws Exception("Generic")
 
         ui.execute(listOf(state), listOf(task))
 

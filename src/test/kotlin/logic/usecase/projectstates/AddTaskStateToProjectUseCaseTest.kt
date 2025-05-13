@@ -15,18 +15,18 @@ import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
+import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.*
 
-class AddStateToProjectUseCaseTest {
+class AddTaskStateToProjectUseCaseTest {
 
     private lateinit var statesRepository: ProjectStatesRepository
     private lateinit var auditRepository: AuditRepository
-    private lateinit var createStateUseCase: AddStateToProjectUseCase
+    private lateinit var createStateUseCase: AddTaskStateToProjectUseCase
     private lateinit var userRepository: UserRepository
 
     private val adminUser = createUserHelper()
@@ -38,7 +38,7 @@ class AddStateToProjectUseCaseTest {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        createStateUseCase = AddStateToProjectUseCase(statesRepository, auditRepository, userRepository)
+        createStateUseCase = AddTaskStateToProjectUseCase(statesRepository, auditRepository, userRepository)
     }
 
 
