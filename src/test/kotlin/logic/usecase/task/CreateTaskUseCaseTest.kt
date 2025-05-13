@@ -2,12 +2,9 @@ package logic.usecase.task
 
 import com.google.common.truth.Truth.assertThat
 import helpers.task.TaskEntityTestData
-import io.mockk.Called
-import io.mockk.coVerify
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
@@ -19,8 +16,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.CreateTaskUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
-import kotlin.jvm.java
+import java.util.*
 import kotlin.test.Test
 
 class CreateTaskUseCaseTest {
@@ -32,16 +28,24 @@ class CreateTaskUseCaseTest {
     private val user = UserEntity(
         name = "Youssef Mohamed",
         username = "Pixelise",
-        hashedPassword = "jd12d1sad",
         type = UserType.Mate
     )
+    private val sessionManager: SessionManager = mockk()
 
     @BeforeEach
     fun setup() {
         taskRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        createTaskUseCase = CreateTaskUseCase(taskRepository, auditRepository, userRepository)
+        createTaskUseCase = CreateTaskUseCase(taskRepository, auditRepository, userRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
+    }
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<Exception> {
+            createTaskUseCase(TaskEntityTestData.normalTask, UUID.randomUUID())
+        }
     }
 
     @Test
@@ -58,7 +62,7 @@ class CreateTaskUseCaseTest {
         val audit = auditSlot.captured
         assertThat(audit.entityUnderAudit).isEqualTo("Task")
         assertThat(audit.projectId).isInstanceOf(UUID::class.java) // assuming ID is auto-generated or assigned
-        assertThat(audit.action).isEqualTo("created task ${task.title}")
+        assertThat(audit.description).isEqualTo("created task ${task.title}")
     }
 
     @Test

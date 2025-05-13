@@ -1,11 +1,10 @@
 package org.baghdad.logic.usecase.projectstates
 
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -14,12 +13,14 @@ import java.util.*
 class DeleteStateForProjectUseCase (
     private val repository: ProjectStatesRepository,
     private val auditRepository: AuditRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ) {
 
     suspend fun invoke(stateId: UUID, userId: UUID){
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val user = userRepository.getUserById(userId)
-        if (user.type.name == UserType.Mate.name) throw NotAccessException("Only Admin can delete states")
+        if (user.type == UserType.Mate) throw NotAccessException("Only Admin can delete states")
         val state = repository.getStateById(stateId)
         repository.deleteState(stateId)
         val audit = createAudit(state, user)
@@ -27,13 +28,15 @@ class DeleteStateForProjectUseCase (
 
     }
 
-    private fun createAudit(state: StateEntity, user: UserEntity):AuditLogEntity {
-        val action = "delete  state is deleted successfully"
+    private fun createAudit(state: TaskStateEntity, user: UserEntity):AuditLogEntity {
+        val description = "delete  state is deleted successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = state.id,
             projectId = state.projectId,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Delete,
+            userId = user.id,
         )
         return audit
 

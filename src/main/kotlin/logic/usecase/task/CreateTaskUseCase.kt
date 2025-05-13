@@ -1,23 +1,28 @@
 package org.baghdad.logic.usecase.task
 
+import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.entities.Action
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import java.util.*
+import java.util.UUID
 
 class CreateTaskUseCase(
     private val taskRepository: TaskRepository,
     private val auditRepository: AuditRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ) {
 
     suspend operator fun invoke(task: TaskEntity, userId: UUID) {
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val validatedTask = validateTask(task)
         taskRepository.createTask(validatedTask)
 
@@ -31,12 +36,14 @@ class CreateTaskUseCase(
         task: TaskEntity,
         user: UserEntity
     ): AuditLogEntity {
-        val action = "created task ${task.title}"
+        val description = "created task ${task.title}"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
+            entityUnderAuditId = task.id,
             projectId = task.projectId,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Create,
+            userId = user.id,
         )
         return audit
     }

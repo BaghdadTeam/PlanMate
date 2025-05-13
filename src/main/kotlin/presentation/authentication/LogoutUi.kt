@@ -5,11 +5,13 @@ import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.usecase.authentication.LogoutUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import kotlin.system.exitProcess
 
-class LogoutUi(
+class  LogoutUi(
     private val useCase: LogoutUseCase,
     private val reader: Reader,
-    private val viewer: Viewer
+    private val viewer: Viewer,
+    private val exit: () -> Unit = { exitProcess(0) }
 ) {
     fun execute() {
         runBlocking {
@@ -20,6 +22,7 @@ class LogoutUi(
                 if (userChoice != null) {
                     if (userChoice == "y") {
                         useCase.invoke()
+                       exit()
                     }
                 }
             } catch (e: LogoutFailedException) {

@@ -6,7 +6,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.exceptions.StateNotFoundException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.usecase.projectstates.GetStateByIdUseCase
 import org.junit.jupiter.api.BeforeEach
@@ -18,13 +20,22 @@ class GetStateByIdUseCaseTest {
 
     private lateinit var statesRepository: ProjectStatesRepository
     private lateinit var getStateByIdUseCase: GetStateByIdUseCase
+    private val sessionManager: SessionManager = mockk()
 
     @BeforeEach
     fun setup() {
         statesRepository = mockk(relaxed = true)
-        getStateByIdUseCase = GetStateByIdUseCase(statesRepository)
+        getStateByIdUseCase = GetStateByIdUseCase(statesRepository,sessionManager,)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
 
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> {
+            getStateByIdUseCase.invoke(UUID.randomUUID())
+        }
+    }
     @Test
     fun `should return state when there is a state by this id`() = runTest {
         val projectState = ProjectStatesEntityTestData.todoState()

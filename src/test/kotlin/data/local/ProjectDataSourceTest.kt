@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectDataSource
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +16,7 @@ import kotlin.test.Test
 
 class ProjectDataSourceTest {
     private lateinit var dataSource: DataSource<ProjectEntity>
-    private lateinit var projectStatesDataSource: DataSource<StateEntity>
+    private lateinit var projectStatesDataSource: DataSource<TaskStateEntity>
     private lateinit var taskDataSource: DataSource<TaskEntity>
     private lateinit var projectDataSource: ProjectDataSource
 
@@ -132,7 +132,7 @@ class ProjectDataSourceTest {
         val projectIdToDelete = UUID.randomUUID()
 
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).copy(id = projectIdToDelete)
-        val projectState = StateEntity(name = "State 1", projectId = projectIdToDelete, creatorId = UUID.randomUUID())
+        val projectState = TaskStateEntity(name = "State 1", projectId = projectIdToDelete, creatorId = UUID.randomUUID())
         val task = TaskEntity(
             title = "Task 1",
             description = "Description 1",

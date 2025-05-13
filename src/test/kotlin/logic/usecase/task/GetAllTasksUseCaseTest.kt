@@ -6,20 +6,32 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.task.GetAllTasksUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class GetAllTasksUseCaseTest {
 
     private lateinit var taskRepository: TaskRepository
     private lateinit var getAllTasksUseCase: GetAllTasksUseCase
+    private val sessionManager: SessionManager = mockk()
 
     @BeforeEach
     fun setUp() {
         taskRepository = mockk(relaxed = true)
-        getAllTasksUseCase = GetAllTasksUseCase(taskRepository)
+        getAllTasksUseCase = GetAllTasksUseCase(taskRepository,sessionManager,)
+        coEvery { sessionManager.isAuthenticated() } returns true
+    }
+    @Test
+    fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> {
+            getAllTasksUseCase.invoke()
+        }
     }
 
     @Test
