@@ -8,11 +8,11 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.enums.UserType
-import org.baghdad.logic.model.exceptions.user.InvalidNameException
-import org.baghdad.logic.model.exceptions.user.InvalidPasswordException
-import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
-import org.baghdad.logic.model.exceptions.user.UnauthorizedException
-import org.baghdad.logic.model.exceptions.user.UserAlreadyExistsException
+import org.baghdad.logic.model.exceptions.InvalidNameException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
+import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.usecase.user.CreateUserUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
