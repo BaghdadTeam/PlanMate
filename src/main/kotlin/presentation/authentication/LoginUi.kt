@@ -14,9 +14,9 @@ class LoginUi(
 ) {
     suspend fun execute(): SessionEntity {
         while (true) {
-            viewer.logAuth("Please enter username:")
+            viewer.log("Please enter username:")
             val username = reader.readInput()
-            viewer.logAuth("Please enter password:")
+            viewer.log("Please enter password:")
             val password = reader.readInput()
 
             if (username != null && password != null) {

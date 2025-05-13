@@ -69,8 +69,8 @@ class UpdateTaskUI(
     private fun tryUpdateTask(task: TaskEntity) {
         try {
             runBlocking {
-                val session = sessionManager.currentSession
-                useCase(task, session.userId)
+                val userId = sessionManager.currentSession.userId
+                useCase(task, userId)
                 viewer.logMessage("Task updated successfully.")
             }
         } catch (_: TaskWithMissingTitleException) {

@@ -9,7 +9,8 @@ class ViewerImpl : Viewer {
         System.err.println("ERROR: $msg")
     }
 
-    override fun logAuth(msg: String) {
+    override fun log(msg: String) {
         print(msg)
     }
+
 }

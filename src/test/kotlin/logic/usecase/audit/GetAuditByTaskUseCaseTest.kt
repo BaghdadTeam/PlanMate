@@ -6,24 +6,34 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class GetAuditByTaskUseCaseTest {
     private lateinit var  auditRepository : AuditRepository
     private lateinit var  getAuditByTaskIdUseCase: GetAuditByTaskIdUseCase
     private lateinit var  userRepository : UserRepository
+    private val sessionManager = mockk<SessionManager>(relaxed = true)
 
     @BeforeEach
     fun setup(){
         auditRepository = mockk(relaxed = true)
         userRepository = mockk(relaxed = true)
-        getAuditByTaskIdUseCase = GetAuditByTaskIdUseCase(auditRepository , userRepository)
+        getAuditByTaskIdUseCase = GetAuditByTaskIdUseCase(auditRepository , userRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
 
+    }
+    @Test
+    fun `Should throw Unauthorized exception  when user not authenticated `() = runTest {
+        coEvery { sessionManager.isAuthenticated() } returns false
+        assertThrows<UnauthorizedException> { getAuditByTaskIdUseCase.invoke(UUID.randomUUID()) }
     }
 
     @Test

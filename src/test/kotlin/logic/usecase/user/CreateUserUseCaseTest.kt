@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
@@ -18,6 +19,7 @@ class CreateUserUseCaseTest {
     private lateinit var userRepository: UserRepository
     private lateinit var createUserUseCase: CreateUserUseCase
     private lateinit var userValidatorUseCase: UserValidatorUseCase
+    private val sessionManager: SessionManager = mockk(relaxUnitFun = true)
 
     private val adminUser = createUserHelper()
 
@@ -27,7 +29,8 @@ class CreateUserUseCaseTest {
         userRepository = mockk(relaxed = true)
         createUserUseCase = mockk(relaxed = true)
         userValidatorUseCase = mockk(relaxed = true)
-        createUserUseCase = CreateUserUseCase(userRepository, userValidatorUseCase)
+        createUserUseCase = CreateUserUseCase(userRepository, userValidatorUseCase, sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
     }
 
     @Test

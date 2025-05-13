@@ -3,6 +3,7 @@ package logic.usecase.user
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.InvalidUsernameException
@@ -18,13 +19,17 @@ class GetUserByUsernameUseCaseTest {
 
     private lateinit var userRepository: UserRepository
     private lateinit var getUserByUsernameUseCase: GetUserByUsernameUseCase
+    private val sessionManager: SessionManager = mockk(relaxed = true)
 
     private val sampleUser = createSampleUser()
 
     @BeforeEach
     fun setup() {
         userRepository = mockk()
-        getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository)
+        getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
+
+
     }
 
     @Test

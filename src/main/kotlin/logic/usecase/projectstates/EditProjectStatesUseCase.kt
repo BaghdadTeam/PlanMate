@@ -1,8 +1,10 @@
 package org.baghdad.logic.usecase.projectstates
 
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -11,10 +13,14 @@ import java.util.*
 class EditProjectStatesUseCase (
     private val repository: ProjectStatesRepository,
     private val auditRepository: AuditRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ) {
 
     suspend fun invoke(stateId: UUID, newTaskStateName: String, userId: UUID){
+
+        if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
+
         val user = userRepository.getUserById(userId)
         if (user.type != UserType.Admin) throw NotAccessException("Only Admin can edit states")
         val state = repository.getStateById(stateId)
