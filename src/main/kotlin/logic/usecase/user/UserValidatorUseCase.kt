@@ -1,6 +1,6 @@
 package org.baghdad.logic.usecase.user
 
-import org.baghdad.logic.model.enums.UserType
+import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.InvalidNameException
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.InvalidUsernameException

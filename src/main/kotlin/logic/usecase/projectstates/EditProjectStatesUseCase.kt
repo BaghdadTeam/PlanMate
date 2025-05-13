@@ -2,7 +2,6 @@ package org.baghdad.logic.usecase.projectstates
 
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository

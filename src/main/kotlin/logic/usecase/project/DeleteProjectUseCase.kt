@@ -1,16 +1,12 @@
 package org.baghdad.logic.usecase.project
 
-import org.baghdad.logic.model.entities.Action
-import org.baghdad.logic.model.entities.AuditLogEntity
+import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.enums.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
-import java.util.UUID
+import java.util.*
 
 class DeleteProjectUseCase(
     private val projectRepository: ProjectRepository,

@@ -1,7 +1,7 @@
 package org.baghdad.logic.usecase.user
 
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.enums.UserType
+import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.utils.md5WithSalt
 import java.util.UUID
