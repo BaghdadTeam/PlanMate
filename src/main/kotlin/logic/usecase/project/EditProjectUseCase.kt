@@ -1,16 +1,13 @@
 package org.baghdad.logic.usecase.project
 
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
 import org.baghdad.logic.repositories.UserRepository
-import java.util.UUID
+import java.util.*
 
 class EditProjectUseCase(
     private val projectRepository: ProjectRepository,
@@ -38,12 +35,14 @@ class EditProjectUseCase(
         user: UserEntity
     ): AuditLogEntity {
 
-        val action = "name change form “${oldProject.name}” to “${newProject.name}” "
+        val description = "name change form “${oldProject.name}” to “${newProject.name}” "
         return AuditLogEntity(
             entityUnderAudit = Entities.Project.name,
+            entityUnderAuditId = oldProject.id,
             projectId = oldProject.id,
-            action = action,
-            user = user,
+            description = description,
+            action = Action.Update,
+            userId = user.id,
         )
     }
 }

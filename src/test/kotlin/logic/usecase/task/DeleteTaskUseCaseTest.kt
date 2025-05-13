@@ -5,9 +5,9 @@ import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
@@ -25,7 +25,6 @@ class DeleteTaskUseCaseTest {
     private val user = UserEntity(
         name = "Youssef Mohamed",
         username = "Pixelise",
-        hashedPassword = "hashedPassword",
         type = UserType.Mate,
     )
 
@@ -54,8 +53,8 @@ class DeleteTaskUseCaseTest {
             auditRepository.addAuditEntry(match { audit ->
                 audit.entityUnderAudit == Entities.Task.name &&
                         audit.projectId == task.projectId &&
-                        audit.user == user &&
-                        audit.action == "has been deleted task ${task.title}"
+                        audit.userId == user.id &&
+                        audit.description == "has been deleted task ${task.title}"
             })
         }
     }

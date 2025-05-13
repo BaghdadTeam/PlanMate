@@ -17,7 +17,7 @@ class AuditDataSource(
 
     suspend fun getAuditByTaskId(taskId: UUID): List<AuditLogDto> {
         return dataSources.loadAll()
-            .filter {(it.projectId == taskId) }
+            .filter {(it.entityUnderAuditId == taskId) }
             .takeIf { it.isNotEmpty() }
             ?: throw NoTaskFoundException("No audit found for task with ID: $taskId")
     }

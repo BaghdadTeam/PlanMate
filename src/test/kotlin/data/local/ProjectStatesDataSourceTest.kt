@@ -7,7 +7,7 @@ import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +17,7 @@ import java.util.*
 
 class ProjectStatesDataSourceTest {
 
-    private lateinit var dataSource: DataSource<StateEntity>
+    private lateinit var dataSource: DataSource<TaskStateEntity>
     private lateinit var taskDataSource: DataSource<TaskEntity>
     private lateinit var projectStatesDataSource: ProjectStatesDataSource
 

@@ -1,8 +1,7 @@
-package org.baghdad.logic.usecase
+package org.baghdad.logic.usecase.task
 
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.UserEntity
+import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -10,7 +9,7 @@ import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
 import java.util.*
 
-class StateTransitionUseCase(
+class TaskStateTransitionUseCase(
     private val taskRepository: TaskRepository,
     private val projectStatesRepository: ProjectStatesRepository,
     private val userRepository: UserRepository,
@@ -18,20 +17,21 @@ class StateTransitionUseCase(
 ) {
     suspend fun changeTaskState(taskId: UUID, newStateId: UUID, userId: UUID) {
         val task = taskRepository.getTaskById(taskId)
-
         val currentState = projectStatesRepository.getStateById(task.stateId)
 
         if (currentState.id == newStateId) {
             throw Exception("Task is already in the requested state. No changes made.")
         }
+
         validateNewState(task.projectId, newStateId)
 
         val updateSuccessful = updateTaskState(taskId, newStateId)
         if (!updateSuccessful) throw Exception("Failed to update task state")
 
+        val newState = projectStatesRepository.getStateById(newStateId)
         val user = userRepository.getUserById(userId)
 
-        logStateChange(taskId, task.stateId, newStateId, user)
+        logStateChange(task, currentState , newState, user)
     }
 
     private suspend fun validateNewState(projectId: UUID, newStateId: UUID) =
@@ -45,15 +45,17 @@ class StateTransitionUseCase(
     }
 
     private suspend fun logStateChange(
-        taskId: UUID, oldStateId: UUID, newStateId: UUID, user: UserEntity
+        task: TaskEntity, oldState: TaskStateEntity, newState: TaskStateEntity, user: UserEntity
     ) {
-        val action = "${user.username} changed task $taskId from state $oldStateId to $newStateId"
+        val description = "${user.username} changed task ${task.title} from state ${oldState.name} to ${newState.name}"
 
         val auditEntry = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
-            projectId = taskId,
-            action = action,
-            user = user,
+            entityUnderAuditId = task.id,
+            projectId = task.projectId,
+            description = description,
+            action = Action.Update,
+            userId = user.id,
         )
         auditRepository.addAuditEntry(auditEntry)
     }

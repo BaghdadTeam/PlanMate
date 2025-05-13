@@ -3,10 +3,8 @@ package logic.usecase.project
 import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.AccessDeniedException
@@ -20,10 +18,10 @@ import java.util.*
 import kotlin.test.Test
 
 class DeleteProjectUseCaseTest {
-    lateinit var projectRepository: ProjectRepository
-    lateinit var userRepository: UserRepository
-    lateinit var deleteProjectUseCase: DeleteProjectUseCase
-    lateinit var auditRepository: AuditRepository
+    private lateinit var projectRepository: ProjectRepository
+    private lateinit var userRepository: UserRepository
+    private lateinit var deleteProjectUseCase: DeleteProjectUseCase
+    private lateinit var auditRepository: AuditRepository
 
     @BeforeEach
     fun setUp() {

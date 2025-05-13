@@ -30,14 +30,12 @@ class EditProjectStatesUseCaseTest {
     private val adminUser = UserEntity(
         name = "Narges Nagy",
         username = "nargesnagy",
-        hashedPassword = "jkjhjkljlk",
         type = UserType.Admin
     )
 
     private val mateUser = UserEntity(
         name = "Narges Nagy",
         username = "narges21",
-        hashedPassword = "tryhghjg",
         type = UserType.Mate
     )
 
@@ -68,8 +66,8 @@ class EditProjectStatesUseCaseTest {
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        assertThat(audit.user).isEqualTo(adminUser)
-        assertThat(audit.action).contains("state is updated successfully")
+        assertThat(audit.userId).isEqualTo(adminUser.id)
+        assertThat(audit.description).contains("state is updated successfully")
     }
 
     @Test

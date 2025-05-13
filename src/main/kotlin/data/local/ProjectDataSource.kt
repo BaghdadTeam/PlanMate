@@ -2,14 +2,14 @@ package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import java.util.*
 
 class ProjectDataSource(
     private val projectDataSource: DataSource<ProjectEntity>,
-    private val projectStatesDataSource: DataSource<StateEntity>,
+    private val projectStatesDataSource: DataSource<TaskStateEntity>,
     private val taskDataSource: DataSource<TaskEntity>
 ) {
 
