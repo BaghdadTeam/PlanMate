@@ -1,19 +1,13 @@
 package org.baghdad.logic.usecase.task
 
-import org.baghdad.logic.model.entities.Action
-import org.baghdad.logic.model.entities.AuditLogEntity
+import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.entities.Entities
-import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.entities.TaskStateEntity
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.NotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import java.util.UUID
+import java.util.*
 
 class TaskStateTransitionUseCase(
     private val taskRepository: TaskRepository,
