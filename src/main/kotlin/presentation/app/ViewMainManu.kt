@@ -45,15 +45,17 @@ class ViewMainManu(
                     }
                 }
 
-                2 -> {
+
+
+                2->logoutUI.execute()
+
+                3 -> {
                     if (adminPermissionCheckerUseCase(userId)) {
                         createUserUI.invoke()
                     } else {
                         viewer.logMessage("Invalid choice. Please try again.")
                     }
                 }
-
-                3->logoutUI.execute()
 
                 0 -> {
                     viewer.logMessage("Goodbye!")
