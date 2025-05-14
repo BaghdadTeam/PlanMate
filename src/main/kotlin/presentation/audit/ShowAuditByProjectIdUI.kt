@@ -5,6 +5,7 @@ import org.baghdad.logic.model.exceptions.NoProjectFoundException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.utils.formatTimestamp
 import java.util.UUID
 
 class ShowAuditByProjectIdUI(
@@ -12,16 +13,18 @@ class ShowAuditByProjectIdUI(
     private val viewer: Viewer
 ) {
     fun execute(projectId: UUID) {
+
         runBlocking {
             try {
-                val auditEntitiesByProject = getAuditByProjectIdUseCase(projectId)
-                auditEntitiesByProject.forEachIndexed { index, auditEntity ->
+                val (auditsList, usersList) = getAuditByProjectIdUseCase(projectId)
+                auditsList.zip(usersList).forEachIndexed { index, pair ->
+                    val (auditEntity, userEntity) = pair
                     viewer.logMessage(
-                        "${index + 1} :" +
-                                " ${auditEntity.user.type} " +
-                                " ${auditEntity.user.name} " +
-                                " ${auditEntity.action} " +
-                                "at ${auditEntity.timestamp}"
+                        "${index + 1}: " +
+                                "${userEntity.type} " +
+                                "${userEntity.name} " +
+                                "${auditEntity.description} " +
+                                "at ${formatTimestamp(auditEntity.timestamp)}"
                     )
                 }
             } catch (_: UnSupportedTimeStampFormatException) {

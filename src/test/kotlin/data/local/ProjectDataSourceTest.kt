@@ -8,7 +8,7 @@ import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.local.ProjectDataSource
 import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +18,7 @@ import kotlin.test.Test
 
 class ProjectDataSourceTest {
     private lateinit var dataSource: DataSource<ProjectDto>
-    private lateinit var projectStatesDataSource: DataSource<StateEntity>
+    private lateinit var projectStatesDataSource: DataSource<TaskStateEntity>
     private lateinit var taskDataSource: DataSource<TaskEntity>
     private lateinit var projectDataSource: ProjectDataSource
 
@@ -134,15 +134,15 @@ class ProjectDataSourceTest {
     @Test
     fun `should delete project with its states and tasks when delete it successfully`() = runTest {
         // Given
-        val id = UUID.randomUUID()
-        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).copy(id = id)
-        val state = StateEntity(name = "State 1", projectId = id, creatorId = UUID.randomUUID())
+        val projectIdToDelete = UUID.randomUUID()
+        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).copy(id = projectIdToDelete)
+        val state = TaskStateEntity(name = "State 1", projectId = projectIdToDelete, creatorId = UUID.randomUUID())
         val task = TaskEntity(
             title = "Task 1",
             description = "Description 1",
             stateId = UUID.randomUUID(),
             creatorId = UUID.randomUUID(),
-            projectId = id
+            projectId = projectIdToDelete
         )
 
         coEvery { dataSource.loadAll() } returns listOf(project.toDto())
@@ -152,8 +152,10 @@ class ProjectDataSourceTest {
         coEvery { projectStatesDataSource.delete(state) } just Runs
         coEvery { taskDataSource.delete(task) } just Runs
 
+        val projectDataSource = ProjectDataSource(dataSource, projectStatesDataSource, taskDataSource)
+
         // When
-        projectDataSource.deleteProject(id)
+        projectDataSource.deleteProject(projectIdToDelete)
 
         // Then
         coVerify { dataSource.delete(project.toDto()) }

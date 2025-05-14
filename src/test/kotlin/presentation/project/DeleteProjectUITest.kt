@@ -38,15 +38,16 @@ class DeleteProjectUiTest {
     @Test
     fun `should delete a project`() = runBlocking {
         // Given
-        val projectIds = listOf(UUID.randomUUID(), UUID.randomUUID())
-        val projectId = 1 // Selecting the second project
+        val firstProjectID = UUID.randomUUID()
+        val secondProjectID = UUID.randomUUID()
+        val projects = listOf(firstProjectID, secondProjectID) to listOf("Project 1", "Project 2")
+        val projectId = 1 // The user will input '1' which maps to index 0
         val userId = UUID.randomUUID()
 
-        // when
         coEvery { session.currentSession.userId } returns userId
-        coEvery { getAllProjectsUi() } returns projectIds
+        coEvery { getAllProjectsUi() } returns projects
         coEvery { reader.readInput() } returns projectId.toString()
-        coEvery { deleteProjectUseCase(projectIds[projectId], userId) } returns Unit
+        coEvery { deleteProjectUseCase(firstProjectID, userId) } returns Unit
 
         // Act
         deleteProjectUi.deleteProject()
@@ -54,17 +55,18 @@ class DeleteProjectUiTest {
         // Then
         verify { viewer.logMessage("=== Delete Project ===") }
         verify { viewer.logMessage("=== View Project ===") }
-        coVerify { deleteProjectUseCase(projectIds[projectId], userId) }
+        coVerify { deleteProjectUseCase(firstProjectID, userId) }
     }
 
     @Test
     fun `should log error when project ID is not a number`() = runBlocking {
         // Given
         val userId = UUID.randomUUID()
+        val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
 
         // when
         coEvery { session.currentSession.userId } returns userId
-        coEvery { getAllProjectsUi() } returns listOf(UUID.randomUUID(), UUID.randomUUID())
+        coEvery { getAllProjectsUi() } returns projects
         coEvery { reader.readInput() } returns "invalid"  // Simulating non-numeric input
 
         // Act

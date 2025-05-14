@@ -3,10 +3,11 @@ package logic.usecase.user
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.user.InvalidUsernameException
-import org.baghdad.logic.model.exceptions.user.UserNotFoundException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.junit.jupiter.api.BeforeEach
@@ -18,13 +19,17 @@ class GetUserByUsernameUseCaseTest {
 
     private lateinit var userRepository: UserRepository
     private lateinit var getUserByUsernameUseCase: GetUserByUsernameUseCase
+    private val sessionManager: SessionManager = mockk(relaxed = true)
 
     private val sampleUser = createSampleUser()
 
     @BeforeEach
     fun setup() {
         userRepository = mockk()
-        getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository)
+        getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository,sessionManager)
+        coEvery { sessionManager.isAuthenticated() } returns true
+
+
     }
 
     @Test
@@ -62,7 +67,6 @@ class GetUserByUsernameUseCaseTest {
         return UserEntity(
             name = "Alice",
             username = "alice",
-            hashedPassword = "",
             type = UserType.Mate
         )
     }

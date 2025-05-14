@@ -7,7 +7,6 @@ import org.baghdad.data.repositories.project.ProjectRepositoryImpl
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
 import org.baghdad.data.repositories.task.TaskRepositoryImpl
 import org.baghdad.data.repositories.user.UserRepositoryImpl
-import org.baghdad.logic.model.entities.Entities
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.AuthenticationRepository
 import org.baghdad.logic.repositories.ProjectRepository
@@ -15,7 +14,6 @@ import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.SessionRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.repositories.UserRepository
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val repositoryModule = module {

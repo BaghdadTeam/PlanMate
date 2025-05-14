@@ -19,11 +19,11 @@ class DeleteProjectUi(
 
         viewer.logMessage("=== Delete Project ===")
         viewer.logMessage("=== View Project ===")
-        val ids = getAllProjectsUi()
+        val projects = getAllProjectsUi()
         val projectsId = reader.readInput()?.toIntOrNull()
 
         if (projectsId != null) {
-            deleteProjectUseCase(ids[projectsId], userId)
+            deleteProjectUseCase(projects.first[projectsId - 1], userId)
         } else {
             viewer.logError("Project Id should be a number")
         }

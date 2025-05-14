@@ -8,6 +8,7 @@ import java.util.UUID
 data class ProjectDto(
     @BsonId
     override val id: UUID,
+    @BsonProperty("name")
     val name: String,
     @BsonProperty("creator_id")
     val creatorId: UUID

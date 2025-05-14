@@ -5,14 +5,14 @@ import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.mapper.toDto
 import org.baghdad.data.mapper.toEntity
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.StateEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import java.util.*
 
 class ProjectDataSource(
     private val projectDataSource: DataSource<ProjectDto>,
-    private val projectStatesDataSource: DataSource<StateEntity>,
+    private val projectStatesDataSource: DataSource<TaskStateEntity>,
     private val taskDataSource: DataSource<TaskEntity>
 ) {
 

@@ -3,23 +3,23 @@ package presentation.projectStates
 import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
-import org.baghdad.logic.model.entities.StateEntity
-import org.baghdad.logic.usecase.projectstates.AddStateToProjectUseCase
+import org.baghdad.logic.model.entities.TaskStateEntity
+import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.projectStates.AddStateToProjectUI
+import org.baghdad.presentation.projectStates.AddTaskStateToProjectUI
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.test.Test
 
 
-class AddStateToProjectUITest {
+class AddTaskStateToProjectUITest {
 
-    private lateinit var useCase: AddStateToProjectUseCase
+    private lateinit var useCase: AddTaskStateToProjectUseCase
     private lateinit var sessionManager: SessionManager
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
-    private lateinit var ui: AddStateToProjectUI
+    private lateinit var ui: AddTaskStateToProjectUI
 
     private val fakeSession = mockk<SessionEntity>(relaxed = true)
     private val userId = UUID.randomUUID()
@@ -33,7 +33,7 @@ class AddStateToProjectUITest {
         every { fakeSession.userId } returns userId
         every { sessionManager.currentSession } returns fakeSession
 
-        ui = AddStateToProjectUI(useCase, sessionManager, viewer, reader)
+        ui = AddTaskStateToProjectUI(useCase, sessionManager, viewer, reader)
     }
 
     @Test
@@ -73,7 +73,7 @@ class AddStateToProjectUITest {
     fun `tryAddState should show error message when useCase throws exception`() {
         every { reader.readInput() } returnsMany listOf("", "  ", "Done")
 
-        val state = StateEntity(name = "Done", projectId = UUID.randomUUID(), creatorId = userId)
+        val state = TaskStateEntity(name = "Done", projectId = UUID.randomUUID(), creatorId = userId)
 
         coEvery { useCase.invoke(any(), any()) } throws RuntimeException("Something went wrong")
 
