@@ -20,7 +20,7 @@ class EditProjectStatesUseCase(
 ) {
 
 
-    suspend fun invoke(stateId: UUID, newTaskStateName: String, userId: UUID) {
+    suspend operator fun invoke(stateId: UUID, newTaskStateName: String, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
 
@@ -33,12 +33,12 @@ class EditProjectStatesUseCase(
     }
 
     private fun createAudit(state: TaskStateEntity, userId: UUID): AuditLogEntity {
-        val action = "create ${state.name} state is updated successfully"
+        val description = "${state.name} state is updated successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.State.name,
             entityUnderAuditId = state.id,
             projectId = state.projectId,
-            description = action,
+            description = description,
             action = Action.Update,
             userId = userId,
         )

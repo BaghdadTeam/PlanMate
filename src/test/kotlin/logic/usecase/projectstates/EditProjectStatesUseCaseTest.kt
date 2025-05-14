@@ -4,7 +4,10 @@ import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.exceptions.AccessDeniedException
@@ -52,16 +55,40 @@ class EditProjectStatesUseCaseTest {
         }
     }
 
+    @Test
+    fun `edit states and add audit when adminPermissionCheckerUseCase return true`(){
+        // given
+        val state = ProjectStatesEntityTestData.todoState()
+        val userId = state.creatorId
+
+        coEvery { adminPermissionCheckerUseCase(userId) } returns true
+        coEvery { statesRepository.getStateById(state.id) } returns state
+
+        // when
+        runBlocking { editStateUseCase(state.id, "Aboud", userId) }
+
+        // then
+        coVerify { auditRepository.addAuditEntry(match({ audit ->
+            audit.userId == userId &&
+            audit.description.contains(" state is updated successfully")
+
+        }
+            )) }
+
+
+    }
+
+
 
 
     @Test
-    fun `should throw exception when user type is mate`() = runTest {
+    fun `should throw exception when adminPermissionCheckerUseCase return false`() = runTest {
         // given
         val state = ProjectStatesEntityTestData.todoState()
         val newState = state.copy(name = "Done")
         val userId = UUID.randomUUID()
 
-        coEvery { adminPermissionCheckerUseCase(userId) } returns false
+        coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
         // when
         val exception = assertThrows<AccessDeniedException> {
