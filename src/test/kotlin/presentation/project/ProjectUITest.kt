@@ -125,7 +125,7 @@ class ProjectUiTest {
 
 
     @Test
-    fun `should call createProjectUi when adminPermissionCheckerUseCase return true and option 1 is selected`() = runTest {
+    fun `should call createProjectUi when adminPermissionCheckerUseCase return true and option 2 is selected`() = runTest {
         val userId = UUID.randomUUID()
 
         every { session.currentSession.userId } returns userId
@@ -136,6 +136,57 @@ class ProjectUiTest {
         projectUi()
 
         coVerify { createProjectUi.createProject() }
+    }
+
+
+    @Test
+    fun `should view Invalid choice Please try again when adminPermissionCheckerUseCase return false and option 2 is selected`() = runTest {
+        val userId = UUID.randomUUID()
+
+        every { session.currentSession.userId } returns userId
+        coEvery { adminPermissionCheckerUseCase(userId) } returns false
+
+        every { reader.readInput() } returns "2" andThen "0"
+
+        projectUi()
+
+        verify{
+            viewer.logError("Invalid choice. Please try again.")
+        }
+
+    }
+
+    @Test
+    fun `should view Invalid choice Please try again when adminPermissionCheckerUseCase return false and option 3 is selected`() = runTest {
+        val userId = UUID.randomUUID()
+
+        every { session.currentSession.userId } returns userId
+        coEvery { adminPermissionCheckerUseCase(userId) } returns false
+
+        every { reader.readInput() } returns "3" andThen "0"
+
+        projectUi()
+
+        verify{
+            viewer.logError("Invalid choice. Please try again.")
+        }
+
+    }
+    @Test
+    fun `should view Invalid choice Please try again when adminPermissionCheckerUseCase return false and option 4 is selected`() = runTest {
+        val userId = UUID.randomUUID()
+
+        every { session.currentSession.userId } returns userId
+        coEvery { adminPermissionCheckerUseCase(userId) } returns false
+
+        every { reader.readInput() } returns "4" andThen "0"
+
+        projectUi()
+
+        verify{
+            viewer.logError("Invalid choice. Please try again.")
+        }
+
     }
 
     @Test
