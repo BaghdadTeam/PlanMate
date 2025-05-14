@@ -88,7 +88,7 @@ class EditProjectStatesUseCaseTest {
         val newState = state.copy(name = "Done")
         val userId = UUID.randomUUID()
 
-        coEvery { adminPermissionCheckerUseCase(userId) } returns true
+        coEvery { adminPermissionCheckerUseCase(userId) } returns false
 
         // when
         val exception = assertThrows<AccessDeniedException> {
