@@ -1,8 +1,8 @@
 package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.mapper.taskState.TaskStateMapper
-import org.baghdad.logic.model.entities.TaskStateEntity
+import data.datasource.mapper.taskState.TaskStateMapper
+import org.baghdad.data.dto.TaskStateDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -63,7 +63,7 @@ class TaskStateMapperTest {
         val name = "Done"
         val projectId = UUID.randomUUID()
         val creatorId = UUID.randomUUID()
-        val entity = TaskStateEntity(
+        val entity = TaskStateDto(
             id = uuid,
             name = name,
             projectId = projectId,
@@ -81,7 +81,7 @@ class TaskStateMapperTest {
     fun `getId returns correct ID as string`() {
         // Given
         val uuid = UUID.randomUUID()
-        val entity = TaskStateEntity(
+        val entity = TaskStateDto(
             id = uuid,
             name = "TestState",
             projectId = UUID.randomUUID(),

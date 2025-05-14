@@ -19,6 +19,7 @@ class ProjectStatesUI(
         viewer.logMessage("2 - Delete State for Project")
         viewer.logMessage("3 - Edit Project State")
         viewer.logMessage("0 - Back to Previous Screen")
+        viewer.logMessage("Enter your choice: ")
 
         when (reader.readInput()?.toIntOrNull()) {
             1 -> addStateToProjectUI.execute(projectId)
@@ -34,7 +35,7 @@ class ProjectStatesUI(
             3 -> {
                 val stateId = getStateIdFromUser(projectId , "edit")
                 if (stateId != null) {
-                    editProjectStateUI.execute(projectId , stateId)
+                    editProjectStateUI.execute(stateId)
                 }else{
                     viewer.logError("Invalid choice. Please try again.")
                 }

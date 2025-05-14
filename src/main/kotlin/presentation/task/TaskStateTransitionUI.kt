@@ -18,15 +18,6 @@ class TaskStateTransitionUI(
 ) {
     fun execute(tasksStates: List<TaskStateEntity>, tasks: List<TaskEntity>) {
 
-        viewer.logMessage("== All Tasks == ")
-        tasks.forEachIndexed { index, task ->
-            viewer.logMessage("${index + 1}. ${task.title} - ${task.description}")
-        }
-
-        viewer.logMessage("Enter Task Number:")
-        val taskNumber = reader.readInput()?.trim()
-
-        if (taskNumber.isNullOrBlank()) throw Exception("Task ID cannot be null or blank.")
         val taskId = getTaskIdFromUser(tasks)
 
         val taskStateId = getTaskStateIdFromUser(tasksStates)

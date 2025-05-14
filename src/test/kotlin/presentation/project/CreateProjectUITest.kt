@@ -47,7 +47,7 @@ class CreateProjectUiTest {
 
         // Then
         verify { viewer.logMessage("=== Create Project ===") }
-        verify { viewer.logMessage("Enter project name: ") }
+        verify { viewer.log("Enter project name: ") }
         coVerify { createProjectUseCase(projectName, userId) }
     }
 
@@ -65,7 +65,7 @@ class CreateProjectUiTest {
 
         // Then
         verify { viewer.logMessage("=== Create Project ===") }
-        verify { viewer.logMessage("Enter project name: ") }
+        verify { viewer.log("Enter project name: ") }
         verify { viewer.logError("Project Id should be a number") }
         coVerify(exactly = 0) { createProjectUseCase(any(), any()) }  // Ensure the use case is not called
     }

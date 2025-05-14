@@ -1,42 +1,40 @@
 package org.baghdad.data.datasource.mapper.audit
 
 import org.baghdad.data.datasource.CsvMapper
-import org.baghdad.data.utils.parseTimestamp
-import org.baghdad.logic.model.entities.Action
-import org.baghdad.logic.model.entities.AuditLogEntity
-import java.util.*
+import org.baghdad.data.dto.AuditLogDto
+import java.util.UUID
 
-class AuditMapper : CsvMapper<AuditLogEntity> {
+class AuditMapper : CsvMapper<AuditLogDto> {
 
     override fun header(): String {
         return "id,entityUnderAudit,entityUnderAuditId,projectId,description,action,userId,timestamp"
     }
 
-    override fun deserializer(content: String): AuditLogEntity {
+    override fun deserializer(content: String): AuditLogDto {
         val audit = Regex(""",(?=(?:[^\[\]]*\[[^\[\]]*])*[^\[\]]*$)""")
             .split(content)
             .map { it.trim() }
 
 
-        return AuditLogEntity(
+        return AuditLogDto(
             id = UUID.fromString(audit[AuditColumns.ID]),
             entityUnderAudit = audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE],
-            entityUnderAuditId = UUID.fromString(audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE_ID]),
-            projectId = UUID.fromString(audit[AuditColumns.PROJECT_ID]),
+            entityUnderAuditId = audit[AuditColumns.ENTITY_UNDER_AUDIT_TYPE_ID],
+            projectId = audit[AuditColumns.PROJECT_ID],
             description = audit[AuditColumns.DESCRIPTION],
-            action = Action.valueOf(audit[AuditColumns.ACTION]),
-            userId = UUID.fromString(audit[AuditColumns.USER_ID]),
-            timestamp = parseTimestamp(audit[AuditColumns.TIMESTAMP]),
+            action = audit[AuditColumns.ACTION],
+            userId = audit[AuditColumns.USER_ID],
+            timestamp = audit[AuditColumns.TIMESTAMP],
         )
 
 
     }
 
-    override fun getId(item: AuditLogEntity): String {
+    override fun getId(item: AuditLogDto): String {
         return item.id.toString()
     }
 
-    override fun serializer(item: AuditLogEntity): String {
+    override fun serializer(item: AuditLogDto): String {
         return "${item.id}," +
                 "${item.entityUnderAudit}," +
                 "${item.entityUnderAuditId}," +
@@ -44,6 +42,6 @@ class AuditMapper : CsvMapper<AuditLogEntity> {
                 "${item.description}," +
                 "${item.action}," +
                 "${item.userId}," +
-                "${item.timestamp}"
+                item.timestamp
     }
 }
