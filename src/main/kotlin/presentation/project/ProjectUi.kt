@@ -33,6 +33,18 @@ class ProjectUi(
             val choice = reader.readInput()?.toIntOrNull()
 
             when (choice) {
+                1 -> {
+                    viewer.logMessage("=== View Projects ===")
+                    val projects = getAllProjectsUi()
+                    viewer.log("Enter project number: ")
+                    val projectsId = reader.readInput()?.toIntOrNull()
+                    if (projectsId != null) {
+                        return projects.first[projectsId - 1] to projects.second[projectsId - 1]
+                    } else {
+                        viewer.logError("Project Id should be a number")
+                    }
+                }
+
                 2 -> {
                     if (adminPermissionCheckerUseCase(userId)) {
                         createProjectUi.createProject()
@@ -53,18 +65,6 @@ class ProjectUi(
                     editProjectUi.editProject()
                 } else {
                     viewer.logError("Invalid choice. Please try again.")
-                }
-
-                1 -> {
-                    viewer.logMessage("=== View Projects ===")
-                    val projects = getAllProjectsUi()
-                    viewer.log("Enter project number: ")
-                    val projectsId = reader.readInput()?.toIntOrNull()
-                    if (projectsId != null) {
-                        return projects.first[projectsId - 1] to projects.second[projectsId - 1]
-                    } else {
-                        viewer.logError("Project Id should be a number")
-                    }
                 }
 
                 0 -> return null
