@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 
-class ProjectUiTest {
+class ProjectManagementUITest {
 
     private val createProjectUi: CreateProjectUi = mockk(relaxed = true)
     private val deleteProjectUi: DeleteProjectUi = mockk(relaxed = true)
@@ -19,12 +19,12 @@ class ProjectUiTest {
     private var viewer: Viewer = mockk(relaxed = true)
     private var reader: Reader = mockk()
 
-    private lateinit var projectUi: ProjectUi
+    private lateinit var projectManagementUI: ProjectManagementUI
 
     @BeforeEach
     fun setUp() {
         // Initialize the real ProjectUi with mocked dependencies
-        projectUi = ProjectUi(
+        projectManagementUI = ProjectManagementUI(
             createProjectUi,
             deleteProjectUi,
             editProjectUi,
@@ -42,7 +42,7 @@ class ProjectUiTest {
     fun `should display project management options and handle invalid input`() = runTest {
         every { reader.readInput() } returnsMany listOf("999", "0")  // Invalid input followed by exit
 
-        projectUi()
+        projectManagementUI()
 
         verifySequence {
             viewer.logMessage("=== Project UI ===")
@@ -70,7 +70,7 @@ class ProjectUiTest {
     fun `should call createProjectUi when option 1 is selected`() = runTest {
         every { reader.readInput() } returns "1" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { createProjectUi.createProject() }
     }
@@ -79,7 +79,7 @@ class ProjectUiTest {
     fun `should call deleteProjectUi when option 2 is selected`() = runTest {
         every { reader.readInput() } returns "2" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { deleteProjectUi.deleteProject() }
     }
@@ -88,7 +88,7 @@ class ProjectUiTest {
     fun `should call editProjectUi when option 3 is selected`() = runTest {
         every { reader.readInput() } returns "3" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { editProjectUi.editProject() }
     }
@@ -100,7 +100,7 @@ class ProjectUiTest {
         every { reader.readInput() } returns "4" andThen "1" andThen "0"
         coEvery { getAllProjectsUi() } returns projects
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { getAllProjectsUi() }
     }
@@ -112,7 +112,7 @@ class ProjectUiTest {
         every { reader.readInput() } returns "4" andThen "invalid" andThen "0"
         coEvery { getAllProjectsUi() } returns projects
 
-        projectUi()
+        projectManagementUI()
 
         verify { viewer.logError("Project Id should be a number") }
     }
@@ -121,7 +121,7 @@ class ProjectUiTest {
     fun `should return null when option 0 is selected`() = runTest {
         every { reader.readInput() } returns "0"
 
-        val result = projectUi()
+        val result = projectManagementUI()
 
         assertEquals(null, result)
     }

@@ -1,18 +1,18 @@
 package org.baghdad.presentation.swimlane
 
 import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.presentation.audit.AuditUI
+import org.baghdad.presentation.audit.AuditManagementUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.projectStates.ProjectStatesUI
-import org.baghdad.presentation.task.TaskManagementGatherUI
+import org.baghdad.presentation.projectStates.ProjectStatesManagementUI
+import org.baghdad.presentation.task.TaskManagementUI
 import java.util.*
 
 class SwimlaneUI(
     private val renderSwimlaneUI: RenderSwimlaneUI,
-    private val projectStatesUI: ProjectStatesUI,
-    private val taskUI: TaskManagementGatherUI,
-    private val auditUI: AuditUI,
+    private val projectStatesManagementUI: ProjectStatesManagementUI,
+    private val taskUI: TaskManagementUI,
+    private val auditManagementUI: AuditManagementUI,
     private val reader: Reader,
     private val viewer: Viewer,
     private val viewServiceUseCase: ViewServiceUseCase
@@ -37,7 +37,7 @@ class SwimlaneUI(
                 when (reader.readInput()?.toIntOrNull()) {
                     1 -> {
                         println("Navigating to Project States Screen...")
-                        projectStatesUI.invoke(project.first)
+                        projectStatesManagementUI.invoke(project.first)
                     }
 
                     2 -> {
@@ -47,7 +47,7 @@ class SwimlaneUI(
 
                     3 -> {
                         println("Navigating to Audit Log Screen...")
-                        auditUI(project.first)
+                        auditManagementUI(project.first)
                     }
 
                     0 -> {
