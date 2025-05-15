@@ -92,7 +92,7 @@ class TaskStateTransitionUITest {
 
         ui.execute(listOf(state), listOf(task))
 
-        verify { viewer.logError("Invalid operation: Not allowed") }
+        verify { viewer.logError("Invalid operation") }
     }
 
     @Test
@@ -111,7 +111,7 @@ class TaskStateTransitionUITest {
 
         ui.execute(listOf(state), listOf(task))
 
-        verify { viewer.logError("Unexpected error: Oops") }
+        verify { viewer.logError("Sorry Something went wrong") }
     }
 
     @Test

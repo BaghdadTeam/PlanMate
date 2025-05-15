@@ -34,7 +34,7 @@ class TaskStateTransitionUI(
         } catch (_: IllegalStateException) {
             viewer.logError("Invalid operation")
         } catch (_: RuntimeException) {
-            viewer.logError("Unexpected error")
+            viewer.logError("Sorry Something went wrong")
         } catch (_: Exception) {
             viewer.logError(" something went wrong while trying to change task state.")
         }
