@@ -2,8 +2,8 @@ package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.TaskStateDto
-import org.baghdad.data.mapper.toDomain
-import org.baghdad.data.mapper.toDto
+import org.baghdad.data.repositories.toDomain
+import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException

@@ -6,11 +6,8 @@ import io.mockk.unmockkAll
 import org.baghdad.data.datasource.mapper.audit.AuditMapper
 import org.baghdad.data.datasource.mapper.user.UserMapper
 import org.baghdad.data.dto.AuditLogDto
-import org.baghdad.data.mapper.toDomain
 import org.baghdad.logic.model.entities.Action
-import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
