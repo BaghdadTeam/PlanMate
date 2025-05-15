@@ -1,4 +1,4 @@
-package org.baghdad.data.mapper
+package org.baghdad.data.repositories
 
 import org.baghdad.data.dto.UserDto
 import org.baghdad.logic.model.entities.UserEntity

@@ -2,7 +2,7 @@ package org.baghdad.data.repositories.authentication
 
 import org.baghdad.data.local.SessionDataSource
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.data.mapper.toDomain
+import org.baghdad.data.repositories.toDomain
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.LogoutFailedException
