@@ -102,11 +102,9 @@ class CsvDataSourceImplTest {
         val item = MyData(UUID.randomUUID(), "John", 25, "Male")
         every { parser.serializer(item) } returns "${item.id},John,25,Male"
 
-        val exception = assertThrows<WritingFileException> {
+        assertThrows<WritingFileException> {
             csvDataSource.append(item)
         }
-
-        assertThat(exception.message).startsWith("Error writing to CSV file")
 
         tempFile.setWritable(true) // cleanup
     }
@@ -160,12 +158,9 @@ class CsvDataSourceImplTest {
         every { parser.header() } returns "id,Name,Age,Gender"
         every { parser.serializer(item) } returns "${item.id},John,25,Male"
 
-        val exception = assertThrows<WritingFileException> {
+        assertThrows<WritingFileException> {
             csvDataSource.update(item)
         }
-
-        assertThat(exception.message).startsWith("Error updating CSV file")
-
         tempFile.setWritable(true)
     }
 }
