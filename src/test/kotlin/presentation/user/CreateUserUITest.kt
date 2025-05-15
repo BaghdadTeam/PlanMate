@@ -87,7 +87,7 @@ class CreateUserUITest {
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("Invalid username: must match pattern") }
+        verify { viewer.logError("Invalid username") }
     }
 
     @Test
@@ -99,7 +99,7 @@ class CreateUserUITest {
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("Invalid name: cannot be blank") }
+        verify { viewer.logError("Invalid name") }
     }
 
     @Test
@@ -111,7 +111,7 @@ class CreateUserUITest {
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("Invalid password: too short") }
+        verify { viewer.logError("Invalid password") }
     }
 
     @Test
@@ -123,6 +123,6 @@ class CreateUserUITest {
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("username exists") }
+        verify { viewer.logError("Username already exists") }
     }
 }

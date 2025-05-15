@@ -23,7 +23,7 @@ class TaskStateTransitionUseCaseTest {
 
     private val taskRepository = mockk<TaskRepository>()
     private val projectStatesRepository = mockk<ProjectStatesRepository>()
-    private val userRepository = mockk<UserRepository>() // NEW
+    private val userRepository = mockk<UserRepository>()
     private val auditRepository = mockk<AuditRepository>()
     private lateinit var service: TaskStateTransitionUseCase
 

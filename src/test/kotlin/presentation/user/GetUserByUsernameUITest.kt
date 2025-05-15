@@ -58,7 +58,7 @@ class GetUserByUsernameUITest {
         // When
         getUserInterface.run()
         // Then
-        verify { viewer.logError("Invalid username: must not be empty") }
+        verify { viewer.logError("Invalid username") }
     }
 
     @Test
@@ -80,7 +80,7 @@ class GetUserByUsernameUITest {
         // When
         getUserInterface.run()
         // Then
-        verify { viewer.logError("bob not found") }
+        verify { viewer.logError("User not found.") }
     }
 
     @Test

@@ -76,7 +76,7 @@ class TaskStateTransitionUITest {
 
         ui.execute(listOf(state), listOf(task))
 
-        verify { viewer.logError("State not found in this project: State not found") }
+        verify { viewer.logError("State not found in this project") }
     }
 
     @Test

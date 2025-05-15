@@ -29,12 +29,12 @@ class TaskStateTransitionUI(
                 useCase.changeTaskState(taskId, taskStateId , userId)
                 viewer.logMessage("Task state changed successfully.")
             }
-        } catch (e: StateNotFoundException) {
-            viewer.logError("State not found in this project: ${e.message}")
-        } catch (e: IllegalStateException) {
-            viewer.logError("Invalid operation: ${e.message}")
-        } catch (e: RuntimeException) {
-            viewer.logError("Unexpected error: ${e.message}")
+        } catch (_: StateNotFoundException) {
+            viewer.logError("State not found in this project")
+        } catch (_: IllegalStateException) {
+            viewer.logError("Invalid operation")
+        } catch (_: RuntimeException) {
+            viewer.logError("Unexpected error")
         } catch (_: Exception) {
             viewer.logError(" something went wrong while trying to change task state.")
         }

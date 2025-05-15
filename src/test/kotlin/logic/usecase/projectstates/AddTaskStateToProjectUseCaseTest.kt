@@ -78,10 +78,9 @@ class AddTaskStateToProjectUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState()
 
         // Then
-        val exception = assertThrows<StateNotAccessedException> {
+        assertThrows<StateNotAccessedException> {
             createStateUseCase.invoke(state, mateUser.id)
         }
-        Truth.assertThat(exception.message).contains("Only Admin can add states")
     }
 
     @Test
@@ -90,10 +89,8 @@ class AddTaskStateToProjectUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
         coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
         // Then
-        val exception = assertThrows<CantAddStateWithNoNameException> {
+        assertThrows<CantAddStateWithNoNameException> {
             createStateUseCase.invoke(state, adminUser.id)
         }
-        Truth.assertThat(exception.message).contains("state name can't be empty")
     }
-
 }

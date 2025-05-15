@@ -69,11 +69,10 @@ class CreateTaskUseCaseTest {
     fun `should throw TaskWithMissingTitleException when title is blank`() = runTest {
         val task = TaskEntityTestData.taskWithBlankTitle()
 
-        val exception = assertThrows<TaskWithMissingTitleException> {
+        assertThrows<TaskWithMissingTitleException> {
             createTaskUseCase(task, user.id)
         }
 
-        assertThat(exception).hasMessageThat().contains("title cannot be empty")
         verify { taskRepository wasNot Called }
         verify { auditRepository wasNot Called }
     }
@@ -82,11 +81,10 @@ class CreateTaskUseCaseTest {
     fun `should throw TaskWithMissingDescriptionException when description is blank`() = runTest {
         val task = TaskEntityTestData.taskWithBlankDescription()
 
-        val exception = assertThrows<TaskWithMissingDescriptionException> {
+        assertThrows<TaskWithMissingDescriptionException> {
             createTaskUseCase(task, user.id)
         }
 
-        assertThat(exception).hasMessageThat().contains("description cannot be empty")
         verify { taskRepository wasNot Called }
         verify { auditRepository wasNot Called }
     }

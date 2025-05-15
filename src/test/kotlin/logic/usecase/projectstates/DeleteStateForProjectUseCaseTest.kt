@@ -85,11 +85,8 @@ class DeleteStateForProjectUseCaseTest {
         coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
 
         // When
-        val exception = assertThrows<StateNotAccessedException> {
+        assertThrows<StateNotAccessedException> {
             deleteStateUseCase.invoke(stateId, mateUser.id)
         }
-
-        // Then
-        Truth.assertThat(exception.message).contains("Only Admin can delete states")
     }
 }

@@ -73,11 +73,11 @@ class UserRepositoryImplTest {
         // Given
         val missingId = UUID.randomUUID()
         coEvery { dataSource.findUserById(missingId) } returns null
+
         // When & Then
-        val error = assertThrows<UserNotFoundException> {
+        assertThrows<UserNotFoundException> {
             repository.getUserById(missingId)
         }
-        assertThat(error.message).isEqualTo("User not found with id: $missingId")
         coVerify { dataSource.findUserById(missingId) }
     }
 

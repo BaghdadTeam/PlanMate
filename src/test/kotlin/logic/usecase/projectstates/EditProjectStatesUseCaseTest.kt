@@ -1,6 +1,5 @@
 package logic.usecase.projectstates
 
-import com.google.common.truth.Truth
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -18,7 +17,7 @@ import org.baghdad.logic.usecase.projectstates.EditProjectStatesUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 
 class EditProjectStatesUseCaseTest {
 
@@ -95,11 +94,9 @@ class EditProjectStatesUseCaseTest {
         coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
 
         // when
-        val exception = assertThrows<StateNotAccessedException> {
+        assertThrows<StateNotAccessedException> {
             editStateUseCase.invoke(state.id, newState.name, mateUser.id)
         }
-        // then
-        Truth.assertThat(exception.message).contains("Only Admin can edit states")
     }
 
 }

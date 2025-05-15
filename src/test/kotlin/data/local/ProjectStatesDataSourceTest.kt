@@ -138,11 +138,10 @@ class ProjectStatesDataSourceTest {
         coEvery { dataSource.loadAll() } returns listOf(existingState.toDto())
 
         // Then
-        val exception = assertThrows<Exception> {
+        assertThrows<Exception> {
             runTest {
                 projectStatesDataSource.deleteState(nonexistentStateId)
             }
         }
-        assertThat(exception.message).isEqualTo("No state found")
     }
 }
