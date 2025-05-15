@@ -13,6 +13,7 @@ import org.baghdad.data.datasource.mongodb.MongoDataSourceImpl
 import org.baghdad.data.datasource.mongodb.MongoSetup
 import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.dto.AuditLogDto
+import org.baghdad.data.dto.TaskStateDto
 import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.*
 import org.baghdad.logic.model.entities.*
@@ -74,6 +75,8 @@ val dataSourceModule = module {
     registerMongoDataSource<UserDto>(Entities.User, CollectionNames.USERS_COLLECTION)
     registerMongoDataSource<ProjectDto>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
     registerMongoDataSource<TaskStateEntity>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
+    registerMongoDataSource<ProjectEntity>(Entities.Project, CollectionNames.PROJECTS_COLLECTION)
+    registerMongoDataSource<TaskStateDto>(Entities.State, CollectionNames.PROJECT_STATES_COLLECTION)
     registerMongoDataSource<TaskEntity>(Entities.Task, CollectionNames.TASKS_COLLECTION)
     registerMongoDataSource<AuditLogDto>(Entities.Audit, CollectionNames.AUDIT_COLLECTION)
 
