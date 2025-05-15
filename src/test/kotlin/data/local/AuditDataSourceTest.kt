@@ -9,14 +9,12 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.AuditLogDto
 import org.baghdad.data.local.AuditDataSource
-import org.baghdad.data.mapper.toDomain
+import org.baghdad.data.repositories.toDomain
 import org.baghdad.logic.model.exceptions.NoProjectFoundException
 import org.baghdad.logic.model.exceptions.NoTaskFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDateTime
 import java.util.*
-import java.util.UUID.randomUUID
 import kotlin.test.Test
 
 class AuditDataSourceTest {
