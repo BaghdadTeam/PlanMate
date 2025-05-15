@@ -8,6 +8,7 @@ import java.util.UUID
 class ProjectRepositoryImpl(
     private val dataSource: ProjectDataSource
 ) : ProjectRepository {
+
     override suspend fun createProject(project: ProjectEntity) {
         dataSource.createProject(project)
     }
@@ -23,6 +24,7 @@ class ProjectRepositoryImpl(
     override suspend fun deleteProject(id: UUID) {
         dataSource.deleteProject(id)
     }
+
 
     override suspend fun editProject(project: ProjectEntity) {
         dataSource.updateProject(project)
