@@ -1,6 +1,9 @@
 package org.baghdad.presentation.swimlane
 
-import org.baghdad.logic.usecase.ViewServiceUseCase
+import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
+import org.baghdad.logic.repositories.ProjectStatesRepository
+import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.presentation.audit.AuditUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -15,17 +18,19 @@ class SwimlaneUI(
     private val auditUI: AuditUI,
     private val reader: Reader,
     private val viewer: Viewer,
-    private val viewServiceUseCase: ViewServiceUseCase
+    private val stateRepository: ProjectStatesRepository,
+    private val taskRepository: TaskRepository
 ) {
     suspend fun invoke(project: Pair<UUID, String>) {
         try {
             while (true) {
-                val projectData =try {
-                  viewServiceUseCase.invoke(project.first)
-                }catch (_:Exception){
+                val projectData = try {
+                    fetchProjectStateTaskMap(project.first)
+                } catch (_: Exception) {
                     emptyMap()
                 }
-                val swimLane= renderSwimlaneUI.invoke(projectData)
+
+                val swimLane = renderSwimlaneUI.invoke(projectData)
                 viewer.logMessage("=== Plan Mate ===")
                 viewer.logMessage(swimLane)
                 viewer.logMessage("1. Manage States (Admin Only)")
@@ -42,7 +47,7 @@ class SwimlaneUI(
 
                     2 -> {
                         println("Navigating to Tasks Screen...")
-                        taskUI.execute(projectData , project.first)
+                        taskUI.execute(projectData, project.first)
                     }
 
                     3 -> {
@@ -67,6 +72,27 @@ class SwimlaneUI(
             }
         } catch (exception: Exception) {
             viewer.logError("Error: ${exception.message}")
+        }
+    }
+
+    suspend fun fetchProjectStateTaskMap(projectId: UUID): Map<TaskStateEntity, List<TaskEntity>> {
+        return try {
+            val stateEntities = stateRepository.getAllStatesPerProject(projectId)
+            if (stateEntities.isEmpty()) {
+                emptyMap()
+            } else {
+                val taskEntities = taskRepository.getTasksByProjectId(projectId)
+                val tasksByStateId = taskEntities.groupBy { it.stateId.toString() }
+
+                stateEntities.associateWith { state ->
+                    tasksByStateId[state.id.toString()] ?: emptyList()
+                }
+            }
+        } catch (e: Exception) {
+            throw Exception(
+                "Failed to fetch states or tasks for project $projectId: ${e.message}",
+                e
+            )
         }
     }
 }

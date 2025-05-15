@@ -32,7 +32,7 @@ import org.koin.dsl.module
 
 val uiModule = module {
 
-    single { CreateTaskUI(get(), get(), get(), get() , get()) }
+    single { CreateTaskUI(get(), get(), get(), get(), get()) }
     single { DeleteTaskUI(get(), get(), get(), get()) }
     single { GetTasksByStateIdUI(get(), get(), get()) }
     single { GetTasksByStateIdUI(get(), get(), get()) }
@@ -43,7 +43,7 @@ val uiModule = module {
 
     single { AddTaskStateToProjectUI(get(), get(), get(), get()) }
     single { EditProjectStateUI(get(), get(), get(), get()) }
-    single { DeleteStateForProjectUseCase(get(), get(), get(),get()) }
+    single { DeleteStateForProjectUseCase(get(), get(), get(), get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
     single { GetStateByIdUI(get(), get(), get()) }
 
@@ -59,7 +59,7 @@ val uiModule = module {
 
     // region :: Auth ::
     single { LoginUi(get(), get(), get()) }
-    single{ LogoutUi(get(),get(),get()) }
+    single { LogoutUi(get(), get(), get()) }
 
     // region :: User ::
     single { CreateUserUI(get(), get(), get(), get()) }
@@ -67,7 +67,7 @@ val uiModule = module {
 
     // region :: Swimlane ::
     single { RenderSwimlaneUI() }
-    single { SwimlaneUI(get(), get(), get(), get(), get() ,get(),get()) }
+    single { SwimlaneUI(get(), get(), get(), get(), get(), get(), get(), get()) }
     // endregion
 
     //region :: ProjectStates ::
@@ -80,7 +80,7 @@ val uiModule = module {
     //endregion
 
     //region :: Task ::
-    single { CreateTaskUI(get(), get(), get(), get() , get()) }
+    single { CreateTaskUI(get(), get(), get(), get(), get()) }
     single { DeleteTaskUI(get(), get(), get(), get()) }
     single { GetTasksByStateIdUI(get(), get(), get()) }
     single { UpdateTaskUI(get(), get(), get(), get()) }
@@ -89,8 +89,8 @@ val uiModule = module {
 //endregion
 
     //region :: Audit ::
-    single { ShowAuditByProjectIdUI(get(), get())}
+    single { ShowAuditByProjectIdUI(get(), get()) }
     single { AuditUI(get(), get(), get()) }
-    single { ShowAuditByTaskIdUI(get(), get(),) }
+    single { ShowAuditByTaskIdUI(get(), get()) }
     //endregion
 }

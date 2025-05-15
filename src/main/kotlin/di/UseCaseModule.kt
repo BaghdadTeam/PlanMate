@@ -1,7 +1,6 @@
 package org.baghdad.di
 
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
-import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.logic.usecase.audit.AddAuditUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
@@ -72,8 +71,5 @@ val useCaseModule = module {
     single { GetAuditByTaskIdUseCase(get() , get(),get()) }
     single { GetAuditByProjectIdUseCase(get() , get(),get()) }
     // endregion
-
-    // region :: Swimlane ::
-    single { ViewServiceUseCase(get(), get()) }
 
 }
