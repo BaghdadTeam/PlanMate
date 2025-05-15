@@ -17,7 +17,6 @@ import org.baghdad.presentation.projectStates.AddTaskStateToProjectUI
 import org.baghdad.presentation.projectStates.DeleteStateForProjectUI
 import org.baghdad.presentation.projectStates.EditProjectStateUI
 import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
-import org.baghdad.presentation.projectStates.GetStateByIdUI
 import org.baghdad.presentation.projectStates.ProjectStatesUI
 import org.baghdad.presentation.swimlane.RenderSwimlaneUI
 import org.baghdad.presentation.swimlane.SwimlaneUI
@@ -45,7 +44,6 @@ val uiModule = module {
     single { EditProjectStateUI(get(), get(), get(), get()) }
     single { DeleteStateForProjectUseCase(get(), get(), get(),get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
-    single { GetStateByIdUI(get(), get(), get()) }
 
     // endregion
 
