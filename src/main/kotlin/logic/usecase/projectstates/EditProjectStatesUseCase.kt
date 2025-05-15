@@ -22,7 +22,6 @@ class EditProjectStatesUseCase(
 
     suspend operator fun invoke(stateId: UUID, newTaskStateName: String, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
 
         val state = repository.getStateById(stateId)
         val newState = state.copy(name = newTaskStateName)

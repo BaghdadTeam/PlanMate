@@ -31,16 +31,13 @@ class AddTaskStateToProjectUseCaseTest {
     private lateinit var statesRepository: ProjectStatesRepository
     private lateinit var auditRepository: AuditRepository
     private lateinit var createStateUseCase: AddTaskStateToProjectUseCase
-    private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
-    private lateinit var userRepository: UserRepository
     private val sessionManager: SessionManager = mockk(relaxed = true)
 
     @BeforeEach
     fun setup() {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        adminPermissionCheckerUseCase = mockk(relaxed = true)
-        createStateUseCase = AddTaskStateToProjectUseCase(statesRepository, auditRepository, adminPermissionCheckerUseCase ,sessionManager)
+        createStateUseCase = AddTaskStateToProjectUseCase(statesRepository, auditRepository ,sessionManager)
         coEvery { sessionManager.isAuthenticated() } returns true
     }
     @Test
@@ -52,11 +49,10 @@ class AddTaskStateToProjectUseCaseTest {
     }
 
     @Test
-    fun `should create state and add audit when adminPermissionCheckerUseCase return true and state is valid`()= runTest {
+    fun `should create state and add audit when state is valid`()= runTest {
         // given
         val userId = UUID.randomUUID()
         val state = ProjectStatesEntityTestData.todoState()
-        coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
         // when
         createStateUseCase.invoke(state, userId)
@@ -72,26 +68,12 @@ class AddTaskStateToProjectUseCaseTest {
         Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
     }
 
-    @Test
-    fun `should throw exception when user type is not admin`() = runTest{
-        // given
-        val userId = UUID.randomUUID()
-        val state = ProjectStatesEntityTestData.todoState()
-        coEvery { adminPermissionCheckerUseCase(userId) } returns false
-
-        // When & Then
-        val exception = assertThrows<AccessDeniedException> {
-            createStateUseCase.invoke(state, userId)
-        }
-        Truth.assertThat(exception.message).contains("Not authorized")
-    }
 
     @Test
     fun `should throw exception when state name is empty`()= runTest {
         // given
         val userId = UUID.randomUUID()
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
-        coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
         // When & Then
         val exception = assertThrows<CantAddStateWithNoNameException> {

@@ -12,17 +12,14 @@ import java.util.UUID
 
 class UserValidatorUseCase(
     private val userRepository: UserRepository,
-    private val adminValidation: AdminPermissionCheckerUseCase
 ) {
     suspend operator fun invoke(
         username: String,
         passwordPlain: String,
         name: String,
-        creatorId: UUID,
     ) {
 
         validateUsername(username)
-        adminValidation(creatorId)
         validateName(name)
         validatePassword(passwordPlain)
         ensureUsernameUnique(username)

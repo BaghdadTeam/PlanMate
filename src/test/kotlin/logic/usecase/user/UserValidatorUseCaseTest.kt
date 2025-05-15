@@ -30,7 +30,7 @@ class UserValidatorUseCaseTest {
     fun setup() {
         userRepository = mockk()
         isAdmin = AdminPermissionCheckerUseCase(userRepository)
-        userValidatorUseCase = UserValidatorUseCase(userRepository, isAdmin)
+        userValidatorUseCase = UserValidatorUseCase(userRepository)
     }
 
     @Test
@@ -41,7 +41,7 @@ class UserValidatorUseCaseTest {
         coEvery { userRepository.getUserById(user.id) } returns user
 
         // When & Then
-        userValidatorUseCase.invoke(TEST_USERNAME,"hi123123" ,user.name, user.id)
+        userValidatorUseCase.invoke(TEST_USERNAME,"hi123123" ,user.name)
 
     }
 
@@ -58,7 +58,6 @@ class UserValidatorUseCaseTest {
                 "",
                 user.name,
                 "h213123i",
-                user.id
             )
         }
     }
@@ -76,7 +75,6 @@ class UserValidatorUseCaseTest {
                 "aboud",
                 "password",
                 user.name,
-                user.id
             )
         }
 
@@ -94,7 +92,6 @@ class UserValidatorUseCaseTest {
                 "aboud",
                 "password",
                 "",
-                user.id
             )
         }
 
@@ -112,7 +109,6 @@ class UserValidatorUseCaseTest {
                 "aboud",
                 "",
                 "aboud",
-                user.id
             )
         }
     }
@@ -130,7 +126,6 @@ class UserValidatorUseCaseTest {
                 "aboud",
                 "12",
                 "aboud",
-                user.id
             )
         }
     }
@@ -147,7 +142,6 @@ class UserValidatorUseCaseTest {
                 "a",
                 "password",
                 "aboud",
-                user.id
             )
         }
     }

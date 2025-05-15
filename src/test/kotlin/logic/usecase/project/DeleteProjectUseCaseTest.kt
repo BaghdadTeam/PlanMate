@@ -25,23 +25,26 @@ class DeleteProjectUseCaseTest {
     private lateinit var deleteProjectUseCase: DeleteProjectUseCase
     private lateinit var auditRepository: AuditRepository
     private val sessionManager: SessionManager = mockk()
-    private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
 
 
     @BeforeEach
     fun setUp() {
         projectRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        adminPermissionCheckerUseCase = mockk()
         deleteProjectUseCase =
-            DeleteProjectUseCase(projectRepository, auditRepository, adminPermissionCheckerUseCase , sessionManager)
+            DeleteProjectUseCase(projectRepository, auditRepository, sessionManager)
         coEvery { sessionManager.isAuthenticated() } returns true
     }
 
     @Test
     fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
         coEvery { sessionManager.isAuthenticated() } returns false
-        assertThrows<UnauthorizedException> { deleteProjectUseCase.invoke(UUID.randomUUID(), UUID.randomUUID()) }
+        assertThrows<UnauthorizedException> {
+            deleteProjectUseCase.invoke(
+                UUID.randomUUID(),
+                UUID.randomUUID()
+            )
+        }
     }
 
     @Test
@@ -49,7 +52,6 @@ class DeleteProjectUseCaseTest {
         // Given
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper()
-        coEvery { adminPermissionCheckerUseCase(user.id) } returns true
 
 
         // When
@@ -59,16 +61,4 @@ class DeleteProjectUseCaseTest {
         coVerify { projectRepository.deleteProject(project.id) }
     }
 
-    @Test
-    fun `should throw AccessDeniedException when adminPermissionCheckerUseCase return false`() = runTest {
-        // Given
-        val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
-        val user = createUserHelper().copy(type = UserType.Mate)
-        coEvery { adminPermissionCheckerUseCase(user.id) } returns false
-
-        // When & Then
-        assertThrows<AccessDeniedException> { deleteProjectUseCase.invoke(project.id, user.id) }
-    }
 }
-
-

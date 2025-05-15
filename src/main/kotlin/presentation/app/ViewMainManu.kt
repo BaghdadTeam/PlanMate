@@ -11,7 +11,7 @@ import org.baghdad.presentation.user.CreateUserUI
 import org.baghdad.presentation.user.UserManagementUI
 import kotlin.system.exitProcess
 
-class ViewMainManu(
+class ViewMainManu( // TODO : Test Cases
     private val projectUi: ProjectUi,
     private val createUserUI: CreateUserUI,
     private val viewer: Viewer,
@@ -27,13 +27,7 @@ class ViewMainManu(
         while (true) {
             viewer.logMessage("=== Main Menu ===")
             viewer.logMessage("1. Project Management")
-            viewer.logMessage("2. Create user")
             viewer.logMessage("3. Logout")
-
-            if (adminPermissionCheckerUseCase(userId)) {
-                viewer.logMessage("2. Create user")
-            }
-
             viewer.logMessage("0. Exit")
             viewer.log("Enter your choice: ")
             when (reader.readInput()?.toIntOrNull()) {

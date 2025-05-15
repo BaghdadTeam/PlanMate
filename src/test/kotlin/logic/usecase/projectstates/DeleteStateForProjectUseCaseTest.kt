@@ -74,23 +74,4 @@ class DeleteStateForProjectUseCaseTest {
             Truth.assertThat(audit.projectId).isInstanceOf(UUID::class.java)
             Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
         }
-
-
-    @Test
-    fun `should throw AccessDeniedException when adminPermissionCheckerUseCase return false`() =
-        runTest {
-            // Given
-            val userId = UUID.randomUUID()
-            val stateId = UUID.randomUUID()
-            coEvery { sessionManager.isAuthenticated() } returns true
-            coEvery { adminPermissionCheckerUseCase(userId) } returns false
-
-            // When
-            val exception = assertThrows<AccessDeniedException> {
-                deleteStateUseCase.invoke(stateId, userId)
-            }
-
-            // Then
-            Truth.assertThat(exception.message).contains("Not authorized")
-        }
 }

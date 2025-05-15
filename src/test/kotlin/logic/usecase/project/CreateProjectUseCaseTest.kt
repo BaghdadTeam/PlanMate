@@ -26,7 +26,6 @@ class CreateProjectUseCaseTest {
     private lateinit var projectRepository: ProjectRepository
     private lateinit var createProjectUseCase: CreateProjectUseCase
     private lateinit var auditRepository: AuditRepository
-    private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
     private val sessionManager: SessionManager = mockk()
 
 
@@ -34,15 +33,20 @@ class CreateProjectUseCaseTest {
     fun setUp() {
         projectRepository = mockk()
         auditRepository = mockk()
-        adminPermissionCheckerUseCase = mockk()
         createProjectUseCase =
-            CreateProjectUseCase(projectRepository, auditRepository , adminPermissionCheckerUseCase , sessionManager)
+            CreateProjectUseCase(projectRepository, auditRepository, sessionManager)
         coEvery { sessionManager.isAuthenticated() } returns true
     }
+
     @Test
     fun `should throw Unauthorized exception  when user not authenticated `() = runTest {
         coEvery { sessionManager.isAuthenticated() } returns false
-        assertThrows<UnauthorizedException> { createProjectUseCase.invoke("project", UUID.randomUUID())}
+        assertThrows<UnauthorizedException> {
+            createProjectUseCase.invoke(
+                "project",
+                UUID.randomUUID()
+            )
+        }
     }
 
     @Test
@@ -51,7 +55,6 @@ class CreateProjectUseCaseTest {
         val projectName = "Test Project"
         val user = createUserHelper()
 
-        coEvery { adminPermissionCheckerUseCase(user.id) } returns true
         coEvery { projectRepository.createProject(any()) } just runs
         coEvery { auditRepository.addAuditEntry(any()) } just runs
         // When
@@ -66,20 +69,8 @@ class CreateProjectUseCaseTest {
         // Given
         val projectName = ""
         val user = createUserHelper()
-        coEvery { adminPermissionCheckerUseCase(user.id) } returns true
 
         // When & Then
         assertThrows<EmptyProjectNameException> { createProjectUseCase(projectName, user.id) }
-    }
-
-    @Test
-    fun `should throw AccessDeniedException when adminPermissionCheckerUseCase return false`() = runTest {
-        // Given
-        val projectName = "Test Project"
-        val user = createUserHelper().copy(type = UserType.Mate)
-        coEvery { adminPermissionCheckerUseCase(user.id) } returns false
-
-        // When & Then
-        assertThrows<AccessDeniedException> { createProjectUseCase(projectName, user.id) }
     }
 }

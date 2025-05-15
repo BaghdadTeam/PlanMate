@@ -15,12 +15,10 @@ import java.util.UUID
 class DeleteProjectUseCase(
     private val projectRepository: ProjectRepository,
     private val auditRepository: AuditRepository,
-    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
     private val sessionManager: SessionManager
 ) {
     suspend operator fun invoke(projectId: UUID,userId : UUID){
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
 
         val project = projectRepository.getProjectById(projectId)
         projectRepository.deleteProject(projectId)

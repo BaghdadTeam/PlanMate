@@ -16,13 +16,11 @@ import java.util.UUID
 class EditProjectUseCase(
     private val projectRepository: ProjectRepository,
     private val auditRepository: AuditRepository,
-    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
     private val sessionManager: SessionManager
 
 ) {
     suspend operator fun invoke(projectId: UUID, projectNewName: String, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
         if (projectNewName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
 
         val existing = projectRepository.getProjectById(projectId)

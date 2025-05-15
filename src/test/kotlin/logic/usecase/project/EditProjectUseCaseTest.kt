@@ -26,18 +26,15 @@ class EditProjectUseCaseTest {
     private lateinit var projectRepository: ProjectRepository
     private lateinit var editProjectUseCase: EditProjectUseCase
     private lateinit var auditRepository: AuditRepository
-    private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
     private val sessionManager: SessionManager = mockk()
 
     @BeforeEach
     fun setUp() {
         projectRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        adminPermissionCheckerUseCase = mockk(relaxed = true)
         editProjectUseCase = EditProjectUseCase(
             projectRepository,
             auditRepository,
-            adminPermissionCheckerUseCase,
             sessionManager
         )
         coEvery { sessionManager.isAuthenticated() } returns true
@@ -61,7 +58,6 @@ class EditProjectUseCaseTest {
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper().copy(type = UserType.Admin)
 
-        coEvery { adminPermissionCheckerUseCase(user.id) } returns true
         coEvery { projectRepository.getProjectById(project.id) } returns project
 
         coEvery { projectRepository.editProject(project) } just runs
@@ -72,33 +68,13 @@ class EditProjectUseCaseTest {
         // Then
         coVerify { projectRepository.editProject(project) }
     }
-
-    @Test
-    fun `should throw AccessDeniedException when adminPermissionCheckerUseCase return false`() =
-        runTest {
-            // Given
-            val projectName = "Test Project"
-            val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
-            val user = createUserHelper().copy(type = UserType.Mate)
-            coEvery { adminPermissionCheckerUseCase(user.id) } returns false
-
-            // When & Then
-            assertThrows<AccessDeniedException> {
-                editProjectUseCase.invoke(
-                    projectId = project.id,
-                    projectName,
-                    user.id
-                )
-            }
-        }
-
+    
     @Test
     fun `should throw EmptyProjectNameException when project name is empty`() = runTest {
         // Given
         val projectName = ""
         val project = ProjectEntity(name = "aboud", creatorId = UUID.randomUUID())
         val user = createUserHelper()
-        coEvery { adminPermissionCheckerUseCase(user.id) } returns true
 
         // When & Then
         assertThrows<EmptyProjectNameException> {

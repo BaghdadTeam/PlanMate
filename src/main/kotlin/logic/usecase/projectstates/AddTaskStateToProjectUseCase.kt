@@ -18,13 +18,11 @@ import java.util.UUID
 class AddTaskStateToProjectUseCase(
     private val projectStatesRepository: ProjectStatesRepository,
     private val auditRepository: AuditRepository,
-    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
     private val sessionManager: SessionManager
 ) {
 
     suspend fun invoke(state: TaskStateEntity, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
         if (state.name.isBlank()) throw CantAddStateWithNoNameException("state name can't be empty")
 
         projectStatesRepository.createState(state)

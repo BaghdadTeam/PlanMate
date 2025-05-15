@@ -44,7 +44,7 @@ val useCaseModule = module {
     // region  ::  Project States Use Cases  ::
 
 
-    single { AddTaskStateToProjectUseCase(get(), get(), get(), get()) }
+    single { AddTaskStateToProjectUseCase(get(), get(), get()) }
     single { DeleteStateForProjectUseCase(get(), get(), get(), get()) }
     single { GetAllStatesPerProjectUseCase(get(), get()) }
     single { GetStateByIdUseCase(get(), get()) }
@@ -52,9 +52,9 @@ val useCaseModule = module {
     // endregion
 
     // region  ::  Project Use Cases  ::
-    single { CreateProjectUseCase(get(), get(), get(), get()) }
-    single { DeleteProjectUseCase(get(), get(), get(), get()) }
-    single { EditProjectUseCase(get(), get(), get(), get()) }
+    single { CreateProjectUseCase(get(), get(), get()) }
+    single { DeleteProjectUseCase(get(), get(), get()) }
+    single { EditProjectUseCase(get(), get(), get()) }
     single { GetAllProjectsUseCase(get(), get()) }
     // endregion
 
@@ -65,12 +65,12 @@ val useCaseModule = module {
 
     // region :: User ::
     single { CreateUserUseCase(get(), get(), get()) }
-    single { UserValidatorUseCase(get(), get()) }
+    single { UserValidatorUseCase(get()) }
 
     // region :: Admin :
     single { AdminPermissionCheckerUseCase(get()) }
     single { CreateUserUseCase(get(), get(), get()) }
-    single { UserValidatorUseCase(get(), get()) }
+    single { UserValidatorUseCase(get()) }
     // endregion
 
     // region :: Audit ::

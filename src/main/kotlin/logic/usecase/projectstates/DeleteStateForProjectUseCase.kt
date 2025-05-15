@@ -21,7 +21,6 @@ class DeleteStateForProjectUseCase(
 
     suspend fun invoke(stateId: UUID, userId: UUID){
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
 
         val state = repository.getStateById(stateId)
         repository.deleteState(stateId)

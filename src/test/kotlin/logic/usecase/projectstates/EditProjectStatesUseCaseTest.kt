@@ -56,7 +56,7 @@ class EditProjectStatesUseCaseTest {
     }
 
     @Test
-    fun `edit states and add audit when adminPermissionCheckerUseCase return true`(){
+    fun `should edit states and add audit`(){
         // given
         val state = ProjectStatesEntityTestData.todoState()
         val userId = state.creatorId
@@ -71,32 +71,7 @@ class EditProjectStatesUseCaseTest {
         coVerify { auditRepository.addAuditEntry(match({ audit ->
             audit.userId == userId &&
             audit.description.contains(" state is updated successfully")
-
+        }))
         }
-            )) }
-
-
     }
-
-
-
-
-    @Test
-    fun `should throw exception when adminPermissionCheckerUseCase return false`() = runTest {
-        // given
-        val state = ProjectStatesEntityTestData.todoState()
-        val newState = state.copy(name = "Done")
-        val userId = UUID.randomUUID()
-
-        coEvery { adminPermissionCheckerUseCase(userId) } returns false
-
-        // when
-        val exception = assertThrows<AccessDeniedException> {
-            editStateUseCase.invoke(state.id, newState.name, userId)
-        }
-
-        // then
-        assertThat(exception.message).contains("Not authorized")
-    }
-
 }

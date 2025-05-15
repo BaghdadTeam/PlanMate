@@ -14,12 +14,10 @@ import java.util.UUID
 class CreateProjectUseCase(
     private val projectRepository: ProjectRepository,
     private val auditRepository: AuditRepository,
-    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
     private val sessionManager: SessionManager
 ) {
     suspend operator fun invoke(projectName: String, userId : UUID){
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (!adminPermissionCheckerUseCase(userId)) throw AccessDeniedException("Not authorized")
         if (projectName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
 
         val project = ProjectEntity(name = projectName, creatorId = userId)
