@@ -83,7 +83,7 @@ class CreateUserUITest {
         // Given
         every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("bad user", "Name", "password")
-        configureUseCaseToThrow(InvalidUsernameException("must match pattern"))
+        configureUseCaseToThrow(InvalidUsernameException())
         // When
         createUserInterface()
         // Then
@@ -95,7 +95,7 @@ class CreateUserUITest {
         // Given
         every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "", "password")
-        configureUseCaseToThrow(InvalidNameException("cannot be blank"))
+        configureUseCaseToThrow(InvalidNameException())
         // When
         createUserInterface()
         // Then
@@ -119,7 +119,7 @@ class CreateUserUITest {
         // Given
         every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "password")
-        configureUseCaseToThrow(UserAlreadyExistsException("username exists"))
+        configureUseCaseToThrow(UserAlreadyExistsException())
         // When
         createUserInterface()
         // Then

@@ -82,7 +82,7 @@ class CreateTaskUITest {
 
         coEvery {
             createTaskUseCase(any(), any())
-        } throws TaskWithMissingTitleException("Title is missing") andThen Unit
+        } throws TaskWithMissingTitleException() andThen Unit
 
         // When
         createTaskUI.execute(projectId)
@@ -105,7 +105,7 @@ class CreateTaskUITest {
 
         coEvery {
             createTaskUseCase(any(), any())
-        } throws TaskWithMissingDescriptionException("Description is missing") andThen Unit
+        } throws TaskWithMissingDescriptionException() andThen Unit
 
         // When
         createTaskUI.execute(projectId)

@@ -72,9 +72,7 @@ class TaskStateTransitionUITest {
         // given
 
         every { reader.readInput() } returnsMany listOf("1", "1")
-        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws StateNotFoundException(
-            "State not found"
-        )
+        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws StateNotFoundException()
 
         ui.execute(listOf(state), listOf(task))
 

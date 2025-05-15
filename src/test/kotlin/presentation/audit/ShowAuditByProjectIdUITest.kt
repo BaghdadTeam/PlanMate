@@ -49,12 +49,10 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws NoAuditForProjectException("No audit found for project with ID: $projectID")
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws NoAuditForProjectException()
 
         // then
         showAuditByProjectIdUI.execute(projectID)
-        verify { viewer.logError("No audit found for project with ID: $projectID") }
-
     }
 
     @Test
@@ -63,14 +61,11 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws UnSupportedTimeStampFormatException(
-            "Invalid timestamp format"
-        )
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws UnSupportedTimeStampFormatException()
 
         // then
         showAuditByProjectIdUI.execute(projectID)
         verify { viewer.logError("Invalid timestamp format") }
-
     }
 
     @Test

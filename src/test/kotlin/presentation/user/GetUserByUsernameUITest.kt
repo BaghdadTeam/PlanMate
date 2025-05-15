@@ -54,7 +54,7 @@ class GetUserByUsernameUITest {
     fun `blank input throws invalid username error`() = runTest {
         // Given
         every { reader.readInput() } returns ""
-        coEvery { getUserByUsernameUseCase.invoke("") } throws InvalidUsernameException("must not be empty")
+        coEvery { getUserByUsernameUseCase.invoke("") } throws InvalidUsernameException()
         // When
         getUserInterface.run()
         // Then
@@ -76,7 +76,7 @@ class GetUserByUsernameUITest {
     fun `user not found error with message`() = runTest {
         // Given
         every { reader.readInput() } returns "bob"
-        coEvery { getUserByUsernameUseCase.invoke("bob") } throws UserNotFoundException("bob not found")
+        coEvery { getUserByUsernameUseCase.invoke("bob") } throws UserNotFoundException()
         // When
         getUserInterface.run()
         // Then
@@ -87,7 +87,7 @@ class GetUserByUsernameUITest {
     fun `user not found with empty message uses default`() = runTest {
         // Given
         every { reader.readInput() } returns null
-        coEvery { getUserByUsernameUseCase.invoke("") } throws UserNotFoundException("")
+        coEvery { getUserByUsernameUseCase.invoke("") } throws UserNotFoundException()
         // When
         getUserInterface.run()
         // Then

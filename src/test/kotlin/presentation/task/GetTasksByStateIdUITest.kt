@@ -91,7 +91,7 @@ class GetTasksByStateIdUITest {
     @Test
     fun `test exception handling when tasks not found`() {
         every { reader.readInput() } returns stateId.toString() // User enters valid state ID
-        coEvery { getTasksByStateIdUseCase(stateId) } throws TasksNotFoundException("No tasks found")
+        coEvery { getTasksByStateIdUseCase(stateId) } throws TasksNotFoundException()
 
         getTasksByStateIdUI.execute()
 

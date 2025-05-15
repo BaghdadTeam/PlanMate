@@ -12,6 +12,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.user.GetUserByUsernameUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -26,7 +27,7 @@ class GetUserByUsernameUseCaseTest {
     @BeforeEach
     fun setup() {
         userRepository = mockk()
-        getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository,sessionManager)
+        getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository, sessionManager)
         coEvery { sessionManager.isAuthenticated() } returns true
 
 
@@ -55,10 +56,10 @@ class GetUserByUsernameUseCaseTest {
     @Test
     fun `should throw UserNotFoundException when user does not exist`() = runTest {
         // Given
-        coEvery { userRepository.getUserByUsername("bob") } throws UserNotFoundException("User 'bob' not found.")
+        coEvery { userRepository.getUserByUsername("bob") } throws UserNotFoundException()
 
         // When & Then
-        assertFailsWith<UserNotFoundException> {
+        assertThrows<UserNotFoundException> {
             getUserByUsernameUseCase("bob")
         }
     }

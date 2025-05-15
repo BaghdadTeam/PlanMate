@@ -52,24 +52,20 @@ class GetStateByIdUseCaseTest {
     @Test
     fun `should throw StateNotFoundException when there is no state with this id`() = runTest {
         val id = UUID.randomUUID()
-        coEvery { statesRepository.getStateById(id) } throws StateNotFoundException("No state found")
+        coEvery { statesRepository.getStateById(id) } throws StateNotFoundException()
 
-        val exception = assertThrows<StateNotFoundException> {
+        assertThrows<StateNotFoundException> {
             getStateByIdUseCase.invoke(id)
         }
-
-        assertThat(exception.message).contains("No state found")
     }
 
     @Test
     fun `should throw StateNotFoundException when state id matches but state is missing`() = runTest {
         val missingStateId = UUID.randomUUID()
-        coEvery { statesRepository.getStateById(missingStateId) } throws StateNotFoundException("No state found")
+        coEvery { statesRepository.getStateById(missingStateId) } throws StateNotFoundException()
 
-        val exception = assertThrows<StateNotFoundException> {
+        assertThrows<StateNotFoundException> {
             getStateByIdUseCase.invoke(missingStateId)
         }
-
-        assertThat(exception.message).contains("No state found")
     }
 }

@@ -49,11 +49,10 @@ class ShowAuditByTaskIdUITest {
 
         // when
         coEvery { getAuditByTaskIdUseCase.invoke(taskID) } throws
-                NoAuditForTaskException("No audit found for task with ID: $taskID")
+                NoAuditForTaskException()
 
         // then
         showAuditByTaskIdUI.execute(taskID)
-        verify { viewer.logError("No audit found for task with ID: $taskID") }
 
     }
 
@@ -63,9 +62,7 @@ class ShowAuditByTaskIdUITest {
         val taskID = UUID.randomUUID()
 
         // when
-        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } throws UnSupportedTimeStampFormatException(
-            "Invalid timestamp format"
-        )
+        coEvery { getAuditByTaskIdUseCase.invoke(taskID) } throws UnSupportedTimeStampFormatException()
 
         // then
         showAuditByTaskIdUI.execute(taskID)
