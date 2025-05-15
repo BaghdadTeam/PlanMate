@@ -1,10 +1,9 @@
 package org.baghdad.presentation.audit
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.task.GetTasksByProjectIdUI
 import java.util.UUID
 
-class AuditUI(
+class AuditManagementUI(
     private val showAuditByProjectIdUI: ShowAuditByProjectIdUI,
     private val viewer: Viewer,
     private val reader: Reader
