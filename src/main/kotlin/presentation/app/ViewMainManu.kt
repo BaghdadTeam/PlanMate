@@ -27,7 +27,10 @@ class ViewMainManu( // TODO : Test Cases
         while (true) {
             viewer.logMessage("=== Main Menu ===")
             viewer.logMessage("1. Project Management")
-            viewer.logMessage("3. Logout")
+            viewer.logMessage("2. Logout")
+            if (adminPermissionCheckerUseCase(userId)) {
+            viewer.logMessage("3. User Management")
+            }
             viewer.logMessage("0. Exit")
             viewer.log("Enter your choice: ")
             when (reader.readInput()?.toIntOrNull()) {
@@ -40,7 +43,7 @@ class ViewMainManu( // TODO : Test Cases
                     }
                 }
 
-                2 -> {
+                3 -> {
                     if (adminPermissionCheckerUseCase(userId)) {
                         createUserUI.invoke()
                     } else {
@@ -48,7 +51,7 @@ class ViewMainManu( // TODO : Test Cases
                     }
                 }
 
-                3->logoutUI.execute()
+                2->logoutUI.execute()
 
                 0 -> {
                     viewer.logMessage("Goodbye!")
