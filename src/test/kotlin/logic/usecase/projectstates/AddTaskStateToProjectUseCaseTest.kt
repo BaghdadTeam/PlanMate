@@ -12,7 +12,7 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
-import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -78,7 +78,7 @@ class AddTaskStateToProjectUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState()
 
         // Then
-        val exception = assertThrows<NotAccessException> {
+        val exception = assertThrows<StateNotAccessedException> {
             createStateUseCase.invoke(state, mateUser.id)
         }
         Truth.assertThat(exception.message).contains("Only Admin can add states")

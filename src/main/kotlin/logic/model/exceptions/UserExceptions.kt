@@ -1,7 +1,8 @@
 package org.baghdad.logic.model.exceptions
 
+sealed class UserExceptions : PlanMateException()
 
-class UserNotFoundException(message: String): Exception(message)
-class UserAlreadyExistsException(message: String): RuntimeException(message)
-class InvalidUsernameException(message: String): Exception(message)
-class InvalidNameException(message: String): Exception(message)
+class UserNotFoundException(message: String) : UserExceptions()
+class UserAlreadyExistsException(message: String) : UserExceptions()
+class InvalidUsernameException(message: String) : UserExceptions()
+class InvalidNameException(message: String) : UserExceptions()

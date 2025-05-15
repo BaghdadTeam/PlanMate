@@ -1,10 +1,8 @@
 package org.baghdad.logic.model.exceptions
 
-class NoTaskFoundException(message: String) : Exception(message)
-class NoProjectFoundException(message: String) : Exception(message)
-class EmptyActionInAuditEntityException(message: String) : Exception(message)
-class UnSupportedTimeStampFormatException(message: String) : Exception(message)
+sealed class AuditExceptions: PlanMateException()
 
-
-
-
+class NoAuditForTaskException(message: String) : AuditExceptions()
+class NoAuditForProjectException(message: String) : AuditExceptions()
+class EmptyActionInAuditEntityException(message: String) : AuditExceptions()
+class UnSupportedTimeStampFormatException(message: String) : AuditExceptions()

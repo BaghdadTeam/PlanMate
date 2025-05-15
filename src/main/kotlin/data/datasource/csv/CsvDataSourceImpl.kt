@@ -2,7 +2,7 @@ package org.baghdad.data.datasource.csv
 
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.logic.model.exceptions.CsvWriteException
+import org.baghdad.logic.model.exceptions.WritingFileException
 import java.io.File
 
 
@@ -31,14 +31,14 @@ class CsvDataSourceImpl<T>(
 
             writer.appendLine(parser.serializer(item))
         } catch (e: Exception) {
-            throw CsvWriteException("Error writing to CSV file: ${e.message}")
+            throw WritingFileException("Error writing to CSV file: ${e.message}")
         }
     }
 
     override suspend fun update(item: T) {
         try {
             val allLines = reader.readCsv()
-            if (allLines.isEmpty()) throw CsvWriteException("CSV is empty")
+            if (allLines.isEmpty()) throw WritingFileException("CSV is empty")
 
             val updatedId = parser.getId(item)
             val updatedLine = parser.serializer(item)
@@ -53,7 +53,7 @@ class CsvDataSourceImpl<T>(
 
             writer.updateLines(updatedLines)
         } catch (_: Exception) {
-            throw CsvWriteException("Error updating CSV file")
+            throw WritingFileException("Error updating CSV file")
         }
     }
 
@@ -72,7 +72,7 @@ class CsvDataSourceImpl<T>(
 
             writer.updateLines(listOf(header) + filteredLines.drop(1))
         } catch (e: Exception) {
-            throw CsvWriteException("Error deleting from CSV file: ${e.message}")
+            throw WritingFileException("Error deleting from CSV file: ${e.message}")
         }
     }
 }

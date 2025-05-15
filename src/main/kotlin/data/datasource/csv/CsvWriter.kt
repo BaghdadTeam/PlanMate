@@ -1,6 +1,6 @@
 package org.baghdad.data.datasource.csv
 
-import org.baghdad.logic.model.exceptions.CsvFileExceptions
+import org.baghdad.logic.model.exceptions.FileExceptions
 import org.baghdad.logic.model.exceptions.EmptyHeaderException
 import java.io.File
 
@@ -10,7 +10,7 @@ class CsvWriter(private val file: File) {
     // Validate the file extension and throw an exception if it is not a CSV file
     init {
         if (!file.name.endsWith(".csv", ignoreCase = true)) {
-            throw CsvFileExceptions("The file must have a .csv extension")
+            throw FileExceptions("The file must have a .csv extension")
         }
     }
 

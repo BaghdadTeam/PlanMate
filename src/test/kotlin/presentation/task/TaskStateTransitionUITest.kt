@@ -10,7 +10,7 @@ import io.mockk.verify
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.exceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
 import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.baghdad.presentation.input.Reader
@@ -72,7 +72,7 @@ class TaskStateTransitionUITest {
         // given
 
         every { reader.readInput() } returnsMany listOf("1", "1")
-        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws NotFoundException(
+        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws StateNotFoundException(
             "State not found"
         )
 

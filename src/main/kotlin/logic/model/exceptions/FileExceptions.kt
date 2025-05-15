@@ -1,5 +1,5 @@
 package org.baghdad.logic.model.exceptions
 
-class CsvFileExceptions(message: String) : IllegalArgumentException(message)
-class EmptyHeaderException(message: String) : IllegalArgumentException(message)
-class CsvWriteException(message: String) : RuntimeException(message)
+class FileExceptions(message: String) : IllegalArgumentException()
+class EmptyHeaderException(message: String) : IllegalArgumentException()
+class WritingFileException(message: String) : RuntimeException()

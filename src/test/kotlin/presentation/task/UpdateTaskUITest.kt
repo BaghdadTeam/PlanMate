@@ -5,7 +5,7 @@ import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.exceptions.CsvWriteException
+import org.baghdad.logic.model.exceptions.WritingFileException
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
@@ -148,7 +148,7 @@ class UpdateTaskUITest {
     @Test
     fun `test CsvWriteException is handled`() {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
-        coEvery { useCase(any(), dummySession.userId) } throws CsvWriteException("CSV write failed")
+        coEvery { useCase(any(), dummySession.userId) } throws WritingFileException("CSV write failed")
 
         updateTaskUI.execute(dummyTasks)
 

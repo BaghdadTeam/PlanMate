@@ -3,7 +3,7 @@ package org.baghdad.logic.usecase.projectstates
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -20,7 +20,7 @@ class DeleteStateForProjectUseCase (
     suspend fun invoke(stateId: UUID, userId: UUID){
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val user = userRepository.getUserById(userId)
-        if (user.type == UserType.Mate) throw NotAccessException("Only Admin can delete states")
+        if (user.type == UserType.Mate) throw StateNotAccessedException("Only Admin can delete states")
         val state = repository.getStateById(stateId)
         repository.deleteState(stateId)
         val audit = createAudit(state, user)

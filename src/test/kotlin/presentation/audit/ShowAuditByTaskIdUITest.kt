@@ -5,9 +5,7 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.NoTaskFoundException
+import org.baghdad.logic.model.exceptions.NoAuditForTaskException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
@@ -51,7 +49,7 @@ class ShowAuditByTaskIdUITest {
 
         // when
         coEvery { getAuditByTaskIdUseCase.invoke(taskID) } throws
-                NoTaskFoundException("No audit found for task with ID: $taskID")
+                NoAuditForTaskException("No audit found for task with ID: $taskID")
 
         // then
         showAuditByTaskIdUI.execute(taskID)

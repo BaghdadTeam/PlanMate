@@ -3,7 +3,7 @@ package org.baghdad.logic.usecase.projectstates
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -22,7 +22,7 @@ class EditProjectStatesUseCase (
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
 
         val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw NotAccessException("Only Admin can edit states")
+        if (user.type != UserType.Admin) throw StateNotAccessedException("Only Admin can edit states")
         val state = repository.getStateById(stateId)
 
         val newState = state.copy(name = newTaskStateName)

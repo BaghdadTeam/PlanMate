@@ -7,7 +7,7 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.CsvMapper
 import org.baghdad.data.datasource.csv.CsvDataSourceImpl
 import org.baghdad.logic.model.entities.Identifiable
-import org.baghdad.logic.model.exceptions.CsvWriteException
+import org.baghdad.logic.model.exceptions.WritingFileException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -102,7 +102,7 @@ class CsvDataSourceImplTest {
         val item = MyData(UUID.randomUUID(), "John", 25, "Male")
         every { parser.serializer(item) } returns "${item.id},John,25,Male"
 
-        val exception = assertThrows<CsvWriteException> {
+        val exception = assertThrows<WritingFileException> {
             csvDataSource.append(item)
         }
 
@@ -160,7 +160,7 @@ class CsvDataSourceImplTest {
         every { parser.header() } returns "id,Name,Age,Gender"
         every { parser.serializer(item) } returns "${item.id},John,25,Male"
 
-        val exception = assertThrows<CsvWriteException> {
+        val exception = assertThrows<WritingFileException> {
             csvDataSource.update(item)
         }
 

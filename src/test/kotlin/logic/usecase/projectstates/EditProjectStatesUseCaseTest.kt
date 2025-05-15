@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -95,7 +95,7 @@ class EditProjectStatesUseCaseTest {
         coEvery { userRepository.getUserById(mateUser.id) } returns mateUser
 
         // when
-        val exception = assertThrows<NotAccessException> {
+        val exception = assertThrows<StateNotAccessedException> {
             editStateUseCase.invoke(state.id, newState.name, mateUser.id)
         }
         // then

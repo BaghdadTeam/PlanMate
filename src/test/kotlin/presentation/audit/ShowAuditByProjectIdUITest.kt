@@ -5,9 +5,7 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.NoProjectFoundException
+import org.baghdad.logic.model.exceptions.NoAuditForProjectException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
@@ -51,7 +49,7 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws NoProjectFoundException("No audit found for project with ID: $projectID")
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws NoAuditForProjectException("No audit found for project with ID: $projectID")
 
         // then
         showAuditByProjectIdUI.execute(projectID)

@@ -2,7 +2,7 @@ package org.baghdad.logic.usecase.task
 
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
@@ -36,7 +36,7 @@ class TaskStateTransitionUseCase(
 
     private suspend fun validateNewState(projectId: UUID, newStateId: UUID) =
         projectStatesRepository.getStateById(newStateId).takeIf { it.projectId == projectId }
-            ?: throw NotFoundException("State not found in this project")
+            ?: throw StateNotFoundException("State not found in this project")
 
     private suspend fun updateTaskState(taskId: UUID, newStateId: UUID): Boolean {
         val task = taskRepository.getTaskById(taskId)

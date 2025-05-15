@@ -1,5 +1,7 @@
 package org.baghdad.logic.model.exceptions
 
-class StateNotFoundException(message: String) : NoSuchElementException(message)
-class NotAccessException(message: String) : Exception(message)
-class CantAddStateWithNoNameException(message: String) : Exception(message)
+sealed class ProjectStatesExceptions : PlanMateException()
+
+class StateNotFoundException(message: String) : ProjectStatesExceptions()
+class StateNotAccessedException(message: String) : ProjectStatesExceptions()
+class CantAddStateWithNoNameException(message: String) : ProjectStatesExceptions()

@@ -2,7 +2,7 @@ package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.csv.CsvWriter
-import org.baghdad.logic.model.exceptions.CsvFileExceptions
+import org.baghdad.logic.model.exceptions.FileExceptions
 import org.baghdad.logic.model.exceptions.EmptyHeaderException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -32,7 +32,7 @@ class CsvWriterTest {
     fun `test CsvWriter throws CsvFileExceptions if file is not CSV on initialization`() {
         val nonCsvFile = File("test.txt")
 
-        val exception = assertThrows<CsvFileExceptions> {
+        val exception = assertThrows<FileExceptions> {
             CsvWriter(nonCsvFile)
         }
 
@@ -43,7 +43,7 @@ class CsvWriterTest {
     fun `test appendLine throws CsvFileExceptions if file is not CSV`() {
         val nonCsvFile = File("test.txt")
 
-        val exception = assertThrows<CsvFileExceptions> {
+        val exception = assertThrows<FileExceptions> {
             CsvWriter(nonCsvFile)
             CsvWriter(nonCsvFile).appendLine("Some record")
         }
@@ -55,7 +55,7 @@ class CsvWriterTest {
     fun `test overwriteLines throws CsvFileExceptions if file is not CSV`() {
         val nonCsvFile = File("test.txt")
 
-        val exception = assertThrows<CsvFileExceptions> {
+        val exception = assertThrows<FileExceptions> {
             CsvWriter(nonCsvFile)
             CsvWriter(nonCsvFile).updateLines(listOf("Header", "Row 1", "Row 2"))
         }
