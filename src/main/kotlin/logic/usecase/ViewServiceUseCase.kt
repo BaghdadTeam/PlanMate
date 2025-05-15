@@ -14,20 +14,15 @@ class ViewServiceUseCase(
 
     suspend fun invoke(projectId: UUID): Map<TaskStateEntity, List<TaskEntity>> {
         try {
-            // Fetch states for the project
             val stateEntities = stateRepository.getAllStatesPerProject(projectId)
             if (stateEntities.isEmpty()) {
-                // If no states are found, return an empty map
                 return emptyMap()
             }
 
-            // Fetch tasks for the project
             val taskEntities = taskRepository.getTasksByProjectId(projectId)
 
-            // Group tasks by their stateId, return empty lists for states without tasks
             val tasksByStateId: Map<String, List<TaskEntity>> = taskEntities.groupBy { it.stateId.toString() }
 
-            // Map states to corresponding tasks, use empty list if no tasks for the state
             return stateEntities.associateWith { state ->
                 tasksByStateId[state.id.toString()] ?: emptyList()
             }
