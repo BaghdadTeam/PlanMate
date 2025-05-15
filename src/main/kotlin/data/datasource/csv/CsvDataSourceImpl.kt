@@ -30,15 +30,15 @@ class CsvDataSourceImpl<T>(
             }
 
             writer.appendLine(parser.serializer(item))
-        } catch (e: Exception) {
-            throw WritingFileException("Error writing to CSV file: ${e.message}")
+        } catch (_: Exception) {
+            throw WritingFileException()
         }
     }
 
     override suspend fun update(item: T) {
         try {
             val allLines = reader.readCsv()
-            if (allLines.isEmpty()) throw WritingFileException("CSV is empty")
+            if (allLines.isEmpty()) throw WritingFileException()
 
             val updatedId = parser.getId(item)
             val updatedLine = parser.serializer(item)
@@ -53,7 +53,7 @@ class CsvDataSourceImpl<T>(
 
             writer.updateLines(updatedLines)
         } catch (_: Exception) {
-            throw WritingFileException("Error updating CSV file")
+            throw WritingFileException()
         }
     }
 
@@ -71,8 +71,8 @@ class CsvDataSourceImpl<T>(
             }
 
             writer.updateLines(listOf(header) + filteredLines.drop(1))
-        } catch (e: Exception) {
-            throw WritingFileException("Error deleting from CSV file: ${e.message}")
+        } catch (_: Exception) {
+            throw WritingFileException()
         }
     }
 }

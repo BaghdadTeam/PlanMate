@@ -22,7 +22,7 @@ class UserRepositoryImpl(
 
     override suspend fun getUserById(id: UUID): UserEntity {
         return dataSource.findUserById(id)?.toDomain()
-            ?: throw UserNotFoundException("User not found with id: $id")
+            ?: throw UserNotFoundException()
     }
 
     override suspend fun isUsernameTaken(username: String): Boolean {

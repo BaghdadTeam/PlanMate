@@ -1,5 +1,5 @@
 package org.baghdad.logic.model.exceptions
 
-class FileExceptions(message: String) : IllegalArgumentException()
-class EmptyHeaderException(message: String) : IllegalArgumentException()
-class WritingFileException(message: String) : RuntimeException()
+class FileExceptions() : IllegalArgumentException()
+class EmptyHeaderException() : IllegalArgumentException()
+class WritingFileException() : RuntimeException()

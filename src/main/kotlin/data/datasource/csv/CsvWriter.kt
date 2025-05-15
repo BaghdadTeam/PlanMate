@@ -10,14 +10,14 @@ class CsvWriter(private val file: File) {
     // Validate the file extension and throw an exception if it is not a CSV file
     init {
         if (!file.name.endsWith(".csv", ignoreCase = true)) {
-            throw FileExceptions("The file must have a .csv extension")
+            throw FileExceptions()
         }
     }
 
     // Write the header to the file if it's not blank and the file doesn't exist
     fun writeHeader(header: String) {
         if (header.isBlank()) {
-            throw EmptyHeaderException("Header cannot be empty")
+            throw EmptyHeaderException()
         }
 
         if (!file.exists()) {
