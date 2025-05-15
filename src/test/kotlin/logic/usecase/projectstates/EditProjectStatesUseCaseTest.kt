@@ -26,18 +26,15 @@ class EditProjectStatesUseCaseTest {
     private lateinit var statesRepository: ProjectStatesRepository
     private lateinit var auditRepository: AuditRepository
     private lateinit var editStateUseCase: EditProjectStatesUseCase
-    private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
     private val sessionManager: SessionManager = mockk()
 
     @BeforeEach
     fun setup() {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        adminPermissionCheckerUseCase = mockk(relaxed = true)
         editStateUseCase = EditProjectStatesUseCase(
             statesRepository,
             auditRepository,
-            adminPermissionCheckerUseCase,
             sessionManager
         )
         coEvery { sessionManager.isAuthenticated() } returns true
@@ -61,7 +58,6 @@ class EditProjectStatesUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState()
         val userId = state.creatorId
 
-        coEvery { adminPermissionCheckerUseCase(userId) } returns true
         coEvery { statesRepository.getStateById(state.id) } returns state
 
         // when

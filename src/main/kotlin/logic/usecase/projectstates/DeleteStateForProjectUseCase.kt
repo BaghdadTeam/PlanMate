@@ -15,7 +15,6 @@ import java.util.UUID
 class DeleteStateForProjectUseCase(
     private val repository: ProjectStatesRepository,
     private val auditRepository: AuditRepository,
-    private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
     private val sessionManager: SessionManager
 ) {
 

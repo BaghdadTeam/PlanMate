@@ -27,18 +27,15 @@ class DeleteStateForProjectUseCaseTest {
     private lateinit var auditRepository: AuditRepository
     private lateinit var deleteStateUseCase: DeleteStateForProjectUseCase
     private val sessionManager: SessionManager = mockk()
-    private lateinit var adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase
 
     @BeforeEach
     fun setup() {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        adminPermissionCheckerUseCase = mockk(relaxed = true)
         deleteStateUseCase =
             DeleteStateForProjectUseCase(
                 statesRepository,
                 auditRepository,
-                adminPermissionCheckerUseCase,
                 sessionManager
             )
 
@@ -59,7 +56,6 @@ class DeleteStateForProjectUseCaseTest {
             val userId = UUID.randomUUID()
 
             coEvery { sessionManager.isAuthenticated() } returns true
-            coEvery { adminPermissionCheckerUseCase(userId) } returns true
 
             // when
             deleteStateUseCase.invoke(id, userId)
