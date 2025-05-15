@@ -22,9 +22,9 @@ class AddTaskStateToProjectUseCase(
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
 
         val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw StateNotAccessedException("Only Admin can add states")
+        if (user.type != UserType.Admin) throw StateNotAccessedException()
 
-        if (state.name.isBlank()) throw CantAddStateWithNoNameException("state name can't be empty")
+        if (state.name.isBlank()) throw CantAddStateWithNoNameException()
 
         projectStatesRepository.createState(state)
         val audit = createAudit(state, user)

@@ -13,7 +13,7 @@ class GetUserByUsernameUseCase(
     suspend operator fun invoke(username: String): UserEntity {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         if (username.isBlank()) {
-            throw InvalidUsernameException("Username must not be empty.")
+            throw InvalidUsernameException()
         }
         return userRepository.getUserByUsername(username)
     }

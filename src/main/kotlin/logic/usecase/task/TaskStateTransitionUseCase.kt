@@ -36,7 +36,7 @@ class TaskStateTransitionUseCase(
 
     private suspend fun validateNewState(projectId: UUID, newStateId: UUID) =
         projectStatesRepository.getStateById(newStateId).takeIf { it.projectId == projectId }
-            ?: throw StateNotFoundException("State not found in this project")
+            ?: throw StateNotFoundException()
 
     private suspend fun updateTaskState(taskId: UUID, newStateId: UUID): Boolean {
         val task = taskRepository.getTaskById(taskId)

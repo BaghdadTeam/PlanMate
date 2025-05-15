@@ -22,7 +22,7 @@ class EditProjectStatesUseCase (
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
 
         val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw StateNotAccessedException("Only Admin can edit states")
+        if (user.type != UserType.Admin) throw StateNotAccessedException()
         val state = repository.getStateById(stateId)
 
         val newState = state.copy(name = newTaskStateName)

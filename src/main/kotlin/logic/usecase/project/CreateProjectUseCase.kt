@@ -22,8 +22,8 @@ class CreateProjectUseCase(
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
 
         val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
-        if (projectName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
+        if (user.type != UserType.Admin) throw AccessDeniedException()
+        if (projectName.isBlank()) throw EmptyProjectNameException()
 
         val project = ProjectEntity(name = projectName, creatorId = user.id)
         projectRepository.createProject(project)

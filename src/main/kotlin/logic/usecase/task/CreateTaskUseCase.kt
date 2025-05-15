@@ -49,8 +49,8 @@ class CreateTaskUseCase(
     }
 
     private fun validateTask(task: TaskEntity): TaskEntity {
-        if (task.title.isBlank()) throw TaskWithMissingTitleException("Task title cannot be empty or blank")
-        if (task.description.isBlank()) throw TaskWithMissingDescriptionException("Task description cannot be empty or blank")
+        if (task.title.isBlank()) throw TaskWithMissingTitleException()
+        if (task.description.isBlank()) throw TaskWithMissingDescriptionException()
 
         return task
     }

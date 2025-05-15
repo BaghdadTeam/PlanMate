@@ -19,7 +19,7 @@ class DeleteProjectUseCase(
     suspend operator fun invoke(projectId: UUID,userId : UUID){
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
         val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
+        if (user.type != UserType.Admin) throw AccessDeniedException()
         val project = projectRepository.getProjectById(projectId)
         projectRepository.deleteProject(projectId)
         val audit = logProjectDeletion(project, user)
