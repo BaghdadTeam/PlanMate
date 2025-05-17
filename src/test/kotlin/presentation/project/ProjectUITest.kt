@@ -13,11 +13,7 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.project.CreateProjectUi
-import org.baghdad.presentation.project.DeleteProjectUi
-import org.baghdad.presentation.project.EditProjectUi
-import org.baghdad.presentation.project.GetAllProjectsUi
-import org.baghdad.presentation.project.ProjectUi
+import org.baghdad.presentation.project.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -68,7 +64,7 @@ class ProjectManagementUITest {
             "999",
             "0"
         )  // Invalid input followed by exit
-        projectUi()
+        projectManagementUI()
 
         verifySequence {
             viewer.logMessage("=== Project UI ===")
@@ -100,13 +96,13 @@ class ProjectManagementUITest {
             every { session.currentSession.userId } returns userId
             coEvery { adminPermissionCheckerUseCase(userId) } returns false
 
-        projectManagementUI()
 
             every { reader.readInput() } returnsMany listOf(
                 "999",
                 "0"
-            )  // Invalid input followed by exit
-            projectUi()
+            )
+
+            projectManagementUI()
 
             verifySequence {
                 viewer.logMessage("=== Project UI ===")
@@ -166,7 +162,7 @@ class ProjectManagementUITest {
 
         every { reader.readInput() } returns "3" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         verify{
             viewer.logError("Invalid choice. Please try again.")
@@ -182,7 +178,7 @@ class ProjectManagementUITest {
 
         every { reader.readInput() } returns "4" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         verify{
             viewer.logError("Invalid choice. Please try again.")
@@ -213,7 +209,7 @@ class ProjectManagementUITest {
 
         every { reader.readInput() } returns "4" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { editProjectUi.editProject() }
     }

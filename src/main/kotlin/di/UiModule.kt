@@ -53,7 +53,7 @@ val uiModule = module {
     single { CreateProjectUi(get(), get(), get(), get()) }
     single { DeleteProjectUi(get(), get(), get(), get(), get()) }
     single { GetAllProjectsUi(get(), get()) }
-    single { ProjectManagementUI(get(), get(), get(), get(), get(), get()) }
+    single { ProjectManagementUI(get(), get(), get(), get(), get(), get(), get(), get() ) }
     single { EditProjectUi(get(), get(), get(), get(), get()) }
     // endregion
 
