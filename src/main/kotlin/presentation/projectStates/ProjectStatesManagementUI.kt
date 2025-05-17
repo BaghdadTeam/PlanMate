@@ -8,50 +8,54 @@ class ProjectStatesManagementUI(
     private val addStateToProjectUI: AddTaskStateToProjectUI,
     private val deleteStateForProjectUI: DeleteStateForProjectUI,
     private val editProjectStateUI: EditProjectStateUI,
-    private val getAllStatesPerProjectUI  : GetAllStatesPerProjectUI,
+    private val getAllStatesPerProjectUI: GetAllStatesPerProjectUI,
     private val reader: Reader,
     private val viewer: Viewer
 
 ) {
-    fun invoke(projectId: UUID) {
-        viewer.logMessage(" === Project States === ")
-        viewer.logMessage("1 - Add State to Project")
-        viewer.logMessage("2 - Delete State for Project")
-        viewer.logMessage("3 - Edit Project State")
-        viewer.logMessage("0 - Back to Previous Screen")
-        viewer.logMessage("Enter your choice: ")
+    operator fun invoke(projectId: UUID) {
+        while (true) {
+            viewer.logMessage(" === Project States === ")
+            viewer.logMessage("1. Add State to Project")
+            viewer.logMessage("2. Delete State for Project")
+            viewer.logMessage("3. Edit Project State")
+            viewer.logMessage("0. Back to Previous Screen")
+            viewer.logMessage("Enter your choice: ")
 
-        when (reader.readInput()?.toIntOrNull()) {
-            1 -> addStateToProjectUI.execute(projectId)
-            2 -> {
-                val stateId = getStateIdFromUser(projectId , "delete")
-                if (stateId != null) {
-                    deleteStateForProjectUI.execute(stateId)
+            when (reader.readInput()?.toIntOrNull()) {
+                1 -> addStateToProjectUI.execute(projectId)
+                2 -> {
+                    val stateId = getStateIdFromUser(projectId, "delete")
+                    if (stateId != null) {
+                        deleteStateForProjectUI.execute(stateId)
+                    } else {
+                        viewer.logError("Invalid choice. Please try again.")
+                    }
                 }
-                else {
-                    viewer.logError("Invalid choice. Please try again.")
-                }
-            }
-            3 -> {
-                val stateId = getStateIdFromUser(projectId , "edit")
-                if (stateId != null) {
-                    editProjectStateUI.execute(stateId)
-                }else{
-                    viewer.logError("Invalid choice. Please try again.")
-                }
-            }
-            0 -> return
-            else -> viewer.logError("Invalid choice. Please try again.")
 
+                3 -> {
+                    val stateId = getStateIdFromUser(projectId, "edit")
+                    if (stateId != null) {
+                        editProjectStateUI.execute(stateId)
+                    } else {
+                        viewer.logError("Invalid choice. Please try again.")
+                    }
+                }
+
+                0 -> return
+                else -> viewer.logError("Invalid choice. Please try again.")
+
+            }
         }
     }
-    private fun getStateIdFromUser(projectId: UUID , action : String) : UUID?{
+
+    private fun getStateIdFromUser(projectId: UUID, action: String): UUID? {
         val statesIds = getAllStatesPerProjectUI.execute(projectId)
-        viewer.logMessage("Enter the state number of the state to $action:")
+        viewer.logMessage   ("Enter the state number of the state to $action:")
         val choice = reader.readInput()?.toIntOrNull()
         return if (choice != null && choice in 1..statesIds.size) {
             statesIds[choice - 1]
-        }else{
+        } else {
             null
         }
     }

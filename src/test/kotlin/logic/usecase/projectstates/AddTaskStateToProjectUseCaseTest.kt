@@ -11,12 +11,14 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.UserType
+import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
 import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,19 +31,13 @@ class AddTaskStateToProjectUseCaseTest {
     private lateinit var statesRepository: ProjectStatesRepository
     private lateinit var auditRepository: AuditRepository
     private lateinit var createStateUseCase: AddTaskStateToProjectUseCase
-    private lateinit var userRepository: UserRepository
     private val sessionManager: SessionManager = mockk(relaxed = true)
-
-    private val adminUser = createUserHelper()
-
-    private val mateUser = createUserHelper(userType = UserType.Mate)
 
     @BeforeEach
     fun setup() {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        userRepository = mockk(relaxed = true)
-        createStateUseCase = AddTaskStateToProjectUseCase(statesRepository, auditRepository, userRepository,sessionManager)
+        createStateUseCase = AddTaskStateToProjectUseCase(statesRepository, auditRepository ,sessionManager)
         coEvery { sessionManager.isAuthenticated() } returns true
     }
     @Test
@@ -55,11 +51,11 @@ class AddTaskStateToProjectUseCaseTest {
     @Test
     fun `should create state and add audit when state is valid`()= runTest {
         // given
+        val userId = UUID.randomUUID()
         val state = ProjectStatesEntityTestData.todoState()
-        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
 
         // when
-        createStateUseCase.invoke(state, adminUser.id)
+        createStateUseCase.invoke(state, userId)
 
         // then
         coVerify { statesRepository.createState(state) }
@@ -72,26 +68,16 @@ class AddTaskStateToProjectUseCaseTest {
         Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
     }
 
-    @Test
-    fun `should throw exception when user type is not admin`() = runTest{
-        // given
-        val state = ProjectStatesEntityTestData.todoState()
-
-        // Then
-        val exception = assertThrows<NotAccessException> {
-            createStateUseCase.invoke(state, mateUser.id)
-        }
-        Truth.assertThat(exception.message).contains("Only Admin can add states")
-    }
 
     @Test
     fun `should throw exception when state name is empty`()= runTest {
         // given
+        val userId = UUID.randomUUID()
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
-        coEvery { userRepository.getUserById(adminUser.id) } returns adminUser
-        // Then
+
+        // When & Then
         val exception = assertThrows<CantAddStateWithNoNameException> {
-            createStateUseCase.invoke(state, adminUser.id)
+            createStateUseCase.invoke(state, userId)
         }
         Truth.assertThat(exception.message).contains("state name can't be empty")
     }

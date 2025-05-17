@@ -25,7 +25,7 @@ class GetStateByIdUI(
         }
     }
 
-    private fun promptForStateId(): String? {
+    private fun promptForStateId(): String {
         while (true) {
             viewer.logMessage("Enter the state ID:")
             val input = reader.readInput()
