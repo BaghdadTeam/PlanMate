@@ -29,7 +29,7 @@ class ProjectStatesRepositoryImpTest {
         // Given
         val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
         val projectId = projectStates.first().projectId
-        coEvery { dataSource.getAllStatesForProject(projectId) } returns projectStates
+        coEvery { dataSource.getAllStatesForProject(projectId) } returns projectStates.map { it.toDto() }
         // When
         val result = projectStatesDataSource.getAllStatesPerProject(projectId)
 
@@ -54,7 +54,7 @@ class ProjectStatesRepositoryImpTest {
     fun `should return state when there is a state with same id`() = runTest {
         val stateEntity = ProjectStatesEntityTestData.todoState()
         val id = stateEntity.id
-        coEvery { dataSource.getStateById(id) } returns stateEntity
+        coEvery { dataSource.getStateById(id) } returns stateEntity.toDto()
 
         // When
         val result = projectStatesDataSource.getStateById(id)
@@ -69,13 +69,13 @@ class ProjectStatesRepositoryImpTest {
     @Test
     fun `should return state when can add state successfully`() = runTest {
         val stateEntity = ProjectStatesEntityTestData.inProgressState()
-        val domainModel = stateEntity.toDto()
+        val domainModel = stateEntity
 
-        coEvery { dataSource.createState(domainModel.toDomain()) } just Runs
+        coEvery { dataSource.createState(domainModel.toDto()) } just Runs
 
-        projectStatesDataSource.createState(domainModel.toDomain())
+        projectStatesDataSource.createState(domainModel)
 
-        coVerify { dataSource.createState(domainModel.toDomain()) }
+        coVerify { dataSource.createState(domainModel.toDto()) }
     }
 
     @Test
@@ -83,11 +83,11 @@ class ProjectStatesRepositoryImpTest {
         // Given
         val state = ProjectStatesEntityTestData.inProgressState()
         val updatedState = state.copy(name = "Doing")
-        coEvery { dataSource.editState(updatedState.toDto().toDomain()) } just Runs
+        coEvery { dataSource.editState(updatedState.toDto()) } just Runs
 
         // When
 
-        projectStatesDataSource.editState(updatedState.toDto().toDomain())
+        projectStatesDataSource.editState(updatedState)
 
         // Then
         coVerify(exactly = 1) { dataSource.editState(any()) }
