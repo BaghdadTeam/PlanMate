@@ -8,32 +8,27 @@ import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
-import org.baghdad.logic.repositories.UserRepository
-import java.util.*
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
+import java.util.UUID
 
 class CreateProjectUseCase(
     private val projectRepository: ProjectRepository,
-    private val userRepository: UserRepository,
     private val auditRepository: AuditRepository,
     private val sessionManager: SessionManager
 ) {
     suspend operator fun invoke(projectName: String, userId : UUID){
-
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-
-        val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw AccessDeniedException("Not authorized")
         if (projectName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
 
-        val project = ProjectEntity(name = projectName, creatorId = user.id)
+        val project = ProjectEntity(name = projectName, creatorId = userId)
         projectRepository.createProject(project)
 
-        val audit = logProjectCreation(project, user)
+        val audit = logProjectCreation(project, userId)
         auditRepository.addAuditEntry(audit)
     }
     private fun logProjectCreation(
         project: ProjectEntity,
-        user: UserEntity
+        userId: UUID
     ): AuditLogEntity {
         val description = "created project ${project.name}"
         val audit = AuditLogEntity(
@@ -42,7 +37,7 @@ class CreateProjectUseCase(
             projectId = project.id,
             description = description,
             action = Action.Create,
-            userId = user.id,
+            userId = userId,
         )
         return audit
     }

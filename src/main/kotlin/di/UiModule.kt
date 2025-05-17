@@ -42,7 +42,7 @@ val uiModule = module {
 
     single { AddTaskStateToProjectUI(get(), get(), get(), get()) }
     single { EditProjectStateUI(get(), get(), get(), get()) }
-    single { DeleteStateForProjectUseCase(get(), get(), get(),get()) }
+    single { DeleteStateForProjectUseCase(get(), get(), get()) }
     single { GetAllStatesPerProjectUI(get(), get()) }
 
     // endregion
@@ -51,7 +51,7 @@ val uiModule = module {
     single { CreateProjectUi(get(), get(), get(), get()) }
     single { DeleteProjectUi(get(), get(), get(), get(), get()) }
     single { GetAllProjectsUi(get(), get()) }
-    single { ProjectUi(get(), get(), get(), get(), get(), get()) }
+    single { ProjectUi(get(), get(), get(), get(), get() , get() , get() , get()) }
     single { EditProjectUi(get(), get(), get(), get(), get()) }
     // endregion
 
@@ -65,7 +65,7 @@ val uiModule = module {
 
     // region :: Swimlane ::
     single { RenderSwimlaneUI() }
-    single { SwimlaneUI(get(), get(), get(), get(), get() ,get(),get()) }
+    single { SwimlaneUI(get(), get(), get(), get(), get() ,get(),get(),get(),get()) }
     // endregion
 
     //region :: ProjectStates ::

@@ -21,7 +21,7 @@ class CreateUserUseCase(
         creatorId: UUID
     ): UserEntity {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        validatorUseCase.invoke(username, passwordPlain, name, creatorId)
+        validatorUseCase.invoke(username, passwordPlain, name)
         val newUser = createUserEntity(username,  name)
         userRepository.createUser(newUser,passwordPlain.md5WithSalt())
         return newUser
