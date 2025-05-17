@@ -46,11 +46,6 @@ class SwimlaneUI(
                 print("Enter your choice: ")
                 when (reader.readInput()?.toIntOrNull()) {
                     1 -> {
-                        println("Navigating to Project States Screen...")
-                        projectStatesManagementUI.invoke(project.first)
-                    }
-
-                    2 -> {
                         println("Navigating to Tasks Screen...")
                         taskUI.execute(projectData, project.first)
                     }
@@ -67,7 +62,6 @@ class SwimlaneUI(
                         } else {
                             viewer.logMessage("Invalid choice. Please try again.")
                         }
-                        auditManagementUI(project.first)
                     }
 
                     0 -> {
