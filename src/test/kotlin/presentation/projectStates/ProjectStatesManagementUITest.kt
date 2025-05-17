@@ -7,7 +7,7 @@ import org.baghdad.presentation.projectStates.*
 import org.junit.jupiter.api.BeforeEach
 
 
-class ProjectStatesUITest {
+class ProjectStatesManagementUITest {
     private lateinit var addStateToProjectUI: AddTaskStateToProjectUI
     private lateinit var deleteStateForProjectUI: DeleteStateForProjectUI
     private lateinit var editProjectStateUI: EditProjectStateUI
