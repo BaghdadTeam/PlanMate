@@ -1,4 +1,4 @@
-package org.baghdad.data.mapper
+package org.baghdad.data.repositories
 
 import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.logic.model.entities.ProjectEntity
