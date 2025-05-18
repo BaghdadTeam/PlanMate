@@ -20,20 +20,37 @@ class EditProjectUi(
         viewer.logMessage("=== View Project ===")
         val projects = getAllProjectsUi()
 
-        viewer.logMessage("Enter project Number: ")
-        val projectIndex = reader.readInput()?.toIntOrNull()
+        val projectIndex = getProjectNumberFromUser()
+        val newName = getProjectNewNameFromUser()
 
-        viewer.logMessage("Enter new project name: ")
-        val newName = reader.readInput()
-
-        if (projectIndex != null && newName != null) {
-            if((projectIndex > 0 && projectIndex <= projects.first.size)) {
-                editProjectUseCase(projects.first[projectIndex - 1], newName, userId)
-            }else{
-                viewer.logMessage("Invalid project Number")
-            }
+        if ((projectIndex > 0 && projectIndex <= projects.first.size)) {
+            editProjectUseCase(projects.first[projectIndex - 1], newName, userId)
         } else {
-            viewer.logError("Project Number should be a number")
+            viewer.logMessage("Invalid project Number")
         }
     }
+
+
+    private fun getProjectNewNameFromUser(): String {
+        viewer.log("Enter new project name: ")
+        val newName = reader.readInput()
+        return if (!newName.isNullOrBlank()) {
+            newName
+        } else {
+            getProjectNewNameFromUser()
+        }
+    }
+
+    private fun getProjectNumberFromUser(): Int {
+        viewer.log("Enter project Number: ")
+        val projectNumber = reader.readInput()?.toIntOrNull()
+        return if (projectNumber != null) {
+            projectNumber
+        } else {
+            viewer.logError("Project Number should be a number")
+            getProjectNumberFromUser()
+        }
+
+    }
+
 }
