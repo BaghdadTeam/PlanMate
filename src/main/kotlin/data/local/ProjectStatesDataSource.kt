@@ -15,25 +15,25 @@ class ProjectStatesDataSource(
     private val taskDataSource: DataSource<TaskEntity>
 ) {
 
-    suspend fun getAllStatesForProject(projectId: UUID): List<TaskStateEntity> {
+    suspend fun getAllStatesForProject(projectId: UUID): List<TaskStateDto> {
         val allData = projectStateDataSource.loadAll()
-        val states = allData.filter { it.projectId == projectId }.map { it.toDomain() }
+        val states = allData.filter { it.projectId == projectId }
         if (states.isEmpty()) throw StateNotFoundException("No state found")
         return states
     }
 
-    suspend fun getStateById(id: UUID): TaskStateEntity {
+    suspend fun getStateById(id: UUID): TaskStateDto {
         val allData = projectStateDataSource.loadAll()
-        return allData.find { it.id == id }?.toDomain()
+        return allData.find { it.id == id }
             ?: throw StateNotFoundException("No state found")
     }
 
-    suspend fun createState(state: TaskStateEntity) {
-        projectStateDataSource.append(state.toDto())
+    suspend fun createState(state: TaskStateDto) {
+        projectStateDataSource.append(state)
     }
 
-    suspend fun editState(state: TaskStateEntity) {
-        projectStateDataSource.update(state.toDto())
+    suspend fun editState(state: TaskStateDto) {
+        projectStateDataSource.update(state)
     }
 
     suspend fun deleteState(stateId: UUID) {
@@ -47,3 +47,5 @@ class ProjectStatesDataSource(
             .forEach { taskDataSource.delete(it) }
     }
 }
+
+//
