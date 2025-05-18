@@ -14,22 +14,26 @@ class EditProjectUi(
 
 ) {
     suspend fun editProject() {
-        val session = sessionManager.currentSession
-        val userId = session.userId
+        val userId = sessionManager.currentSession.userId
 
         viewer.logMessage("=== Edit Project ===")
         viewer.logMessage("=== View Project ===")
         val projects = getAllProjectsUi()
 
+        viewer.logMessage("Enter project Number: ")
+        val projectIndex = reader.readInput()?.toIntOrNull()
+
         viewer.logMessage("Enter new project name: ")
-
-        val projectId = reader.readInput()?.toIntOrNull()
         val newName = reader.readInput()
-        if (projectId != null && newName != null) {
-            editProjectUseCase(projects.first[projectId], newName, userId)
-        } else {
-            viewer.logError("Project Id should be a number")
-        }
 
+        if (projectIndex != null && newName != null) {
+            if((projectIndex > 0 && projectIndex <= projects.first.size)) {
+                editProjectUseCase(projects.first[projectIndex - 1], newName, userId)
+            }else{
+                viewer.logMessage("Invalid project Number")
+            }
+        } else {
+            viewer.logError("Project Number should be a number")
+        }
     }
 }
