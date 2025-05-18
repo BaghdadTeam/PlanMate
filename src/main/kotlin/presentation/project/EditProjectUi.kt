@@ -32,25 +32,28 @@ class EditProjectUi(
 
 
     private fun getProjectNewNameFromUser(): String {
-        viewer.log("Enter new project name: ")
-        val newName = reader.readInput()
-        return if (!newName.isNullOrBlank()) {
-            newName
-        } else {
-            getProjectNewNameFromUser()
+        var newName: String? = null
+        while (newName.isNullOrBlank()) {
+            viewer.log("Enter new project name: ")
+            newName = reader.readInput()
+            if (newName.isNullOrBlank()) {
+                viewer.logError("Project name can't be empty")
+            }
         }
+        return newName
     }
 
     private fun getProjectNumberFromUser(): Int {
-        viewer.log("Enter project Number: ")
-        val projectNumber = reader.readInput()?.toIntOrNull()
-        return if (projectNumber != null) {
-            projectNumber
-        } else {
-            viewer.logError("Project Number should be a number")
-            getProjectNumberFromUser()
+        var projectNumber: Int? = null
+        while (projectNumber == null) {
+            viewer.log("Enter project Number: ")
+            val input = reader.readInput()
+            projectNumber = input?.toIntOrNull()
+            if (projectNumber == null) {
+                viewer.logError("Project Number should be a number")
+            }
         }
-
+        return projectNumber
     }
 
 }
