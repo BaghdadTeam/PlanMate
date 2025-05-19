@@ -1,6 +1,13 @@
 package presentation.project
 
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
+import io.mockk.verifySequence
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.project.EditProjectUseCase
@@ -10,7 +17,7 @@ import org.baghdad.presentation.project.EditProjectUi
 import org.baghdad.presentation.project.GetAllProjectsUi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 
 class EditProjectUiTest {
 
@@ -37,16 +44,23 @@ class EditProjectUiTest {
     @Test
     fun `should edit project successfully`() = runBlocking {
         // Given
-        val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
+        val projects =
+            listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
         val userId = UUID.randomUUID()
-        val projectId = 0
+        val projectNumber = 1
         val newProjectName = "New Project Name"
 
         // when
         coEvery { session.currentSession.userId } returns userId
         coEvery { getAllProjectsUi() } returns projects
-        coEvery { reader.readInput() } returns projectId.toString() andThen newProjectName
-        coEvery { editProjectUseCase(projects.first[projectId], newProjectName, userId) } returns Unit
+        coEvery { reader.readInput() } returns projectNumber.toString() andThen newProjectName
+        coEvery {
+            editProjectUseCase(
+                projects.first[projectNumber - 1],
+                newProjectName,
+                userId
+            )
+        } returns Unit
 
         // Act
         editProjectUi.editProject()
@@ -54,53 +68,87 @@ class EditProjectUiTest {
         // Then
         verify { viewer.logMessage("=== Edit Project ===") }
         verify { viewer.logMessage("=== View Project ===") }
-        verify { viewer.logMessage("Enter new project name: ") }
-        coVerify { editProjectUseCase(projects.first[projectId], newProjectName, userId) }
+        verify { viewer.log("Enter project Number: ") }
+        verify { viewer.log("Enter new project name: ") }
+        coVerify { editProjectUseCase(projects.first[projectNumber - 1], newProjectName, userId) }
     }
 
     @Test
-    fun `should log error when project id is not a number`() = runBlocking {
-        // Given
-        val userId = UUID.randomUUID()
-        val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
+    fun `should log error when project id is not a number and continue ask the user for a number`() =
+        runBlocking {
+            // Given
+            val projects =
+                listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
+            val userId = UUID.randomUUID()
+            val projectNumber = 1
+            val newProjectName = "New Project Name"
 
-        // when
-        coEvery { session.currentSession.userId } returns userId
-        coEvery { getAllProjectsUi() } returns projects
-        coEvery { reader.readInput() } returns "invalid"
+            // when
+            coEvery { session.currentSession.userId } returns userId
+            coEvery { getAllProjectsUi() } returns projects
+            coEvery { reader.readInput() } returns "invalid" andThen "1" andThen newProjectName
+            coEvery {
+                editProjectUseCase(
+                    projects.first[projectNumber - 1],
+                    newProjectName,
+                    userId
+                )
+            } returns Unit
 
-        // Act
-        editProjectUi.editProject()
+            editProjectUi.editProject()
 
-        // Then
-        verify { viewer.logMessage("=== Edit Project ===") }
-        verify { viewer.logMessage("=== View Project ===") }
-        verify { viewer.logMessage("Enter new project name: ") }
-        verify { viewer.logError("Project Id should be a number") }
-        coVerify(exactly = 0) { editProjectUseCase(any(), any(), any()) }  // Ensure use case is not called
-    }
+            // Then
+            verifySequence {
+                viewer.logMessage("=== Edit Project ===")
+                viewer.logMessage("=== View Project ===")
+                viewer.log("Enter project Number: ")
+                viewer.logError("Project Number should be a number")
+                viewer.log("Enter project Number: ")
+                viewer.log("Enter new project name: ")
+            }
+            coVerify {
+                editProjectUseCase(
+                    projects.first[projectNumber - 1],
+                    newProjectName,
+                    userId
+                )
+            }
+        }
 
     @Test
     fun `should log error when new project name is null`() = runBlocking {
         // Given
         val userId = UUID.randomUUID()
-        val projectId = 0
-        val projects = listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
+        val projectNumber = 1
+        val projects =
+            listOf(UUID.randomUUID(), UUID.randomUUID()) to listOf("Project 1", "Project 2")
+        val newProjectName = "New Project Name"
 
 
         // when
         coEvery { session.currentSession.userId } returns userId
         coEvery { getAllProjectsUi() } returns projects
-        coEvery { reader.readInput() } returns projectId.toString() andThen null  // Simulating null project name input
+        coEvery { reader.readInput() } returns projectNumber.toString() andThen null andThen newProjectName
+        coEvery {
+            editProjectUseCase(
+                projects.first[projectNumber - 1],
+                newProjectName,
+                userId
+            )
+        } returns Unit
 
         // Act
         editProjectUi.editProject()
 
         // Then
-        verify { viewer.logMessage("=== Edit Project ===") }
-        verify { viewer.logMessage("=== View Project ===") }
-        verify { viewer.logMessage("Enter new project name: ") }
-        verify { viewer.logError("Project Id should be a number") }  // Adjust error message based on the condition
-        coVerify(exactly = 0) { editProjectUseCase(any(), any(), any()) }  // Ensure the use case is not called
+        verifySequence {
+            viewer.logMessage("=== Edit Project ===")
+            viewer.logMessage("=== View Project ===")
+            viewer.log("Enter project Number: ")
+            viewer.log("Enter new project name: ")
+            viewer.logError("Project name can't be empty")
+            viewer.log("Enter new project name: ")
+        }
+        coVerify { editProjectUseCase(projects.first[projectNumber - 1], newProjectName, userId) }
     }
 }
