@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.ProjectDataSource
+import org.baghdad.data.repositories.toDto
 import org.baghdad.data.repositories.project.ProjectRepositoryImpl
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.repositories.ProjectRepository
@@ -29,7 +30,7 @@ class ProjectRepositoryImplTest {
         val projects = listOf(
             ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()),
         )
-        coEvery { dataSource.getAllProjects() } returns projects
+        coEvery { dataSource.getAllProjects() } returns projects.map { it.toDto() }
 
         // When
         val result = projectRepository.getAllProjects()
@@ -42,7 +43,7 @@ class ProjectRepositoryImplTest {
     fun `should return true when project is found by id`() = runTest {
         // Given
         val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        coEvery { dataSource.getProjectById(project.id) } returns project
+        coEvery { dataSource.getProjectById(project.id) } returns project.toDto()
         // When
 
         val result = projectRepository.getProjectById(project.id)

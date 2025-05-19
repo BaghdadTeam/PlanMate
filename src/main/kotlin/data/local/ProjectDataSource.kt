@@ -2,9 +2,6 @@ package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.project.ProjectDto
-import org.baghdad.data.mapper.toDto
-import org.baghdad.data.mapper.toEntity
-import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
@@ -16,26 +13,25 @@ class ProjectDataSource(
     private val taskDataSource: DataSource<TaskEntity>
 ) {
 
-    suspend fun createProject(project: ProjectEntity) {
-        projectDataSource.append(project.toDto())
+    suspend fun createProject(project: ProjectDto) {
+        projectDataSource.append(project)
     }
 
-    suspend fun getAllProjects(): List<ProjectEntity> {
-        return projectDataSource.loadAll().map { it.toEntity() }
+    suspend fun getAllProjects(): List<ProjectDto> {
+        return projectDataSource.loadAll()
     }
 
-    suspend fun getProjectById(id: UUID): ProjectEntity {
+    suspend fun getProjectById(id: UUID): ProjectDto {
         return projectDataSource.loadAll().find { it.id == id }
-            ?.toEntity()
             ?: throw ProjectNotFoundException("Project with id $id not found")
     }
 
-    suspend fun updateProject(project: ProjectEntity) {
+    suspend fun updateProject(project: ProjectDto) {
         val projects = projectDataSource.loadAll()
         if (projects.none { it.id == project.id }) {
             throw ProjectNotFoundException("Project with id ${project.id} not found")
         }
-        projectDataSource.update(project.toDto())
+        projectDataSource.update(project)
     }
 
     suspend fun deleteProject(projectId: UUID) {
