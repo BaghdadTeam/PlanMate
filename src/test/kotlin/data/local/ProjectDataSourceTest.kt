@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.local.ProjectDataSource
-import org.baghdad.data.mapper.toDto
+import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
@@ -34,22 +34,21 @@ class ProjectDataSourceTest {
     @Test
     fun `should return data when there is a projects`() = runTest {
         // Given
-        val entity = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        val dto = entity.toDto()
-        coEvery { dataSource.loadAll() } returns listOf(dto)
+        val projectDto = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).toDto()
+        coEvery { dataSource.loadAll() } returns listOf(projectDto)
 
         // When
         val result = projectDataSource.getAllProjects()
 
         // Then
-        assertThat(result).containsExactly(entity)
+        assertThat(result).containsExactly(projectDto)
     }
 
     @Test
     fun `should throw ProjectNotFoundException when updateProject and there is no projects`() =
         runTest {
             // Given
-            val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
+            val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).toDto()
             coEvery { dataSource.loadAll() } returns emptyList()
 
             // When & Then
@@ -74,29 +73,28 @@ class ProjectDataSourceTest {
     @Test
     fun `createProject should call append on data source`() = runTest {
         // Given
-        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        val dto = project.toDto()
-        coEvery { dataSource.append(dto) } just Runs
+        val project = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).toDto()
+
+        coEvery { dataSource.append(project) } just Runs
 
         // When
         projectDataSource.createProject(project)
 
         // Then
-        coVerify { dataSource.append(dto) }
+        coVerify { dataSource.append(project) }
     }
 
     @Test
     fun `should return project when there is a project with same id`() = runTest {
         // Given
-        val entity = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
-        val dto = entity.toDto()
-        coEvery { dataSource.loadAll() } returns listOf(dto)
+        val projectDto = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).toDto()
+        coEvery { dataSource.loadAll() } returns listOf(projectDto)
 
         // When
-        val result = projectDataSource.getProjectById(entity.id)
+        val result = projectDataSource.getProjectById(projectDto.id)
 
         // Then
-        assertThat(result).isEqualTo(entity)
+        assertThat(result).isEqualTo(projectDto)
     }
 
     @Test
@@ -114,10 +112,10 @@ class ProjectDataSourceTest {
     @Test
     fun `should return updated project when can update it successfully`() = runTest {
         // Given
-        val existing = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID())
+        val existing = ProjectEntity(name = "Project 1", creatorId = UUID.randomUUID()).toDto()
         val updated = existing.copy(name = "Project 3")
-        coEvery { dataSource.loadAll() } returns listOf(existing.toDto())
-        coEvery { dataSource.update(updated.toDto()) } just Runs
+        coEvery { dataSource.loadAll() } returns listOf(existing)
+        coEvery { dataSource.update(updated) } just Runs
 
         // When
         projectDataSource.updateProject(updated)
