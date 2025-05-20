@@ -1,6 +1,8 @@
-package org.baghdad.data.datasource.mongodb
+package org.baghdad.data.datasource.remote.mongodb
 
-object CollectionNames {
+object MongoDBNames {
+    const val DATABASE_NAME = "Aboud"
+
     const val PROJECTS_COLLECTION = "Projects"
     const val PROJECT_STATES_COLLECTION = "ProjectStates"
     const val TASKS_COLLECTION = "Tasks"
