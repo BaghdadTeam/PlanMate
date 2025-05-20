@@ -1,4 +1,4 @@
-package org.baghdad.data.local
+package data.datasource.local.csv.files
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.logic.model.entities.SessionEntity

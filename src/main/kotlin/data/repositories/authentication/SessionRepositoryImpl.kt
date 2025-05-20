@@ -1,6 +1,6 @@
 package org.baghdad.data.repositories.authentication
 
-import org.baghdad.data.local.SessionDataSource
+import data.datasource.local.csv.files.SessionDataSource
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.repositories.SessionRepository
 
