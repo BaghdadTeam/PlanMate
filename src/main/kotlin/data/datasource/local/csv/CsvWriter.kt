@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.csv
+package org.baghdad.data.datasource.local.csv
 
 import org.baghdad.logic.model.exceptions.CsvFileExceptions
 import org.baghdad.logic.model.exceptions.EmptyHeaderException

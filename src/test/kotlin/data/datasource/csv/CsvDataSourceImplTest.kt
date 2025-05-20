@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.CsvMapper
-import org.baghdad.data.datasource.csv.CsvDataSourceImpl
+import org.baghdad.data.datasource.local.csv.CsvDataSourceImpl
 import org.baghdad.logic.model.entities.Identifiable
 import org.baghdad.logic.model.exceptions.CsvWriteException
 import org.junit.jupiter.api.AfterEach

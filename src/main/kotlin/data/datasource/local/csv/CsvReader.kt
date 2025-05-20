@@ -1,4 +1,4 @@
-package org.baghdad.data.datasource.csv
+package org.baghdad.data.datasource.local.csv
 
 import java.io.File
 

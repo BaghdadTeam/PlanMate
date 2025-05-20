@@ -1,7 +1,7 @@
 package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.csv.CsvReader
+import org.baghdad.data.datasource.local.csv.CsvReader
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -1,7 +1,7 @@
 package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
-import org.baghdad.data.datasource.csv.CsvWriter
+import org.baghdad.data.datasource.local.csv.CsvWriter
 import org.baghdad.logic.model.exceptions.CsvFileExceptions
 import org.baghdad.logic.model.exceptions.EmptyHeaderException
 import org.junit.jupiter.api.AfterEach
