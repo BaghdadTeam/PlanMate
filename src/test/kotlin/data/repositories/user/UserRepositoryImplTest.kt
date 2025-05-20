@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.dto.UserDto
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.data.mapper.toDto
+import org.baghdad.data.repositories.toDto
 import org.baghdad.data.repositories.user.UserRepositoryImpl
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.UserNotFoundException

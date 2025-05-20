@@ -9,13 +9,13 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.task.CreateTaskUI
 import org.baghdad.presentation.task.DeleteTaskUI
-import org.baghdad.presentation.task.TaskManagementGatherUI
+import org.baghdad.presentation.task.TaskManagementUI
 import org.baghdad.presentation.task.UpdateTaskUI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class TaskManagementGatherUITest {
+class TaskManagementUITest {
 
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
@@ -24,7 +24,7 @@ class TaskManagementGatherUITest {
     private lateinit var deleteTaskUI: DeleteTaskUI
     private lateinit var changeTaskStateUI: TaskStateTransitionUI
     private lateinit var viewServiceUseCase: ViewServiceUseCase
-    private lateinit var ui: TaskManagementGatherUI
+    private lateinit var ui: TaskManagementUI
 
     private val projectId = UUID.randomUUID()
     private val creatorId = UUID.randomUUID()
@@ -42,7 +42,7 @@ class TaskManagementGatherUITest {
         deleteTaskUI = mockk(relaxed = true)
         changeTaskStateUI = mockk(relaxed = true)
 
-        ui = TaskManagementGatherUI(
+        ui = TaskManagementUI(
             viewer,
             reader,
             createTaskUI,

@@ -38,7 +38,7 @@ class CreateUserUseCaseTest {
     @Test
     fun `should create user when invoked by admin with valid data`() = runTest {
         coEvery { userRepository.getUserByUsername("newUser") } throws UserNotFoundException()
-        coEvery { userValidatorUseCase.invoke(any(), any(), any(), any()) } returns Unit
+        coEvery { userValidatorUseCase.invoke(any(), any(), any()) } returns Unit
         val created = createUserUseCase("newUser", "hashedPassword", "New User", adminUser.id)
 
         assertThat(created.username).isEqualTo("newUser")

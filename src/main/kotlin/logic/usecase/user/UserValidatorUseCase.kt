@@ -1,22 +1,24 @@
 package org.baghdad.logic.usecase.user
 
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.*
+import org.baghdad.logic.model.exceptions.InvalidNameException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
-import java.util.*
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
+import java.util.UUID
 
 class UserValidatorUseCase(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) {
     suspend operator fun invoke(
         username: String,
         passwordPlain: String,
         name: String,
-        creatorId: UUID
     ) {
 
         validateUsername(username)
-        checkAdmin(creatorId)
         validateName(name)
         validatePassword(passwordPlain)
         ensureUsernameUnique(username)
@@ -31,13 +33,6 @@ class UserValidatorUseCase(
         val re = Regex("^[A-Za-z0-9_]{3,20}\$")
         if (!username.matches(re)) {
             throw InvalidUsernameException()
-        }
-    }
-
-    private suspend fun checkAdmin(userId: UUID) {
-        val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) {
-            throw AccessDeniedException()
         }
     }
 

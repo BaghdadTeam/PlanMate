@@ -8,8 +8,8 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.TaskStateDto
 import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.data.mapper.toDomain
-import org.baghdad.data.mapper.toDto
+import org.baghdad.data.repositories.toDomain
+import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
@@ -36,9 +36,9 @@ class ProjectStatesDataSourceTest {
     @Test
     fun `should return data when there are states for the project`() = runTest {
         // Given
-        val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject()
+        val projectStates = ProjectStatesEntityTestData.getAllStatesPerProject().map { it.toDto() }
         val id = projectStates.first().projectId
-        coEvery { dataSource.loadAll() } returns projectStates.map { it.toDto() }
+        coEvery { dataSource.loadAll() } returns projectStates
 
         // When
         val result = projectStatesDataSource.getAllStatesForProject(id)
@@ -63,8 +63,8 @@ class ProjectStatesDataSourceTest {
     fun `should return state when there is a state with same id`() = runTest {
         // Given
 
-        val projectStates = ProjectStatesEntityTestData.todoState()
-        coEvery { dataSource.loadAll() } returns listOf(projectStates.toDto())
+        val projectStates = ProjectStatesEntityTestData.todoState().toDto()
+        coEvery { dataSource.loadAll() } returns listOf(projectStates)
         // When
         val result = projectStatesDataSource.getStateById(projectStates.id)
         // Then
@@ -74,9 +74,9 @@ class ProjectStatesDataSourceTest {
     @Test
     fun `should return state when can add state successfully`() = runTest {
         // Given
-        val projectState = ProjectStatesEntityTestData.inProgressState()
-        coEvery { dataSource.loadAll() } returns listOf(projectState.toDto())
-        coEvery { projectStatesDataSource.createState(projectState.toDto().toDomain()) } just Runs
+        val projectState = ProjectStatesEntityTestData.inProgressState().toDto()
+        coEvery { dataSource.loadAll() } returns listOf(projectState)
+        coEvery { projectStatesDataSource.createState(projectState) } just Runs
         // When
         val result = projectStatesDataSource.getStateById(projectState.id)
 
@@ -88,19 +88,19 @@ class ProjectStatesDataSourceTest {
     @Test
     fun `should return updated state when can update it successfully`() = runTest {
         // Given
-        val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList()
+        val allStates = ProjectStatesEntityTestData.getAllStatesPerProject().toMutableList().map { it.toDto() }
         val id = allStates.first().projectId
-        val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(id = allStates[1].id, name = "doing")
+        val updatedProject = ProjectStatesEntityTestData.inProgressState().copy(id = allStates[1].id, name = "doing").toDto()
 
-        coEvery { dataSource.loadAll() } returns allStates.map { it.toDto() }
-        coEvery { dataSource.update(updatedProject.toDto()) } just Runs
+        coEvery { dataSource.loadAll() } returns allStates
+        coEvery { dataSource.update(updatedProject) } just Runs
 
         // When
-        projectStatesDataSource.editState(updatedProject.toDto().toDomain())
+        projectStatesDataSource.editState(updatedProject)
         val result = projectStatesDataSource.getAllStatesForProject(id)
 
         // Then
-        assertThat(result.contains(updatedProject.toDto().toDomain()))
+        assertThat(result.contains(updatedProject))
     }
 
     @Test

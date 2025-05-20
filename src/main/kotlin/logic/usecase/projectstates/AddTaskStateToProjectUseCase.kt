@@ -1,37 +1,37 @@
 package org.baghdad.logic.usecase.projectstates
 
+import org.baghdad.logic.model.entities.Action
+import org.baghdad.logic.model.entities.AuditLogEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
+import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
 import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
-import org.baghdad.logic.repositories.UserRepository
-import java.util.*
+import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
+import java.util.UUID
 
 class AddTaskStateToProjectUseCase(
     private val projectStatesRepository: ProjectStatesRepository,
     private val auditRepository: AuditRepository,
-    private val userRepository: UserRepository,
     private val sessionManager: SessionManager
 ) {
 
     suspend fun invoke(state: TaskStateEntity, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-
-        val user = userRepository.getUserById(userId)
-        if (user.type != UserType.Admin) throw StateNotAccessedException()
-
-        if (state.name.isBlank()) throw CantAddStateWithNoNameException()
+        if (state.name.isBlank()) throw CantAddStateWithNoNameException("state name can't be empty")
 
         projectStatesRepository.createState(state)
-        val audit = createAudit(state, user)
+
+        val audit = createAudit(state, userId)
         auditRepository.addAuditEntry(audit)
     }
 
-    private fun createAudit(state: TaskStateEntity, user: UserEntity): AuditLogEntity {
+    private fun createAudit(state: TaskStateEntity, userId: UUID): AuditLogEntity {
         val description = "create ${state.name} state is created successfully"
         val audit = AuditLogEntity(
             entityUnderAudit = Entities.Task.name,
@@ -39,7 +39,7 @@ class AddTaskStateToProjectUseCase(
             projectId = state.projectId,
             description = description,
             action = Action.Create,
-            userId = user.id,
+            userId = userId,
         )
         return audit
     }

@@ -1,8 +1,8 @@
 package org.baghdad.data.repositories.user
 
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.data.mapper.toDomain
-import org.baghdad.data.mapper.toDto
+import org.baghdad.data.repositories.toDomain
+import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository

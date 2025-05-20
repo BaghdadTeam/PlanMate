@@ -12,6 +12,9 @@ import org.baghdad.data.local.AuditDataSource
 import org.baghdad.data.mapper.toDomain
 import org.baghdad.logic.model.exceptions.NoAuditForProjectException
 import org.baghdad.logic.model.exceptions.NoAuditForTaskException
+import org.baghdad.data.repositories.toDomain
+import org.baghdad.logic.model.exceptions.NoProjectFoundException
+import org.baghdad.logic.model.exceptions.NoTaskFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*

@@ -1,32 +1,32 @@
 package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.logic.model.entities.ProjectEntity
+import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import java.util.*
 
 class ProjectDataSource(
-    private val projectDataSource: DataSource<ProjectEntity>,
+    private val projectDataSource: DataSource<ProjectDto>,
     private val projectStatesDataSource: DataSource<TaskStateEntity>,
     private val taskDataSource: DataSource<TaskEntity>
 ) {
 
-    suspend fun createProject(project: ProjectEntity) {
+    suspend fun createProject(project: ProjectDto) {
         projectDataSource.append(project)
     }
 
-    suspend fun getAllProjects(): List<ProjectEntity> {
+    suspend fun getAllProjects(): List<ProjectDto> {
         return projectDataSource.loadAll()
     }
 
-    suspend fun getProjectById(id: UUID): ProjectEntity {
+    suspend fun getProjectById(id: UUID): ProjectDto {
         return projectDataSource.loadAll().find { it.id == id }
             ?: throw ProjectNotFoundException()
     }
 
-    suspend fun updateProject(project: ProjectEntity) {
+    suspend fun updateProject(project: ProjectDto) {
         val projects = projectDataSource.loadAll()
         if (projects.none { it.id == project.id }) {
             throw ProjectNotFoundException()
