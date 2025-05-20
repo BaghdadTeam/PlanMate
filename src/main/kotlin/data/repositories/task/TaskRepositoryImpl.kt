@@ -1,9 +1,9 @@
 package org.baghdad.data.repositories.task
 
-import org.baghdad.data.local.TaskDataSource
+import data.datasource.local.csv.files.TaskDataSource
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.repositories.TaskRepository
-import java.util.UUID
+import java.util.*
 
 class TaskRepositoryImpl(
     private val dataSource: TaskDataSource
@@ -24,8 +24,8 @@ class TaskRepositoryImpl(
         return dataSource.getTasksByProjectId(id)
     }
 
-    override suspend fun getTasksByStateId(stateId: UUID): List<TaskEntity> {
-        return dataSource.getTasksByStateId(stateId)
+    override suspend fun getTasksByStateId(id: UUID): List<TaskEntity> {
+        return dataSource.getTasksByStateId(id)
     }
 
     override suspend fun updateTask(task: TaskEntity): Boolean {
