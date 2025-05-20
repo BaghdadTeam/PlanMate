@@ -1,11 +1,11 @@
 package data.local
 
 import com.google.common.truth.Truth.assertThat
+import data.datasource.local.csv.files.ProjectDataSource
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.dto.project.ProjectDto
-import org.baghdad.data.local.ProjectDataSource
+import org.baghdad.data.dto.ProjectDto
 import org.baghdad.data.mapper.toDto
 import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.entities.TaskStateEntity

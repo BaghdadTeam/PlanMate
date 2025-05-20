@@ -2,7 +2,7 @@ package data.datasource.mapper
 
 import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.mapper.project.ProjectDtoCsvMapper
-import org.baghdad.data.dto.project.ProjectDto
+import org.baghdad.data.dto.ProjectDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.UUID

@@ -1,4 +1,4 @@
-package org.baghdad.data.dto.project
+package org.baghdad.data.dto
 
 import org.baghdad.logic.model.entities.Identifiable
 import org.bson.codecs.pojo.annotations.BsonId
@@ -13,4 +13,3 @@ data class ProjectDto(
     @BsonProperty("creator_id")
     val creatorId: UUID
 ) : Identifiable
-

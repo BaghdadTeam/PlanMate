@@ -1,6 +1,6 @@
 package org.baghdad.data.mapper
 
-import org.baghdad.data.dto.project.ProjectDto
+import org.baghdad.data.dto.ProjectDto
 import org.baghdad.logic.model.entities.ProjectEntity
 
 fun ProjectDto.toEntity() = ProjectEntity(

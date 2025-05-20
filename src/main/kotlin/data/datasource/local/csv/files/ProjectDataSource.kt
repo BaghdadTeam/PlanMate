@@ -1,7 +1,7 @@
-package org.baghdad.data.local
+package data.datasource.local.csv.files
 
 import org.baghdad.data.datasource.DataSource
-import org.baghdad.data.dto.project.ProjectDto
+import org.baghdad.data.dto.ProjectDto
 import org.baghdad.data.mapper.toDto
 import org.baghdad.data.mapper.toEntity
 import org.baghdad.logic.model.entities.ProjectEntity

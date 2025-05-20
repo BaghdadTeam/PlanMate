@@ -1,6 +1,6 @@
 package org.baghdad.data.datasource.mapper.project
 
-import org.baghdad.data.dto.project.ProjectDto
+import org.baghdad.data.dto.ProjectDto
 import org.baghdad.data.datasource.CsvMapper
 import java.util.UUID
 
