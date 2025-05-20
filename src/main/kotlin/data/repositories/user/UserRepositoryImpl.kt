@@ -1,19 +1,18 @@
 package org.baghdad.data.repositories.user
 
-import org.baghdad.data.local.UserDataSource
+import org.baghdad.data.datasource.remote.mongodb.collection.UserCollection
 import org.baghdad.data.repositories.toDomain
 import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.entities.UserEntity
-import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
-import java.util.UUID
+import java.util.*
 
 class UserRepositoryImpl(
-    private val dataSource: UserDataSource
+    private val dataSource: UserCollection
 ) : UserRepository {
 
     override suspend fun createUser(user: UserEntity, hashedPassword: String) {
-        dataSource.addUser(user.toDto(hashedPassword))
+        dataSource.createUser(user.toDto(hashedPassword))
     }
 
     override suspend fun getUserByUsername(username: String): UserEntity {
@@ -21,8 +20,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun getUserById(id: UUID): UserEntity {
-        return dataSource.findUserById(id)?.toDomain()
-            ?: throw UserNotFoundException("User not found with id: $id")
+        return dataSource.findUserById(id).toDomain()
     }
 
     override suspend fun isUsernameTaken(username: String): Boolean {

@@ -1,8 +1,7 @@
-package org.baghdad.data.local
+package data.datasource.local.csv.files
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.UserDto
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.UserNotFoundException
 import java.util.UUID
 
