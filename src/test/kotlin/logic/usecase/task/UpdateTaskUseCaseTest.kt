@@ -32,7 +32,7 @@ class UpdateTaskUseCaseTest {
     private val sessionManager: SessionManager = mockk()
 
     private val user = UserEntity(
-        id = UUID.fromString("9d597711-f9fa-40ca-9f8e-94f59ae957c9"), // <-- Set explicitly
+        id = UUID.randomUUID(),
         name = "Youssef Mohamed",
         username = "Pixelise",
         type = UserType.Mate,

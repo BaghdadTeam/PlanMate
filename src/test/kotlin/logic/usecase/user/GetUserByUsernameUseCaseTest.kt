@@ -29,8 +29,6 @@ class GetUserByUsernameUseCaseTest {
         userRepository = mockk()
         getUserByUsernameUseCase = GetUserByUsernameUseCase(userRepository, sessionManager)
         coEvery { sessionManager.isAuthenticated() } returns true
-
-
     }
 
     @Test

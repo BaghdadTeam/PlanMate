@@ -1,23 +1,17 @@
 package presentation.task
 
-import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
-import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class TaskStateTransitionUITest {

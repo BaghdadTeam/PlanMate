@@ -2,11 +2,7 @@ package data.repositories.user
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.createUserHelper
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.runs
+import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.dto.UserDto
@@ -18,8 +14,7 @@ import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
-
+import java.util.*
 
 class UserRepositoryImplTest {
 

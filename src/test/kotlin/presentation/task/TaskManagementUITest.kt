@@ -1,16 +1,14 @@
 package presentation.task
 
-import io.mockk.*
-import org.baghdad.logic.model.entities.TaskStateEntity
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import io.mockk.verifySequence
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.usecase.ViewServiceUseCase
-import org.baghdad.presentation.task.TaskStateTransitionUI
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.task.CreateTaskUI
-import org.baghdad.presentation.task.DeleteTaskUI
-import org.baghdad.presentation.task.TaskManagementUI
-import org.baghdad.presentation.task.UpdateTaskUI
+import org.baghdad.presentation.task.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -23,7 +21,6 @@ class TaskManagementUITest {
     private lateinit var editTaskUI: UpdateTaskUI
     private lateinit var deleteTaskUI: DeleteTaskUI
     private lateinit var changeTaskStateUI: TaskStateTransitionUI
-    private lateinit var viewServiceUseCase: ViewServiceUseCase
     private lateinit var ui: TaskManagementUI
 
     private val projectId = UUID.randomUUID()

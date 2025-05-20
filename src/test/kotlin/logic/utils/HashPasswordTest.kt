@@ -1,7 +1,7 @@
 package logic.utils
 
 import org.baghdad.logic.utils.md5WithSalt
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class HashPasswordTest {

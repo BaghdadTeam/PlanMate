@@ -1,26 +1,18 @@
 package logic.usecase.project
 
 import helpers.authentication.createUserHelper
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.runs
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
-import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.project.CreateProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 
 class CreateProjectUseCaseTest {
     private lateinit var projectRepository: ProjectRepository

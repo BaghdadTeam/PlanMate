@@ -12,7 +12,7 @@ import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.utils.formatTimestamp
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class ShowAuditByProjectIdUITest {

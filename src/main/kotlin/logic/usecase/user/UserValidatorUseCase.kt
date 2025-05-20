@@ -1,13 +1,10 @@
 package org.baghdad.logic.usecase.user
 
-import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.InvalidNameException
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.InvalidUsernameException
 import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
-import java.util.UUID
 
 class UserValidatorUseCase(
     private val userRepository: UserRepository,

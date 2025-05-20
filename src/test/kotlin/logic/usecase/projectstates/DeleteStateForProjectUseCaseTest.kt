@@ -9,7 +9,6 @@ import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -31,13 +30,11 @@ class DeleteStateForProjectUseCaseTest {
     fun setup() {
         statesRepository = mockk(relaxed = true)
         auditRepository = mockk(relaxed = true)
-        deleteStateUseCase =
-            DeleteStateForProjectUseCase(
-                statesRepository,
-                auditRepository,
-                sessionManager
-            )
-
+        deleteStateUseCase = DeleteStateForProjectUseCase(
+            statesRepository,
+            auditRepository,
+            sessionManager
+        )
     }
 
     @Test

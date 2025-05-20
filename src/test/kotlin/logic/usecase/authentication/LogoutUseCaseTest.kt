@@ -29,7 +29,6 @@ class LogoutUseCaseTest {
         useCase.invoke()
         // Then
         coVerify { authRepo.logout() }
-
     }
 
     @Test

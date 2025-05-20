@@ -23,7 +23,7 @@ class AddTaskStateToProjectUseCase(
 
     suspend fun invoke(state: TaskStateEntity, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (state.name.isBlank()) throw CantAddStateWithNoNameException("state name can't be empty")
+        if (state.name.isBlank()) throw CantAddStateWithNoNameException()
 
         projectStatesRepository.createState(state)
 

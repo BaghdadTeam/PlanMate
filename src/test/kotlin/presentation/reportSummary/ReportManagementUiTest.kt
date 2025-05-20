@@ -1,12 +1,13 @@
-package org.baghdad.presentation.reportSummary
+package presentation.reportSummary
 
-import com.google.common.base.Verify.verify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifySequence
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.reportSummary.ReportManagementUi
+import org.baghdad.presentation.reportSummary.ReportUI
 import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 

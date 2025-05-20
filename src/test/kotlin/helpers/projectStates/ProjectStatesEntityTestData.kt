@@ -1,7 +1,7 @@
 package helpers.projectStates
 
 import org.baghdad.logic.model.entities.TaskStateEntity
-import java.util.UUID
+import java.util.*
 
 object ProjectStatesEntityTestData {
 
@@ -18,7 +18,6 @@ object ProjectStatesEntityTestData {
     fun inProgressState() = createProjectStateHelper(
         name = "In Progress",
     )
-
 
     fun inReviewState() = createProjectStateHelper(
         name = "Ready For Review",
