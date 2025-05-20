@@ -6,7 +6,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.*
 
-class TaskManagementGatherUI(
+class TaskManagementUI(
     private val viewer: Viewer,
     private val reader: Reader,
     private val createTaskUI: CreateTaskUI,

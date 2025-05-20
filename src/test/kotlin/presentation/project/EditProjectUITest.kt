@@ -19,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-class EditProjectUiTest {
+class EditProjectUITest {
 
     private lateinit var editProjectUi: EditProjectUi
     private lateinit var editProjectUseCase: EditProjectUseCase

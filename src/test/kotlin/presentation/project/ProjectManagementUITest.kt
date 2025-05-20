@@ -13,17 +13,13 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.project.CreateProjectUi
-import org.baghdad.presentation.project.DeleteProjectUi
-import org.baghdad.presentation.project.EditProjectUi
-import org.baghdad.presentation.project.GetAllProjectsUi
-import org.baghdad.presentation.project.ProjectUi
+import org.baghdad.presentation.project.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 import kotlin.test.assertEquals
 
-class ProjectUiTest {
+class ProjectManagementUITest {
 
     private val createProjectUi: CreateProjectUi = mockk(relaxed = true)
     private val deleteProjectUi: DeleteProjectUi = mockk(relaxed = true)
@@ -34,12 +30,12 @@ class ProjectUiTest {
     private var viewer: Viewer = mockk(relaxed = true)
     private var reader: Reader = mockk()
 
-    private lateinit var projectUi: ProjectUi
+    private lateinit var projectManagementUI: ProjectManagementUI
 
     @BeforeEach
     fun setUp() {
         // Initialize the real ProjectUi with mocked dependencies
-        projectUi = ProjectUi(
+        projectManagementUI = ProjectManagementUI(
             createProjectUi,
             deleteProjectUi,
             editProjectUi,
@@ -68,7 +64,7 @@ class ProjectUiTest {
             "999",
             "0"
         )  // Invalid input followed by exit
-        projectUi()
+        projectManagementUI()
 
         verifySequence {
             viewer.logMessage("=== Project UI ===")
@@ -104,8 +100,9 @@ class ProjectUiTest {
             every { reader.readInput() } returnsMany listOf(
                 "999",
                 "0"
-            )  // Invalid input followed by exit
-            projectUi()
+            )
+
+            projectManagementUI()
 
             verifySequence {
                 viewer.logMessage("=== Project UI ===")
@@ -133,7 +130,7 @@ class ProjectUiTest {
 
         every { reader.readInput() } returns "2" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { createProjectUi.createProject() }
     }
@@ -148,7 +145,7 @@ class ProjectUiTest {
 
         every { reader.readInput() } returns "2" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         verify{
             viewer.logError("Invalid choice. Please try again.")
@@ -165,7 +162,7 @@ class ProjectUiTest {
 
         every { reader.readInput() } returns "3" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         verify{
             viewer.logError("Invalid choice. Please try again.")
@@ -181,7 +178,7 @@ class ProjectUiTest {
 
         every { reader.readInput() } returns "4" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         verify{
             viewer.logError("Invalid choice. Please try again.")
@@ -198,7 +195,7 @@ class ProjectUiTest {
 
         every { reader.readInput() } returns "3" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { deleteProjectUi.deleteProject() }
     }
@@ -212,7 +209,7 @@ class ProjectUiTest {
 
         every { reader.readInput() } returns "4" andThen "0"
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { editProjectUi.editProject() }
     }
@@ -224,7 +221,7 @@ class ProjectUiTest {
         every { reader.readInput() } returns "1" andThen "1" andThen "0"
         coEvery { getAllProjectsUi() } returns projects
 
-        projectUi()
+        projectManagementUI()
 
         coVerify { getAllProjectsUi() }
     }
@@ -236,7 +233,7 @@ class ProjectUiTest {
         every { reader.readInput() } returns "1" andThen "invalid" andThen "0"
         coEvery { getAllProjectsUi() } returns projects
 
-        projectUi()
+        projectManagementUI()
 
         verify { viewer.logError("Project Id should be a number") }
     }
@@ -245,7 +242,7 @@ class ProjectUiTest {
     fun `should return null when option 0 is selected`() = runTest {
         every { reader.readInput() } returns "0"
 
-        val result = projectUi()
+        val result = projectManagementUI()
 
         assertEquals(null, result)
     }
