@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.test.Test
 
-class DeleteProjectUiTest {
+class DeleteProjectUITest {
 
     private lateinit var deleteProjectUi: DeleteProjectUi
     private lateinit var deleteProjectUseCase: DeleteProjectUseCase

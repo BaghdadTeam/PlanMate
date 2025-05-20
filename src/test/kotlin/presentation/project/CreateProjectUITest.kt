@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class CreateProjectUiTest {
+class CreateProjectUITest {
     private lateinit var createProjectUi: CreateProjectUi
     private lateinit var createProjectUseCase: CreateProjectUseCase
     private lateinit var viewer: Viewer

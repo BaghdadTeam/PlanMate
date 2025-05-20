@@ -1,21 +1,19 @@
 package presentation.audit
 import io.mockk.*
-import org.baghdad.presentation.audit.AuditUI
+import org.baghdad.presentation.audit.AuditManagementUI
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
-import org.baghdad.presentation.audit.ShowAuditByTaskIdUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.task.GetTasksByProjectIdUI
 import org.junit.jupiter.api.*
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AuditUITest {
+class AuditManagementUITest {
 
     private lateinit var showAuditByProjectIdUI: ShowAuditByProjectIdUI
     private lateinit var viewer: Viewer
     private lateinit var reader: Reader
-    private lateinit var auditUI: AuditUI
+    private lateinit var auditManagementUI: AuditManagementUI
 
     @BeforeEach
     fun setUp() {
@@ -24,7 +22,7 @@ class AuditUITest {
         viewer = mockk(relaxed = true)
         reader = mockk(relaxed = true)
 
-        auditUI = AuditUI(
+        auditManagementUI = AuditManagementUI(
             showAuditByProjectIdUI,
             viewer,
             reader
@@ -39,7 +37,7 @@ class AuditUITest {
         every { reader.readInput() } returnsMany listOf("1", "0")
 
         // When
-        auditUI(projectId)
+        auditManagementUI(projectId)
 
         // Then
         verify(exactly = 1) { showAuditByProjectIdUI.execute(projectId) }
@@ -57,7 +55,7 @@ class AuditUITest {
         every { reader.readInput() } returns "0"
 
         // When
-        auditUI(projectId)
+        auditManagementUI(projectId)
 
         // Then
         verify { viewer.logMessage("=== Audit UI ===") }
@@ -71,7 +69,7 @@ class AuditUITest {
         every { reader.readInput() } returnsMany listOf("99", "0")
 
         // When
-        auditUI(projectId)
+        auditManagementUI(projectId)
 
         // Then
         verify { viewer.logError("Invalid choice. Please try again.") }

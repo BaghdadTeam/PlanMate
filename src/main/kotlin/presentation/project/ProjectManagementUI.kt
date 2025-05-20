@@ -6,7 +6,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import java.util.UUID
 
-class ProjectUi(
+class ProjectManagementUI(
     private val createProjectUi: CreateProjectUi,
     private val deleteProjectUi: DeleteProjectUi,
     private val editProjectUi: EditProjectUi,

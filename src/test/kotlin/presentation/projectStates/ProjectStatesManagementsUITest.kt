@@ -12,7 +12,7 @@ import org.baghdad.presentation.projectStates.AddTaskStateToProjectUI
 import org.baghdad.presentation.projectStates.DeleteStateForProjectUI
 import org.baghdad.presentation.projectStates.EditProjectStateUI
 import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
-import org.baghdad.presentation.projectStates.ProjectStatesUI
+import org.baghdad.presentation.projectStates.ProjectStatesManagementUI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -23,7 +23,7 @@ class ProjectStatesManagementsUITest {
     private lateinit var deleteStateForProjectUI: DeleteStateForProjectUI
     private lateinit var editProjectStateUI: EditProjectStateUI
     private lateinit var getAllStatesPerProjectUI: GetAllStatesPerProjectUI
-    private lateinit var projectStatesUI: ProjectStatesUI
+    private lateinit var projectStatesManagementUI: ProjectStatesManagementUI
     private lateinit var reader: Reader
     private lateinit var viewer: Viewer
 
@@ -36,7 +36,7 @@ class ProjectStatesManagementsUITest {
         editProjectStateUI = mockk()
         getAllStatesPerProjectUI = mockk()
 
-        projectStatesUI = ProjectStatesUI(
+        projectStatesManagementUI = ProjectStatesManagementUI(
             addStateToProjectUI,
             deleteStateForProjectUI,
             editProjectStateUI,
@@ -59,7 +59,7 @@ class ProjectStatesManagementsUITest {
         every { addStateToProjectUI.execute(projectId) } just Runs
 
         // When
-        projectStatesUI.invoke(projectId)
+        projectStatesManagementUI.invoke(projectId)
 
         // Then
         verifySequence {
@@ -81,7 +81,7 @@ class ProjectStatesManagementsUITest {
         every { reader.readInput() } returns "invalid" andThen null andThen "0"
 
         // When
-        projectStatesUI.invoke(projectId)
+        projectStatesManagementUI.invoke(projectId)
 
         // Then
         coVerify(exactly = 2) {
@@ -98,7 +98,7 @@ class ProjectStatesManagementsUITest {
         every { addStateToProjectUI.execute(projectId) } just Runs
 
         // When
-        projectStatesUI(projectId)
+        projectStatesManagementUI(projectId)
 
         // Then
         coVerify {
@@ -113,11 +113,11 @@ class ProjectStatesManagementsUITest {
         val projectId = UUID.randomUUID()
         val stateId = UUID.randomUUID()
         every { reader.readInput() } returns "2" andThen "1" andThen "0"
-        every { getAllStatesPerProjectUI.execute(projectId) } returns listOf(stateId , stateId)
+        every { getAllStatesPerProjectUI.execute(projectId) } returns listOf(stateId, stateId)
         every { deleteStateForProjectUI.execute(stateId) } just Runs
 
         // When
-        projectStatesUI(projectId)
+        projectStatesManagementUI(projectId)
 
         // Then
         coVerify {
@@ -136,7 +136,7 @@ class ProjectStatesManagementsUITest {
         every { deleteStateForProjectUI.execute(stateId) } just Runs
 
         // When
-        projectStatesUI(projectId)
+        projectStatesManagementUI(projectId)
 
         // Then
         coVerify { viewer.logError("Invalid choice. Please try again.") }
@@ -156,7 +156,7 @@ class ProjectStatesManagementsUITest {
         every { editProjectStateUI.execute(stateId) } just Runs
 
         // When
-        projectStatesUI(projectId)
+        projectStatesManagementUI(projectId)
 
         // Then
         coVerify {
@@ -175,7 +175,7 @@ class ProjectStatesManagementsUITest {
         every { editProjectStateUI.execute(stateId) } just Runs
 
         // When
-        projectStatesUI(projectId)
+        projectStatesManagementUI(projectId)
 
         // Then
         coVerify { viewer.logError("Invalid choice. Please try again.") }
@@ -194,7 +194,7 @@ class ProjectStatesManagementsUITest {
         every { editProjectStateUI.execute(stateId) } just Runs
 
         // When
-        projectStatesUI(projectId)
+        projectStatesManagementUI(projectId)
 
         // Then
         coVerify { viewer.logError("Invalid choice. Please try again.") }

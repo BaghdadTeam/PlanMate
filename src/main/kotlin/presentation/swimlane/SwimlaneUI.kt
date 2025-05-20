@@ -1,22 +1,21 @@
 package org.baghdad.presentation.swimlane
-
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
-import org.baghdad.presentation.audit.AuditUI
+import org.baghdad.presentation.audit.AuditManagementUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.projectStates.ProjectStatesUI
-import org.baghdad.presentation.task.TaskManagementGatherUI
-import java.util.UUID
+import org.baghdad.presentation.projectStates.ProjectStatesManagementUI
+import org.baghdad.presentation.task.TaskManagementUI
+import java.util.*
 
 class SwimlaneUI(
     private val renderSwimlaneUI: RenderSwimlaneUI,
-    private val projectStatesUI: ProjectStatesUI,
-    private val taskUI: TaskManagementGatherUI,
-    private val auditUI: AuditUI,
     private val adminPermissionCheckerUseCase: AdminPermissionCheckerUseCase,
     private val session: SessionManager,
+    private val projectStatesManagementUI: ProjectStatesManagementUI,
+    private val taskUI: TaskManagementUI,
+    private val auditManagementUI: AuditManagementUI,
     private val reader: Reader,
     private val viewer: Viewer,
     private val viewServiceUseCase: ViewServiceUseCase
@@ -53,13 +52,13 @@ class SwimlaneUI(
 
                     2 -> {
                         println("Navigating to Audit Log Screen...")
-                        auditUI.invoke(project.first)
+                        auditManagementUI.invoke(project.first)
                     }
 
                     3 -> {
                         if (adminPermissionCheckerUseCase(userId)) {
                             viewer.logMessage("Navigating to Project States Screen...")
-                            projectStatesUI.invoke(project.first)
+                            projectStatesManagementUI.invoke(project.first)
                         } else {
                             viewer.logMessage("Invalid choice. Please try again.")
                         }
