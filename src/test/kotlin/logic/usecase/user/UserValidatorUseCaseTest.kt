@@ -4,8 +4,10 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.*
+import org.baghdad.logic.model.exceptions.InvalidNameException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.user.UserValidatorUseCase
@@ -145,5 +147,4 @@ class UserValidatorUseCaseTest {
             )
         }
     }
-
 }

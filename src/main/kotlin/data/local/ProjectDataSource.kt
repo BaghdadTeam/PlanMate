@@ -23,13 +23,13 @@ class ProjectDataSource(
 
     suspend fun getProjectById(id: UUID): ProjectDto {
         return projectDataSource.loadAll().find { it.id == id }
-            ?: throw ProjectNotFoundException("Project with id $id not found")
+            ?: throw ProjectNotFoundException()
     }
 
     suspend fun updateProject(project: ProjectDto) {
         val projects = projectDataSource.loadAll()
         if (projects.none { it.id == project.id }) {
-            throw ProjectNotFoundException("Project with id ${project.id} not found")
+            throw ProjectNotFoundException()
         }
         projectDataSource.update(project)
     }
@@ -37,7 +37,7 @@ class ProjectDataSource(
     suspend fun deleteProject(projectId: UUID) {
         val projects = projectDataSource.loadAll().toMutableList()
         val project = projects.find { it.id == projectId }
-            ?: throw ProjectNotFoundException("Project with id $projectId not found")
+            ?: throw ProjectNotFoundException()
 
         val projectStates = projectStatesDataSource.loadAll().toMutableList()
         val tasks = taskDataSource.loadAll().toMutableList()

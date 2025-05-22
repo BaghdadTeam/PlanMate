@@ -1,7 +1,6 @@
 package presentation.task
 
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -29,8 +28,6 @@ class GetTasksByProjectIdUITest {
         TaskEntity(UUID.randomUUID(), "Task 1", "Description 1", UUID.randomUUID(), projectId, UUID.randomUUID()),
         TaskEntity(UUID.randomUUID(), "Task 2", "Description 2", UUID.randomUUID(), projectId, UUID.randomUUID())
     )
-
-    private val emptyProjectId = ""
 
     @BeforeEach
     fun setup() {
@@ -67,7 +64,7 @@ class GetTasksByProjectIdUITest {
     @Test
     fun `test exception handling when tasks not found`() {
         every { reader.readInput() } returns projectId.toString() // User enters valid project ID
-        coEvery { getTasksByProjectIdUseCase(projectId) } throws TasksNotFoundException("No tasks found")
+        coEvery { getTasksByProjectIdUseCase(projectId) } throws TasksNotFoundException()
 
         getTasksByProjectIdUI.execute(projectId)
 

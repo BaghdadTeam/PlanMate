@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class AuditMapperTest {

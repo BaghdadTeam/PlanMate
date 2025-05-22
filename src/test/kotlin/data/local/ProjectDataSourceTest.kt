@@ -8,8 +8,8 @@ import org.baghdad.data.dto.project.ProjectDto
 import org.baghdad.data.local.ProjectDataSource
 import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.entities.ProjectEntity
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.exceptions.ProjectNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows

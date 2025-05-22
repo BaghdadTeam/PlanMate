@@ -3,9 +3,12 @@ package presentation.projectStates
 import io.mockk.mockk
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
-import org.baghdad.presentation.projectStates.*
+import org.baghdad.presentation.projectStates.AddTaskStateToProjectUI
+import org.baghdad.presentation.projectStates.DeleteStateForProjectUI
+import org.baghdad.presentation.projectStates.EditProjectStateUI
+import org.baghdad.presentation.projectStates.GetAllStatesPerProjectUI
+import org.baghdad.presentation.projectStates.ProjectStatesManagementUI
 import org.junit.jupiter.api.BeforeEach
-
 
 class ProjectStatesManagementUITest {
     private lateinit var addStateToProjectUI: AddTaskStateToProjectUI

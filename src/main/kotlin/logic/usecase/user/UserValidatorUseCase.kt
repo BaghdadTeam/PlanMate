@@ -1,14 +1,10 @@
 package org.baghdad.logic.usecase.user
 
-import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.InvalidNameException
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.InvalidUsernameException
 import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
-import java.util.UUID
 
 class UserValidatorUseCase(
     private val userRepository: UserRepository,
@@ -29,18 +25,16 @@ class UserValidatorUseCase(
 
     private fun validateUsername(username: String) {
         if (username.isBlank()) {
-            throw InvalidUsernameException("Username must not be empty.")
+            throw InvalidUsernameException()
         }
         val re = Regex("^[A-Za-z0-9_]{3,20}\$")
         if (!username.matches(re)) {
-            throw InvalidUsernameException(
-                "Username must be 3–20 chars, letters, digits or underscore only."
-            )
+            throw InvalidUsernameException()
         }
     }
 
     private fun validateName(name: String) {
-        if (name.isBlank()) throw InvalidNameException("Name must not be empty.")
+        if (name.isBlank()) throw InvalidNameException()
     }
 
 
@@ -51,7 +45,7 @@ class UserValidatorUseCase(
     private suspend fun ensureUsernameUnique(username: String) {
         val usernameExist = userRepository.isUsernameTaken(username)
         if (usernameExist) {
-            throw UserAlreadyExistsException("User with username $username already exists.")
+            throw UserAlreadyExistsException()
         }
     }
 }

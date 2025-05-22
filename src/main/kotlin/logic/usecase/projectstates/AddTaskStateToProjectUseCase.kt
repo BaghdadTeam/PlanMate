@@ -8,7 +8,7 @@ import org.baghdad.logic.model.entities.*
 import org.baghdad.logic.model.enums.Entities
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
-import org.baghdad.logic.model.exceptions.NotAccessException
+import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
@@ -23,7 +23,7 @@ class AddTaskStateToProjectUseCase(
 
     suspend fun invoke(state: TaskStateEntity, userId: UUID) {
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (state.name.isBlank()) throw CantAddStateWithNoNameException("state name can't be empty")
+        if (state.name.isBlank()) throw CantAddStateWithNoNameException()
 
         projectStatesRepository.createState(state)
 

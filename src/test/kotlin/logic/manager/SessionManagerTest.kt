@@ -3,7 +3,6 @@ package logic.manager
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.SessionTestData
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager

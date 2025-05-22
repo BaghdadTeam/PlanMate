@@ -1,5 +1,7 @@
 package org.baghdad.logic.model.exceptions
 
-class TasksNotFoundException(message: String) : Exception(message)
-class TaskWithMissingTitleException(message: String) : Exception(message)
-class TaskWithMissingDescriptionException(message: String) : Exception(message)
+sealed class TaskExceptions: PlanMateException()
+
+class TasksNotFoundException() : TaskExceptions()
+class TaskWithMissingTitleException() : TaskExceptions()
+class TaskWithMissingDescriptionException() : TaskExceptions()

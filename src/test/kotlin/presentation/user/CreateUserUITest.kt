@@ -8,7 +8,10 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.*
+import org.baghdad.logic.model.exceptions.InvalidNameException
+import org.baghdad.logic.model.exceptions.InvalidPasswordException
+import org.baghdad.logic.model.exceptions.InvalidUsernameException
+import org.baghdad.logic.model.exceptions.UserAlreadyExistsException
 import org.baghdad.logic.usecase.user.CreateUserUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -83,11 +86,11 @@ class CreateUserUITest {
         // Given
         every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("bad user", "Name", "password")
-        configureUseCaseToThrow(InvalidUsernameException("must match pattern"))
+        configureUseCaseToThrow(InvalidUsernameException())
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("Invalid username: must match pattern") }
+        verify { viewer.logError("Invalid username") }
     }
 
     @Test
@@ -95,11 +98,11 @@ class CreateUserUITest {
         // Given
         every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "", "password")
-        configureUseCaseToThrow(InvalidNameException("cannot be blank"))
+        configureUseCaseToThrow(InvalidNameException())
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("Invalid name: cannot be blank") }
+        verify { viewer.logError("Invalid name") }
     }
 
     @Test
@@ -111,7 +114,7 @@ class CreateUserUITest {
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("Invalid password: too short") }
+        verify { viewer.logError("Invalid password") }
     }
 
     @Test
@@ -119,10 +122,10 @@ class CreateUserUITest {
         // Given
         every { session.currentSession.userId } returns regularMate.id
         setReaderInputs("user123", "Name", "password")
-        configureUseCaseToThrow(UserAlreadyExistsException("username exists"))
+        configureUseCaseToThrow(UserAlreadyExistsException())
         // When
         createUserInterface()
         // Then
-        verify { viewer.logError("username exists") }
+        verify { viewer.logError("Username already exists") }
     }
 }

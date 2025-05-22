@@ -3,7 +3,7 @@ package org.baghdad.presentation.task
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.exceptions.CsvWriteException
+import org.baghdad.logic.model.exceptions.WritingFileException
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
@@ -81,7 +81,7 @@ class UpdateTaskUI(
             tryUpdateTask(promptForDescription(task))
         } catch (_: TasksNotFoundException) {
             viewer.logMessage("Task not found.")
-        } catch (_: CsvWriteException) {
+        } catch (_: WritingFileException) {
             viewer.logMessage("Error: Failed to write task to CSV.")
         } catch (e: Exception) {
             viewer.logMessage("Failed to update task: ${e.message}")

@@ -34,14 +34,14 @@ class CreateUserUI(
             } else {
                 viewer.logError("Invalid input. Please try again.")
             }
-        } catch (e: InvalidUsernameException) {
-            viewer.logError("Invalid username: ${e.message}")
-        } catch (e: InvalidNameException) {
-            viewer.logError("Invalid name: ${e.message}")
-        } catch (e: InvalidPasswordException) {
-            viewer.logError("Invalid password: ${e.message}")
-        } catch (e: UserAlreadyExistsException) {
-            viewer.logError("${e.message}")
+        } catch (_: InvalidUsernameException) {
+            viewer.logError("Invalid username")
+        } catch (_: InvalidNameException) {
+            viewer.logError("Invalid name")
+        } catch (_: InvalidPasswordException) {
+            viewer.logError("Invalid password")
+        } catch (_: UserAlreadyExistsException) {
+            viewer.logError("Username already exists")
         } catch (e: UnauthorizedException) {
             viewer.logError("${e.message}")
         }

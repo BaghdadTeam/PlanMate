@@ -5,16 +5,14 @@ import helpers.authentication.createUserHelper
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
-import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.NoProjectFoundException
+import org.baghdad.logic.model.exceptions.NoAuditForProjectException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByProjectIdUseCase
 import org.baghdad.presentation.audit.ShowAuditByProjectIdUI
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.utils.formatTimestamp
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class ShowAuditByProjectIdUITest {
@@ -51,12 +49,10 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws NoProjectFoundException("No audit found for project with ID: $projectID")
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws NoAuditForProjectException()
 
         // then
         showAuditByProjectIdUI.execute(projectID)
-        verify { viewer.logError("No audit found for project with ID: $projectID") }
-
     }
 
     @Test
@@ -65,14 +61,11 @@ class ShowAuditByProjectIdUITest {
         val projectID = UUID.randomUUID()
 
         // when
-        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws UnSupportedTimeStampFormatException(
-            "Invalid timestamp format"
-        )
+        coEvery { getAuditByProjectIdUseCase.invoke(projectID) } throws UnSupportedTimeStampFormatException()
 
         // then
         showAuditByProjectIdUI.execute(projectID)
         verify { viewer.logError("Invalid timestamp format") }
-
     }
 
     @Test

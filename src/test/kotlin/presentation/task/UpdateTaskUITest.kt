@@ -5,10 +5,10 @@ import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.SessionEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.exceptions.CsvWriteException
 import org.baghdad.logic.model.exceptions.TaskWithMissingDescriptionException
 import org.baghdad.logic.model.exceptions.TaskWithMissingTitleException
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
+import org.baghdad.logic.model.exceptions.WritingFileException
 import org.baghdad.logic.usecase.task.UpdateTaskUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -115,7 +115,7 @@ class UpdateTaskUITest {
     fun `test TaskWithMissingTitleException is retried`() {
         every { reader.readInput() } returnsMany listOf("1", "", "Fixed Title", "Valid")
 
-        coEvery { useCase(any(), dummySession.userId) } throws TaskWithMissingTitleException("Title is missing") andThen Unit
+        coEvery { useCase(any(), dummySession.userId) } throws TaskWithMissingTitleException() andThen Unit
 
         updateTaskUI.execute(dummyTasks)
 
@@ -127,7 +127,7 @@ class UpdateTaskUITest {
     fun `test TaskWithMissingDescriptionException is retried`() {
         every { reader.readInput() } returnsMany listOf("1", "Valid", "", "Fixed Description")
 
-        coEvery { useCase(any(), dummySession.userId) } throws TaskWithMissingDescriptionException("Description is missing") andThen Unit
+        coEvery { useCase(any(), dummySession.userId) } throws TaskWithMissingDescriptionException() andThen Unit
 
         updateTaskUI.execute(dummyTasks)
 
@@ -138,7 +138,7 @@ class UpdateTaskUITest {
     @Test
     fun `test TasksNotFoundException is handled`() {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
-        coEvery { useCase(any(), dummySession.userId) } throws TasksNotFoundException("Task not found")
+        coEvery { useCase(any(), dummySession.userId) } throws TasksNotFoundException()
 
         updateTaskUI.execute(dummyTasks)
 
@@ -148,7 +148,7 @@ class UpdateTaskUITest {
     @Test
     fun `test CsvWriteException is handled`() {
         every { reader.readInput() } returnsMany listOf("1", "Title", "Desc")
-        coEvery { useCase(any(), dummySession.userId) } throws CsvWriteException("CSV write failed")
+        coEvery { useCase(any(), dummySession.userId) } throws WritingFileException()
 
         updateTaskUI.execute(dummyTasks)
 

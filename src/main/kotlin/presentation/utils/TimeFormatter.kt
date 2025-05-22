@@ -10,7 +10,7 @@ fun formatTimestamp(currentTimestamp: LocalDateTime): String {
     return try {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm a", Locale.ENGLISH)
         currentTimestamp.format(formatter)
-    } catch (e: DateTimeParseException) {
-        throw UnSupportedTimeStampFormatException("Invalid timestamp format: $currentTimestamp. Expected: yyyy-MM-dd'T'HH:mm:ss'Z'")
+    } catch (_: DateTimeParseException) {
+        throw UnSupportedTimeStampFormatException()
     }
 }

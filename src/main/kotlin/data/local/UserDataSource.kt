@@ -2,9 +2,8 @@ package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.UserDto
-import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.exceptions.UserNotFoundException
-import java.util.UUID
+import java.util.*
 
 class UserDataSource(
     private val dataSource: DataSource<UserDto>
@@ -17,7 +16,7 @@ class UserDataSource(
 
     suspend fun findUserByUsername(username: String): UserDto {
         return loadUsers().firstOrNull() { it.username == username }
-            ?: throw UserNotFoundException("User not found with username: $username")
+            ?: throw UserNotFoundException()
     }
 
     suspend fun isUsernameTaken(username: String): Boolean {

@@ -8,7 +8,6 @@ import kotlinx.coroutines.test.runTest
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.TaskStateDto
 import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.data.repositories.toDomain
 import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.StateNotFoundException
@@ -138,11 +137,10 @@ class ProjectStatesDataSourceTest {
         coEvery { dataSource.loadAll() } returns listOf(existingState.toDto())
 
         // Then
-        val exception = assertThrows<Exception> {
+        assertThrows<Exception> {
             runTest {
                 projectStatesDataSource.deleteState(nonexistentStateId)
             }
         }
-        assertThat(exception.message).isEqualTo("No state found")
     }
 }

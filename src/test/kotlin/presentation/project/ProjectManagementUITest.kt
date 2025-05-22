@@ -1,13 +1,6 @@
 package presentation.project
 
-import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.verify
-import io.mockk.verifySequence
+import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
@@ -16,7 +9,7 @@ import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.project.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertEquals
 
 class ProjectManagementUITest {

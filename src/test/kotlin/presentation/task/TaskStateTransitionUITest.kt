@@ -1,23 +1,17 @@
 package presentation.task
 
-import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.exceptions.NotFoundException
+import org.baghdad.logic.model.entities.TaskStateEntity
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
-import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.task.TaskStateTransitionUI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class TaskStateTransitionUITest {
@@ -72,13 +66,11 @@ class TaskStateTransitionUITest {
         // given
 
         every { reader.readInput() } returnsMany listOf("1", "1")
-        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws NotFoundException(
-            "State not found"
-        )
+        coEvery { useCase.changeTaskState(task.id, state.id, testUserId) } throws StateNotFoundException()
 
         ui.execute(listOf(state), listOf(task))
 
-        verify { viewer.logError("State not found in this project: State not found") }
+        verify { viewer.logError("State not found in this project") }
     }
 
     @Test
@@ -94,7 +86,7 @@ class TaskStateTransitionUITest {
 
         ui.execute(listOf(state), listOf(task))
 
-        verify { viewer.logError("Invalid operation: Not allowed") }
+        verify { viewer.logError("Invalid operation") }
     }
 
     @Test
@@ -113,7 +105,7 @@ class TaskStateTransitionUITest {
 
         ui.execute(listOf(state), listOf(task))
 
-        verify { viewer.logError("Unexpected error: Oops") }
+        verify { viewer.logError("Sorry Something went wrong") }
     }
 
     @Test

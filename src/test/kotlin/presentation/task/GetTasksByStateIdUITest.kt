@@ -1,10 +1,6 @@
 package presentation.task
 
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.baghdad.logic.usecase.task.GetTasksByStateIdUseCase
@@ -12,7 +8,7 @@ import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
 import org.baghdad.presentation.task.GetTasksByStateIdUI
 import org.junit.jupiter.api.BeforeEach
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class GetTasksByStateIdUITest {
@@ -91,7 +87,7 @@ class GetTasksByStateIdUITest {
     @Test
     fun `test exception handling when tasks not found`() {
         every { reader.readInput() } returns stateId.toString() // User enters valid state ID
-        coEvery { getTasksByStateIdUseCase(stateId) } throws TasksNotFoundException("No tasks found")
+        coEvery { getTasksByStateIdUseCase(stateId) } throws TasksNotFoundException()
 
         getTasksByStateIdUI.execute()
 

@@ -1,7 +1,7 @@
 package org.baghdad.presentation.audit
 
 import kotlinx.coroutines.runBlocking
-import org.baghdad.logic.model.exceptions.NoTaskFoundException
+import org.baghdad.logic.model.exceptions.NoAuditForTaskException
 import org.baghdad.logic.model.exceptions.UnSupportedTimeStampFormatException
 import org.baghdad.logic.usecase.audit.GetAuditByTaskIdUseCase
 import org.baghdad.presentation.output.Viewer
@@ -28,7 +28,7 @@ class ShowAuditByTaskIdUI(
                 }
             } catch (_: UnSupportedTimeStampFormatException) {
                 viewer.logError("Invalid timestamp format")
-            } catch (_: NoTaskFoundException) {
+            } catch (_: NoAuditForTaskException) {
                 viewer.logError("No audit found for task with ID: $taskId")
             } catch (e: Exception) {
                 print(e)

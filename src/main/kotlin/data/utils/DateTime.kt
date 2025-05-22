@@ -9,8 +9,8 @@ import java.time.format.DateTimeParseException
 fun parseTimestamp(timestampString: String): LocalDateTime {
     return try {
         LocalDateTime.parse(timestampString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    } catch (e: DateTimeParseException) {
-        throw UnSupportedTimeStampFormatException("Invalid timestamp format: $timestampString. Expected: yyyy-MM-dd'T'HH:mm:ss'Z'")
+    } catch (_: DateTimeParseException) {
+        throw UnSupportedTimeStampFormatException()
     }
 }
 
