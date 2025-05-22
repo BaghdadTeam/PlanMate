@@ -42,6 +42,8 @@ class ViewMainManu(
                     }
                 }
 
+                2->logoutUI.execute()
+
                 3 -> {
                     if (adminPermissionCheckerUseCase(userId)) {
                         createUserUI.invoke()
@@ -50,11 +52,9 @@ class ViewMainManu(
                     }
                 }
 
-                2->logoutUI.execute()
-
                 0 -> {
                     viewer.logMessage("Goodbye!")
-                    exitProcess(0)
+                    return
                 }
 
                 else -> {
