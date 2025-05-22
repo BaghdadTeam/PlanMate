@@ -2,8 +2,8 @@ package data.datasource.csv
 
 import com.google.common.truth.Truth.assertThat
 import org.baghdad.data.datasource.csv.CsvWriter
-import org.baghdad.logic.model.exceptions.CsvFileExceptions
 import org.baghdad.logic.model.exceptions.EmptyHeaderException
+import org.baghdad.logic.model.exceptions.FileExceptions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,35 +32,29 @@ class CsvWriterTest {
     fun `test CsvWriter throws CsvFileExceptions if file is not CSV on initialization`() {
         val nonCsvFile = File("test.txt")
 
-        val exception = assertThrows<CsvFileExceptions> {
+        assertThrows<FileExceptions> {
             CsvWriter(nonCsvFile)
         }
-
-        assertThat(exception.message).isEqualTo("The file must have a .csv extension")
-    }
+ }
 
     @Test
     fun `test appendLine throws CsvFileExceptions if file is not CSV`() {
         val nonCsvFile = File("test.txt")
 
-        val exception = assertThrows<CsvFileExceptions> {
+        assertThrows<FileExceptions> {
             CsvWriter(nonCsvFile)
             CsvWriter(nonCsvFile).appendLine("Some record")
         }
-
-        assertThat(exception.message).isEqualTo("The file must have a .csv extension")
     }
 
     @Test
     fun `test overwriteLines throws CsvFileExceptions if file is not CSV`() {
         val nonCsvFile = File("test.txt")
 
-        val exception = assertThrows<CsvFileExceptions> {
+        assertThrows<FileExceptions> {
             CsvWriter(nonCsvFile)
             CsvWriter(nonCsvFile).updateLines(listOf("Header", "Row 1", "Row 2"))
         }
-
-        assertThat(exception.message).isEqualTo("The file must have a .csv extension")
     }
 
     @Test
@@ -108,11 +102,8 @@ class CsvWriterTest {
 
     @Test
     fun `test writeHeader throws EmptyHeaderException if header is empty`() {
-        val exception = assertThrows<EmptyHeaderException> {
+        assertThrows<EmptyHeaderException> {
             csvWriter.writeHeader("")
         }
-
-        assertThat(exception.message).isEqualTo("Header cannot be empty")
     }
-
 }

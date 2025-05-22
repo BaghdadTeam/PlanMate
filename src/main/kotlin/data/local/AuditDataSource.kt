@@ -2,8 +2,8 @@ package org.baghdad.data.local
 
 import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.AuditLogDto
-import org.baghdad.logic.model.exceptions.NoProjectFoundException
-import org.baghdad.logic.model.exceptions.NoTaskFoundException
+import org.baghdad.logic.model.exceptions.NoAuditForProjectException
+import org.baghdad.logic.model.exceptions.NoAuditForTaskException
 import java.util.*
 import kotlin.collections.filter
 
@@ -19,13 +19,13 @@ class AuditDataSource(
         return dataSources.loadAll()
             .filter {(it.entityUnderAuditId == taskId.toString()) }
             .takeIf { it.isNotEmpty() }
-            ?: throw NoTaskFoundException("No audit found for task with ID: $taskId")
+            ?: throw NoAuditForTaskException()
     }
 
     suspend fun getAuditByProjectId(projectId: UUID): List<AuditLogDto> {
         return dataSources.loadAll()
             .filter { it.projectId == projectId.toString() }
             .takeIf { it.isNotEmpty() }
-            ?: throw NoProjectFoundException("No audit found for project with ID: $projectId")
+            ?: throw NoAuditForProjectException()
     }
 }

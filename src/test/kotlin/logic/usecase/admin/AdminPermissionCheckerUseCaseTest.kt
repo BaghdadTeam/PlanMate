@@ -9,7 +9,7 @@ import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

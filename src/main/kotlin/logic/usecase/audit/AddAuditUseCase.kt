@@ -17,6 +17,6 @@ class AddAuditUseCase(
     }
 
     private fun validateAuditEntity(auditLogEntity: AuditLogEntity) {
-        if (auditLogEntity.description.isBlank()) throw EmptyActionInAuditEntityException("Action cannot be empty")
+        if (auditLogEntity.description.isBlank()) throw EmptyActionInAuditEntityException()
     }
 }

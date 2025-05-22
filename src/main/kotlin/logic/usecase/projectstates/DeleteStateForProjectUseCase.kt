@@ -5,6 +5,7 @@ import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.enums.Entities
+import org.baghdad.logic.model.exceptions.StateNotAccessedException
 import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository

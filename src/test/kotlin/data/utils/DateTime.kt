@@ -18,7 +18,6 @@ class DateTime {
         assertThrows<UnSupportedTimeStampFormatException> {
             parseTimestamp(invalidTimestamp)
         }
-
     }
 
     @Test
@@ -31,6 +30,5 @@ class DateTime {
 
         // Then
         assertThat(parsedTimestamp.toString() == validTimestamp).isTrue()
-
     }
 }

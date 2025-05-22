@@ -6,7 +6,7 @@ import org.baghdad.logic.model.entities.TaskEntity
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.UserEntity
 import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
@@ -23,7 +23,7 @@ class TaskStateTransitionUseCaseTest {
 
     private val taskRepository = mockk<TaskRepository>()
     private val projectStatesRepository = mockk<ProjectStatesRepository>()
-    private val userRepository = mockk<UserRepository>() // NEW
+    private val userRepository = mockk<UserRepository>()
     private val auditRepository = mockk<AuditRepository>()
     private lateinit var service: TaskStateTransitionUseCase
 
@@ -83,7 +83,7 @@ class TaskStateTransitionUseCaseTest {
             service.changeTaskState(task.id, newState.id, user.id)
             Assertions.fail("Expected exception not thrown")
         } catch (e: Exception) {
-            Assertions.assertTrue(e is NotFoundException)
+            Assertions.assertTrue(e is StateNotFoundException)
             coVerify(exactly = 0) { taskRepository.updateTask(any()) }
             coVerify(exactly = 0) { auditRepository.addAuditEntry(any()) }
         }

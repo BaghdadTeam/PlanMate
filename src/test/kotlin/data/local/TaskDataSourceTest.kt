@@ -11,7 +11,7 @@ import org.baghdad.logic.model.exceptions.TasksNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 
 class TaskDataSourceTest {
 
@@ -71,10 +71,9 @@ class TaskDataSourceTest {
         val taskId = UUID.randomUUID()
 
         // When & Then
-        val exception = assertThrows<TasksNotFoundException> {
+        assertThrows<TasksNotFoundException> {
             taskDataSource.getTaskById(taskId)
         }
-        assertThat(exception.message).isEqualTo("Task with id $taskId not found")
     }
 
     @Test
@@ -124,10 +123,9 @@ class TaskDataSourceTest {
         val stateId = UUID.randomUUID()
 
         // When & Then
-        val exception = assertThrows<TasksNotFoundException> {
+        assertThrows<TasksNotFoundException> {
             taskDataSource.getTasksByStateId(stateId)
         }
-        assertThat(exception.message).isEqualTo("No tasks found for state ID: $stateId")
     }
 
     @Test
@@ -159,11 +157,9 @@ class TaskDataSourceTest {
 
         coEvery { dataSource.loadAll() } returns existingTasks
 
-        val exception = assertThrows<TasksNotFoundException> {
+        assertThrows<TasksNotFoundException> {
             taskDataSource.updateTask(unknownTask)
         }
-
-        assertThat(exception.message).contains("Task with id $randomId not found")
     }
 
     @Test
@@ -187,10 +183,8 @@ class TaskDataSourceTest {
         val unknownId = UUID.randomUUID()
         coEvery { dataSource.loadAll() } returns existingTasks
 
-        val exception = assertThrows<TasksNotFoundException> {
+        assertThrows<TasksNotFoundException> {
             taskDataSource.deleteTask(unknownId)
         }
-
-        assertThat(exception.message).contains("Task with id $unknownId not found")
     }
 }

@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.Test
 
-
 class EditProjectStateUITest {
 
     private lateinit var useCase: EditProjectStatesUseCase

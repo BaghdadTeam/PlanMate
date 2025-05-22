@@ -1,10 +1,11 @@
-package org.baghdad.logic.model.entities
+package logic.model.entities
 
+import org.baghdad.logic.model.entities.SessionEntity
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 class SessionEntityTest {
 

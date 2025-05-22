@@ -35,7 +35,6 @@ class GetAllProjectsUiTest {
         val expectedOutput = listOf(project1.id, project2.id) to listOf("Project One", "Project Two")
         coEvery { listProjectsUseCase() } returns projects
 
-
         val result = getAllProjectsUi.invoke()
 
         // Then

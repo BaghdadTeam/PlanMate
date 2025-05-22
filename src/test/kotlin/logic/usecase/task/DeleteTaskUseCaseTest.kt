@@ -16,7 +16,7 @@ import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.logic.usecase.task.DeleteTaskUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 import kotlin.test.Test
 
 class DeleteTaskUseCaseTest {

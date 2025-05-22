@@ -6,7 +6,7 @@ import org.baghdad.logic.model.entities.AuditLogEntity
 import org.baghdad.logic.model.enums.Entities
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.UUID
+import java.util.*
 
 object AuditTestData {
     fun createAuditHelper(

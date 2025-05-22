@@ -8,8 +8,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.SessionDataSource
 import org.baghdad.data.local.UserDataSource
-import org.baghdad.data.repositories.toDto
 import org.baghdad.data.repositories.authentication.AuthenticationRepositoryImpl
+import org.baghdad.data.repositories.toDto
 import org.baghdad.logic.model.exceptions.InvalidPasswordException
 import org.baghdad.logic.model.exceptions.LogoutFailedException
 import org.baghdad.logic.utils.md5WithSalt

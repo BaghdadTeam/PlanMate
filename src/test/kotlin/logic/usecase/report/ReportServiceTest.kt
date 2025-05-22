@@ -1,14 +1,19 @@
 package logic.usecase.report
 
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import kotlin.test.*
+import org.baghdad.logic.model.entities.ProjectEntity
+import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
+import org.baghdad.logic.repositories.ProjectRepository
+import org.baghdad.logic.repositories.ProjectStatesRepository
+import org.baghdad.logic.repositories.TaskRepository
+import org.baghdad.logic.usecase.report.ReportService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.baghdad.logic.usecase.report.ReportService
-import org.baghdad.logic.model.entities.*
-import org.baghdad.logic.repositories.*
 import java.util.*
+import kotlin.test.assertEquals
 
 class ReportServiceTest {
 

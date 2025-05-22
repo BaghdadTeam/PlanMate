@@ -64,7 +64,7 @@ class DeleteTaskUITest {
     fun `test task not found exception`() {
         every { reader.readInput() } returns "1" // User selects task 1
         every { sessionManager.currentSession } returns dummySession
-        coEvery { useCase(any(), any()) } throws TasksNotFoundException("Task not found")
+        coEvery { useCase(any(), any()) } throws TasksNotFoundException()
 
         deleteTaskUI.execute(tasks)
 
