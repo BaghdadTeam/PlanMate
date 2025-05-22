@@ -1,7 +1,6 @@
 package logic.usecase.projectstates
 
-import com.google.common.truth.Truth
-import helpers.authentication.createUserHelper
+import com.google.common.truth.Truth.assertThat
 import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -10,15 +9,10 @@ import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.AuditLogEntity
-import org.baghdad.logic.model.entities.UserType
-import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.CantAddStateWithNoNameException
-import org.baghdad.logic.model.exceptions.NotAccessException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectStatesRepository
-import org.baghdad.logic.repositories.UserRepository
-import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
 import org.baghdad.logic.usecase.projectstates.AddTaskStateToProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -64,8 +58,8 @@ class AddTaskStateToProjectUseCaseTest {
         coVerify { auditRepository.addAuditEntry(capture(auditSlot)) }
 
         val audit = auditSlot.captured
-        Truth.assertThat(audit.projectId).isInstanceOf(UUID::class.java)
-        Truth.assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
+        assertThat(audit.projectId).isInstanceOf(UUID::class.java)
+        assertThat(audit.timestamp).isInstanceOf(LocalDateTime::class.java)
     }
 
 
@@ -76,10 +70,8 @@ class AddTaskStateToProjectUseCaseTest {
         val state = ProjectStatesEntityTestData.todoState().copy(name = "")
 
         // When & Then
-        val exception = assertThrows<CantAddStateWithNoNameException> {
+        assertThrows<CantAddStateWithNoNameException> {
             createStateUseCase.invoke(state, userId)
         }
-        Truth.assertThat(exception.message).contains("state name can't be empty")
     }
-
 }

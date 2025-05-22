@@ -10,8 +10,8 @@ import org.baghdad.data.datasource.DataSource
 import org.baghdad.data.dto.AuditLogDto
 import org.baghdad.data.local.AuditDataSource
 import org.baghdad.data.repositories.toDomain
-import org.baghdad.logic.model.exceptions.NoProjectFoundException
-import org.baghdad.logic.model.exceptions.NoTaskFoundException
+import org.baghdad.logic.model.exceptions.NoAuditForProjectException
+import org.baghdad.logic.model.exceptions.NoAuditForTaskException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -72,7 +72,7 @@ class AuditDataSourceTest {
 
         // When & Then
         coEvery { dataSource.loadAll() } returns emptyList()
-        assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(randomUUID) }
+        assertThrows<NoAuditForTaskException> { auditDataSource.getAuditByTaskId(randomUUID) }
 
     }
 
@@ -83,7 +83,7 @@ class AuditDataSourceTest {
 
         // When & Then
         coEvery { dataSource.loadAll() } returns listOf(auditLogDto)
-        assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(UUID.randomUUID()) }
+        assertThrows<NoAuditForProjectException> { auditDataSource.getAuditByProjectId(UUID.randomUUID()) }
 
     }
 
@@ -94,7 +94,7 @@ class AuditDataSourceTest {
 
         // When & Then
         coEvery { dataSource.loadAll() } returns emptyList()
-        assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(randomUUID) }
+        assertThrows<NoAuditForTaskException> { auditDataSource.getAuditByTaskId(randomUUID) }
     }
 
     @Test
@@ -106,7 +106,7 @@ class AuditDataSourceTest {
 
         // When
         coEvery { dataSource.loadAll() } returns listOf(auditLogDto)
-        assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
+        assertThrows<NoAuditForTaskException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
 
     }
 
@@ -119,7 +119,7 @@ class AuditDataSourceTest {
 
         // When
         coEvery { dataSource.loadAll() } returns listOf(auditLogDto)
-        assertThrows<NoProjectFoundException> { auditDataSource.getAuditByProjectId(inputRandomUUID) }
+        assertThrows<NoAuditForProjectException> { auditDataSource.getAuditByProjectId(inputRandomUUID) }
     }
 
     @Test
@@ -133,7 +133,7 @@ class AuditDataSourceTest {
 
             // When
             coEvery { dataSource.loadAll() } returns listOf(auditLogDto)
-            assertThrows<NoTaskFoundException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
+            assertThrows<NoAuditForTaskException> { auditDataSource.getAuditByTaskId(inputRandomUUID) }
 
 
         }
@@ -147,7 +147,7 @@ class AuditDataSourceTest {
 
             // When
             coEvery { dataSource.loadAll() } returns listOf(auditLogDto)
-            assertThrows<NoProjectFoundException> {
+            assertThrows<NoAuditForProjectException> {
                 auditDataSource.getAuditByProjectId(
                     inputRandomUUID
                 )

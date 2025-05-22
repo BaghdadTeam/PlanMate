@@ -1,8 +1,5 @@
 package presentation.user
 
-import org.baghdad.presentation.user.CreateUserUI
-import org.baghdad.presentation.user.GetUserByUsernameUI
-import org.baghdad.presentation.user.UserManagementUI
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
@@ -11,9 +8,12 @@ import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.repositories.UserRepository
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
+import org.baghdad.presentation.user.CreateUserUI
+import org.baghdad.presentation.user.GetUserByUsernameUI
+import org.baghdad.presentation.user.UserManagementUI
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 class UserManagementUITest {
 

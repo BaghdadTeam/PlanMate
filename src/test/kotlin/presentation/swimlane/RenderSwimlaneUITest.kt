@@ -3,8 +3,8 @@ package presentation.swimlane
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.usecase.ViewServiceUseCase
 import org.baghdad.presentation.swimlane.RenderSwimlaneUI
 import org.junit.jupiter.api.Test
@@ -22,7 +22,6 @@ class RenderSwimlaneUITest {
         val projectId = UUID.randomUUID()
         val project : Map<TaskStateEntity, List<TaskEntity>> = emptyMap()
 
-        // Mocking failure result by throwing exception
         coEvery {
             viewServiceUseCase.invoke(projectId)
         } throws Exception("Failed to fetch data")
@@ -50,7 +49,6 @@ class RenderSwimlaneUITest {
         )
         val project = mapOf(state to listOf(task))
 
-        // Mocking successful result with data
         coEvery {
             viewServiceUseCase.invoke(projectId)
         } returns project
@@ -68,7 +66,6 @@ class RenderSwimlaneUITest {
         // Given
         val projectId = UUID.randomUUID()
         val project : Map<TaskStateEntity, List<TaskEntity>> = emptyMap()
-        // Mocking empty data result (No states)
         coEvery {
             viewServiceUseCase.invoke(projectId)
         } returns emptyMap()

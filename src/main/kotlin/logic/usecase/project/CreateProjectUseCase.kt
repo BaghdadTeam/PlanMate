@@ -1,15 +1,15 @@
 package org.baghdad.logic.usecase.project
 
 import org.baghdad.logic.manager.SessionManager
-import org.baghdad.logic.model.entities.*
+import org.baghdad.logic.model.entities.Action
+import org.baghdad.logic.model.entities.AuditLogEntity
+import org.baghdad.logic.model.entities.ProjectEntity
 import org.baghdad.logic.model.enums.Entities
-import org.baghdad.logic.model.exceptions.AccessDeniedException
 import org.baghdad.logic.model.exceptions.EmptyProjectNameException
 import org.baghdad.logic.model.exceptions.UnauthorizedException
 import org.baghdad.logic.repositories.AuditRepository
 import org.baghdad.logic.repositories.ProjectRepository
-import org.baghdad.logic.usecase.admin.AdminPermissionCheckerUseCase
-import java.util.UUID
+import java.util.*
 
 class CreateProjectUseCase(
     private val projectRepository: ProjectRepository,
@@ -18,7 +18,7 @@ class CreateProjectUseCase(
 ) {
     suspend operator fun invoke(projectName: String, userId : UUID){
         if (!sessionManager.isAuthenticated()) throw UnauthorizedException()
-        if (projectName.isBlank()) throw EmptyProjectNameException("Project name can't be empty")
+        if (projectName.isBlank()) throw EmptyProjectNameException()
 
         val project = ProjectEntity(name = projectName, creatorId = userId)
         projectRepository.createProject(project)

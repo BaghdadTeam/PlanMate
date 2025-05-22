@@ -69,9 +69,9 @@ class UpdateTaskUseCase(
     }
 
     private fun validateNewTask(newTask: TaskEntity): TaskEntity {
-        if (newTask.title.isBlank()) throw TaskWithMissingTitleException("Title cannot be empty or blank")
+        if (newTask.title.isBlank()) throw TaskWithMissingTitleException()
 
-        if (newTask.description.isBlank()) throw TaskWithMissingDescriptionException("Description cannot be empty blank")
+        if (newTask.description.isBlank()) throw TaskWithMissingDescriptionException()
 
         return newTask
     }

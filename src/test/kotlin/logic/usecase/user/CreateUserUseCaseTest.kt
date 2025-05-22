@@ -1,4 +1,4 @@
-package org.baghdad.logic.usecase.user
+package logic.usecase.user
 
 import com.google.common.truth.Truth.assertThat
 import helpers.authentication.createUserHelper
@@ -10,6 +10,8 @@ import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.UserType
 import org.baghdad.logic.model.exceptions.UserNotFoundException
 import org.baghdad.logic.repositories.UserRepository
+import org.baghdad.logic.usecase.user.CreateUserUseCase
+import org.baghdad.logic.usecase.user.UserValidatorUseCase
 import org.baghdad.logic.utils.md5WithSalt
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -35,7 +37,7 @@ class CreateUserUseCaseTest {
 
     @Test
     fun `should create user when invoked by admin with valid data`() = runTest {
-        coEvery { userRepository.getUserByUsername("newUser") } throws UserNotFoundException("not found")
+        coEvery { userRepository.getUserByUsername("newUser") } throws UserNotFoundException()
         coEvery { userValidatorUseCase.invoke(any(), any(), any()) } returns Unit
         val created = createUserUseCase("newUser", "hashedPassword", "New User", adminUser.id)
 
@@ -44,6 +46,4 @@ class CreateUserUseCaseTest {
         assertThat(created.type).isEqualTo(UserType.Mate)
         coVerify(exactly = 1) { userRepository.createUser(created, hashedPassword = "hashedPassword".md5WithSalt()) }
     }
-
-
 }

@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.baghdad.logic.manager.SessionManager
 import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
-import org.baghdad.logic.model.exceptions.NotFoundException
+import org.baghdad.logic.model.exceptions.StateNotFoundException
 import org.baghdad.logic.usecase.task.TaskStateTransitionUseCase
 import org.baghdad.presentation.input.Reader
 import org.baghdad.presentation.output.Viewer
@@ -29,12 +29,12 @@ class TaskStateTransitionUI(
                 useCase.changeTaskState(taskId, taskStateId , userId)
                 viewer.logMessage("Task state changed successfully.")
             }
-        } catch (e: NotFoundException) {
-            viewer.logError("State not found in this project: ${e.message}")
-        } catch (e: IllegalStateException) {
-            viewer.logError("Invalid operation: ${e.message}")
-        } catch (e: RuntimeException) {
-            viewer.logError("Unexpected error: ${e.message}")
+        } catch (_: StateNotFoundException) {
+            viewer.logError("State not found in this project")
+        } catch (_: IllegalStateException) {
+            viewer.logError("Invalid operation")
+        } catch (_: RuntimeException) {
+            viewer.logError("Sorry Something went wrong")
         } catch (_: Exception) {
             viewer.logError(" something went wrong while trying to change task state.")
         }

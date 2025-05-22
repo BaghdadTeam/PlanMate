@@ -19,11 +19,10 @@ class GetUserByUsernameUI(
         try {
             val user = getByUsername(username)
             viewer.logMessage("Found: ${user.username}  Name: ${user.name}  Role: ${user.type}")
-        } catch (exception: InvalidUsernameException) {
-            viewer.logError("Invalid username: ${exception.message}")
-        } catch (exception: UserNotFoundException) {
-            val massage = exception.message
-            viewer.logError(if (massage.isNullOrBlank()) "User not found." else massage)
+        } catch (_: InvalidUsernameException) {
+            viewer.logError("Invalid username")
+        } catch (_: UserNotFoundException) {
+            viewer.logError("User not found.")
         }
     }
 }

@@ -5,9 +5,8 @@ import helpers.projectStates.ProjectStatesEntityTestData
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import org.baghdad.data.local.ProjectStatesDataSource
-import org.baghdad.data.repositories.toDomain
-import org.baghdad.data.repositories.toDto
 import org.baghdad.data.repositories.projectstates.ProjectStatesRepositoryImp
+import org.baghdad.data.repositories.toDto
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*

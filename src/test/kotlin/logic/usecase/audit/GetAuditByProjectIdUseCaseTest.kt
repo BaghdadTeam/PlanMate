@@ -31,8 +31,6 @@ class GetAuditByProjectIdUseCaseTest {
         coEvery { sessionManager.isAuthenticated() } returns true
     }
 
-
-
     @Test
     fun `should fetch and combine all audit logs for project`() = runTest {
         // Given

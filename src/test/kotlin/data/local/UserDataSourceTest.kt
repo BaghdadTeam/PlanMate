@@ -65,10 +65,9 @@ class UserDataSourceTest {
         coEvery { dataSource.loadAll() } returns emptyList()
 
         // When & Then
-        val error = assertThrows<UserNotFoundException> {
+        assertThrows<UserNotFoundException> {
             userDataSource.findUserByUsername("missing")
         }
-        assertThat(error.message).isEqualTo("User not found with username: missing")
     }
 
     @Test

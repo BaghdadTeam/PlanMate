@@ -1,11 +1,12 @@
 package logic.usecase
+
 import com.google.common.truth.Truth.assertThat
 import io.github.classgraph.AnnotationInfoList.emptyList
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.model.entities.TaskEntity
+import org.baghdad.logic.model.entities.TaskStateEntity
 import org.baghdad.logic.repositories.ProjectStatesRepository
 import org.baghdad.logic.repositories.TaskRepository
 import org.baghdad.logic.usecase.ViewServiceUseCase
